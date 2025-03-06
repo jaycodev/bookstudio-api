@@ -6,7 +6,7 @@ import java.util.List;
 import com.bookstudio.models.User;
 
 public interface UserDao {
-	List<User> listUsers();
+	List<User> listUsers(int loggedUserId);
 	User getUser(String userId);
 	User createUser(User user) throws SQLException;
 	User updateUser(User user);

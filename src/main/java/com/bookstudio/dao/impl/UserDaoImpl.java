@@ -13,14 +13,15 @@ import com.bookstudio.utils.DbConnection;
 
 public class UserDaoImpl implements UserDao {
 	@Override
-	public List<User> listUsers() {
+	public List<User> listUsers(int loggedUserId) {
 		List<User> userList = new ArrayList<>();
 
-		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Password, Role, ProfilePhoto FROM Users";
+		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Password, Role, ProfilePhoto FROM Users WHERE UserID <> ?";
 
-		try (Connection cn = DbConnection.getConexion();
-				PreparedStatement ps = cn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()) {
+		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
+
+			ps.setInt(1, loggedUserId);
+			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
 				User user = new User();
@@ -37,7 +38,7 @@ public class UserDaoImpl implements UserDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return userList;
 	}
 

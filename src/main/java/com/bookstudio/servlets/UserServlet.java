@@ -70,7 +70,7 @@ public class UserServlet extends HttpServlet {
     
     private void listUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            List<User> userData = userService.listUsers();
+            List<User> userData = userService.listUsers(request);
             response.setContentType("application/json");
             Gson gson = new Gson();
             String json = gson.toJson(userData);
