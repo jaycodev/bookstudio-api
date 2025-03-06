@@ -48,11 +48,11 @@ We follow a standard Git workflow based on the GitHub Flow:
 
 1. Fork the repository to your GitHub account
 2. Clone your fork to your local machine
-3. Create a new branch from the `develop` branch
+3. Create a new branch from the `main` branch
 4. Make your changes
 5. Commit your changes with clear and descriptive commit messages
 6. Push your branch to your fork
-7. Open a Pull Request from your branch to the original repository's `develop` branch
+7. Open a Pull Request from your branch to the original repository's `main` branch
 
 ### Step-by-Step Contributing Guide
 
@@ -80,18 +80,18 @@ git remote add upstream https://github.com/jason-vila/bookstudio.git
 Before creating a new branch, make sure your fork is up to date:
 
 ```bash
-git checkout develop
+git checkout main
 git fetch upstream
-git merge upstream/develop
-git push origin develop
+git merge upstream/main
+git push origin main
 ```
 
 #### 5. Create a Working Branch
 
-Create a new branch from `develop` using the appropriate naming convention:
+Create a new branch from `main` using the appropriate naming convention:
 
 ```bash
-git checkout develop
+git checkout main
 git checkout -b feature/42-add-search-functionality
 ```
 
@@ -122,7 +122,7 @@ git push origin feature/42-add-search-functionality
 
 1. Navigate to your fork on GitHub
 2. Click "Compare & pull request" button for your branch
-3. Ensure the base repository is `jason-vila/bookstudio` and the base branch is `develop`
+3. Ensure the base repository is `jason-vila/bookstudio` and the base branch is `main`
 4. Fill in the PR template with details about your changes
 5. Click "Create pull request"
 
