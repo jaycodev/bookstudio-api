@@ -12,6 +12,19 @@ $(document).ready(function() {
 	var croppedImageBlob = null;
 	var cropper;
 
+	$("#currentProfilePassword, #editProfilePassword").on("input", function() {
+		const inputElement = this;
+		const cursorPosition = inputElement.selectionStart;
+		const originalValue = $(this).val();
+		const newValue = originalValue.replace(/\s/g, '');
+
+		if (originalValue !== newValue) {
+			$(this).val(newValue);
+			const spacesRemoved = (originalValue.slice(0, cursorPosition).match(/\s/g) || []).length;
+			inputElement.setSelectionRange(cursorPosition - spacesRemoved, cursorPosition - spacesRemoved);
+		}
+	});
+
 	$('#cropperModal').on('shown.bs.modal', function() {
 		if (cropper) {
 			cropper.destroy();
