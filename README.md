@@ -1,3 +1,5 @@
+<h1 align="center">BookStudio - Library Management System</h1>
+
 <p align="center">
   <img src="https://github.com/jason-vila/bookstudio/blob/main/src/main/webapp/images/bookstudio-logo.png" width="250" alt="BookStudio Logo" />
 </p>
@@ -109,30 +111,6 @@ The folder structure is organized as follows:
 ```
 
 - **`WEB-INF/includes`**: This folder contains reusable JSP components (e.g., `header`, `sidebar`, `buttonTheme`). These are included in the main JSPs to maintain a consistent structure across the application without code duplication.
-
-## 📋 Code Standards
-
-To maintain clarity and consistency, we use abbreviated tags for commits and full descriptive names for branches. This distinction makes it easier to quickly understand the purpose of each change (commits) and the scope of work on a branch.
-
-| **Type**         | **Commit Prefix** | **Branch Prefix**           | **Description**                                                     |
-|------------------|-------------------|-----------------------------|---------------------------------------------------------------------|
-| New Features     | `feat:`           | `feature/`                  | Introduce new features                                              |
-| Bug Fixes        | `fix:`            | `fix/`                      | Correct issues or bugs                                              |
-| Documentation    | `docs:`           | `documentation/`            | Update or add documentation                                         |
-| Formatting       | `style:`          | `style/`                    | Code formatting changes that don't affect functionality             |
-| Refactoring      | `refactor:`       | `refactor/`                 | Code refactoring without altering behavior                          |
-| Testing          | `test:`           | `test/`                     | Adding or updating tests                                            |
-| Auxiliary Tasks  | `chore:`          | `chore/`                    | Build process changes or other auxiliary tasks                      |
-
-**Commit Example:**  
-```bash
-feat: add newsletter subscription component
-```
-
-**Branch Example:**  
-```bash
-feature/newsletter-subscription
-```
 
 ## ⚙️ Installation and Setup
 
@@ -247,7 +225,7 @@ public class DbConnection {
 
 ## 🤝 Contributing
 
-This is a personal project aimed at learning and growth, but contributions are welcome. If you have suggestions, improvements, or bug fixes, feel free to fork the repository and submit a pull request.
+Contributions are welcome! For detailed instructions on how to contribute to this project, please read our [CONTRIBUTING.md](CONTRIBUTING.md) guide.
 
 ## 📜 License
 
