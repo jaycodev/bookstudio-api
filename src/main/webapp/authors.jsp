@@ -116,8 +116,8 @@
 	                                class="form-control" 
 	                                id="addAuthorName" 
 	                                name="addAuthorName" 
-	                                pattern="[A-Za-zÀ-ÿ\s]+" 
-	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
+	                                pattern="[A-Za-zÀ-ÿ\s.]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s.]/g, '');" 
 	                                placeholder="Ingrese el nombre del autor" 
 	                                required
 	                            >
@@ -343,8 +343,8 @@
 	                                class="form-control" 
 	                                id="editAuthorName" 
 	                                name="editAuthorName" 
-	                                pattern="[A-Za-zÀ-ÿ\s]+" 
-	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
+	                                pattern="[A-Za-zÀ-ÿ\s.]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s.]/g, '');" 
 	                                placeholder="Ingrese el nombre del autor" 
 	                                required
 	                            >
