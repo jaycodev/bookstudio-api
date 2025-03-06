@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import com.bookstudio.dao.UserDao;
-import com.bookstudio.dao.impl.SessionDaoImpl;
 import com.bookstudio.dao.impl.UserDaoImpl;
 import com.bookstudio.models.User;
 import com.bookstudio.utils.LoginConstants;
@@ -126,23 +125,6 @@ public class UserService {
 
 	public boolean deleteUser(String userId) throws SQLException {
 		return userDao.deleteUser(userId);
-	}
-
-	public void updateSession(HttpServletRequest request, User updatedUser) {
-		String userId = updatedUser.getUserId();
-		String sessionUserId = (String) request.getSession().getAttribute(LoginConstants.ID);
-		if (sessionUserId != null && sessionUserId.equals(userId)) {
-			SessionDaoImpl sessionProject = new SessionDaoImpl();
-			sessionProject.saveSessionString(request, LoginConstants.FIRSTNAME, updatedUser.getFirstName());
-			sessionProject.saveSessionString(request, LoginConstants.LASTNAME, updatedUser.getLastName());
-			sessionProject.saveSessionString(request, LoginConstants.PASSWORD, updatedUser.getPassword());
-			sessionProject.saveSessionString(request, LoginConstants.ROLE, updatedUser.getRole());
-			byte[] profilePhoto = updatedUser.getProfilePhoto();
-			if (profilePhoto != null) {
-				sessionProject.saveSessionString(request, LoginConstants.USER_PROFILE_IMAGE,
-						"data:image/jpeg;base64," + Base64.getEncoder().encodeToString(profilePhoto));
-			}
-		}
 	}
 
 	private String getUtf8Parameter(HttpServletRequest request, String fieldName) throws IOException, ServletException {

@@ -119,7 +119,6 @@ public class UserServlet extends HttpServlet {
     private void updateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             User updatedUser = userService.updateUser(request);
-            userService.updateSession(request, updatedUser);
             byte[] fotoPerfil = updatedUser.getProfilePhoto();
             if (fotoPerfil != null) {
             	updatedUser.setProfilePhotoBase64("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(fotoPerfil));
