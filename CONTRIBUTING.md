@@ -95,6 +95,22 @@ git checkout main
 git checkout -b feature/42-add-search-functionality
 ```
 
+> [!NOTE]  
+> If you are working on multiple issues at the same time, it is okay to create a single branch for both, **if the issues are related and not too large**. In this case, make sure to create clear commits for each issue and reference both in the commit messages. For example:
+> 
+> - `feat: add search functionality (#42)`
+> - `fix: correct login error (#43)`
+> 
+> The branch name should reflect the issues you're addressing, such as:
+> 
+> `feature/42-43-add-search-functionality-and-fix-login-error`
+> 
+> When creating the pull request, mention all relevant issues in the PR title, such as:
+> 
+> `feat: add search functionality and fix login error (#42, #43)`
+> 
+> **However, the common practice is to create a separate branch for each issue**, especially if the issues are independent or large.
+
 #### 6. Make Your Changes
 
 Work on your feature or bug fix. Remember to:
