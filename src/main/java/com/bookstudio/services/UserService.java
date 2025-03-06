@@ -19,9 +19,22 @@ import com.bookstudio.utils.LoginConstants;
 public class UserService {
 	private UserDao userDao = new UserDaoImpl();
 
-	public List<User> listUsers() throws SQLException {
-		List<User> userData = userDao.listUsers();
-		
+	public List<User> listUsers(HttpServletRequest request) throws SQLException {
+		Object userIdObj = request.getSession().getAttribute(LoginConstants.ID);
+
+		if (userIdObj == null) {
+			throw new IllegalStateException("El ID del usuario no está presente en la sesión. Asegúrate de que el usuario esté logueado.");
+		}
+
+		int loggedUserId;
+		try {
+			loggedUserId = Integer.parseInt(userIdObj.toString());
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("El ID de usuario no es válido: " + userIdObj);
+		}
+
+		List<User> userData = userDao.listUsers(loggedUserId);
+
 		for (User user : userData) {
 			byte[] photo = user.getProfilePhoto();
 			if (photo != null) {
@@ -29,7 +42,7 @@ public class UserService {
 				user.setProfilePhotoBase64("data:image/jpeg;base64," + photoBase64);
 			}
 		}
-		
+
 		return userData;
 	}
 
