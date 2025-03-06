@@ -32,6 +32,20 @@ $(document).ready(function() {
 			return true;
 		}
 	}
+	
+	// Prevent spaces in password field in real-time
+	$("#txtPassword").on("input", function() {
+		const inputElement = this;
+		const cursorPosition = inputElement.selectionStart;
+		const originalValue = $(this).val();
+		const newValue = originalValue.replace(/\s/g, '');
+
+		if (originalValue !== newValue) {
+			$(this).val(newValue);
+			const spacesRemoved = (originalValue.slice(0, cursorPosition).match(/\s/g) || []).length;
+			inputElement.setSelectionRange(cursorPosition - spacesRemoved, cursorPosition - spacesRemoved);
+		}
+	});
 
 	// Event listeners
 	$("#txtUsername, #txtPassword").on("input", function() {

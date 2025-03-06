@@ -655,6 +655,8 @@ function loadModalData() {
 
 		$('#addUserForm .password-field').attr('type', 'password');
 		$('#addUserForm .input-group-text').find('i').removeClass('bi-eye-slash').addClass('bi-eye');
+
+		preventSpacesInPasswordField("#addUserPassword, #addUserConfirmPassword");
 	});
 
 	// Details Modal
@@ -720,6 +722,8 @@ function loadModalData() {
 
 				$('#editUserForm .password-field').attr('type', 'password');
 				$('#editUserForm .input-group-text').find('i').removeClass('bi-eye-slash').addClass('bi-eye');
+
+				preventSpacesInPasswordField("#editUserPassword");
 
 				placeholderColorEditSelect();
 
@@ -799,6 +803,21 @@ function loadModalData() {
 				}
 			});
 		});
+	});
+}
+
+function preventSpacesInPasswordField(selector) {
+	$(selector).off('input').on("input", function() {
+		const inputElement = this;
+		const cursorPosition = inputElement.selectionStart;
+		const originalValue = $(this).val();
+		const newValue = originalValue.replace(/\s/g, '');
+
+		if (originalValue !== newValue) {
+			$(this).val(newValue);
+			const spacesRemoved = (originalValue.slice(0, cursorPosition).match(/\s/g) || []).length;
+			inputElement.setSelectionRange(cursorPosition - spacesRemoved, cursorPosition - spacesRemoved);
+		}
 	});
 }
 
