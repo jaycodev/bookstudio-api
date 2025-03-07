@@ -92,7 +92,7 @@ Create a new branch from `main` using the appropriate naming convention:
 
 ```bash
 git checkout main
-git checkout -b feature/42-add-search-functionality
+git checkout -b feat/42-add-search-functionality
 ```
 
 > [!NOTE]  
@@ -103,7 +103,7 @@ git checkout -b feature/42-add-search-functionality
 > 
 > The branch name should reflect the issues you're addressing, such as:
 > 
-> `feature/42-43-add-search-functionality-and-fix-login-error`
+> `feat/42-43-add-search-functionality-and-fix-login-error`
 > 
 > When creating the pull request, mention all relevant issues in the PR title, such as:
 > 
@@ -131,7 +131,7 @@ git commit -m "feat: add advanced search functionality (#42)"
 #### 8. Push Your Changes
 
 ```bash
-git push origin feature/42-add-search-functionality
+git push origin feat/42-add-search-functionality
 ```
 
 #### 9. Create a Pull Request
@@ -147,8 +147,8 @@ git push origin feature/42-add-search-functionality
 When creating branches, use one of the following formats based on the type of change:
 
 - **✨ New Features:**  
-  `feature/<issue-number>-<short-description>`  
-  *Example:* `feature/12-new-search-function`
+  `feat/<issue-number>-<short-description>`  
+  *Example:* `feat/12-new-search-function`
   
 - **🐛 Bug Fixes:**  
   `fix/<issue-number>-<short-description>`  
