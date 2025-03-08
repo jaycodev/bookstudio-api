@@ -92,18 +92,23 @@ public class PublisherService {
 		String website = getUtf8Parameter(request, "editPublisherWebsite");
 		String address = getUtf8Parameter(request, "editPublisherAddress");
 		String status = getUtf8Parameter(request, "editPublisherStatus");
+		String deletePhoto = request.getParameter("deletePhoto");
 
 		byte[] photo = null;
-		try {
-			InputStream inputStream = request.getPart("editPublisherPhoto").getInputStream();
-			if (inputStream.available() > 0) {
-				photo = inputStream.readAllBytes();
+		if ("true".equals(deletePhoto)) {
+			photo = null;
+		} else {
+			try {
+				InputStream inputStream = request.getPart("editPublisherPhoto").getInputStream();
+				if (inputStream.available() > 0) {
+					photo = inputStream.readAllBytes();
+				}
+			} catch (Exception e) {
 			}
-		} catch (Exception e) {
-		}
-		if (photo == null) {
-			Publisher currentPublisher = publisherDao.getPublisher(publisherId);
-			photo = currentPublisher.getPhoto();
+			if (photo == null) {
+				Publisher currentPublisher = publisherDao.getPublisher(publisherId);
+				photo = currentPublisher.getPhoto();
+			}
 		}
 
 		Publisher publisher = new Publisher();

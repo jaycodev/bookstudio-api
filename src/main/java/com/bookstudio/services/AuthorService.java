@@ -83,40 +83,45 @@ public class AuthorService {
         return createdAuthor;
     }
     
-    public Author updateAuthor(HttpServletRequest request) throws Exception {
-    	String authorId = request.getParameter("authorId");
-        String name = getUtf8Parameter(request, "editAuthorName");
-        String nationality = getUtf8Parameter(request, "editAuthorNationality");
-        String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");
-        LocalDate birthDate = LocalDate.parse(request.getParameter("editAuthorBirthDate"));
-        String biography = getUtf8Parameter(request, "editAuthorBiography");
-        String status = getUtf8Parameter(request, "editAuthorStatus");
-        
-        byte[] photo = null;
-        try {
-            InputStream inputStream = request.getPart("editAuthorPhoto").getInputStream();
-            if (inputStream.available() > 0) {
-            	photo = inputStream.readAllBytes();
-            }
-        } catch (Exception e) {
-        }
-        if (photo == null) {
-            Author currentAuthor = authorDao.getAuthor(authorId);
-            photo = currentAuthor.getPhoto();
-        }
-        
-        Author author = new Author();
-        author.setAuthorId(authorId);
-        author.setName(name);
-        author.setNationality(nationality);
-        author.setLiteraryGenreId(literaryGenreId);
-        author.setBirthDate(birthDate);
-        author.setBiography(biography);
-        author.setStatus(status);
-        author.setPhoto(photo);
-        
-        return authorDao.updateAuthor(author);
-    }
+	public Author updateAuthor(HttpServletRequest request) throws Exception {
+		String authorId = request.getParameter("authorId");
+		String name = getUtf8Parameter(request, "editAuthorName");
+		String nationality = getUtf8Parameter(request, "editAuthorNationality");
+		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");
+		LocalDate birthDate = LocalDate.parse(request.getParameter("editAuthorBirthDate"));
+		String biography = getUtf8Parameter(request, "editAuthorBiography");
+		String status = getUtf8Parameter(request, "editAuthorStatus");
+		String deletePhoto = request.getParameter("deletePhoto");
+
+		byte[] photo = null;
+		if ("true".equals(deletePhoto)) {
+			photo = null;
+		} else {
+			try {
+				InputStream inputStream = request.getPart("editAuthorPhoto").getInputStream();
+				if (inputStream.available() > 0) {
+					photo = inputStream.readAllBytes();
+				}
+			} catch (Exception e) {
+			}
+			if (photo == null) {
+				Author currentAuthor = authorDao.getAuthor(authorId);
+				photo = currentAuthor.getPhoto();
+			}
+		}
+
+		Author author = new Author();
+		author.setAuthorId(authorId);
+		author.setName(name);
+		author.setNationality(nationality);
+		author.setLiteraryGenreId(literaryGenreId);
+		author.setBirthDate(birthDate);
+		author.setBiography(biography);
+		author.setStatus(status);
+		author.setPhoto(photo);
+
+		return authorDao.updateAuthor(author);
+	}
     
     public SelectOptions populateSelects() throws Exception {
         SelectOptions selectOptions = new SelectOptions();

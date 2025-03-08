@@ -9,6 +9,13 @@
  * @author [Jason]
  */
 
+/*****************************************
+ * GLOBAL VARIABLES AND HELPER FUNCTIONS
+ *****************************************/
+
+// Global variable to handle profile photo deletion in edit modal
+let deletePhotoFlag = false;
+
 function placeholderColorSelect() {
 	$('select.selectpicker').on('change', function() {
 		var $select = $(this);
@@ -51,8 +58,11 @@ function generateRow(user) {
 			<td class="align-middle text-start">${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
 			<td class="align-middle text-center">
 				${user.profilePhotoBase64 ?
-					`<img src="${user.profilePhotoBase64}" alt="Foto" class="img-fluid rounded-circle" style="width: 25px; height: 25px;">` :
-					`<a href="#" class="text-muted">#</a>`}
+					`<img src="${user.profilePhotoBase64}" alt="Foto" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
+					`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+					</svg>`}
 			</td>
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
@@ -170,13 +180,14 @@ function updateRowInTable(user) {
 		row.find('td').eq(5).text(user.role.charAt(0).toUpperCase() + user.role.slice(1));
 
 		if (user.profilePhotoBase64 && user.profilePhotoBase64.trim() !== "") {
-			row.find('td').eq(6).html(`<img src="${user.profilePhotoBase64}" alt="Foto" class="img-fluid rounded-circle" style="width: 25px; height: 25px;">`);
+			row.find('td').eq(6).html(`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
 		} else {
-			if (user.profilePhotoBase64 === undefined || user.profilePhotoBase64.trim() === "") {
-				if (!row.find('td').eq(6).find('img').length) {
-					row.find('td').eq(6).html('<a href="#" class="text-muted">#</a>');
-				}
-			}
+			row.find('td').eq(6).html(`
+				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+				</svg>
+			`);
 		}
 
 		table.row(row).invalidate().draw();
@@ -486,6 +497,8 @@ function handleEditUserForm() {
 			if (userId) {
 				formData.append('userId', userId);
 			}
+			
+			formData.append('deleteProfilePhoto', deletePhotoFlag);
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
@@ -717,6 +730,8 @@ function loadModalData() {
 				);
 				$('#editUserRole').val(data.role);
 				$('#editUserRole').selectpicker();
+				
+				updateImageContainer(data.profilePhotoBase64);
 
 				$('#editUserForm .is-invalid').removeClass('is-invalid');
 
@@ -821,6 +836,43 @@ function preventSpacesInPasswordField(selector) {
 	});
 }
 
+function updateImageContainer(profilePhotoBase64) {
+	const $imageContainer = $('#currentPhotoContainer');
+	const $deletePhotoBtn = $('#deletePhotoBtn');
+
+	$imageContainer.empty();
+
+	if (profilePhotoBase64) {
+		$imageContainer.html(
+			`<img src="${profilePhotoBase64}" class="img-fluid rounded-circle" alt="Foto del Usuario">`
+		);
+		$deletePhotoBtn.removeClass('d-none');
+	} else {
+		$imageContainer.html(
+			`<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+				<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+				<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+            </svg>`
+		);
+		$deletePhotoBtn.addClass('d-none');
+	}
+	$imageContainer.removeClass('d-none');
+}
+
+$('#deletePhotoBtn').on('click', function() {
+	deletePhotoFlag = true;
+	updateImageContainer(null);
+
+	$(this).addClass('d-none');
+
+	if (cropper) {
+		cropper.destroy();
+		cropper = null;
+	}
+	$('#cropperContainerEdit').addClass('d-none');
+	$('#editUserProfilePhoto').val('');
+});
+
 let cropper;
 const $cropperContainerAdd = $('#cropperContainerAdd');
 const $imageToCropAdd = $('#imageToCropAdd');
@@ -856,8 +908,13 @@ function initializeCropper(file, $cropperContainer, $imageToCrop) {
 
 $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 	const file = this.files[0];
+	deletePhotoFlag = false;
+	$('#deletePhotoBtn').addClass('d-none');
 
 	if (file && file.type.startsWith('image/')) {
+		$('#currentPhotoContainer').addClass('d-none');
+		$('#deletePhotoBtn').removeClass('d-none');
+		
 		let $container, $image;
 		if ($(this).is('#addUserProfilePhoto')) {
 			$container = $cropperContainerAdd;
@@ -872,6 +929,10 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 			$cropperContainerAdd.addClass('d-none');
 		} else {
 			$cropperContainerEdit.addClass('d-none');
+		}
+		
+		if ($('#currentPhotoContainer').find('img').length > 0) {
+			$('#deletePhotoBtn').removeClass('d-none');
 		}
 	}
 });
