@@ -98,12 +98,22 @@ public class UserService {
 		String lastName = getUtf8Parameter(request, "editUserLastName");
 		String password = getUtf8Parameter(request, "editUserPassword");
 		String role = getUtf8Parameter(request, "editUserRole");
-
-		Part photoPart = request.getPart("editUserProfilePhoto");
+		String deleteProfilePhoto = request.getParameter("deleteProfilePhoto");
+		
 		byte[] profilePhoto = null;
-		if (photoPart != null && photoPart.getSize() > 0) {
-			try (InputStream inputStream = photoPart.getInputStream()) {
-				profilePhoto = inputStream.readAllBytes();
+		if ("true".equals(deleteProfilePhoto)) {
+			profilePhoto = null;
+		} else {
+			try {
+				InputStream inputStream = request.getPart("editUserProfilePhoto").getInputStream();
+				if (inputStream.available() > 0) {
+					profilePhoto = inputStream.readAllBytes();
+				}
+			} catch (Exception e) {
+			}
+			if (profilePhoto == null) {
+				User currentUser = userDao.getUser(userId);
+				profilePhoto = currentUser.getProfilePhoto();
 			}
 		}
 
@@ -113,11 +123,6 @@ public class UserService {
 		user.setLastName(lastName);
 		user.setPassword(password);
 		user.setRole(role);
-
-		if (profilePhoto == null) {
-			User currentUser = userDao.getUser(userId);
-			profilePhoto = currentUser.getProfilePhoto();
-		}
 		user.setProfilePhoto(profilePhoto);
 
 		return userDao.updateUser(user);

@@ -228,8 +228,8 @@
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>
-	                    
-	                    <!-- Image Cropper Container -->
+
+						<!-- Image Cropper Section -->
 	                    <div id="cropperContainerAdd" class="d-none">
 	                        <img id="imageToCropAdd" src="#" alt="Imagen" />
 	                    </div>
@@ -468,13 +468,33 @@
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                    </div>
-	                    
-	                    <!-- Image Cropper Container -->
-	                    <div id="cropperContainerEdit" class="d-none">
-	                        <img id="imageToCropEdit" src="#" alt="Imagen" />
-	                    </div>
-	                </form>
+						</div>
+
+						<!-- Current Photo Section -->
+						<div class="row">
+							<div class="col-md-12 d-flex justify-content-center">
+								<div id="currentPhotoContainer" class="text-center" style="max-width: 180px;">
+									<!-- The current photo will be displayed here -->
+								</div>
+							</div>
+						</div>
+
+						<!-- Image Cropper Section -->
+						<div id="cropperContainerEdit" class="d-none">
+							<img id="imageToCropEdit" src="#" alt="Imagen" />
+						</div>
+						
+						<!-- Delete Photo Section -->
+						<div class="row">
+							<div class="col-md-12 d-flex justify-content-center">
+								<!-- Delete Photo Button -->
+								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deletePhotoBtn">
+									<i class="bi bi-trash me-2"></i>
+									Eliminar Foto
+								</button>
+							</div>
+						</div>
+					</form>
 	            </div>
 	            
 	            <!-- Modal Footer -->

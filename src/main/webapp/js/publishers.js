@@ -17,6 +17,9 @@
 // Global list of literary genres for the selectpickers
 var literaryGenreList = [];
 
+// Global variable to handle photo deletion in edit modal
+let deletePhotoFlag = false;
+
 function populateSelect(selector, dataList, valueKey, textKey) {
 	var select = $(selector).selectpicker('destroy').empty();
 	dataList.forEach(item => {
@@ -99,8 +102,11 @@ function generateRow(publisher) {
 			</td>
 			<td class="align-middle text-center">
 				${publisher.photoBase64 ?
-					`<img src="${publisher.photoBase64}" alt="Foto" class="img-fluid rounded-circle" style="width: 25px; height: 25px;">` :
-					`<a href="#" class="text-muted">#</a>`}
+					`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
+					`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+					</svg>`}
 			</td>
             <td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
@@ -217,13 +223,14 @@ function updateRowInTable(publisher) {
 			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>');
 
 		if (publisher.photoBase64 && publisher.photoBase64.trim() !== "") {
-			row.find('td').eq(5).html(`<img src="${publisher.photoBase64}" alt="Foto" class="img-fluid rounded-circle" style="width: 25px; height: 25px;">`);
+			row.find('td').eq(5).html(`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
 		} else {
-			if (publisher.photoBase64 === undefined || publisher.photoBase64.trim() === "") {
-				if (!row.find('td').eq(5).find('img').length) {
-					row.find('td').eq(5).html('<a href="#" class="text-muted">#</a>');
-				}
-			}
+			row.find('td').eq(5).html(`
+				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+				</svg>
+			`);
 		}
 
 		table.row(row).invalidate().draw();
@@ -464,6 +471,8 @@ function handleEditPublisherForm() {
 			if (publisherId) {
 				formData.append('publisherId', publisherId);
 			}
+			
+			formData.append('deletePhoto', deletePhotoFlag);
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
@@ -693,6 +702,8 @@ function loadModalData() {
 				);
 				$('#editPublisherStatus').val(data.status);
 				$('#editPublisherStatus').selectpicker();
+				
+				updateImageContainer(data.photoBase64);
 
 				$('#editPublisherForm .is-invalid').removeClass('is-invalid');
 
@@ -717,6 +728,43 @@ function loadModalData() {
 		}
 	});
 }
+
+function updateImageContainer(photoBase64) {
+	const $imageContainer = $('#currentPhotoContainer');
+	const $deletePhotoBtn = $('#deletePhotoBtn');
+
+	$imageContainer.empty();
+
+	if (photoBase64) {
+		$imageContainer.html(
+			`<img src="${photoBase64}" class="img-fluid rounded-circle" alt="Foto de la Editorial">`
+		);
+		$deletePhotoBtn.removeClass('d-none');
+	} else {
+		$imageContainer.html(
+			`<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+				<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+				<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+            </svg>`
+		);
+		$deletePhotoBtn.addClass('d-none');
+	}
+	$imageContainer.removeClass('d-none');
+}
+
+$('#deletePhotoBtn').on('click', function() {
+	deletePhotoFlag = true;
+	updateImageContainer(null);
+
+	$(this).addClass('d-none');
+
+	if (cropper) {
+		cropper.destroy();
+		cropper = null;
+	}
+	$('#cropperContainerEdit').addClass('d-none');
+	$('#editPublisherPhoto').val('');
+});
 
 let cropper;
 const $cropperContainerAdd = $('#cropperContainerAdd');
@@ -753,8 +801,13 @@ function initializeCropper(file, $cropperContainer, $imageToCrop) {
 
 $('#addPublisherPhoto, #editPublisherPhoto').on('change', function() {
 	const file = this.files[0];
+	deletePhotoFlag = false;
+	$('#deletePhotoBtn').addClass('d-none');
 
 	if (file && file.type.startsWith('image/')) {
+		$('#currentPhotoContainer').addClass('d-none');
+		$('#deletePhotoBtn').removeClass('d-none');
+
 		let $container, $image;
 		if ($(this).is('#addPublisherPhoto')) {
 			$container = $cropperContainerAdd;
@@ -769,6 +822,10 @@ $('#addPublisherPhoto, #editPublisherPhoto').on('change', function() {
 			$cropperContainerAdd.addClass('d-none');
 		} else {
 			$cropperContainerEdit.addClass('d-none');
+		}
+
+		if ($('#currentPhotoContainer').find('img').length > 0) {
+			$('#deletePhotoBtn').removeClass('d-none');
 		}
 	}
 });
