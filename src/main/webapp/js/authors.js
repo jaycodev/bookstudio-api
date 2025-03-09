@@ -990,7 +990,14 @@ function generatePDF(dataTable) {
 
 	const filename = `Lista_de_Autores_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
-	doc.save(filename);
+	const pdfBlob = doc.output('blob');
+	const blobUrl = URL.createObjectURL(pdfBlob);
+	const link = document.createElement('a');
+	link.href = blobUrl;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
 }
 
 function generateExcel(dataTable) {
