@@ -337,7 +337,6 @@ function handleAddLoanForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					console.log(response);
 					if (response && response.loanId) {
 						addRowToTable(response);
 						$('#addLoanModal').modal('hide');
@@ -851,8 +850,8 @@ function generateLoanReceipt(response) {
 		['ID del Préstamo', response.loanId],
 		['Libro', response.bookTitle],
 		['Estudiante - DNI', response.studentName],
-		['Fecha de Préstamo', response.loanDate],
-		['Fecha de Devolución', response.returnDate],
+		['Fecha de Préstamo', moment(response.loanDate).format('DD/MM/YYYY')],
+		['Fecha de Devolución', moment(response.returnDate).format('DD/MM/YYYY')],
 		['Cantidad', response.quantity]
 	];
 
@@ -975,7 +974,14 @@ function generatePDF(loanTable) {
 
 	const filename = `Lista_de_Préstamos_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
-	doc.save(filename);
+	const pdfBlob = doc.output('blob');
+	const blobUrl = URL.createObjectURL(pdfBlob);
+	const link = document.createElement('a');
+	link.href = blobUrl;
+	link.download = filename;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
 }
 
 function generateExcel(loanTable) {
