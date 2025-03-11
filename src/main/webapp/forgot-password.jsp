@@ -25,8 +25,8 @@
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
 					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
-					<h4 class="fw-bold mb-0">Recuperar Contraseña</h4>
-					<p class="text-muted mb-0 fs-6">Ingrese su correo electrónico</p>
+					<h3 class="fw-bold mb-0">Restablece la contraseña</h3>
+					<p class="text-muted mb-0">Escribe la dirección de correo electrónico vinculado a tu cuenta de Bookstudio y te enviaremos un mensaje.</p>
 				</header>
 				
 				<!-- Card body -->
@@ -37,7 +37,7 @@
 						
 						<!-- Email field -->
 						<div class="mb-4">
-							<label for="email" class="form-label">Correo Electrónico</label>
+							<label for="email" class="form-label">Dirección de correo electrónico</label>
 							<input
 	                            id="email" 
 	                            name="email" 
@@ -53,6 +53,7 @@
 		                    <span id="sendText">Enviar enlace</span>
 		                </button>
 		                
+		                <!-- Cancel Button -->
 						<a href="login.jsp" class="btn btn-custom-secondary w-100 mt-3 text-decoration-none">
 							Cancelar
 						</a>

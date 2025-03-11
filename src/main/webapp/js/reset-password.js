@@ -15,7 +15,7 @@ $(document).ready(function() {
 		redirectToForgotPassword();
 		return;
 	}
-	
+
 	$.ajax({
 		type: "POST",
 		url: "ValidateTokenServlet",
@@ -79,7 +79,7 @@ $(document).ready(function() {
 
 		var newPassword = $("#newPassword").val().trim();
 
-		$("#resetBtn").prop("disabled", true);
+		$("#createBtn").prop("disabled", true);
 		$("#spinner").removeClass("d-none");
 		$("#resetText").addClass("d-none");
 
@@ -90,10 +90,18 @@ $(document).ready(function() {
 			dataType: "json",
 			success: function(response) {
 				if (response && response.success) {
-					showToast(response.message, 'success');
-					setTimeout(function() {
-						window.location.href = "login.jsp";
-					}, 3000);
+					$("header.card-header h3").text("¡Todo listo!");
+					$("header.card-header p").text("La contraseña se actualizó con éxito, inicie sesión nuevamente para disfrutar de BookStudio.");
+
+					$("#newPassword").closest('.mb-4').remove();
+					$("#confirmNewPassword").closest('.mb-4').remove();
+					$("#createBtn").remove();
+
+					if ($("#backToLogin").length === 0) {
+						$("#resetPasswordForm").append(`
+							<a href="login.jsp" class="btn btn-custom-primary w-100 text-decoration-none" id="backToLogin">Volver al inicio de sesión</a>
+						`);
+					}
 				} else {
 					showToast(response.message, 'error');
 				}
@@ -102,7 +110,7 @@ $(document).ready(function() {
 				showToast("Ocurrió un error al procesar la solicitud.", "error");
 			},
 			complete: function() {
-				$("#resetBtn").prop("disabled", false);
+				$("#createBtn").prop("disabled", false);
 				$("#spinner").addClass("d-none");
 				$("#resetText").removeClass("d-none");
 			}

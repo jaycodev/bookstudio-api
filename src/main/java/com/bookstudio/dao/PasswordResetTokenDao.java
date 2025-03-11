@@ -5,4 +5,5 @@ public interface PasswordResetTokenDao {
 	boolean savePasswordResetToken(String email, String token, long expiryTime);
 	boolean isTokenValid(String token);
 	boolean updatePassword(String token, String newPassword);
+	String getEmailByToken(String token);
 }

@@ -23,7 +23,7 @@ public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 
@@ -39,7 +39,7 @@ public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 
@@ -57,13 +57,12 @@ public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
 
 	@Override
 	public boolean updatePassword(String token, String newPassword) {
-		// Primero, obtenemos el correo asociado al token (si es válido y no expiró)
 		String sqlSelect = "SELECT Email FROM PasswordResetTokens WHERE Token = ? AND ExpiryTime >= ?";
 		String email = null;
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sqlSelect)) {
@@ -78,19 +77,17 @@ public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		if (email == null) {
-			return false; // Token inválido o expirado
+			return false;
 		}
 
-		// Actualizamos la contraseña del usuario
 		String sqlUpdate = "UPDATE Users SET Password = ? WHERE Email = ?";
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sqlUpdate)) {
 			ps.setString(1, newPassword);
 			ps.setString(2, email);
 			int rowsAffected = ps.executeUpdate();
 			if (rowsAffected > 0) {
-				// Eliminamos el token para que no pueda reutilizarse
 				String sqlDelete = "DELETE FROM PasswordResetTokens WHERE Token = ?";
 				try (PreparedStatement psDelete = cn.prepareStatement(sqlDelete)) {
 					psDelete.setString(1, token);
@@ -101,7 +98,24 @@ public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
+	}
+
+	@Override
+	public String getEmailByToken(String token) {
+		String sql = "SELECT Email FROM PasswordResetTokens WHERE Token = ?";
+		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
+			ps.setString(1, token);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getString("Email");
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

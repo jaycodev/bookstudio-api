@@ -37,7 +37,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 
 		PasswordResetTokenDao tokenDao = new PasswordResetTokenDaoImpl();
 		if (!tokenDao.emailExists(email)) {
-			response.getWriter().write("{\"success\": false, \"message\": \"El correo ingresado no está registrado.\"}");
+			response.getWriter().write("{\"success\": false, \"message\": \"La dirección de correo electrónico ingresada no está asociada a ninguna cuenta.\", \"target\": \"field-error\"}");
 			return;
 		}
 
@@ -53,8 +53,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 
 		boolean emailSent = sendResetEmail(email, token, request);
 		if (emailSent) {
-			response.getWriter().write(
-					"{\"success\": true, \"message\": \"Se ha enviado un correo para restablecer la contraseña.\"}");
+			response.getWriter().write("{\"success\": true}");
 		} else {
 			response.getWriter().write("{\"success\": false, \"message\": \"Ocurrió un error al enviar el correo.\"}");
 		}
@@ -103,13 +102,32 @@ public class ForgotPasswordServlet extends HttpServlet {
 			String resetLink = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
 					+ request.getContextPath() + "/reset-password.jsp?token=" + token;
 
-			String msg = "<html><body>"
-		             + "<p>Hola,</p>"
-		             + "<p>Para restablecer tu contraseña, por favor haz clic en el siguiente enlace:</p>"
-		             + "<p><a href=\"" + resetLink + "\">Restablecer contraseña</a></p>"
-		             + "<p>Este enlace es válido por 30 minutos. Si no solicitaste este cambio, por favor ignora este correo.</p>"
-		             + "<p>Saludos,<br/>El equipo de BookStudio</p>"
-		             + "</body></html>";
+			String msg = "<!DOCTYPE html>"
+			        + "<html>"
+			        + "<head>"
+			        + "<meta charset='UTF-8'>"
+			        + "<style>"
+			        + "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }"
+			        + ".container { max-width: 600px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }"
+			        + ".title { font-size: 24px; font-weight: bold; color: #333; }"
+			        + ".content { font-size: 16px; color: #555; line-height: 1.5; }"
+			        + ".button { display: inline-block; background-color: #000; color: #fff !important; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-size: 16px; margin-top: 20px; }"
+			        + ".footer { font-size: 12px; color: #777; margin-top: 20px; }"
+			        + ".link { display: block; margin-top: 10px; color: #000; text-decoration: none; font-size: 14px; word-break: break-word; }"
+			        + "</style>"
+			        + "</head>"
+			        + "<body>"
+			        + "<div class='container'>"
+			        + "    <p class='title'>¿Tienes problemas para acceder a tu cuenta de BookStudio?</p>"
+			        + "    <p class='content'>No te preocupes. Estamos aquí para ayudarte.</p>"
+			        + "    <p class='content'>Selecciona el botón a continuación para restablecer tu contraseña.</p>"
+			        + "    <p class='content'>Este enlace es válido por 30 minutos. Si no solicitaste restablecer tu contraseña, puedes ignorar este email.</p>"
+			        + "    <a href='" + resetLink + "' class='button'>Restablecer contraseña</a>"
+			        + "    <a href='" + resetLink + "' class='link'>" + resetLink + "</a>"
+			        + "    <p class='footer'>Saludos,<br/>El equipo de BookStudio</p>"
+			        + "</div>"
+			        + "</body>"
+			        + "</html>";
 
 			message.setContent(msg, "text/html; charset=UTF-8");
 

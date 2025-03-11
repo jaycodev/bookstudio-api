@@ -1,5 +1,9 @@
 $(document).ready(function() {
 	var isFirstSubmit = false;
+	
+	var originalTitle = $("header.card-header h3").text();
+	var originalParagraph = $("header.card-header p").text();
+	var originalCancelHTML = $("#forgotPasswordForm a.btn-custom-secondary").prop("outerHTML");
 
 	function validateEmail() {
 		var email = $("#email").val().trim();
@@ -21,8 +25,50 @@ $(document).ready(function() {
 		}
 	});
 
+	function updateUIOnSuccess() {
+		const $headerTitle = $("header.card-header h3");
+		const $headerParagraph = $("header.card-header p");
+		const $emailContainer = $("#email").closest('.mb-4');
+		const $sendBtn = $("#sendBtn");
+		const $cancelBtn = $("#forgotPasswordForm a.btn-custom-secondary");
+
+		$headerTitle.text("Comprueba tu bandeja de entrada");
+		$headerParagraph.text("Te hemos enviado un correo. Sigue las instrucciones para acceder a tu cuenta de BookStudio.");
+
+		$emailContainer.hide();
+		$sendBtn.hide();
+
+		$cancelBtn.text("Volver al inicio de sesión")
+			.removeClass("btn-custom-secondary mt-3")
+			.addClass("btn-custom-primary");
+
+		if ($("#editBtn").length === 0) {
+			const $editBtn = $(`
+	                <button type="button" class="btn btn-custom-secondary w-100 mt-3 d-flex align-items-center justify-content-center" id="editBtn">
+	                    <i class="bi bi-pencil me-2"></i>Editar correo
+	                </button>
+	            `);
+			$cancelBtn.after($editBtn);
+
+			$editBtn.on("click", function() {
+				restoreOriginalUI();
+				$editBtn.remove();
+			});
+		}
+	}
+
+	function restoreOriginalUI() {
+		$("header.card-header h3").text(originalTitle);
+		$("header.card-header p").text(originalParagraph);
+		$("#email").closest('.mb-4').show();
+		$("#sendBtn").show();
+		$("#forgotPasswordForm a.btn-custom-primary").replaceWith(originalCancelHTML);
+	}
+
 	$("#forgotPasswordForm").on("submit", function(e) {
 		e.preventDefault();
+
+		$("#alertContainer").empty();
 
 		isFirstSubmit = true;
 
@@ -43,14 +89,14 @@ $(document).ready(function() {
 			dataType: "json",
 			success: function(response) {
 				if (response && response.success) {
-					showToast(response.message, 'success');
-					setTimeout(function() {
-						window.location.href = "login.jsp";
-					}, 3000);
+					updateUIOnSuccess();
 				} else {
-					showToast(response.message, 'error');
-					$("#email").val("");
-					$("#email").addClass("is-invalid");
+					if (response.target === "field-error") {
+						$("#email").addClass("is-invalid");
+						$("#email").siblings(".invalid-feedback").html(response.message);
+					} else {
+						showToast(response.message, 'error');
+					}
 				}
 			},
 			error: function() {
@@ -60,6 +106,17 @@ $(document).ready(function() {
 				$("#sendBtn").prop("disabled", false);
 				$("#spinner").addClass("d-none");
 				$("#sendText").removeClass("d-none");
+
+				const urlParams = new URLSearchParams(window.location.search);
+				if (urlParams.get("linkInvalid") === "true") {
+					urlParams.delete("linkInvalid");
+
+					if (urlParams.toString()) {
+						window.history.replaceState({}, "", `${location.pathname}?${urlParams}`);
+					} else {
+						window.history.replaceState({}, "", location.pathname);
+					}
+				}
 			}
 		});
 	});

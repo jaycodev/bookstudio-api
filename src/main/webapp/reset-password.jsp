@@ -25,8 +25,8 @@
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
 					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
-					<h4 class="fw-bold mb-0">Restablecer Contraseña</h4>
-					<p class="text-muted mb-0 fs-6">Ingrese y confirme su nueva contraseña</p>
+					<h3 class="fw-bold mb-0">Crear nueva contraseña</h3>
+					<p class="text-muted mb-0">Ingresa la nueva contraseña para tu cuenta de Bookstudio a continuación.</p>
 				</header>
 				
 				<!-- Card body -->
@@ -34,7 +34,7 @@
 					<form id="resetPasswordForm" accept-charset="UTF-8" novalidate>
 						<!-- New Password field -->
 						<div class="mb-4">
-							<label for="newPassword" class="form-label">Nueva Contraseña</label>
+							<label for="newPassword" class="form-label">Nueva contraseña</label>
 							<div class="input-group">
 								<input
 	                                id="newPassword" 
@@ -42,8 +42,8 @@
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="1" 
-	                                placeholder="Ingrese su nueva contraseña">
-	                            <span class="input-group-text eye-icon" data-toggle-id="1">
+	                                placeholder="Nueva contraseña">
+	                            <span class="input-group-text cursor-pointer" data-toggle-id="1">
 	                                <i class="bi bi-eye"></i>
 	                            </span>
 	                            <div class="invalid-feedback"></div>
@@ -52,7 +52,7 @@
 						
 						<!-- Confirm New Password field -->
 						<div class="mb-4">
-							<label for="confirmNewPassword" class="form-label">Confirmar Nueva Contraseña</label>
+							<label for="confirmNewPassword" class="form-label">Confirmar contraseña nueva</label>
 							<div class="input-group">
 								<input
 	                                id="confirmNewPassword" 
@@ -60,18 +60,18 @@
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="2" 
-	                                placeholder="Confirme su nueva contraseña">
-	                            <span class="input-group-text eye-icon" data-toggle-id="2">
+	                                placeholder="Confirmar contraseña nueva">
+	                            <span class="input-group-text cursor-pointer" data-toggle-id="2">
 	                                <i class="bi bi-eye"></i>
 	                            </span>
 	                            <div class="invalid-feedback"></div>
 							</div>
 						</div>
 						
-						<!-- Reset Button -->
-						<button type="submit" class="btn btn-custom-primary w-100" id="resetBtn">
+						<!-- Create Password Button -->
+						<button type="submit" class="btn btn-custom-primary w-100" id="createBtn">
 		                    <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-		                    <span id="resetText">Restablecer</span>
+		                    <span id="resetText">Crear contraseña</span>
 		                </button>
 					</form>
 				</div>

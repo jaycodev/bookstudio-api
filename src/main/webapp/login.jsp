@@ -26,7 +26,7 @@
 				<header class="card-header text-center bg-body-secondary">
 					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
 					<h3 class="fw-bold mb-0">Iniciar Sesión</h3>
-					<p class="text-muted mb-0 fs-6">Empieza a gestionar tus préstamos.</p>
+					<p class="text-muted mb-0">Empieza a gestionar tus préstamos.</p>
 				</header>
 				
 				<!-- Card body -->
@@ -34,7 +34,7 @@
 					<form id="loginForm" novalidate>
 						<!-- Username field -->
 						<div class="mb-4">
-							<label for="txtUsername" class="form-label">Nombre de Usuario</label>
+							<label for="txtUsername" class="form-label">Nombre de usuario</label>
 							<input
 	                            id="txtUsername" 
 	                            name="txtUsername" 
@@ -61,7 +61,7 @@
 	                                placeholder="Ingrese su contraseña" 
 	                                aria-describedby="passwordHelp" 
 	                                autocomplete="current-password">
-	                            <span class="input-group-text eye-icon" data-toggle-id="1">
+	                            <span class="input-group-text cursor-pointer" data-toggle-id="1">
 	                                <i class="bi bi-eye"></i>
 	                            </span>
 							</div>
