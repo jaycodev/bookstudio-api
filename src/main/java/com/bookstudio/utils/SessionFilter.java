@@ -17,6 +17,11 @@ public class SessionFilter implements Filter {
 	private static final String LOGIN_PAGE = "/login.jsp";
 	private static final String LOGIN_SERVLET = "/LoginServlet";
 	private static final String DASHBOARD_PAGE = "/dashboard.jsp";
+	private static final String RESET_PASSWORD_PAGE = "/reset-password.jsp";
+	private static final String FORGOT_PASSWORD_PAGE = "/forgot-password.jsp";
+	private static final String RESET_PASSWORD_SERVLET = "/ResetPasswordServlet";
+	private static final String FORGOT_PASSWORD_SERVLET = "/ForgotPasswordServlet";
+	private static final String VALIDATE_TOKEN_SERVLET = "/ValidateTokenServlet";
 	private static final String STATIC_RESOURCES = "/css/";
 	private static final String JS_RESOURCES = "/js/";
 	private static final String IMAGES_RESOURCES = "/images/";
@@ -27,9 +32,7 @@ public class SessionFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -50,10 +53,19 @@ public class SessionFilter implements Filter {
 				httpResponse.sendRedirect(contextPath + DASHBOARD_PAGE);
 				return;
 			}
+
+			if (relativePath.equals(RESET_PASSWORD_PAGE) || relativePath.equals(FORGOT_PASSWORD_PAGE)
+					|| relativePath.equals(RESET_PASSWORD_SERVLET) || relativePath.equals(FORGOT_PASSWORD_SERVLET)) {
+				httpResponse.sendRedirect(contextPath + DASHBOARD_PAGE);
+				return;
+			}
 		}
 
 		if (session == null || session.getAttribute("user") == null) {
-			if (relativePath.equals(LOGIN_PAGE) || relativePath.equals(LOGIN_SERVLET)) {
+			if (relativePath.equals(LOGIN_PAGE) || relativePath.equals(LOGIN_SERVLET)
+					|| relativePath.equals(RESET_PASSWORD_PAGE) || relativePath.equals(FORGOT_PASSWORD_PAGE)
+					|| relativePath.equals(RESET_PASSWORD_SERVLET) || relativePath.equals(FORGOT_PASSWORD_SERVLET)
+					|| relativePath.equals(VALIDATE_TOKEN_SERVLET)) {
 				chain.doFilter(request, response);
 				return;
 			}

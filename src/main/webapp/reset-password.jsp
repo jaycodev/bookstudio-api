@@ -20,64 +20,65 @@
 	<div class="d-flex justify-content-center align-items-center vh-100">
 		<!-- ===================== Main Content ==================== -->
 		<main class="w-100 mx-4" style="max-width: 384px;">
-			<!-- Card Container -->
+			<!-- Card -->
 			<section class="card border">
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
 					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
-					<h3 class="fw-bold mb-0">Iniciar Sesión</h3>
-					<p class="text-muted mb-0 fs-6">Empieza a gestionar tus préstamos.</p>
+					<h4 class="fw-bold mb-0">Restablecer Contraseña</h4>
+					<p class="text-muted mb-0 fs-6">Ingrese y confirme su nueva contraseña</p>
 				</header>
 				
 				<!-- Card body -->
 				<div class="card-body">
-					<form id="loginForm" novalidate>
-						<!-- Username field -->
+					<form id="resetPasswordForm" accept-charset="UTF-8" novalidate>
+						<!-- New Password field -->
 						<div class="mb-4">
-							<label for="txtUsername" class="form-label">Nombre de Usuario</label>
-							<input
-	                            id="txtUsername" 
-	                            name="txtUsername" 
-	                            type="text" 
-	                            class="form-control" 
-	                            placeholder="Ingrese su nombre de usuario" 
-	                            aria-describedby="usernameHelp" 
-	                            autocomplete="username">
-						</div>
-						
-						<!-- Password field -->
-						<div class="mb-4">
-							<div class="d-flex justify-content-between align-items-center">
-								<label for="txtPassword" class="form-label">Contraseña</label>
-								<a href="forgot-password.jsp" class="text-body-emphasis"><small>¿Olvidaste tu contraseña?</small></a>
-							</div>
+							<label for="newPassword" class="form-label">Nueva Contraseña</label>
 							<div class="input-group">
 								<input
-	                                id="txtPassword" 
-	                                name="txtPassword" 
+	                                id="newPassword" 
+	                                name="newPassword" 
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="1" 
-	                                placeholder="Ingrese su contraseña" 
-	                                aria-describedby="passwordHelp" 
-	                                autocomplete="current-password">
+	                                placeholder="Ingrese su nueva contraseña">
 	                            <span class="input-group-text eye-icon" data-toggle-id="1">
 	                                <i class="bi bi-eye"></i>
 	                            </span>
+	                            <div class="invalid-feedback"></div>
 							</div>
 						</div>
 						
-						<!-- Login Button -->
-						<button type="submit" class="btn btn-custom-primary w-100" id="loginBtn">
+						<!-- Confirm New Password field -->
+						<div class="mb-4">
+							<label for="confirmNewPassword" class="form-label">Confirmar Nueva Contraseña</label>
+							<div class="input-group">
+								<input
+	                                id="confirmNewPassword" 
+	                                name="confirmNewPassword" 
+	                                type="password" 
+	                                class="form-control password-field" 
+	                                data-toggle-id="2" 
+	                                placeholder="Confirme su nueva contraseña">
+	                            <span class="input-group-text eye-icon" data-toggle-id="2">
+	                                <i class="bi bi-eye"></i>
+	                            </span>
+	                            <div class="invalid-feedback"></div>
+							</div>
+						</div>
+						
+						<!-- Reset Button -->
+						<button type="submit" class="btn btn-custom-primary w-100" id="resetBtn">
 		                    <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-		                    <span id="loginText">Iniciar Sesión</span>
+		                    <span id="resetText">Restablecer</span>
 		                </button>
 					</form>
 				</div>
 			</section>
 		</main>
 	</div>
-
+	
 	<!-- Toast Container -->
 	<div class="toast-container" id="toast-container"></div>
 
@@ -87,14 +88,14 @@
 			<jsp:param name="dropdownDirection" value="2" />
 		</jsp:include>
 	</div>
-
+	
 	<!-- External Libraries -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-
+	
 	<!-- Custom Scripts -->
-	<script src="js/login.js"></script>
+	<script src="js/reset-password.js"></script>
 	<script src="utils/toast.js"></script>
 	<script src="utils/password.js"></script>
 </body>
