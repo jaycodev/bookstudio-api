@@ -112,6 +112,8 @@
 	                                id="addUserUsername" 
 	                                name="addUserUsername" 
 	                                placeholder="Ingrese su nombre de usuario" 
+	                                pattern="[A-Za-zÀ-ÿ0-9_]+" 
+									oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ0-9_]/g, '');" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>

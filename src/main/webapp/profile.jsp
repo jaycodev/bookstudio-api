@@ -123,7 +123,9 @@
 	                                name="editProfileFirstName" 
 	                                value="${sessionScope.firstname}" 
 	                                placeholder="Actualizar nombres" 
-	                                autocomplete="given-name"
+	                                autocomplete="given-name" 
+	                                pattern="[A-Za-zÀ-ÿ\s]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
 	                            >
 	                        </div>
 	                        <div class="col-12 col-md-6 mb-3">
@@ -135,7 +137,9 @@
 	                                name="editProfileLastName" 
 	                                value="${sessionScope.lastname}" 
 	                                placeholder="Actualizar apellidos" 
-	                                autocomplete="family-name"
+	                                autocomplete="family-name" 
+	                                pattern="[A-Za-zÀ-ÿ\s]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
 	                            >
 	                        </div>
 	                        
