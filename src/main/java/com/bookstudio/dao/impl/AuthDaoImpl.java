@@ -15,7 +15,8 @@ public class AuthDaoImpl implements AuthDao {
 		User user = null;
 
 		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Password, Role, ProfilePhoto "
-				+ "FROM Users " + "WHERE Username = ? AND BINARY Password = ?";
+				+ "FROM Users "
+				+ "WHERE Username = ? AND Password = ?";
 
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
 
