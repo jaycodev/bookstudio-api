@@ -9,66 +9,69 @@
 %>
 
 <!-- Sidebar (Visible on Medium and Large Screens) -->
-<aside class="position-fixed d-none d-md-flex flex-column border-end bg-body-secondary"
-       id="sidebar" data-current-page="<%= currentPage %>">
+<aside class="position-fixed d-none d-md-flex flex-column border-end bg-body-secondary" id="sidebar" data-current-page="<%= currentPage %>">
     <!-- Navigation Links -->
     <ul class="nav flex-column p-3 flex-grow-1">
         <li class="mb-1">
             <a href="dashboard.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-bar-chart"></i>
-                Dashboard
+                <span class="sidebar-link">Dashboard</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="loans.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-file-earmark-text"></i>
-                Préstamos
+                <span class="sidebar-link">Préstamos</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="books.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-journal-bookmark"></i>
-                Libros
+                <span class="sidebar-link">Libros</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="authors.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-person-plus"></i>
-                Autores
+                <span class="sidebar-link">Autores</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="publishers.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-map"></i>
-                Editoriales
+                <span class="sidebar-link">Editoriales</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="courses.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-stickies"></i>
-                Cursos
+                <span class="sidebar-link">Cursos</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="students.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2  bi-mortarboard"></i>
-                Estudiantes
+                <span class="sidebar-link">Estudiantes</span>
             </a>
         </li>
         <c:if test="${role == 'administrador'}">
 	        <li class="mb-1">
 	            <a href="users.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
 	                <i class="bi pe-none me-2  bi-people"></i>
-	                Usuarios
+	                <span class="sidebar-link">Usuarios</span>
 	            </a>
 	        </li>
 	    </c:if>
     </ul>
 
-    <!-- User Information Footer -->
-    <footer class="p-4 mt-auto">
-        <p class="text-muted mb-0">Sesión iniciada como: <span class="text-body-emphasis">${sessionScope.username}</span></p>
-    </footer>
+	<!-- Footer Sidebar -->
+	<footer class="py-2 d-flex justify-content-center border-top">
+		<!-- Collapse Sidebar Button -->
+		<button type="button" class="btn btn-custom-secondary border-0 text-body-emphasis d-flex align-items-center text-nowrap px-3" id="colapseSidebar">
+			<i class="bi bi-arrow-bar-left" id="sidebarArrow"></i>
+			<span class="ms-2 sidebar-link">Cerrar barra lateral</span>
+		</button>
+	</footer>
 </aside>
 
 <!-- Sidebar (Offcanvas - Visible on Small Screens) -->

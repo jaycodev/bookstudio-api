@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <header class="header position-fixed d-flex align-items-center px-3 bg-body-secondary border-bottom">
-
     <!-- Menu Button (Visible on Mobile) -->
     <button class="btn-menu nav-link d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
         <i class="bi bi-list header-icon"></i>
