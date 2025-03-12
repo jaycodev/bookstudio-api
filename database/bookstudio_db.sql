@@ -108,13 +108,24 @@ CREATE TABLE Loans (
 -- Users table
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
-    Username VARCHAR(50) UNIQUE NOT NULL,
+    Username VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin UNIQUE NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     FirstName VARCHAR(255) NOT NULL,
     LastName VARCHAR(255) NOT NULL,
-    Password VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     Role ENUM('administrador', 'bibliotecario') NOT NULL,
     ProfilePhoto LONGBLOB
+);
+
+-- PasswordResetTokens table
+CREATE TABLE PasswordResetTokens (
+    TokenID INT AUTO_INCREMENT PRIMARY KEY,
+    Email VARCHAR(100) NOT NULL,
+    Token VARCHAR(255) UNIQUE NOT NULL,
+    ExpiryTime DATETIME NOT NULL,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Used BOOLEAN DEFAULT FALSE,
+    CONSTRAINT FK_Email FOREIGN KEY (Email) REFERENCES Users(Email) ON DELETE CASCADE
 );
 
 -- INSERT DATA
