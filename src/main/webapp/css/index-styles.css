@@ -71,7 +71,21 @@ aside.position-fixed {
 	width: 235px;
 	height: calc(100vh - 60px);
 	overflow-y: auto;
+	overflow-x: hidden;
 	z-index: 1025;
+}
+
+aside.position-fixed.collapsed {
+	width: 80px;
+}
+
+aside.position-fixed.collapsed .sidebar-link {
+	display: none;
+}
+
+aside.position-fixed.collapsed ul.nav li {
+	width: 100%;
+	box-sizing: border-box;
 }
 
 main {
@@ -83,6 +97,14 @@ main {
 	min-height: calc(100vh - 60px);
 	padding: 20px;
 	overflow: hidden;
+}
+
+main.collapsed {
+	left: 80px;
+}
+
+aside.position-fixed, main {
+	transition: width 0.3s ease, left 0.3s ease;
 }
 
 #offcanvasSidebar {
@@ -227,7 +249,7 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 		display: none;
 	}
 	main {
-		left: 0;
+		left: 0 !important;
 	}
 	.bd-placeholder-img-lg {
 		font-size: 3.5rem;

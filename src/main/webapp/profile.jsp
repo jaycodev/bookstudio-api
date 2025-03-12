@@ -276,6 +276,7 @@
 	<script src="utils/toast.js"></script>
 	<script src="utils/password.js"></script>
 	<script src="utils/header.js"></script>
+	<script src="utils/sidebar.js"></script>
 	<script src="js/profile.js"></script>
 </body>
 </html>
