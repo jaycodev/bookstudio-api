@@ -699,9 +699,11 @@ function loadModalData() {
 						: '<span class="badge bg-danger p-1">Inactivo</span>'
 				);
 				if (data.photoBase64) {
-					$('#detailsAuthorPhoto').attr('src', data.photoBase64);
+					$('#detailsAuthorImg').attr('src', data.photoBase64).removeClass('d-none');
+					$('#detailsAuthorSvg').addClass('d-none');
 				} else {
-					$('#detailsAuthorPhoto').attr('src', '#');
+					$('#detailsAuthorImg').addClass('d-none');
+					$('#detailsAuthorSvg').removeClass('d-none');
 				}
 			},
 			error: function(status, error) {

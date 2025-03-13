@@ -58,7 +58,7 @@ function generateRow(user) {
 			<td class="align-middle text-start">${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
 			<td class="align-middle text-center">
 				${user.profilePhotoBase64 ?
-					`<img src="${user.profilePhotoBase64}" alt="Foto" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
+					`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
 					`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -693,9 +693,11 @@ function loadModalData() {
 				$('#detailsUserPassword').text(data.password);
 				$('#detailsUserRole').text(data.role.charAt(0).toUpperCase() + data.role.slice(1));
 				if (data.profilePhotoBase64) {
-					$('#detailsUserPhoto').attr('src', data.profilePhotoBase64);
+					$('#detailsUserImg').attr('src', data.profilePhotoBase64).removeClass('d-none');
+					$('#detailsUserSvg').addClass('d-none');
 				} else {
-					$('#detailsUserPhoto').attr('src', '#');
+					$('#detailsUserImg').addClass('d-none');
+					$('#detailsUserSvg').removeClass('d-none');
 				}
 			},
 			error: function(status, error) {
