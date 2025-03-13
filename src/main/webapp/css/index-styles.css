@@ -244,16 +244,7 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 	}
 }
 
-@media ( max-width : 768px) {
-	aside.position-fixed {
-		display: none;
-	}
-	main {
-		left: 0 !important;
-	}
-	.bd-placeholder-img-lg {
-		font-size: 3.5rem;
-	}
+@media ( max-width : 767.98px) {
 	.card-header {
 		display: flex;
 		flex-wrap: wrap;
@@ -274,15 +265,21 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 	}
 }
 
-@media ( min-width : 929px) {
-	.table-responsive {
-		overflow-x: unset;
+@media ( max-width : 991.98px) {
+	aside.position-fixed {
+		display: none !important;
+	}
+	main {
+		left: 0 !important;
+	}
+	.penultimate-chart {
+		margin-bottom: 1rem !important;
 	}
 }
 
-@media ( max-width : 928px) {
-	.table-responsive {
-		overflow-x: auto;
+@media ( min-width : 768px) and (max-width: 992px) {
+	.modal-dialog.modal-lg {
+		max-width: 720px;
 	}
 }
 
