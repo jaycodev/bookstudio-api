@@ -5,7 +5,8 @@ import java.time.LocalDate;
 public class Author {
 	private String authorId;
 	private String name;
-	private String nationality;
+	private String nationalityId;
+	private String nationalityName;
 	private String literaryGenreId;
 	private String literaryGenreName;
 	private LocalDate birthDate;
@@ -30,12 +31,20 @@ public class Author {
 		this.name = name;
 	}
 
-	public String getNationality() {
-		return nationality;
+	public String getNationalityId() {
+		return nationalityId;
 	}
 
-	public void setNationality(String nationality) {
-		this.nationality = nationality;
+	public void setNationalityId(String nationalityId) {
+		this.nationalityId = nationalityId;
+	}
+
+	public String getNationalityName() {
+		return nationalityName;
+	}
+
+	public void setNationalityName(String nationalityName) {
+		this.nationalityName = nationalityName;
 	}
 
 	public String getLiteraryGenreId() {
@@ -62,14 +71,6 @@ public class Author {
 		this.birthDate = birthDate;
 	}
 
-	public byte[] getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(byte[] photo) {
-		this.photo = photo;
-	}
-
 	public String getBiography() {
 		return biography;
 	}
@@ -84,6 +85,14 @@ public class Author {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public byte[] getPhoto() {
+		return photo;
+	}
+
+	public void setPhoto(byte[] photo) {
+		this.photo = photo;
 	}
 
 	public String getPhotoBase64() {

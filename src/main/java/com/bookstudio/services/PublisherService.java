@@ -10,15 +10,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import com.bookstudio.dao.LiteraryGenreDao;
+import com.bookstudio.dao.NationalityDao;
 import com.bookstudio.dao.PublisherDao;
 import com.bookstudio.dao.impl.LiteraryGenreDaoImpl;
+import com.bookstudio.dao.impl.NationalityDaoImpl;
 import com.bookstudio.dao.impl.PublisherDaoImpl;
 import com.bookstudio.models.LiteraryGenre;
+import com.bookstudio.models.Nationality;
 import com.bookstudio.models.Publisher;
 import com.bookstudio.utils.SelectOptions;
 
 public class PublisherService {
 	private PublisherDao publisherDao = new PublisherDaoImpl();
+	private NationalityDao nationalityDao = new NationalityDaoImpl();
 	private LiteraryGenreDao literaryGenreDao = new LiteraryGenreDaoImpl();
 
 	public List<Publisher> listPublishers() throws Exception {
@@ -49,7 +53,7 @@ public class PublisherService {
 
 	public Publisher createPublisher(HttpServletRequest request) throws Exception {
 		String name = getUtf8Parameter(request, "addPublisherName");
-		String nationality = getUtf8Parameter(request, "addPublisherNationality");
+		String nationalityId = getUtf8Parameter(request, "addPublisherNationality");
 		String literaryGenreId = getUtf8Parameter(request, "addLiteraryGenre");
 		int foundationYear = Integer.parseInt(getUtf8Parameter(request, "addFoundationYear"));
 		String website = getUtf8Parameter(request, "addPublisherWebsite");
@@ -67,7 +71,7 @@ public class PublisherService {
 
 		Publisher publisher = new Publisher();
 		publisher.setName(name);
-		publisher.setNationality(nationality);
+		publisher.setNationalityId(nationalityId);
 		publisher.setLiteraryGenreId(literaryGenreId);
 		publisher.setFoundationYear(foundationYear);
 		publisher.setWebsite(website);
@@ -86,7 +90,7 @@ public class PublisherService {
 	public Publisher updatePublisher(HttpServletRequest request) throws Exception {
 		String publisherId = getUtf8Parameter(request, "publisherId");
 		String name = getUtf8Parameter(request, "editPublisherName");
-		String nationality = getUtf8Parameter(request, "editPublisherNationality");
+		String nationalityId = getUtf8Parameter(request, "editPublisherNationality");
 		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");
 		int foundationYear = Integer.parseInt(getUtf8Parameter(request, "editFoundationYear"));
 		String website = getUtf8Parameter(request, "editPublisherWebsite");
@@ -114,7 +118,7 @@ public class PublisherService {
 		Publisher publisher = new Publisher();
 		publisher.setPublisherId(publisherId);
 		publisher.setName(name);
-		publisher.setNationality(nationality);
+		publisher.setNationalityId(nationalityId);
 		publisher.setLiteraryGenreId(literaryGenreId);
 		publisher.setFoundationYear(foundationYear);
 		publisher.setWebsite(website);
@@ -127,6 +131,9 @@ public class PublisherService {
 
 	public SelectOptions populateSelects() throws Exception {
 		SelectOptions selectOptions = new SelectOptions();
+		
+		List<Nationality> nationalities = nationalityDao.populateNationalitySelect();
+		selectOptions.setNationalities(nationalities);
 
 		List<LiteraryGenre> literayGenres = literaryGenreDao.populateLiteraryGenreSelect();
 		selectOptions.setLiteraryGenres(literayGenres);

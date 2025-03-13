@@ -41,6 +41,8 @@
 	                            type="text" 
 	                            class="form-control" 
 	                            placeholder="Ingrese su nombre de usuario" 
+	                            pattern="[A-Za-zÀ-ÿ0-9_]+" 
+								oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ0-9_]/g, '');" 
 	                            aria-describedby="usernameHelp" 
 	                            autocomplete="username">
 						</div>

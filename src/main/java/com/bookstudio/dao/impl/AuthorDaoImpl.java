@@ -18,13 +18,15 @@ public class AuthorDaoImpl implements AuthorDao {
 
 		String sql = """
 				    SELECT
-				        a.AuthorID, a.Name, a.Nationality,
+				        a.AuthorID, a.Name, a.NationalityID,
 				        a.LiteraryGenreID, a.BirthDate,
 				        a.Photo, a.Biography, a.Status,
-				        lg.GenreName
+				        n.NationalityName, lg.GenreName
 				    FROM
 				        Authors a
-				    INNER JOIN
+				   	INNER JOIN
+				        Nationalities n ON a.NationalityID = n.NationalityID
+				   	INNER JOIN
 				        LiteraryGenres lg ON a.LiteraryGenreID = lg.LiteraryGenreID
 				""";
 
@@ -36,7 +38,8 @@ public class AuthorDaoImpl implements AuthorDao {
 				Author author = new Author();
 				author.setAuthorId(rs.getString("AuthorID"));
 				author.setName(rs.getString("Name"));
-				author.setNationality(rs.getString("Nationality"));
+				author.setNationalityId(rs.getString("NationalityID"));
+				author.setNationalityName(rs.getString("NationalityName"));
 				author.setLiteraryGenreId(rs.getString("LiteraryGenreID"));
 				author.setLiteraryGenreName(rs.getString("GenreName"));
 				author.setBirthDate(rs.getDate("BirthDate").toLocalDate());
@@ -58,14 +61,16 @@ public class AuthorDaoImpl implements AuthorDao {
 		Author author = null;
 
 		String sql = """
-				    SELECT
-				        a.AuthorID, a.Name, a.Nationality,
+					SELECT
+				        a.AuthorID, a.Name, a.NationalityID,
 				        a.LiteraryGenreID, a.BirthDate,
 				        a.Photo, a.Biography, a.Status,
-				        lg.GenreName
+				        n.NationalityName, lg.GenreName
 				    FROM
 				        Authors a
-				    INNER JOIN
+				   	INNER JOIN
+				        Nationalities n ON a.NationalityID = n.NationalityID
+				   	INNER JOIN
 				        LiteraryGenres lg ON a.LiteraryGenreID = lg.LiteraryGenreID
 				    WHERE
 				        a.AuthorID = ?
@@ -80,7 +85,8 @@ public class AuthorDaoImpl implements AuthorDao {
 					author = new Author();
 					author.setAuthorId(rs.getString("AuthorID"));
 					author.setName(rs.getString("Name"));
-					author.setNationality(rs.getString("Nationality"));
+					author.setNationalityId(rs.getString("NationalityID"));
+					author.setNationalityName(rs.getString("NationalityName"));
 					author.setLiteraryGenreId(rs.getString("LiteraryGenreID"));
 					author.setLiteraryGenreName(rs.getString("GenreName"));
 					author.setBirthDate(rs.getDate("BirthDate").toLocalDate());
@@ -99,21 +105,27 @@ public class AuthorDaoImpl implements AuthorDao {
 	@Override
 	public Author createAuthor(Author author) {
 		String sqlInsert = """
-				    INSERT INTO Authors (Name, Nationality, LiteraryGenreID, BirthDate, Photo, Biography, Status)
+				    INSERT INTO Authors (Name, NationalityID, LiteraryGenreID, BirthDate, Photo, Biography, Status)
 				    VALUES (?, ?, ?, ?, ?, ?, ?)
 				""";
 
-		String sqlSelect = """
+		String sqlSelectNationality = """
+					SELECT NationalityName
+					FROM Nationalities
+					WHERE NationalityID = ?
+				""";
+		
+		String sqlSelectLiteraryGenre = """
 				    SELECT GenreName
 				    FROM LiteraryGenres
 				    WHERE LiteraryGenreID = ?
 				""";
-
+		
 		try (Connection cn = DbConnection.getConexion();
 				PreparedStatement psInsert = cn.prepareStatement(sqlInsert, PreparedStatement.RETURN_GENERATED_KEYS)) {
 
 			psInsert.setString(1, author.getName());
-			psInsert.setString(2, author.getNationality());
+			psInsert.setString(2, author.getNationalityId());
 			psInsert.setString(3, author.getLiteraryGenreId());
 			psInsert.setDate(4, java.sql.Date.valueOf(author.getBirthDate()));
 			psInsert.setBytes(5, author.getPhoto());
@@ -128,8 +140,17 @@ public class AuthorDaoImpl implements AuthorDao {
 						author.setAuthorId(rs.getString(1));
 					}
 				}
+				
+				try (PreparedStatement psSelectNationality = cn.prepareStatement(sqlSelectNationality)) {
+	                psSelectNationality.setString(1, author.getNationalityId());
+	                try (ResultSet rs = psSelectNationality.executeQuery()) {
+	                    if (rs.next()) {
+	                        author.setNationalityName(rs.getString("NationalityName"));
+	                    }
+	                }
+	            }
 
-				try (PreparedStatement psSelect = cn.prepareStatement(sqlSelect)) {
+				try (PreparedStatement psSelect = cn.prepareStatement(sqlSelectLiteraryGenre)) {
 					psSelect.setString(1, author.getLiteraryGenreId());
 					try (ResultSet rs = psSelect.executeQuery()) {
 						if (rs.next()) {
@@ -149,12 +170,18 @@ public class AuthorDaoImpl implements AuthorDao {
 	public Author updateAuthor(Author author) {
 		String sqlUpdate = """
 				    UPDATE Authors
-				    SET Name = ?, Nationality = ?, LiteraryGenreID = ?,
+				    SET Name = ?, NationalityID = ?, LiteraryGenreID = ?,
 				        BirthDate = ?, Photo = ?, Biography = ?, Status = ?
 				    WHERE AuthorID = ?
 				""";
 
-		String sqlSelect = """
+		String sqlSelectNationality = """
+					SELECT NationalityName
+					FROM Nationalities
+					WHERE NationalityID = ?
+				""";
+
+		String sqlSelectLiteraryGenre = """
 				    SELECT GenreName
 				    FROM LiteraryGenres
 				    WHERE LiteraryGenreID = ?
@@ -163,7 +190,7 @@ public class AuthorDaoImpl implements AuthorDao {
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement psUpdate = cn.prepareStatement(sqlUpdate)) {
 
 			psUpdate.setString(1, author.getName());
-			psUpdate.setString(2, author.getNationality());
+			psUpdate.setString(2, author.getNationalityId());
 			psUpdate.setString(3, author.getLiteraryGenreId());
 			psUpdate.setDate(4, java.sql.Date.valueOf(author.getBirthDate()));
 			psUpdate.setBytes(5, author.getPhoto());
@@ -174,7 +201,16 @@ public class AuthorDaoImpl implements AuthorDao {
 			int resultado = psUpdate.executeUpdate();
 
 			if (resultado > 0) {
-				try (PreparedStatement psSelect = cn.prepareStatement(sqlSelect)) {
+				try (PreparedStatement psSelectNationality = cn.prepareStatement(sqlSelectNationality)) {
+					psSelectNationality.setString(1, author.getNationalityId());
+					try (ResultSet rs = psSelectNationality.executeQuery()) {
+						if (rs.next()) {
+							author.setNationalityName(rs.getString("NationalityName"));
+						}
+					}
+				}
+
+				try (PreparedStatement psSelect = cn.prepareStatement(sqlSelectLiteraryGenre)) {
 					psSelect.setString(1, author.getLiteraryGenreId());
 					try (ResultSet rs = psSelect.executeQuery()) {
 						if (rs.next()) {

@@ -11,15 +11,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import com.bookstudio.dao.AuthorDao;
+import com.bookstudio.dao.NationalityDao;
 import com.bookstudio.dao.LiteraryGenreDao;
 import com.bookstudio.dao.impl.AuthorDaoImpl;
+import com.bookstudio.dao.impl.NationalityDaoImpl;
 import com.bookstudio.dao.impl.LiteraryGenreDaoImpl;
 import com.bookstudio.models.Author;
+import com.bookstudio.models.Nationality;
 import com.bookstudio.models.LiteraryGenre;
 import com.bookstudio.utils.SelectOptions;
 
 public class AuthorService {
     private AuthorDao authorDao = new AuthorDaoImpl();
+    private NationalityDao nationalityDao = new NationalityDaoImpl();
     private LiteraryGenreDao literaryGenreDao = new LiteraryGenreDaoImpl();
 
     public List<Author> listAuthors() throws Exception {
@@ -36,6 +40,7 @@ public class AuthorService {
         return authorData;
     }
     
+    
     public Author getAuthor(String authorId) throws Exception {
         Author author = authorDao.getAuthor(authorId);
         byte[] photo = author.getPhoto();
@@ -50,7 +55,7 @@ public class AuthorService {
     
     public Author createAuthor(HttpServletRequest request) throws Exception {
     	String name = getUtf8Parameter(request, "addAuthorName");
-        String nationality = getUtf8Parameter(request, "addAuthorNationality");
+        String nationalityId = getUtf8Parameter(request, "addAuthorNationality");
         String literaryGenreId = getUtf8Parameter(request, "addLiteraryGenre");
         LocalDate birthDate = LocalDate.parse(request.getParameter("addAuthorBirthDate"));
         String biography = getUtf8Parameter(request, "addAuthorBiography");
@@ -67,7 +72,7 @@ public class AuthorService {
         
         Author author = new Author();
         author.setName(name);
-        author.setNationality(nationality);
+        author.setNationalityId(nationalityId);
         author.setLiteraryGenreId(literaryGenreId);
         author.setBirthDate(birthDate);
         author.setBiography(biography);
@@ -86,7 +91,7 @@ public class AuthorService {
 	public Author updateAuthor(HttpServletRequest request) throws Exception {
 		String authorId = request.getParameter("authorId");
 		String name = getUtf8Parameter(request, "editAuthorName");
-		String nationality = getUtf8Parameter(request, "editAuthorNationality");
+		String nationalityId = getUtf8Parameter(request, "editAuthorNationality");
 		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");
 		LocalDate birthDate = LocalDate.parse(request.getParameter("editAuthorBirthDate"));
 		String biography = getUtf8Parameter(request, "editAuthorBiography");
@@ -113,7 +118,7 @@ public class AuthorService {
 		Author author = new Author();
 		author.setAuthorId(authorId);
 		author.setName(name);
-		author.setNationality(nationality);
+		author.setNationalityId(nationalityId);
 		author.setLiteraryGenreId(literaryGenreId);
 		author.setBirthDate(birthDate);
 		author.setBiography(biography);
@@ -125,6 +130,9 @@ public class AuthorService {
     
     public SelectOptions populateSelects() throws Exception {
         SelectOptions selectOptions = new SelectOptions();
+        
+        List<Nationality> nationalities = nationalityDao.populateNationalitySelect();
+		selectOptions.setNationalities(nationalities);
         
         List<LiteraryGenre> literaryGenres = literaryGenreDao.populateLiteraryGenreSelect();
         selectOptions.setLiteraryGenres(literaryGenres);
