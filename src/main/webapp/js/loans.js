@@ -948,7 +948,7 @@ function generatePDF(loanTable) {
 	doc.autoTable({
 		startY: topMargin + 25,
 		margin: { left: margin, right: margin },
-		head: [['ID', 'Libro', 'Estudiante', 'Fecha Préstamo', 'Fecha Devolución', 'Cantidad', 'Estado']],
+		head: [['ID', 'Libro', 'Estudiante - DNI', 'Fecha Préstamo', 'Fecha Devolución', 'Cantidad', 'Estado']],
 		body: data,
 		theme: 'grid',
 		headStyles: {
@@ -1022,7 +1022,7 @@ function generateExcel(loanTable) {
 	];
 
 	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Libro', 'Estudiante', 'Fecha Préstamo', 'Fecha Devolución', 'Cantidad', 'Estado'];
+	headerRow.values = ['ID', 'Libro', 'Estudiante - DNI', 'Fecha Préstamo', 'Fecha Devolución', 'Cantidad', 'Estado'];
 	headerRow.eachCell((cell) => {
 		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };

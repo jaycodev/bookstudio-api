@@ -655,6 +655,9 @@ function loadModalData() {
 			})
 		);
 		$('#addUserRole').selectpicker();
+		
+		$('#defaultAddPhotoContainer').removeClass('d-none');
+		$('#deleteAddPhotoBtn').addClass('d-none');
 
 		$('#addUserForm')[0].reset();
 		$('#addUserForm .is-invalid').removeClass('is-invalid');
@@ -731,7 +734,7 @@ function loadModalData() {
 				$('#editUserRole').val(data.role);
 				$('#editUserRole').selectpicker();
 				
-				updateImageContainer(data.profilePhotoBase64);
+				updateEditImageContainer(data.profilePhotoBase64);
 
 				$('#editUserForm .is-invalid').removeClass('is-invalid');
 
@@ -836,32 +839,44 @@ function preventSpacesInPasswordField(selector) {
 	});
 }
 
-function updateImageContainer(profilePhotoBase64) {
-	const $imageContainer = $('#currentPhotoContainer');
-	const $deletePhotoBtn = $('#deletePhotoBtn');
+function updateEditImageContainer(profilePhotoBase64) {
+	const $editImageContainer = $('#currentEditPhotoContainer');
+	const $deleteEditPhotoBtn = $('#deleteEditPhotoBtn');
 
-	$imageContainer.empty();
+	$editImageContainer.empty();
 
 	if (profilePhotoBase64) {
-		$imageContainer.html(
+		$editImageContainer.html(
 			`<img src="${profilePhotoBase64}" class="img-fluid rounded-circle" alt="Foto del Usuario">`
 		);
-		$deletePhotoBtn.removeClass('d-none');
+		$deleteEditPhotoBtn.removeClass('d-none');
 	} else {
-		$imageContainer.html(
+		$editImageContainer.html(
 			`<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 				<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
 				<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
             </svg>`
 		);
-		$deletePhotoBtn.addClass('d-none');
+		$deleteEditPhotoBtn.addClass('d-none');
 	}
-	$imageContainer.removeClass('d-none');
+	$editImageContainer.removeClass('d-none');
 }
 
-$('#deletePhotoBtn').on('click', function() {
+$('#deleteAddPhotoBtn').on('click', function() {
+	$(this).addClass('d-none');
+
+	if (cropper) {
+		cropper.destroy();
+		cropper = null;
+	}
+	$('#cropperContainerAdd').addClass('d-none');
+	$('#addUserProfilePhoto').val('');
+	$('#defaultAddPhotoContainer').removeClass('d-none');
+});
+
+$('#deleteEditPhotoBtn').on('click', function() {
 	deletePhotoFlag = true;
-	updateImageContainer(null);
+	updateEditImageContainer(null);
 
 	$(this).addClass('d-none');
 
@@ -909,12 +924,17 @@ function initializeCropper(file, $cropperContainer, $imageToCrop) {
 $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 	const file = this.files[0];
 	deletePhotoFlag = false;
-	$('#deletePhotoBtn').addClass('d-none');
 
-	if (file && file.type.startsWith('image/')) {
-		$('#currentPhotoContainer').addClass('d-none');
-		$('#deletePhotoBtn').removeClass('d-none');
-		
+	$('#deleteAddPhotoBtn').addClass('d-none');
+	$('#deleteEditPhotoBtn').addClass('d-none');
+
+	if (file && ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+		$('#defaultAddPhotoContainer').addClass('d-none');
+		$('#currentEditPhotoContainer').addClass('d-none');
+
+		$('#deleteAddPhotoBtn').removeClass('d-none');
+		$('#deleteEditPhotoBtn').removeClass('d-none');
+
 		let $container, $image;
 		if ($(this).is('#addUserProfilePhoto')) {
 			$container = $cropperContainerAdd;
@@ -927,12 +947,22 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 	} else {
 		if ($(this).is('#addUserProfilePhoto')) {
 			$cropperContainerAdd.addClass('d-none');
+			if (cropper) {
+				cropper.destroy();
+				cropper = null;
+			}
+			$('#defaultAddPhotoContainer').removeClass('d-none');
 		} else {
 			$cropperContainerEdit.addClass('d-none');
+			if (cropper) {
+				cropper.destroy();
+				cropper = null;
+			}
+			$('#currentEditPhotoContainer').removeClass('d-none');
 		}
-		
-		if ($('#currentPhotoContainer').find('img').length > 0) {
-			$('#deletePhotoBtn').removeClass('d-none');
+
+		if ($('#currentEditPhotoContainer').find('img').length > 0) {
+			$('#deleteEditPhotoBtn').removeClass('d-none');
 		}
 	}
 });

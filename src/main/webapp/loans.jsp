@@ -77,7 +77,7 @@
 							<tr>
 								<th scope="col" class="text-start">ID</th>
 								<th scope="col" class="text-start">Libro</th>
-								<th scope="col" class="text-start">Estudiante</th>
+								<th scope="col" class="text-start">Estudiante - DNI</th>
 								<th scope="col" class="text-center">Fecha Préstamo</th>
 								<th scope="col" class="text-center">Fecha Devolución</th>
 								<th scope="col" class="text-center">Cantidad</th>

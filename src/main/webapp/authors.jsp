@@ -220,10 +220,33 @@
 	                        </div>
 	                    </div>
 	                    
+	                    <!-- Default Photo Section -->
+						<div class="row">
+							<div class="col-md-12 d-flex justify-content-center">
+								<div id="defaultAddPhotoContainer" class="text-center" style="max-width: 180px;">
+									<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+										<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+										<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+						            </svg>
+								</div>
+							</div>
+						</div>
+	                    
 	                    <!-- Image Cropper Section -->
 	                    <div id="cropperContainerAdd" class="d-none">
 	                        <img id="imageToCropAdd" src="#" alt="Imagen" />
 	                    </div>
+	                    
+	                    <!-- Delete Photo Section -->
+						<div class="row">
+							<div class="col-md-12 d-flex justify-content-center">
+								<!-- Delete Photo Button -->
+								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteAddPhotoBtn">
+									<i class="bi bi-trash me-2"></i>
+									Eliminar Foto
+								</button>
+							</div>
+						</div>
 	                </form>
 	            </div>
 	            
@@ -449,7 +472,7 @@
 						<!-- Current Photo Section -->
 						<div class="row">
 							<div class="col-md-12 d-flex justify-content-center">
-								<div id="currentPhotoContainer" class="text-center" style="max-width: 180px;">
+								<div id="currentEditPhotoContainer" class="text-center" style="max-width: 180px;">
 									<!-- The current photo will be displayed here -->
 								</div>
 							</div>
@@ -464,7 +487,7 @@
 						<div class="row">
 							<div class="col-md-12 d-flex justify-content-center">
 								<!-- Delete Photo Button -->
-								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deletePhotoBtn">
+								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteEditPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
 									Eliminar Foto
 								</button>
