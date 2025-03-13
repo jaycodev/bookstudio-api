@@ -14,50 +14,50 @@
     <ul class="nav flex-column p-3 flex-grow-1">
         <li class="mb-1">
             <a href="dashboard.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-bar-chart"></i>
+                <i class="bi pe-none me-2 bi-bar-chart"></i>
                 <span class="sidebar-link">Dashboard</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="loans.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-file-earmark-text"></i>
+                <i class="bi pe-none me-2 bi-file-earmark-text"></i>
                 <span class="sidebar-link">Préstamos</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="books.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-journal-bookmark"></i>
+                <i class="bi pe-none me-2 bi-journal-bookmark"></i>
                 <span class="sidebar-link">Libros</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="authors.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-person-plus"></i>
+                <i class="bi pe-none me-2 bi-person-plus"></i>
                 <span class="sidebar-link">Autores</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="publishers.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-map"></i>
+                <i class="bi pe-none me-2 bi-map"></i>
                 <span class="sidebar-link">Editoriales</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="courses.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-stickies"></i>
+                <i class="bi pe-none me-2 bi-stickies"></i>
                 <span class="sidebar-link">Cursos</span>
             </a>
         </li>
         <li class="mb-1">
             <a href="students.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-                <i class="bi pe-none me-2  bi-mortarboard"></i>
+                <i class="bi pe-none me-2 bi-mortarboard"></i>
                 <span class="sidebar-link">Estudiantes</span>
             </a>
         </li>
         <c:if test="${role == 'administrador'}">
 	        <li class="mb-1">
 	            <a href="users.jsp" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
-	                <i class="bi pe-none me-2  bi-people"></i>
+	                <i class="bi pe-none me-2 bi-people"></i>
 	                <span class="sidebar-link">Usuarios</span>
 	            </a>
 	        </li>

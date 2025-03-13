@@ -4,12 +4,13 @@ import java.util.List;
 
 import com.bookstudio.models.Author;
 import com.bookstudio.models.Book;
+import com.bookstudio.models.Publisher;
 import com.bookstudio.models.Course;
+import com.bookstudio.models.Student;
 import com.bookstudio.models.Faculty;
 import com.bookstudio.models.Genre;
+import com.bookstudio.models.Nationality;
 import com.bookstudio.models.LiteraryGenre;
-import com.bookstudio.models.Publisher;
-import com.bookstudio.models.Student;
 
 public class SelectOptions {
 	private List<Book> books;
@@ -19,6 +20,7 @@ public class SelectOptions {
 	private List<Student> students;
 	private List<Faculty> faculties;
 	private List<Genre> genres;
+	private List<Nationality> nationalities;
 	private List<LiteraryGenre> literaryGenres;
 
 	public List<Book> getBooks() {
@@ -75,6 +77,14 @@ public class SelectOptions {
 
 	public void setGenres(List<Genre> genres) {
 		this.genres = genres;
+	}
+
+	public List<Nationality> getNationalities() {
+		return nationalities;
+	}
+
+	public void setNationalities(List<Nationality> nationalities) {
+		this.nationalities = nationalities;
 	}
 
 	public List<LiteraryGenre> getLiteraryGenres() {

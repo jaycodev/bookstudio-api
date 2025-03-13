@@ -14,7 +14,8 @@
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
 
-// Global list of literary genres for the selectpickers
+// Global list of nationalities and literary genres for the selectpickers
+var nationalityList = [];
 var literaryGenreList = [];
 
 // Global variable to handle photo deletion in edit modal
@@ -42,10 +43,13 @@ function populateSelectOptions() {
 		dataType: 'json',
 		success: function(data) {
 			if (data) {
+				nationalityList = data.nationalities;
 				literaryGenreList = data.literaryGenres;
 
+				populateSelect('#addPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
 				populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 
+				populateSelect('#editPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
 				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 			}
 		},
@@ -93,7 +97,7 @@ function generateRow(publisher) {
 		<tr>
 			<td class="align-middle text-start">${publisher.publisherId}</td>
 			<td class="align-middle text-start">${publisher.name}</td>
-			<td class="align-middle text-start">${publisher.nationality}</td>
+			<td class="align-middle text-start">${publisher.nationalityName}</td>
 			<td class="align-middle text-start">${publisher.literaryGenreName}</td>
 			<td class="align-middle text-center">
 				${publisher.status === 'activo'
@@ -216,7 +220,7 @@ function updateRowInTable(publisher) {
 
 	if (row.length > 0) {
 		row.find('td').eq(1).text(publisher.name);
-		row.find('td').eq(2).text(publisher.nationality);
+		row.find('td').eq(2).text(publisher.nationalityName);
 		row.find('td').eq(3).text(publisher.literaryGenreName);
 		row.find('td').eq(4).html(publisher.status === 'activo'
 			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
@@ -608,6 +612,9 @@ function validateEditField(field) {
 function loadModalData() {
 	// Add Modal
 	$(document).on('click', '[data-bs-target="#addPublisherModal"]', function() {
+		populateSelect('#addPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
+		$('#addPublisherNationality').selectpicker();
+		
 		populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 		$('#addLiteraryGenre').selectpicker();
 
@@ -646,7 +653,7 @@ function loadModalData() {
 			success: function(data) {
 				$('#detailsPublisherID').text(data.publisherId);
 				$('#detailsPublisherName').text(data.name);
-				$('#detailsPublisherNationality').text(data.nationality);
+				$('#detailsPublisherNationality').text(data.nationalityName);
 				$('#detailsPublisherGenre').text(data.literaryGenreName);
 				$('#detailsPublisherYear').text(data.foundationYear);
 				$('#detailsPublisherWebsite a').attr('href', data.website).text(data.website);
@@ -680,7 +687,10 @@ function loadModalData() {
 			success: function(data) {
 				$('#editPublisherForm').data('publisherId', data.publisherId);
 				$('#editPublisherName').val(data.name);
-				$('#editPublisherNationality').val(data.nationality);
+				
+				populateSelect('#editPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
+				$('#editPublisherNationality').val(data.nationalityId);
+				$('#editPublisherNationality').selectpicker();
 
 				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 				$('#editLiteraryGenre').val(data.literaryGenreId);

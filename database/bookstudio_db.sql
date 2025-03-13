@@ -21,16 +21,23 @@ CREATE TABLE Genres (
     GenreName VARCHAR(255) UNIQUE NOT NULL
 );
 
+-- Nationalities table
+CREATE TABLE Nationalities (
+    NationalityID INT AUTO_INCREMENT PRIMARY KEY,
+    NationalityName VARCHAR(100) UNIQUE NOT NULL
+);
+
 -- Authors table
 CREATE TABLE Authors (
     AuthorID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
-    Nationality VARCHAR(100) NOT NULL,
+    NationalityID INT NOT NULL,
     LiteraryGenreID INT NOT NULL,
     BirthDate DATE NOT NULL,
     Biography TEXT,
     Status ENUM('activo', 'inactivo') DEFAULT 'activo',
     Photo LONGBLOB,
+    FOREIGN KEY (NationalityID) REFERENCES Nationalities(NationalityID),
     FOREIGN KEY (LiteraryGenreID) REFERENCES LiteraryGenres(LiteraryGenreID)
 );
 
@@ -38,13 +45,14 @@ CREATE TABLE Authors (
 CREATE TABLE Publishers (
     PublisherID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
-    Nationality VARCHAR(100) NOT NULL,
+    NationalityID INT NOT NULL,
     LiteraryGenreID INT NOT NULL,
     FoundationYear INT NOT NULL,
     Website VARCHAR(255),
     Address VARCHAR(255),
     Status ENUM('activo', 'inactivo') DEFAULT 'activo',
     Photo LONGBLOB,
+    FOREIGN KEY (NationalityID) REFERENCES Nationalities(NationalityID),
     FOREIGN KEY (LiteraryGenreID) REFERENCES LiteraryGenres(LiteraryGenreID)
 );
 
@@ -139,75 +147,100 @@ INSERT INTO Faculties (FacultyName) VALUES
 
 -- LiteraryGenres
 INSERT INTO LiteraryGenres (GenreName) VALUES
-('Realismo mágico'), ('Fantasía'), ('Ficción'), ('Poesía'), ('Drama'),
-('Ensayo'), ('Ciencia Ficción'), ('Biografía'), ('Misterio'), ('Aventura'),
-('Crónica'), ('Novela histórica'), ('Terror'), ('Romance'), ('Filosofía'),
-('Autoayuda'), ('Periodismo'), ('Narrativa'), ('Comedia'), ('Tragedia'),
-('Lírica'), ('Cuento'), ('Teatro'), ('Crítica literaria'), ('Literatura infantil');
+('Realismo mágico'), ('Fantasía'), ('Ciencia Ficción'), ('Poesía'), ('Drama'),
+('Ensayo'), ('Biografía'), ('Misterio'), ('Aventura'), ('Crónica'),
+('Novela histórica'), ('Terror'), ('Romance'), ('Filosofía'), ('Autoayuda'),
+('Periodismo'), ('Narrativa'), ('Comedia'), ('Tragedia'), ('Lírica'),
+('Cuento'), ('Teatro'), ('Crítica literaria'), ('Literatura infantil'), ('Satírico');
 
 -- Genres
 INSERT INTO Genres (GenreName) VALUES
-('Realismo mágico'), ('Fantasía'), ('Ficción'), ('Poesía'), ('Drama'),
-('Ensayo'), ('Ciencia Ficción'), ('Biografía'), ('Misterio'), ('Aventura'),
-('Crónica'), ('Matemáticas'), ('Novela histórica'), ('Terror'), ('Romance'),
-('Filosofía'), ('Autoayuda'), ('Periodismo'), ('Narrativa'), ('Comedia'),
-('Tragedia'), ('Lírica'), ('Física'), ('Química'), ('Biología');
+('Fantasía'), ('Ciencia Ficción'), ('Misterio'), ('Aventura'), ('Novela negra'),
+('Novela histórica'), ('Terror'), ('Romance'), ('Distopía'), ('Thriller'),
+('Cómic'), ('Manga'), ('Literatura infantil'), ('Juvenil'), ('Educativo'),
+('Autoayuda'), ('Psicología'), ('Desarrollo personal'), ('Matemáticas'), ('Física'),
+('Química'), ('Biología'), ('Medicina'), ('Historia'), ('Sociología'),
+('Filosofía'), ('Derecho'), ('Política'), ('Economía'), ('Administración'),
+('Ingeniería'), ('Ciencias de la computación'), ('Programación'), ('Arte'),
+('Música'), ('Cine'), ('Fotografía'), ('Arquitectura'), ('Deportes'),
+('Gastronomía'), ('Viajes'), ('Religión'), ('Mitología'), ('Astrología');
+
+-- Nationalities
+INSERT INTO Nationalities (NationalityName) VALUES
+('Afgano'), ('Albanés'), ('Alemán'), ('Argelino'), ('Argentino'),
+('Australiano'), ('Bangladesí'), ('Belga'), ('Boliviano'), ('Brasileño'),
+('Búlgaro'), ('Británico'), ('Camboyano'), ('Canadiense'), ('Ceilandés'),
+('Checoslovaco'), ('Chileno'), ('Chino'), ('Colombiano'), ('Coreano'),
+('Costarricense'), ('Cubano'), ('Danés'), ('Ecuatoriano'), ('Egipcio'),
+('Emiratí'), ('Escocés'), ('Español'), ('Estadounidense'), ('Eslovaco'),
+('Esloveno'), ('Estonio'), ('Etíope'), ('Filipino'), ('Finlandés'),
+('Francés'), ('Fiyiano'), ('Galés'), ('Griego'), ('Guatemalteco'),
+('Haitiano'), ('Holandés'), ('Hondureño'), ('Indio'), ('Indonesio'),
+('Inglés'), ('Iraní'), ('Irlandés'), ('Israelí'), ('Islandés'),
+('Italiano'), ('Japonés'), ('Kenyano'), ('Letón'), ('Libanés'),
+('Lituano'), ('Malayo'), ('Maldiveño'), ('Marfileño'), ('Marroquí'),
+('Mexicano'), ('Monegasco'), ('Nepalés'), ('Nicaragüense'), ('Neozelandés'),
+('Noruego'), ('Nigeriano'), ('Panameño'), ('Paraguayo'), ('Paquistaní'),
+('Peruano'), ('Polaco'), ('Portugués'), ('Puertorriqueño'), ('Ruso'),
+('Salvadoreño'), ('Saudí'), ('Senegalés'), ('Sudafricano'), ('Sueco'),
+('Suizo'), ('Tailandés'), ('Tanzano'), ('Taiwanés'), ('Turco'),
+('Ucraniano'), ('Uruguayo'), ('Venezolano'), ('Vietnamita');
 
 -- Authors
-INSERT INTO Authors (Name, Nationality, LiteraryGenreID, BirthDate, Status) VALUES
-('Gabriel García Márquez', 'Colombiana', 1, '1927-03-06', 'activo'),
-('J.K. Rowling', 'Británica', 2, '1965-07-31', 'activo'),
-('Mario Vargas Llosa', 'Peruana', 3, '1936-03-28', 'activo'),
-('Isabel Allende', 'Chilena', 4, '1942-08-02', 'activo'),
-('Jorge Luis Borges', 'Argentina', 3, '1899-08-24', 'activo'),
-('Pablo Neruda', 'Chilena', 4, '1904-07-12', 'activo'),
-('Julio Cortázar', 'Argentina', 3, '1914-08-26', 'activo'),
-('Miguel de Cervantes', 'Española', 3, '1547-09-29', 'activo'),
-('Federico García Lorca', 'Española', 4, '1898-06-05', 'activo'),
-('Octavio Paz', 'Mexicana', 4, '1914-03-31', 'activo'),
-('Ernest Hemingway', 'Estadounidense', 3, '1899-07-21', 'activo'),
-('Virginia Woolf', 'Británica', 3, '1882-01-25', 'activo'),
-('Franz Kafka', 'Checoslovaca', 3, '1883-07-03', 'activo'),
-('Charles Dickens', 'Británica', 3, '1812-02-07', 'activo'),
-('Stephen King', 'Estadounidense', 2, '1947-09-21', 'activo'),
-('Emily Dickinson', 'Estadounidense', 4, '1830-12-10', 'activo'),
-('Albert Camus', 'Francesa', 6, '1913-11-07', 'activo'),
-('Gabriela Mistral', 'Chilena', 4, '1889-04-07', 'activo'),
-('Oscar Wilde', 'Irlandesa', 5, '1854-10-16', 'activo'),
-('Edgar Allan Poe', 'Estadounidense', 9, '1809-01-19', 'activo'),
-('Juan Rulfo', 'Mexicana', 3, '1917-05-16', 'activo'),
-('George Orwell', 'Británica', 3, '1903-06-25', 'activo'),
-('Mary Shelley', 'Británica', 7, '1797-08-30', 'activo'),
-('Miguel Ángel Asturias', 'Guatemalteca', 1, '1899-10-19', 'activo'),
-('Agatha Christie', 'Británica', 9, '1890-09-15', 'activo');
+INSERT INTO Authors (Name, NationalityID, LiteraryGenreID, BirthDate, Status) VALUES
+('Gabriel García Márquez', 19, 1, '1927-03-06', 'activo'),
+('J.K. Rowling', 12, 2, '1965-07-31', 'activo'),
+('Mario Vargas Llosa', 71, 3, '1936-03-28', 'activo'),
+('Isabel Allende', 17, 4, '1942-08-02', 'activo'),
+('Jorge Luis Borges', 5, 3, '1899-08-24', 'activo'),
+('Pablo Neruda', 17, 4, '1904-07-12', 'activo'),
+('Julio Cortázar', 5, 3, '1914-08-26', 'activo'),
+('Miguel de Cervantes', 28, 3, '1547-09-29', 'activo'),
+('Federico García Lorca', 28, 4, '1898-06-05', 'activo'),
+('Octavio Paz', 61, 4, '1914-03-31', 'activo'),
+('Ernest Hemingway', 29, 3, '1899-07-21', 'activo'),
+('Virginia Woolf', 12, 3, '1882-01-25', 'activo'),
+('Franz Kafka', 16, 3, '1883-07-03', 'activo'),
+('Charles Dickens', 12, 3, '1812-02-07', 'activo'),
+('Stephen King', 29, 2, '1947-09-21', 'activo'),
+('Emily Dickinson', 29, 4, '1830-12-10', 'activo'),
+('Albert Camus', 36, 6, '1913-11-07', 'activo'),
+('Gabriela Mistral', 17, 4, '1889-04-07', 'activo'),
+('Oscar Wilde', 48, 5, '1854-10-16', 'activo'),
+('Edgar Allan Poe', 29, 9, '1809-01-19', 'activo'),
+('Juan Rulfo', 61, 3, '1917-05-16', 'activo'),
+('George Orwell', 12, 3, '1903-06-25', 'activo'),
+('Mary Shelley', 12, 7, '1797-08-30', 'activo'),
+('Miguel Ángel Asturias', 40, 1, '1899-10-19', 'activo'),
+('Agatha Christie', 12, 9, '1890-09-15', 'activo');
 
 -- Publishers
-INSERT INTO Publishers (Name, Nationality, LiteraryGenreID, FoundationYear, Website, Address, Status) VALUES
-('Penguin Random House', 'Estados Unidos', 3, 1925, 'https://www.penguinrandomhouse.com', '555 Editorial St', 'activo'),
-('HarperCollins', 'Estados Unidos', 3, 1817, 'https://www.harpercollins.com', '789 Harper Ave', 'activo'),
-('Alfaguara', 'España', 3, 1964, 'https://www.alfaguara.com', 'Calle Editores 123', 'activo'),
-('Planeta', 'España', 3, 1949, 'https://www.planeta.es', 'Av. Diagonal 662', 'activo'),
-('Anagrama', 'España', 3, 1969, 'https://www.anagrama-ed.es', 'Calle Anagrama 45', 'activo'),
-('Tusquets', 'España', 3, 1969, 'https://www.tusquetseditores.com', 'Av. Diagonal 928', 'activo'),
-('Seix Barral', 'España', 3, 1911, 'https://www.seix-barral.es', 'Av. Editorial 78', 'activo'),
-('Salamandra', 'España', 2, 1989, 'https://www.salamandra.info', 'Calle Salamandra 12', 'activo'),
-('Ediciones B', 'España', 3, 1986, 'https://www.edicionesb.com', 'Plaza Editores 34', 'activo'),
-('Siruela', 'España', 2, 1982, 'https://www.siruela.com', 'Calle del Libro 56', 'activo'),
-('Gallimard', 'Francia', 3, 1911, 'https://www.gallimard.fr', 'Rue de Grenelle 5', 'activo'),
-('Oxford University Press', 'Reino Unido', 6, 1586, 'https://www.oup.com', 'Great Clarendon Street', 'activo'),
-('Pearson', 'Reino Unido', 6, 1844, 'https://www.pearson.com', 'London Bridge St', 'activo'),
-('McGraw-Hill', 'Estados Unidos', 6, 1917, 'https://www.mheducation.com', 'Pennsylvania Ave', 'activo'),
-('Fondo de Cultura Económica', 'México', 6, 1934, 'https://www.fondodeculturaeconomica.com', 'Av. del Libro 78', 'activo'),
-('Hachette', 'Francia', 3, 1826, 'https://www.hachette.com', 'Rue de Fleurus 15', 'activo'),
-('Simon & Schuster', 'Estados Unidos', 3, 1924, 'https://www.simonandschuster.com', 'Rockefeller Plaza', 'activo'),
-('Macmillan', 'Reino Unido', 3, 1843, 'https://www.macmillan.com', 'Hampshire Road 12', 'activo'),
-('Springer', 'Alemania', 6, 1842, 'https://www.springer.com', 'Tiergartenstrasse 17', 'activo'),
-('Wiley', 'Estados Unidos', 6, 1807, 'https://www.wiley.com', 'River Street 111', 'activo'),
-('Elsevier', 'Países Bajos', 6, 1880, 'https://www.elsevier.com', 'Radarweg 29', 'activo'),
-('Paidós', 'Argentina', 6, 1945, 'https://www.paidos.com', 'Av. Independencia 1668', 'activo'),
-('Grijalbo', 'México', 3, 1939, 'https://www.grijalbo.com', 'Av. Insurgentes 1822', 'activo'),
-('Sudamericana', 'Argentina', 3, 1939, 'https://www.sudamericana.com', 'Humberto I 555', 'activo'),
-('Cambridge University Press', 'Reino Unido', 6, 1534, 'https://www.cambridge.org', 'Cambridge Street 23', 'activo');
+INSERT INTO Publishers (Name, NationalityID, LiteraryGenreID, FoundationYear, Website, Address, Status) VALUES
+('Penguin Random House', 29, 3, 1925, 'https://www.penguinrandomhouse.com', '555 Editorial St', 'activo'),
+('HarperCollins', 29, 3, 1817, 'https://www.harpercollins.com', '789 Harper Ave', 'activo'),
+('Alfaguara', 28, 3, 1964, 'https://www.alfaguara.com', 'Calle Editores 123', 'activo'),
+('Planeta', 28, 3, 1949, 'https://www.planeta.es', 'Av. Diagonal 662', 'activo'),
+('Anagrama', 28, 3, 1969, 'https://www.anagrama-ed.es', 'Calle Anagrama 45', 'activo'),
+('Tusquets', 28, 3, 1969, 'https://www.tusquetseditores.com', 'Av. Diagonal 928', 'activo'),
+('Seix Barral', 28, 3, 1911, 'https://www.seix-barral.es', 'Av. Editorial 78', 'activo'),
+('Salamandra', 28, 2, 1989, 'https://www.salamandra.info', 'Calle Salamandra 12', 'activo'),
+('Ediciones B', 28, 3, 1986, 'https://www.edicionesb.com', 'Plaza Editores 34', 'activo'),
+('Siruela', 28, 2, 1982, 'https://www.siruela.com', 'Calle del Libro 56', 'activo'),
+('Gallimard', 36, 3, 1911, 'https://www.gallimard.fr', 'Rue de Grenelle 5', 'activo'),
+('Oxford University Press', 12, 6, 1586, 'https://www.oup.com', 'Great Clarendon Street', 'activo'),
+('Pearson', 12, 6, 1844, 'https://www.pearson.com', 'London Bridge St', 'activo'),
+('McGraw-Hill', 29, 6, 1917, 'https://www.mheducation.com', 'Pennsylvania Ave', 'activo'),
+('Fondo de Cultura Económica', 61, 6, 1934, 'https://www.fondodeculturaeconomica.com', 'Av. del Libro 78', 'activo'),
+('Hachette', 36, 3, 1826, 'https://www.hachette.com', 'Rue de Fleurus 15', 'activo'),
+('Simon & Schuster', 29, 3, 1924, 'https://www.simonandschuster.com', 'Rockefeller Plaza', 'activo'),
+('Macmillan', 12, 3, 1843, 'https://www.macmillan.com', 'Hampshire Road 12', 'activo'),
+('Springer', 3, 6, 1842, 'https://www.springer.com', 'Tiergartenstrasse 17', 'activo'),
+('Wiley', 29, 6, 1807, 'https://www.wiley.com', 'River Street 111', 'activo'),
+('Elsevier', 42, 6, 1880, 'https://www.elsevier.com', 'Radarweg 29', 'activo'),
+('Paidós', 5, 6, 1945, 'https://www.paidos.com', 'Av. Independencia 1668', 'activo'),
+('Grijalbo', 61, 3, 1939, 'https://www.grijalbo.com', 'Av. Insurgentes 1822', 'activo'),
+('Sudamericana', 5, 3, 1939, 'https://www.sudamericana.com', 'Humberto I 555', 'activo'),
+('Cambridge University Press', 12, 6, 1534, 'https://www.cambridge.org', 'Cambridge Street 23', 'activo');
 
 -- Courses
 INSERT INTO Courses (Name, Level, Description, Status) VALUES
@@ -314,8 +347,6 @@ INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Ob
 (6, 6, '2025-01-15', '2025-01-26', 1, 'devuelto', 'Devuelto en perfectas condiciones'),
 (8, 8, '2025-01-20', '2025-02-01', 1, 'devuelto', 'Pequeña mancha en la contraportada'),
 (10, 10, '2025-01-25', '2025-02-06', 1, 'devuelto', 'Devuelto en buen estado'),
-(12, 12, '2025-02-03', '2025-02-14', 1, 'devuelto', 'Devuelto en buen estado'),
-(14, 14, '2025-02-08', '2025-02-20', 1, 'devuelto', 'Sin observaciones'),
 (16, 16, '2025-02-13', '2025-02-24', 1, 'prestado', 'Solicita prórroga de una semana'),
 (18, 18, '2025-02-18', '2025-03-01', 1, 'prestado', 'Sin observaciones'),
 (20, 20, '2025-02-23', '2025-03-07', 1, 'prestado', 'Préstamo para proyecto de fin de curso');

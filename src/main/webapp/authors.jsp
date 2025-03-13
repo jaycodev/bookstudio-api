@@ -127,14 +127,17 @@
                             <!-- Nationality Field -->
                             <div class="col-md-6 mb-3">
 	                            <label for="addAuthorNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
-	                            <input 
-	                                type="text" 
-	                                class="form-control" 
+	                            <select 
+	                                class="selectpicker form-control placeholder-color" 
 	                                id="addAuthorNationality" 
 	                                name="addAuthorNationality" 
-	                                placeholder="Ingrese la nacionalidad del autor" 
+	                                data-live-search="true" 
+	                                data-live-search-placeholder="Buscar..." 
+	                                title="Seleccione una nacionalidad" 
 	                                required
 	                            >
+	                            	<!-- Options will be dynamically populated via JavaScript -->
+	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
                         </div>
@@ -354,14 +357,16 @@
 	                        <!-- Nationality Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editAuthorNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
-	                            <input 
-	                                type="text" 
-	                                class="form-control" 
+	                            <select 
+	                                class="selectpicker form-control" 
 	                                id="editAuthorNationality" 
 	                                name="editAuthorNationality" 
-	                                placeholder="Ingrese la nacionalidad del autor" 
+	                                data-live-search="true" 
+	                                data-live-search-placeholder="Buscar..." 
 	                                required
 	                            >
+	                            	<!-- Options will be dynamically populated via JavaScript -->
+	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>

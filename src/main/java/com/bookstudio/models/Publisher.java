@@ -3,7 +3,8 @@ package com.bookstudio.models;
 public class Publisher {
 	private String publisherId;
 	private String name;
-	private String nationality;
+	private String nationalityId;
+	private String nationalityName;
 	private String literaryGenreId;
 	private String literaryGenreName;
 	private int foundationYear;
@@ -29,12 +30,20 @@ public class Publisher {
 		this.name = name;
 	}
 
-	public String getNationality() {
-		return nationality;
+	public String getNationalityId() {
+		return nationalityId;
 	}
 
-	public void setNationality(String nationality) {
-		this.nationality = nationality;
+	public void setNationalityId(String nationalityId) {
+		this.nationalityId = nationalityId;
+	}
+
+	public String getNationalityName() {
+		return nationalityName;
+	}
+
+	public void setNationalityName(String nationalityName) {
+		this.nationalityName = nationalityName;
 	}
 
 	public String getLiteraryGenreId() {
