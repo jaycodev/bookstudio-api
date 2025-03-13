@@ -3,6 +3,7 @@
 <html lang="es" data-bs-theme="auto">
 <head>
 	<meta charset="UTF-8">
+	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="utils/color-modes.js"></script>
@@ -79,7 +80,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	
 	<!-- Custom Scripts -->
-	<script src="js/forgot-password.js"></script>
-	<script src="utils/toast.js"></script>
+	<script src="js/forgot-password.js" defer></script>
+	<script src="utils/toast.js" defer></script>
 </body>
 </html>

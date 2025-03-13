@@ -4,6 +4,7 @@
 <html lang="es" data-bs-theme="auto">
 <head>
 	<meta charset="UTF-8">
+	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="utils/color-modes.js"></script>
@@ -268,15 +269,15 @@
 
 	<!-- External Libraries -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js" defer></script>
 
 	<!-- Custom Scripts -->
-	<script src="utils/toast.js"></script>
-	<script src="utils/password.js"></script>
-	<script src="utils/header.js"></script>
-	<script src="utils/sidebar.js"></script>
-	<script src="js/profile.js"></script>
+	<script src="utils/header.js" defer></script>
+	<script src="utils/sidebar.js" defer></script>
+	<script src="utils/toast.js" defer></script>
+	<script src="utils/password.js" defer></script>
+	<script src="js/profile.js" defer></script>
 </body>
 </html>

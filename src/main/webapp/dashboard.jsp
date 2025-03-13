@@ -3,6 +3,7 @@
 <html lang="es" data-bs-theme="auto">
 <head>
 	<meta charset="UTF-8">
+	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="utils/color-modes.js"></script>
@@ -30,8 +31,7 @@
 			<article class="col-md-4">
 				<div class="card border-start-primary bg-body-secondary border mb-3">
 					<div class="card-body">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-journal-bookmark text-primary"></i>
 							Libros
 						</h5>
@@ -44,8 +44,7 @@
 			<article class="col-md-4">
 				<div class="card border-start-success bg-body-secondary border mb-3">
 					<div class="card-body">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-person-plus text-success"></i>
 							Autores
 						</h5>
@@ -58,8 +57,7 @@
 			<article class="col-md-4">
 				<div class="card border-start-warning bg-body-secondary border mb-3">
 					<div class="card-body sombra">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-map text-warning"></i> Editoriales
 						</h5>
 						<p class="card-text text-body-emphasis" id="totalPublishers">Editoriales</p>
@@ -74,8 +72,7 @@
 			<article class="col-md-4">
 				<div class="card border-start-info bg-body-secondary border mb-3">
 					<div class="card-body sombra">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-stickies text-info"></i> Cursos
 						</h5>
 						<p class="card-text text-body-emphasis" id="totalCourses">Cursos</p>
@@ -88,8 +85,7 @@
 				<div
 					class="card border-start-secondary bg-body-secondary border mb-3">
 					<div class="card-body sombra">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-mortarboard text-secondary"></i>
 							Estudiantes
 						</h5>
@@ -102,8 +98,7 @@
 			<article class="col-md-4">
 				<div class="card border-start-danger bg-body-secondary border mb-3">
 					<div class="card-body sombra">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-file-earmark-text text-danger"></i>
 							Préstamos
 						</h5>
@@ -118,10 +113,9 @@
 			<article class="col-md-6">
 				<div class="card mb-3 border">
 					<div class="card-body">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
-							<i class="bi pe-none me-2 bi-journal-plus"></i> Libros Prestados
-							por Mes
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
+							<i class="bi pe-none me-2 bi-journal-plus"></i>
+							Libros Prestados por Mes
 						</h5>
 						<canvas id="borrowedBooksChart" width="400" height="200"></canvas>
 					</div>
@@ -132,10 +126,9 @@
 			<article class="col-md-6">
 				<div class="card mb-3 border">
 					<div class="card-body">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
-							<i class="bi pe-none me-2 bi-arrow-clockwise"></i> Libros
-							Devueltos por Mes
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
+							<i class="bi pe-none me-2 bi-arrow-clockwise"></i>
+							Libros Devueltos por Mes
 						</h5>
 						<canvas id="returnedBooksChart" width="400" height="200"></canvas>
 					</div>
@@ -144,12 +137,11 @@
 
 			<!-- Average Loan Time Chart -->
 			<article class="col-md-6">
-				<div class="card border">
+				<div class="card penultimate-chart border">
 					<div class="card-body">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
-							<i class="bi pe-none me-2 bi-clock"></i> Tiempo Promedio de
-							Préstamo
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
+							<i class="bi pe-none me-2 bi-clock"></i>
+							Tiempo Promedio de Préstamo
 						</h5>
 						<canvas id="avgLoanTimeChart" width="400" height="200"></canvas>
 					</div>
@@ -160,10 +152,9 @@
 			<article class="col-md-6">
 				<div class="card border">
 					<div class="card-body">
-						<h5
-							class="card-title d-flex align-items-center text-body-emphasis">
-							<i class="bi pe-none me-2 bi-bar-chart-line"></i> Comparación de
-							Préstamos por Año
+						<h5 class="card-title d-flex align-items-center text-body-emphasis">
+							<i class="bi pe-none me-2 bi-bar-chart-line"></i>
+							Comparación de Préstamos por Año
 						</h5>
 						<canvas id="loanComparisonChart" width="400" height="200"></canvas>
 					</div>
@@ -174,15 +165,13 @@
 
 	<!-- External Libraries -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 	<!-- Custom Scripts -->
-	<script src="js/dashboard.js"></script>
-	<script src="utils/header.js"></script>
-	<script src="utils/sidebar.js"></script>
+	<script src="js/dashboard.js" defer></script>
+	<script src="utils/header.js" defer></script>
+	<script src="utils/sidebar.js" defer></script>
 </body>
 </html>

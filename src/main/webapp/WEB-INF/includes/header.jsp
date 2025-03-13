@@ -2,7 +2,7 @@
 
 <header class="header position-fixed d-flex align-items-center px-3 bg-body-secondary border-bottom">
     <!-- Menu Button (Visible on Mobile) -->
-    <button class="btn-menu nav-link d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar">
+    <button class="btn-menu nav-link d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Abrir menú lateral">
         <i class="bi bi-list header-icon"></i>
     </button>
 
@@ -10,7 +10,7 @@
     <div class="d-flex flex-grow-1 justify-content-between align-items-center">
     
         <!-- Empty Space for Alignment (Visible on Mobile) -->
-        <div class="d-md-none me-5"></div>
+        <div class="d-lg-none me-5"></div>
 
         <!-- Logo -->
 		<a href="/bookstudio/dashboard.jsp" class="text-center text-decoration-none text-body-emphasis ms-md-2 d-flex align-items-center">
@@ -35,7 +35,7 @@
 
             <!-- User Dropdown -->
             <div class="dropdown bd-navbar">
-                <button type="button" class="btn btn-link nav-link d-flex align-items-center link-body-emphasis" data-bs-toggle="dropdown" aria-expanded="false">
+                <button type="button" class="btn btn-link nav-link d-flex align-items-center link-body-emphasis" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Abrir menú de usuario">
                     <c:choose>
 					    <c:when test="${not empty sessionScope.user_profile_image}">
 					        <img src="${sessionScope.user_profile_image}" alt="Foto" width="24" height="24" class="rounded-circle">
@@ -76,7 +76,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h5 class="modal-title text-body-emphasis" id="logoutModalLabel">Confirmar Cierre de Sesión</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar Sesión"></button>
             </div>
             
             <!-- Modal Body -->
