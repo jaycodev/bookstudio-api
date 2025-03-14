@@ -14,11 +14,7 @@ import com.bookstudio.dao.impl.BookDaoImpl;
 import com.bookstudio.dao.impl.CourseDaoImpl;
 import com.bookstudio.dao.impl.GenreDaoImpl;
 import com.bookstudio.dao.impl.PublisherDaoImpl;
-import com.bookstudio.models.Author;
 import com.bookstudio.models.Book;
-import com.bookstudio.models.Course;
-import com.bookstudio.models.Genre;
-import com.bookstudio.models.Publisher;
 import com.bookstudio.utils.SelectOptions;
 
 public class BookService {
@@ -87,17 +83,13 @@ public class BookService {
 	public SelectOptions populateSelects() throws Exception {
 		SelectOptions selectOptions = new SelectOptions();
 
-		List<Author> authors = authorDao.populateAuthorSelect();
-		selectOptions.setAuthors(authors);
+		selectOptions.setAuthors(authorDao.populateAuthorSelect());
 
-		List<Publisher> publishers = publisherDao.populatePublisherSelect();
-		selectOptions.setPublishers(publishers);
+		selectOptions.setPublishers(publisherDao.populatePublisherSelect());
 
-		List<Course> courses = courseDao.populateCourseSelect();
-		selectOptions.setCourses(courses);
+		selectOptions.setCourses(courseDao.populateCourseSelect());
 
-		List<Genre> genres = genreDao.populateGenreSelect();
-		selectOptions.setGenres(genres);
+		selectOptions.setGenres(genreDao.populateGenreSelect());
 
 		return selectOptions;
 	}

@@ -115,7 +115,7 @@
 					<div class="card-body">
 						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-journal-plus"></i>
-							Libros Prestados por Mes
+							Libros prestados por mes
 						</h5>
 						<canvas id="borrowedBooksChart" width="400" height="200"></canvas>
 					</div>
@@ -128,7 +128,7 @@
 					<div class="card-body">
 						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-arrow-clockwise"></i>
-							Libros Devueltos por Mes
+							Libros devueltos por mes
 						</h5>
 						<canvas id="returnedBooksChart" width="400" height="200"></canvas>
 					</div>
@@ -141,7 +141,7 @@
 					<div class="card-body">
 						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-clock"></i>
-							Tiempo Promedio de Préstamo
+							Tiempo promedio de préstamo
 						</h5>
 						<canvas id="avgLoanTimeChart" width="400" height="200"></canvas>
 					</div>
@@ -154,7 +154,7 @@
 					<div class="card-body">
 						<h5 class="card-title d-flex align-items-center text-body-emphasis">
 							<i class="bi pe-none me-2 bi-bar-chart-line"></i>
-							Comparación de Préstamos por Año
+							Comparación de préstamos por año
 						</h5>
 						<canvas id="loanComparisonChart" width="400" height="200"></canvas>
 					</div>
@@ -165,7 +165,7 @@
 
 	<!-- External Libraries -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

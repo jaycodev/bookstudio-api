@@ -1,5 +1,6 @@
 /**
  * profile.js
+ * 
  * Manages user profile updates, including photo cropping, password validation, and general profile editing.
  * Handles the AJAX requests for updating the profile photo and details, including validation of password changes.
  * 
@@ -7,7 +8,6 @@
  */
 
 $(document).ready(function() {
-
 	/************** Logic for Profile Photo **************/
 	var croppedImageBlob = null;
 	var cropper;
@@ -104,7 +104,7 @@ $(document).ready(function() {
 				processData: false,
 				contentType: false,
 				success: function(response) {
-					if (response.success) {
+					if (response && response.success) {
 						sessionStorage.setItem('toastMessage', 'Foto de perfil subida exitosamente.');
 						sessionStorage.setItem('toastType', 'success');
 						window.location.href = "profile.jsp";
@@ -149,7 +149,7 @@ $(document).ready(function() {
 			processData: false,
 			contentType: false,
 			success: function(response) {
-				if (response.success) {
+				if (response && response.success) {
 					sessionStorage.setItem('toastMessage', 'Foto de perfil eliminada exitosamente.');
 					sessionStorage.setItem('toastType', 'success');
 					window.location.href = "profile.jsp";
@@ -236,7 +236,7 @@ $(document).ready(function() {
 					confirmCurrentPassword: currentPassword
 				},
 				success: function(response) {
-					if (response.success) {
+					if (response && response.success) {
 						$("#currentProfilePassword").removeClass("is-invalid");
 						$("#currentProfilePassword").siblings('.invalid-feedback').text('');
 						data += '&editProfilePassword=' + encodeURIComponent(newPassword);
@@ -277,7 +277,7 @@ $(document).ready(function() {
 			method: 'POST',
 			data: data,
 			success: function(response) {
-				if (response.success) {
+				if (response && response.success) {
 					sessionStorage.setItem('toastMessage', 'Perfil actualizado exitosamente.');
 					sessionStorage.setItem('toastType', 'success');
 					window.location.href = "profile.jsp";

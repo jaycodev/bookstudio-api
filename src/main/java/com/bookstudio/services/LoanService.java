@@ -10,9 +10,7 @@ import com.bookstudio.dao.StudentDao;
 import com.bookstudio.dao.impl.BookDaoImpl;
 import com.bookstudio.dao.impl.LoanDaoImpl;
 import com.bookstudio.dao.impl.StudentDaoImpl;
-import com.bookstudio.models.Book;
 import com.bookstudio.models.Loan;
-import com.bookstudio.models.Student;
 import com.bookstudio.utils.SelectOptions;
 
 public class LoanService {
@@ -68,18 +66,16 @@ public class LoanService {
 		return loanDao.updateLoan(loan);
 	}
 
-	public int confirmReturn(String loanId, String newStatus) throws Exception {
-		return loanDao.confirmReturn(loanId, newStatus);
+	public int confirmReturn(String loanId) throws Exception {
+		return loanDao.confirmReturn(loanId);
 	}
 
 	public SelectOptions populateSelects() throws Exception {
 		SelectOptions selectOptions = new SelectOptions();
 
-		List<Book> books = bookDao.populateBookSelect();
-		selectOptions.setBooks(books);
+		selectOptions.setBooks(bookDao.populateBookSelect());
 
-		List<Student> students = studentDao.populateStudentSelect();
-		selectOptions.setStudents(students);
+		selectOptions.setStudents(studentDao.populateStudentSelect());
 
 		return selectOptions;
 	}

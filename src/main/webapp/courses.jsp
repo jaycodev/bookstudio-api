@@ -32,7 +32,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Cursos</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de cursos</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -99,7 +99,7 @@
 		    <div class="modal-content">
 		        <!-- Modal Header -->
 		        <header class="modal-header">
-		            <h5 class="modal-title text-body-emphasis" id="addCourseModalLabel">Agregar Curso</h5>
+		            <h5 class="modal-title text-body-emphasis" id="addCourseModalLabel">Agregar un curso</h5>
 		            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		        </header>
 		        
@@ -190,7 +190,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del Curso</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del curso</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -246,7 +246,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar Curso</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar curso</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

@@ -9,7 +9,6 @@ import com.bookstudio.dao.FacultyDao;
 import com.bookstudio.dao.StudentDao;
 import com.bookstudio.dao.impl.FacultyDaoImpl;
 import com.bookstudio.dao.impl.StudentDaoImpl;
-import com.bookstudio.models.Faculty;
 import com.bookstudio.models.Student;
 import com.bookstudio.utils.SelectOptions;
 
@@ -76,8 +75,7 @@ public class StudentService {
 	public SelectOptions populateSelects() throws SQLException {
 		SelectOptions selectOptions = new SelectOptions();
 
-		List<Faculty> faculties = facultyDao.populateFacultySelect();
-		selectOptions.setFaculties(faculties);
+		selectOptions.setFaculties(facultyDao.populateFacultySelect());
 
 		return selectOptions;
 	}

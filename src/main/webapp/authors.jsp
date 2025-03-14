@@ -32,7 +32,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Autores</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de autores</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -79,7 +79,7 @@
 								<th scope="col" class="text-start">ID</th>
 								<th scope="col" class="text-start">Nombre</th>
 								<th scope="col" class="text-start">Nacionalidad</th>
-								<th scope="col" class="text-start">Género Literario</th>
+								<th scope="col" class="text-start">Género literario</th>
 								<th scope="col" class="text-center">Estado</th>
 								<th scope="col" class="text-center">Foto</th>
 								<th scope="col" class="text-center"></th>
@@ -100,7 +100,7 @@
             <div class="modal-content">
             	<!-- Modal Header -->
                 <header class="modal-header">
-                    <h5 class="modal-title text-body-emphasis" id="addAuthorModalLabel">Agregar Autor</h5>
+                    <h5 class="modal-title text-body-emphasis" id="addAuthorModalLabel">Agregar un autor</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </header>
                 
@@ -147,7 +147,7 @@
 	                    <div class="row">
 	                    	<!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLiteraryGenre" class="form-label">Género Literario <span class="text-danger">*</span></label>
+	                            <label for="addLiteraryGenre" class="form-label">Género literario <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
 	                                id="addLiteraryGenre" 
@@ -164,7 +164,7 @@
 	                        
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorBirthDate" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
+	                            <label for="addAuthorBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
@@ -273,7 +273,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">Detalles del Autor</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">Detalles del autor</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -300,7 +300,7 @@
 	                    </div>
 	                    
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Género Literario</h6>
+	                        <h6 class="small text-muted">Género literario</h6>
 	                        <p class="fw-bold" id="detailsAuthorGenre"></p>
 	                    </div>
 	                </div>
@@ -308,7 +308,7 @@
 	                <!-- Birth Date and Biography Section -->
 	                <div class="row">
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de Nacimiento</h6>
+	                        <h6 class="small text-muted">Fecha de nacimiento</h6>
 	                        <p class="fw-bold" id="detailsAuthorBirthDate"></p>
 	                    </div>
 	                    
@@ -351,7 +351,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">Editar Autor</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">Editar autor</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -397,7 +397,7 @@
 	                    <div class="row">
 	                        <!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLiteraryGenre" class="form-label">Género Literario <span class="text-danger">*</span></label>
+	                            <label for="editLiteraryGenre" class="form-label">Género literario <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
 	                                id="editLiteraryGenre" 
@@ -413,7 +413,7 @@
 	                        
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorBirthDate" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
+	                            <label for="editAuthorBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
@@ -488,7 +488,7 @@
 								<!-- Delete Photo Button -->
 								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteEditPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
-									Eliminar Foto
+									Eliminar foto
 								</button>
 							</div>
 						</div>

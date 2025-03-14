@@ -1,5 +1,6 @@
 /**
  * login.js
+ * 
  * Handles the login form validation, submission, and background image update based on the theme.
  * Implements real-time validation for username and password fields, and authenticates using
  * an AJAX request. Also initializes and updates particle animation based on the current theme.
@@ -81,7 +82,7 @@ $(document).ready(function() {
 			data: formData,
 			dataType: "json",
 			success: function(response) {
-				if (response.success) {
+				if (response && response.success) {
 					window.location.href = "dashboard.jsp";
 				} else {
 					showToast(response.message, "error");

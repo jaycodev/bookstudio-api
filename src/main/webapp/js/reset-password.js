@@ -1,3 +1,12 @@
+/**
+ * reset-password.js
+ * 
+ * Validates the reset token and new password inputs, then submits an AJAX request to reset the password.
+ * On success, updates the UI to prompt the user to log in.
+ * 
+ * @author Jason
+ */
+
 $(document).ready(function() {
 	var isFirstSubmit = false;
 

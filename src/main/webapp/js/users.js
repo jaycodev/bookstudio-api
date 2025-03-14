@@ -1,5 +1,6 @@
 /**
  * users.js
+ * 
  * Manages the initialization, data loading, and configuration of the users table,  
  * as well as handling modals for creating, viewing, editing, and deleting user details.  
  * Utilizes AJAX for CRUD operations on user data.  
@@ -149,9 +150,18 @@ function loadUsers() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing user data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los usuarios.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyUsers');
 			tableBody.empty();
@@ -270,6 +280,7 @@ function handleAddUserForm() {
 					success: function(response) {
 						if (response && response.success) {
 							addRowToTable(response.data);
+							
 							$('#addUserModal').modal('hide');
 							showToast('Usuario agregado exitosamente.', 'success');
 						} else {
@@ -278,6 +289,7 @@ function handleAddUserForm() {
 								$('#addUserForm').data("submitted", false);
 							}
 							else {
+								console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 								showToast(response.message, 'error');
 								$('#addUserModal').modal('hide');
 							}
@@ -295,6 +307,7 @@ function handleAddUserForm() {
 							setFieldError(errorField, errorMessage);
 							$('#addUserForm').data("submitted", false);
 						} else {
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
 							showToast(errorMessage, 'error');
 							$('#addUserModal').modal('hide');
 						}
@@ -528,18 +541,29 @@ function handleEditUserForm() {
 					processData: false,
 					contentType: false,
 					success: function(response) {
-						if (response.success) {
+						if (response && response.success) {
 							updateRowInTable(response.data);
+							
 							$('#editUserModal').modal('hide');
 							showToast('Usuario actualizado exitosamente.', 'success');
 						} else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							$('#editUserModal').modal('hide');
 							showToast('Hubo un error al actualizar el usuario.', 'error');
 						}
 					},
-					error: function() {
+					error: function(xhr) {
+						let errorResponse;
+						try {
+							errorResponse = JSON.parse(xhr.responseText);
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+							showToast('Hubo un error al actualizar el usuario.', 'error');
+						} catch (e) {
+							console.error("Unexpected error:", xhr.status, xhr.responseText);
+							showToast('Hubo un error inesperado.', 'error');
+						}
+						
 						$('#editUserModal').modal('hide');
-						showToast('Hubo un error al actualizar el usuario.', 'error');
 					},
 					complete: function() {
 						$("#editUserSpinner").addClass("d-none");
@@ -637,6 +661,70 @@ function validateEditField(field) {
 	return isValid;
 }
 
+function handleDeleteUser() {
+	var isSubmitted = false;
+
+	$('#confirmDeleteUser').off('click').on('click', function() {
+		if (isSubmitted) return;
+		isSubmitted = true;
+
+		$('#confirmDeleteUserIcon').addClass('d-none');
+		$('#confirmDeleteUserSpinner').removeClass('d-none');
+		$('#confirmDeleteUser').prop('disabled', true);
+
+		var userId = $(this).data('userId');
+
+		$.ajax({
+			url: '/bookstudio/UserServlet',
+			type: 'POST',
+			data: {
+				type: 'delete',
+				userId: userId
+			},
+			dataType: 'json',
+			success: function(response) {
+				if (response && response.success) {
+					var table = $('#userTable').DataTable();
+
+					table.rows().every(function() {
+						var data = this.data();
+						if (data[0] == userId) {
+							this.remove();
+						}
+					});
+
+					table.draw();
+
+					$('#deleteUserModal').modal('hide');
+					showToast("Usuario eliminado exitosamente.", 'success');
+				} else {
+					console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+					$('#deleteUserModal').modal('hide');
+					showToast("Hubo un error al eliminar el usuario.", 'error');
+				}
+			},
+			error: function() {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al eliminar el usuario.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
+				
+				$('#deleteUserModal').modal('hide');
+			},
+			complete: function() {
+				$('#confirmDeleteUserSpinner').addClass('d-none');
+				$('#confirmDeleteUserIcon').removeClass('d-none');
+				$('#confirmDeleteUser').prop('disabled', false);
+			}
+		});
+	});
+}
+
 /*****************************************
  * MODAL MANAGEMENT
  *****************************************/
@@ -700,8 +788,16 @@ function loadModalData() {
 					$('#detailsUserSvg').removeClass('d-none');
 				}
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del usuario:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading user details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del usuario.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -753,8 +849,16 @@ function loadModalData() {
 
 				$('#editUserProfilePhoto').val('');
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del usuario para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading user details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del usuario.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 
@@ -770,59 +874,8 @@ function loadModalData() {
 	$('#deleteUserModal').on('show.bs.modal', function(event) {
 		var button = $(event.relatedTarget);
 		var userId = button.data('id');
-		$('#confirmDeleteUser').data('id', userId);
 
-		var isSubmitted = false;
-
-		$('#confirmDeleteUser').off('click').on('click', function() {
-			if (isSubmitted) return;
-			isSubmitted = true;
-
-			$('#confirmDeleteUserIcon').addClass('d-none');
-			$('#confirmDeleteUserSpinner').removeClass('d-none');
-			$('#confirmDeleteUser').prop('disabled', true);
-
-			var userId = $('#confirmDeleteUser').data('id');
-
-			$.ajax({
-				url: '/bookstudio/UserServlet',
-				type: 'POST',
-				data: {
-					type: 'delete',
-					userId: userId
-				},
-				dataType: 'json',
-				success: function(response) {
-					if (response.success) {
-						var table = $('#userTable').DataTable();
-
-						table.rows().every(function() {
-							var data = this.data();
-							if (data[0] == userId) {
-								this.remove();
-							}
-						});
-
-						table.draw();
-
-						$('#deleteUserModal').modal('hide');
-						showToast(response.message, 'success');
-					} else {
-						$('#deleteUserModal').modal('hide');
-						showToast(response.message, 'error');
-					}
-				},
-				error: function() {
-					$('#deleteUserModal').modal('hide');
-					showToast('Hubo un error al eliminar el usuario.', 'error');
-				},
-				complete: function() {
-					$('#confirmDeleteUserSpinner').addClass('d-none');
-					$('#confirmDeleteUserIcon').removeClass('d-none');
-					$('#confirmDeleteUser').prop('disabled', false);
-				}
-			});
-		});
+		$('#confirmDeleteUser').data('userId', userId);
 	});
 }
 
@@ -976,7 +1029,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -1041,7 +1094,7 @@ function generatePDF(dataTable) {
 	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(14);
-	doc.text("Lista de Usuarios", pageWidth / 2, topMargin + 13, { align: "center" });
+	doc.text("Lista de usuarios", pageWidth / 2, topMargin + 13, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(8);
@@ -1063,7 +1116,7 @@ function generatePDF(dataTable) {
 	doc.autoTable({
 		startY: topMargin + 25,
 		margin: { left: margin, right: margin },
-		head: [['ID', 'Nombre de Usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
+		head: [['ID', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
 		body: data,
 		theme: 'grid',
 		headStyles: {
@@ -1085,7 +1138,7 @@ function generatePDF(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Usuarios_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_usuarios_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1115,7 +1168,7 @@ function generateExcel(dataTable) {
 
 	worksheet.mergeCells('A1:F1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Usuarios - BookStudio';
+	titleCell.value = 'Lista de usuarios - BookStudio';
 	titleCell.font = { name: 'Arial', size: 14, bold: true };
 	titleCell.alignment = { horizontal: 'center' };
 
@@ -1134,7 +1187,7 @@ function generateExcel(dataTable) {
 	];
 
 	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Nombre de Usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
+	headerRow.values = ['ID', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
 	headerRow.eachCell((cell) => {
 		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1160,7 +1213,7 @@ function generateExcel(dataTable) {
 
 	data.forEach(item => worksheet.addRow(item));
 
-	const filename = `Lista_de_Usuarios_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_usuarios_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -1179,6 +1232,7 @@ $(document).ready(function() {
 	loadUsers();
 	handleAddUserForm();
 	handleEditUserForm();
+	handleDeleteUser();
 	loadModalData();
 	$('.selectpicker').selectpicker();
 	setupBootstrapSelectDropdownStyles();

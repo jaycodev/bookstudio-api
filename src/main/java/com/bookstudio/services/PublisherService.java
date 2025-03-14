@@ -2,9 +2,9 @@ package com.bookstudio.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -15,8 +15,6 @@ import com.bookstudio.dao.PublisherDao;
 import com.bookstudio.dao.impl.LiteraryGenreDaoImpl;
 import com.bookstudio.dao.impl.NationalityDaoImpl;
 import com.bookstudio.dao.impl.PublisherDaoImpl;
-import com.bookstudio.models.LiteraryGenre;
-import com.bookstudio.models.Nationality;
 import com.bookstudio.models.Publisher;
 import com.bookstudio.utils.SelectOptions;
 
@@ -29,11 +27,7 @@ public class PublisherService {
 		List<Publisher> publisherData = publisherDao.listPublishers();
 		
 		for (Publisher publisher : publisherData) {
-			byte[] photo = publisher.getPhoto();
-			if (photo != null) {
-				String photoBase64 = Base64.getEncoder().encodeToString(photo);
-				publisher.setPhotoBase64("data:image/jpeg;base64," + photoBase64);
-			}
+			encodePublisherPhoto(publisher);
 		}
 		
 		return publisherData;
@@ -41,12 +35,7 @@ public class PublisherService {
 
 	public Publisher getPublisher(String publisherId) throws Exception {
 		Publisher publisher = publisherDao.getPublisher(publisherId);
-		byte[] photo = publisher.getPhoto();
-		
-		if (photo != null) {
-			String photoBase64 = Base64.getEncoder().encodeToString(photo);
-			publisher.setPhotoBase64("data:image/jpeg;base64," + photoBase64);
-		}
+		encodePublisherPhoto(publisher);
 		
 		return publisher;
 	}
@@ -60,14 +49,7 @@ public class PublisherService {
 		String address = getUtf8Parameter(request, "addPublisherAddress");
 		String status = getUtf8Parameter(request, "addPublisherStatus");
 
-		byte[] photo = null;
-		try {
-			InputStream inputStream = request.getPart("addPublisherPhoto").getInputStream();
-			if (inputStream.available() > 0) {
-				photo = inputStream.readAllBytes();
-			}
-		} catch (Exception e) {
-		}
+		byte[] photo = readPhoto(request, "addPublisherPhoto");
 
 		Publisher publisher = new Publisher();
 		publisher.setName(name);
@@ -80,10 +62,8 @@ public class PublisherService {
 		publisher.setPhoto(photo);
 
 		Publisher createdPublisher = publisherDao.createPublisher(publisher);
-		if (createdPublisher.getPhoto() != null) {
-			String photoBase64 = Base64.getEncoder().encodeToString(createdPublisher.getPhoto());
-			createdPublisher.setPhotoBase64("data:image/jpeg;base64," + photoBase64);
-		}
+		encodePublisherPhoto(createdPublisher);
+		
 		return createdPublisher;
 	}
 
@@ -102,13 +82,7 @@ public class PublisherService {
 		if ("true".equals(deletePhoto)) {
 			photo = null;
 		} else {
-			try {
-				InputStream inputStream = request.getPart("editPublisherPhoto").getInputStream();
-				if (inputStream.available() > 0) {
-					photo = inputStream.readAllBytes();
-				}
-			} catch (Exception e) {
-			}
+			photo = readPhoto(request, "editPublisherPhoto");
 			if (photo == null) {
 				Publisher currentPublisher = publisherDao.getPublisher(publisherId);
 				photo = currentPublisher.getPhoto();
@@ -132,12 +106,10 @@ public class PublisherService {
 	public SelectOptions populateSelects() throws Exception {
 		SelectOptions selectOptions = new SelectOptions();
 		
-		List<Nationality> nationalities = nationalityDao.populateNationalitySelect();
-		selectOptions.setNationalities(nationalities);
-
-		List<LiteraryGenre> literayGenres = literaryGenreDao.populateLiteraryGenreSelect();
-		selectOptions.setLiteraryGenres(literayGenres);
-
+		selectOptions.setNationalities(nationalityDao.populateNationalitySelect());
+		
+		selectOptions.setLiteraryGenres(literaryGenreDao.populateLiteraryGenreSelect());
+		
 		return selectOptions;
 	}
 
@@ -145,10 +117,34 @@ public class PublisherService {
 		Part part = request.getPart(fieldName);
 		if (part != null) {
 			try (InputStream is = part.getInputStream()) {
-				return new String(is.readAllBytes(), "UTF-8");
+				return new String(is.readAllBytes(), StandardCharsets.UTF_8);
 			}
 		}
 		
 		return "";
+	}
+
+	private byte[] readPhoto(HttpServletRequest request, String partName) {
+		try {
+			Part part = request.getPart(partName);
+			if (part != null) {
+				InputStream inputStream = part.getInputStream();
+				if (inputStream.available() > 0) {
+					return inputStream.readAllBytes();
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error reading photo from part '" + partName + "': " + e.getMessage());
+		}
+		
+		return null;
+	}
+
+	private void encodePublisherPhoto(Publisher publisher) {
+		byte[] photo = publisher.getPhoto();
+		if (photo != null) {
+			String photoBase64 = Base64.getEncoder().encodeToString(photo);
+			publisher.setPhotoBase64("data:image/jpeg;base64," + photoBase64);
+		}
 	}
 }

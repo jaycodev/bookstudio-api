@@ -1,5 +1,6 @@
 /**
  * courses.js
+ * 
  * Manages the initialization, data loading, and configuration of the courses table,  
  * as well as handling modals for creating, viewing, and editing course details.
  * Also supports logical delete (status change) operations on course records.
@@ -138,9 +139,18 @@ function loadCourses() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing loan data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los cursos.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyCourses');
 			tableBody.empty();
@@ -231,18 +241,28 @@ function handleAddCourseForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					if (response && response.courseId) {
-						addRowToTable(response);
+					if (response && response.success) {
+						addRowToTable(response.data);
 						$('#addCourseModal').modal('hide');
 						showToast('Curso agregado exitosamente.', 'success');
 					} else {
+						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 						$('#addCourseModal').modal('hide');
 						showToast('Hubo un error al agregar el curso.', 'error');
 					}
 				},
-				error: function() {
+				error: function(xhr) {
+					let errorResponse;
+					try {
+						errorResponse = JSON.parse(xhr.responseText);
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						showToast('Hubo un error al agregar el curso.', 'error');
+					} catch (e) {
+						console.error("Unexpected error:", xhr.status, xhr.responseText);
+						showToast('Hubo un error inesperado.', 'error');
+					}
+					
 					$('#addCourseModal').modal('hide');
-					showToast('Hubo un error al agregar el curso.', 'error');
 				},
 				complete: function() {
 					$("#addCourseSpinner").addClass("d-none");
@@ -357,18 +377,29 @@ function handleEditCourseForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					if (response.success) {
+					if (response && response.success) {
 						updateRowInTable(response.data);
+						
 						$('#editCourseModal').modal('hide');
 						showToast('Curso actualizado exitosamente.', 'success');
 					} else {
+						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 						$('#editCourseModal').modal('hide');
 						showToast('Hubo un error al actualizar el curso.', 'error');
 					}
 				},
-				error: function() {
+				error: function(xhr) {
+					let errorResponse;
+					try {
+						errorResponse = JSON.parse(xhr.responseText);
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						showToast('Hubo un error al actualizar el curso.', 'error');
+					} catch (e) {
+						console.error("Unexpected error:", xhr.status, xhr.responseText);
+						showToast('Hubo un error inesperado.', 'error');
+					}
+					
 					$('#editCourseModal').modal('hide');
-					showToast('Hubo un error al actualizar el curso.', 'error');
 				},
 				complete: function() {
 					$("#editCourseSpinner").addClass("d-none");
@@ -481,13 +512,21 @@ function loadModalData() {
 				$('#detailsCourseLevel').text(data.level);
 				$('#detailsCourseStatus').html(
 					data.status === 'activo'
-						? '<span class="badge bg-success p-1">Activo</span>'
-						: '<span class="badge bg-danger p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
 				$('#detailsCourseDescription').text(data.description);
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del curso:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading course details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del curso.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -544,8 +583,16 @@ function loadModalData() {
 					validateEditField($(this), true);
 				});
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del curso para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading course details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del curso.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -558,7 +605,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -625,7 +672,7 @@ function generatePDF(dataTable) {
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(18);
 	doc.setTextColor(40);
-	doc.text("Lista de Cursos", pageWidth / 2, topMargin + 18, { align: "center" });
+	doc.text("Lista de cursos", pageWidth / 2, topMargin + 18, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(10);
@@ -676,7 +723,7 @@ function generatePDF(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Cursos_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_cursos_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -706,7 +753,7 @@ function generateExcel(dataTable) {
 
 	worksheet.mergeCells('A1:E1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Cursos - BookStudio';
+	titleCell.value = 'Lista de cursos - BookStudio';
 	titleCell.font = { name: 'Arial', size: 14, bold: true };
 	titleCell.alignment = { horizontal: 'center' };
 
@@ -762,7 +809,7 @@ function generateExcel(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Cursos_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_cursos_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

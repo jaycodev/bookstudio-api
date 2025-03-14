@@ -1,5 +1,6 @@
 /**
  * books.js
+ * 
  * Manages the initialization, data loading, and configuration of the books table,  
  * as well as handling modals for creating, viewing, and editing book details.
  * Also supports logical delete (status change) operations on book records.
@@ -40,7 +41,12 @@ function populateSelectOptions() {
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
-		success: function(data) {
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
 			if (data) {
 				authorList = data.authors;
 				publisherList = data.publishers;
@@ -58,8 +64,14 @@ function populateSelectOptions() {
 				populateSelect('#editBookGenre', genreList, 'genreId', 'genreName');
 			}
 		},
-		error: function(status, error) {
-			console.error("Error al obtener los datos para los select:", status, error);
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
 		}
 	});
 }
@@ -216,9 +228,18 @@ function loadBooks() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing book data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los libros.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyBooks');
 			tableBody.empty();
@@ -311,18 +332,28 @@ function handleAddBookForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					if (response && response.bookId) {
-						addRowToTable(response);
+					if (response && response.success) {
+						addRowToTable(response.data);
 						$('#addBookModal').modal('hide');
 						showToast('Libro agregado exitosamente.', 'success');
 					} else {
+						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 						$('#addBookModal').modal('hide');
 						showToast('Hubo un error al agregar el libro.', 'error');
 					}
 				},
-				error: function() {
+				error: function(xhr) {
+					let errorResponse;
+					try {
+						errorResponse = JSON.parse(xhr.responseText);
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						showToast('Hubo un error al agregar el libro.', 'error');
+					} catch (e) {
+						console.error("Unexpected error:", xhr.status, xhr.responseText);
+						showToast('Hubo un error inesperado.', 'error');
+					}
+					
 					$('#addBookModal').modal('hide');
-					showToast('Hubo un error al agregar el libro.', 'error');
 				},
 				complete: function() {
 					$("#addBookSpinner").addClass("d-none");
@@ -459,18 +490,29 @@ function handleEditBookForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					if (response.success) {
+					if (response && response.success) {
 						updateRowInTable(response.data);
+						
 						$('#editBookModal').modal('hide');
 						showToast('Libro actualizado exitosamente.', 'success');
 					} else {
+						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 						$('#editBookModal').modal('hide');
 						showToast('Hubo un error al actualizar el libro.', 'error');
 					}
 				},
-				error: function() {
+				error: function(xhr) {
+					let errorResponse;
+					try {
+						errorResponse = JSON.parse(xhr.responseText);
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						showToast('Hubo un error al actualizar el libro.', 'error');
+					} catch (e) {
+						console.error("Unexpected error:", xhr.status, xhr.responseText);
+						showToast('Hubo un error inesperado.', 'error');
+					}
+					
 					$('#editBookModal').modal('hide');
-					showToast('Hubo un error al actualizar el libro.', 'error');
 				},
 				complete: function() {
 					$("#editBookSpinner").addClass("d-none");
@@ -613,12 +655,20 @@ function loadModalData() {
 				$('#detailsBookGenre').text(data.genreName);
 				$('#detailsBookStatus').html(
 					data.status === 'activo'
-						? '<span class="badge bg-success p-1">Activo</span>'
-						: '<span class="badge bg-danger p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del libro:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading book details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del libro.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -677,8 +727,16 @@ function loadModalData() {
 					validateEditField($(this), true);
 				});
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del libro para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading book details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del libro.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -691,7 +749,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -782,7 +840,7 @@ function generatePDF(dataTable) {
 
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(14);
-	doc.text("Lista de Libros", pageWidth / 2, topMargin + 13, { align: "center" });
+	doc.text("Lista de libros", pageWidth / 2, topMargin + 13, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(8);
@@ -807,7 +865,7 @@ function generatePDF(dataTable) {
 	doc.autoTable({
 		startY: topMargin + 25,
 		margin: { left: margin, right: margin },
-		head: [['ID', 'Título', 'Ejemplares Disponibles', 'Ejemplares Prestados', 'Autor', 'Editorial', 'Estado']],
+		head: [['ID', 'Título', 'Ejemplares disponibles', 'Ejemplares prestados', 'Autor', 'Editorial', 'Estado']],
 		body: data,
 		theme: 'grid',
 		headStyles: {
@@ -831,7 +889,7 @@ function generatePDF(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Libros_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_libros_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -861,7 +919,7 @@ function generateExcel(dataTable) {
 
 	worksheet.mergeCells('A1:G1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Libros - BookStudio';
+	titleCell.value = 'Lista de libros - BookStudio';
 	titleCell.font = { name: 'Arial', size: 14, bold: true };
 	titleCell.alignment = { horizontal: 'center' };
 
@@ -881,7 +939,7 @@ function generateExcel(dataTable) {
 	];
 
 	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Título', 'Ejemplares Disponibles', 'Ejemplares Prestados', 'Autor', 'Editorial', 'Estado'];
+	headerRow.values = ['ID', 'Título', 'Ejemplares disponibles', 'Ejemplares prestados', 'Autor', 'Editorial', 'Estado'];
 	headerRow.eachCell((cell) => {
 		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -930,7 +988,7 @@ function generateExcel(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Libros_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_libros_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
