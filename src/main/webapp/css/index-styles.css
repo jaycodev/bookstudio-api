@@ -614,11 +614,13 @@ textarea {
 	border-left: 4px solid var(--bs-secondary) !important;
 }
 
-/* Toast light color */
-[data-bs-theme="light"] .bg-success-subtle {
-	background-color: #b8dfc9 !important;
+/* background colors for success and danger states */
+[data-bs-theme="light"] .bg-success-subtle, 
+[data-bs-theme="light"] .alert-success {
+    background-color: #b8dfc9 !important;
 }
 
-[data-bs-theme="light"] .bg-danger-subtle {
-	background-color: #f4c2c6 !important;
+[data-bs-theme="light"] .bg-danger-subtle, 
+[data-bs-theme="light"] .alert-danger {
+    background-color: #f4c2c6 !important;
 }

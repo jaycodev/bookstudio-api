@@ -60,7 +60,7 @@
                     	<!-- Logout Button -->
                     	<button class="dropdown-item rounded-2 dropdown-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     		<i class="bi bi-box-arrow-right me-2"></i>
-                    		Cerrar Sesión
+                    		Cerrar sesión
                     	</button>
                     </li>
                 </ul>
@@ -75,7 +75,7 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h5 class="modal-title text-body-emphasis" id="logoutModalLabel">Confirmar Cierre de Sesión</h5>
+                <h5 class="modal-title text-body-emphasis" id="logoutModalLabel">Confirmar cierre de sesión</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar Sesión"></button>
             </div>
             
@@ -98,7 +98,7 @@
                     <!-- Logout Button -->
                     <button type="submit" class="btn btn-danger d-flex align-items-center">
                     	<i class="bi bi-box-arrow-right me-2"></i>
-                    	Cerrar Sesión
+                    	Cerrar sesión
                     </button>
                 </form>
             </div>

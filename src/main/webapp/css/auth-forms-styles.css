@@ -135,13 +135,6 @@ a:hover {
 	font-weight: 600;
 }
 
-/* Background blur effect */
-.bg-blur {
-	background: rgba(255, 255, 255, 0);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-}
-
 /* Active Dropdown Items */
 .dropdown-item.active, .dropdown-item:active {
 	color: var(--bs-dropdown-link-color);
@@ -230,76 +223,6 @@ a:hover {
 	border-bottom: 1px solid var(--bs-border-color) !important;
 }
 
-/* Responsive Styles */
-@media ( max-width : 576px) {
-	.bg-blur {
-		padding: 1.5rem;
-		width: 90%;
-		margin: 0 auto;
-	}
-	.logo {
-		width: 35px;
-	}
-	.text-logo {
-		font-size: 0.9rem;
-	}
-	.form-control {
-		font-size: 0.95rem;
-		padding: 0.375rem 0.5rem;
-	}
-	.input-group-text {
-		padding: 0.375rem 0.5rem;
-	}
-	.form-check-label, small {
-		font-size: 0.8rem;
-	}
-	.btn-lg {
-		padding: 0.5rem 1rem;
-		font-size: 1rem;
-	}
-}
-
-@media ( max-width : 375px) {
-	.bg-blur {
-		padding: 1.25rem;
-		width: 96%;
-	}
-	.logo {
-		width: 30px;
-	}
-	.form-check-label, small, .text-logo {
-		font-size: 0.75rem;
-	}
-	body {
-		font-size: 0.9rem;
-	}
-	h2 {
-		font-size: 1.6rem !important;
-	}
-	p {
-		font-size: 0.85rem;
-	}
-	.dropdown.position-fixed {
-		bottom: 5px;
-		right: 5px;
-	}
-	.dropdown.position-fixed .btn {
-		padding: 0.25rem 0.5rem;
-	}
-}
-
-@media ( max-height : 550px) {
-	html, body {
-		overflow-y: auto;
-	}
-	.container-fluid.vh-100 {
-		height: auto !important;
-		min-height: 100vh;
-		padding-top: 1rem;
-		padding-bottom: 1rem;
-	}
-}
-
 /* Checkbox styles for Light Theme */
 [data-bs-theme="light"] .form-check-input {
 	background-color: var(--bg-secondary-light);
@@ -333,11 +256,13 @@ a:hover {
 	box-shadow: none;
 }
 
-/* Subtle background colors for success and danger states */
-[data-bs-theme="light"] .bg-success-subtle {
-	background-color: #b8dfc9 !important;
+/* background colors for success and danger states */
+[data-bs-theme="light"] .bg-success-subtle, 
+[data-bs-theme="light"] .alert-success {
+    background-color: #b8dfc9 !important;
 }
 
-[data-bs-theme="light"] .bg-danger-subtle {
-	background-color: #f4c2c6 !important;
+[data-bs-theme="light"] .bg-danger-subtle, 
+[data-bs-theme="light"] .alert-danger {
+    background-color: #f4c2c6 !important;
 }
