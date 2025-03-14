@@ -2,7 +2,7 @@
 CREATE DATABASE bookstudio_db;
 USE bookstudio_db;
 
--- CREATE TABLES
+---------------------- CREATE TABLES ----------------------
 -- Faculties table
 CREATE TABLE Faculties (
     FacultyID INT AUTO_INCREMENT PRIMARY KEY,
@@ -136,7 +136,7 @@ CREATE TABLE PasswordResetTokens (
     CONSTRAINT FK_Email FOREIGN KEY (Email) REFERENCES Users(Email) ON DELETE CASCADE
 );
 
--- INSERT DATA
+---------------------- INSERT DATA ----------------------
 -- Faculties
 INSERT INTO Faculties (FacultyName) VALUES
 ('Ingeniería'), ('Ciencias Sociales'), ('Medicina'), ('Derecho'), ('Arquitectura'),
@@ -153,7 +153,7 @@ INSERT INTO LiteraryGenres (GenreName) VALUES
 ('Periodismo'), ('Narrativa'), ('Comedia'), ('Tragedia'), ('Lírica'),
 ('Cuento'), ('Teatro'), ('Crítica literaria'), ('Literatura infantil'), ('Satírico');
 
--- Genres
+-- Genres  
 INSERT INTO Genres (GenreName) VALUES
 ('Fantasía'), ('Ciencia Ficción'), ('Misterio'), ('Aventura'), ('Novela negra'),
 ('Novela histórica'), ('Terror'), ('Romance'), ('Distopía'), ('Thriller'),
@@ -163,7 +163,7 @@ INSERT INTO Genres (GenreName) VALUES
 ('Filosofía'), ('Derecho'), ('Política'), ('Economía'), ('Administración'),
 ('Ingeniería'), ('Ciencias de la computación'), ('Programación'), ('Arte'),
 ('Música'), ('Cine'), ('Fotografía'), ('Arquitectura'), ('Deportes'),
-('Gastronomía'), ('Viajes'), ('Religión'), ('Mitología'), ('Astrología');
+('Gastronomía'), ('Viajes'), ('Religión'), ('Mitología'), ('Astrología'), ('Poesía');
 
 -- Nationalities
 INSERT INTO Nationalities (NationalityName) VALUES
@@ -190,56 +190,56 @@ INSERT INTO Nationalities (NationalityName) VALUES
 INSERT INTO Authors (Name, NationalityID, LiteraryGenreID, BirthDate, Status) VALUES
 ('Gabriel García Márquez', 19, 1, '1927-03-06', 'activo'),
 ('J.K. Rowling', 12, 2, '1965-07-31', 'activo'),
-('Mario Vargas Llosa', 71, 3, '1936-03-28', 'activo'),
-('Isabel Allende', 17, 4, '1942-08-02', 'activo'),
-('Jorge Luis Borges', 5, 3, '1899-08-24', 'activo'),
+('Mario Vargas Llosa', 71, 17, '1936-03-28', 'activo'),
+('Isabel Allende', 17, 1, '1942-08-02', 'activo'),
+('Jorge Luis Borges', 5, 2, '1899-08-24', 'activo'),
 ('Pablo Neruda', 17, 4, '1904-07-12', 'activo'),
-('Julio Cortázar', 5, 3, '1914-08-26', 'activo'),
-('Miguel de Cervantes', 28, 3, '1547-09-29', 'activo'),
+('Julio Cortázar', 5, 17, '1914-08-26', 'activo'),
+('Miguel de Cervantes', 28, 11, '1547-09-29', 'activo'),
 ('Federico García Lorca', 28, 4, '1898-06-05', 'activo'),
 ('Octavio Paz', 61, 4, '1914-03-31', 'activo'),
-('Ernest Hemingway', 29, 3, '1899-07-21', 'activo'),
-('Virginia Woolf', 12, 3, '1882-01-25', 'activo'),
-('Franz Kafka', 16, 3, '1883-07-03', 'activo'),
-('Charles Dickens', 12, 3, '1812-02-07', 'activo'),
-('Stephen King', 29, 2, '1947-09-21', 'activo'),
+('Ernest Hemingway', 29, 17, '1899-07-21', 'activo'),
+('Virginia Woolf', 12, 17, '1882-01-25', 'activo'),
+('Franz Kafka', 16, 17, '1883-07-03', 'activo'),
+('Charles Dickens', 12, 17, '1812-02-07', 'activo'),
+('Stephen King', 29, 12, '1947-09-21', 'activo'),
 ('Emily Dickinson', 29, 4, '1830-12-10', 'activo'),
-('Albert Camus', 36, 6, '1913-11-07', 'activo'),
+('Albert Camus', 36, 17, '1913-11-07', 'activo'),
 ('Gabriela Mistral', 17, 4, '1889-04-07', 'activo'),
 ('Oscar Wilde', 48, 5, '1854-10-16', 'activo'),
-('Edgar Allan Poe', 29, 9, '1809-01-19', 'activo'),
-('Juan Rulfo', 61, 3, '1917-05-16', 'activo'),
-('George Orwell', 12, 3, '1903-06-25', 'activo'),
-('Mary Shelley', 12, 7, '1797-08-30', 'activo'),
+('Edgar Allan Poe', 29, 8, '1809-01-19', 'activo'),
+('Juan Rulfo', 61, 17, '1917-05-16', 'activo'),
+('George Orwell', 12, 17, '1903-06-25', 'activo'),
+('Mary Shelley', 12, 3, '1797-08-30', 'activo'),
 ('Miguel Ángel Asturias', 40, 1, '1899-10-19', 'activo'),
-('Agatha Christie', 12, 9, '1890-09-15', 'activo');
+('Agatha Christie', 12, 8, '1890-09-15', 'activo');
 
 -- Publishers
 INSERT INTO Publishers (Name, NationalityID, LiteraryGenreID, FoundationYear, Website, Address, Status) VALUES
-('Penguin Random House', 29, 3, 1925, 'https://www.penguinrandomhouse.com', '555 Editorial St', 'activo'),
-('HarperCollins', 29, 3, 1817, 'https://www.harpercollins.com', '789 Harper Ave', 'activo'),
-('Alfaguara', 28, 3, 1964, 'https://www.alfaguara.com', 'Calle Editores 123', 'activo'),
-('Planeta', 28, 3, 1949, 'https://www.planeta.es', 'Av. Diagonal 662', 'activo'),
-('Anagrama', 28, 3, 1969, 'https://www.anagrama-ed.es', 'Calle Anagrama 45', 'activo'),
-('Tusquets', 28, 3, 1969, 'https://www.tusquetseditores.com', 'Av. Diagonal 928', 'activo'),
-('Seix Barral', 28, 3, 1911, 'https://www.seix-barral.es', 'Av. Editorial 78', 'activo'),
+('Penguin Random House', 29, 17, 1925, 'https://www.penguinrandomhouse.com', '555 Editorial St', 'activo'),
+('HarperCollins', 29, 17, 1817, 'https://www.harpercollins.com', '789 Harper Ave', 'activo'),
+('Alfaguara', 28, 17, 1964, 'https://www.alfaguara.com', 'Calle Editores 123', 'activo'),
+('Planeta', 28, 17, 1949, 'https://www.planeta.es', 'Av. Diagonal 662', 'activo'),
+('Anagrama', 28, 17, 1969, 'https://www.anagrama-ed.es', 'Calle Anagrama 45', 'activo'),
+('Tusquets', 28, 17, 1969, 'https://www.tusquetseditores.com', 'Av. Diagonal 928', 'activo'),
+('Seix Barral', 28, 17, 1911, 'https://www.seix-barral.es', 'Av. Editorial 78', 'activo'),
 ('Salamandra', 28, 2, 1989, 'https://www.salamandra.info', 'Calle Salamandra 12', 'activo'),
-('Ediciones B', 28, 3, 1986, 'https://www.edicionesb.com', 'Plaza Editores 34', 'activo'),
-('Siruela', 28, 2, 1982, 'https://www.siruela.com', 'Calle del Libro 56', 'activo'),
-('Gallimard', 36, 3, 1911, 'https://www.gallimard.fr', 'Rue de Grenelle 5', 'activo'),
+('Ediciones B', 28, 17, 1986, 'https://www.edicionesb.com', 'Plaza Editores 34', 'activo'),
+('Siruela', 28, 6, 1982, 'https://www.siruela.com', 'Calle del Libro 56', 'activo'),
+('Gallimard', 36, 17, 1911, 'https://www.gallimard.fr', 'Rue de Grenelle 5', 'activo'),
 ('Oxford University Press', 12, 6, 1586, 'https://www.oup.com', 'Great Clarendon Street', 'activo'),
 ('Pearson', 12, 6, 1844, 'https://www.pearson.com', 'London Bridge St', 'activo'),
 ('McGraw-Hill', 29, 6, 1917, 'https://www.mheducation.com', 'Pennsylvania Ave', 'activo'),
 ('Fondo de Cultura Económica', 61, 6, 1934, 'https://www.fondodeculturaeconomica.com', 'Av. del Libro 78', 'activo'),
-('Hachette', 36, 3, 1826, 'https://www.hachette.com', 'Rue de Fleurus 15', 'activo'),
-('Simon & Schuster', 29, 3, 1924, 'https://www.simonandschuster.com', 'Rockefeller Plaza', 'activo'),
-('Macmillan', 12, 3, 1843, 'https://www.macmillan.com', 'Hampshire Road 12', 'activo'),
+('Hachette', 36, 17, 1826, 'https://www.hachette.com', 'Rue de Fleurus 15', 'activo'),
+('Simon & Schuster', 29, 17, 1924, 'https://www.simonandschuster.com', 'Rockefeller Plaza', 'activo'),
+('Macmillan', 12, 17, 1843, 'https://www.macmillan.com', 'Hampshire Road 12', 'activo'),
 ('Springer', 3, 6, 1842, 'https://www.springer.com', 'Tiergartenstrasse 17', 'activo'),
 ('Wiley', 29, 6, 1807, 'https://www.wiley.com', 'River Street 111', 'activo'),
 ('Elsevier', 42, 6, 1880, 'https://www.elsevier.com', 'Radarweg 29', 'activo'),
 ('Paidós', 5, 6, 1945, 'https://www.paidos.com', 'Av. Independencia 1668', 'activo'),
-('Grijalbo', 61, 3, 1939, 'https://www.grijalbo.com', 'Av. Insurgentes 1822', 'activo'),
-('Sudamericana', 5, 3, 1939, 'https://www.sudamericana.com', 'Humberto I 555', 'activo'),
+('Grijalbo', 61, 17, 1939, 'https://www.grijalbo.com', 'Av. Insurgentes 1822', 'activo'),
+('Sudamericana', 5, 17, 1939, 'https://www.sudamericana.com', 'Humberto I 555', 'activo'),
 ('Cambridge University Press', 12, 6, 1534, 'https://www.cambridge.org', 'Cambridge Street 23', 'activo');
 
 -- Courses
@@ -300,31 +300,31 @@ INSERT INTO Students (DNI, FirstName, LastName, Address, Phone, Email, BirthDate
 
 -- Books
 INSERT INTO Books (Title, TotalCopies, LoanedCopies, AuthorID, PublisherID, CourseID, ReleaseDate, GenreID, Status) VALUES
-('Álgebra Superior', 50, 1, 1, 1, 1, '2020-01-15', 12, 'activo'),
-('Harry Potter y la piedra filosofal', 55, 1, 2, 2, 2, '1997-06-26', 2, 'activo'),
-('Cien años de soledad', 30, 2, 1, 3, 15, '1967-05-30', 1, 'activo'),
-('1984', 25, 1, 18, 4, 11, '1949-06-08', 7, 'activo'),
-('Don Quijote de la Mancha', 20, 0, 4, 5, 2, '1605-01-16', 3, 'activo'),
-('Rayuela', 15, 1, 3, 6, 15, '1963-06-28', 3, 'activo'),
-('El amor en los tiempos del cólera', 18, 0, 1, 7, 15, '1985-12-08', 3, 'activo'),
-('La metamorfosis', 22, 1, 9, 8, 11, '1915-10-15', 3, 'activo'),
-('Poema 20', 12, 0, 2, 9, 15, '1924-03-14', 4, 'activo'),
-('Pedro Páramo', 17, 0, 17, 10, 15, '1955-03-27', 3, 'activo'),
-('Orgullo y prejuicio', 24, 1, 8, 11, 15, '1813-01-28', 3, 'activo'),
-('El principito', 35, 2, 6, 12, 15, '1943-04-06', 10, 'activo'),
-('El resplandor', 20, 1, 11, 13, 10, '1977-01-28', 2, 'activo'),
+('Álgebra Superior', 50, 1, 1, 1, 1, '2020-01-15', 19, 'activo'),
+('Harry Potter y la piedra filosofal', 55, 1, 2, 2, 2, '1997-06-26', 1, 'activo'),
+('Cien años de soledad', 30, 2, 1, 3, 15, '1967-05-30', 6, 'activo'),
+('1984', 25, 1, 18, 4, 11, '1949-06-08', 9, 'activo'),
+('Don Quijote de la Mancha', 20, 0, 4, 5, 2, '1605-01-16', 6, 'activo'),
+('Rayuela', 15, 1, 3, 6, 15, '1963-06-28', 6, 'activo'),
+('El amor en los tiempos del cólera', 18, 0, 1, 7, 15, '1985-12-08', 8, 'activo'),
+('La metamorfosis', 22, 1, 9, 8, 11, '1915-10-15', 2, 'activo'),
+('Poema 20', 12, 0, 2, 9, 15, '1924-03-14', 45, 'activo'),
+('Pedro Páramo', 17, 0, 17, 10, 15, '1955-03-27', 6, 'activo'),
+('Orgullo y prejuicio', 24, 1, 8, 11, 15, '1813-01-28', 8, 'activo'),
+('El principito', 35, 2, 6, 12, 15, '1943-04-06', 13, 'activo'),
+('El resplandor', 20, 1, 11, 13, 10, '1977-01-28', 7, 'activo'),
 ('Frankenstein', 15, 0, 19, 14, 15, '1818-01-01', 7, 'activo'),
 ('Ficciones', 18, 1, 5, 15, 15, '1944-06-14', 3, 'activo'),
-('Oliver Twist', 22, 0, 10, 16, 15, '1838-02-01', 3, 'activo'),
-('La naranja mecánica', 17, 1, 18, 17, 11, '1962-05-22', 7, 'activo'),
-('Física Universitaria', 40, 2, 8, 18, 3, '2018-03-15', 11, 'activo'),
-('El extranjero', 25, 0, 13, 19, 11, '1942-05-19', 3, 'activo'),
+('Oliver Twist', 22, 0, 10, 16, 15, '1838-02-01', 6, 'activo'),
+('La naranja mecánica', 17, 1, 18, 17, 11, '1962-05-22', 9, 'activo'),
+('Física Universitaria', 40, 2, 8, 18, 3, '2018-03-15', 20, 'activo'),
+('El extranjero', 25, 0, 13, 19, 11, '1942-05-19', 6, 'activo'),
 ('El retrato de Dorian Gray', 20, 1, 15, 20, 2, '1890-07-01', 3, 'activo'),
-('Cuentos de la selva', 30, 0, 20, 21, 22, '1918-01-01', 11, 'activo'),
-('Química General', 45, 3, 7, 22, 9, '2019-08-12', 12, 'activo'),
-('Los miserables', 22, 1, 4, 23, 17, '1862-04-03', 3, 'activo'),
-('Antología poética', 15, 0, 14, 24, 15, '1958-09-10', 4, 'activo'),
-('El laberinto de la soledad', 18, 1, 6, 25, 11, '1950-02-18', 6, 'activo');
+('Cuentos de la selva', 30, 0, 20, 21, 22, '1918-01-01', 13, 'activo'),
+('Química General', 45, 3, 7, 22, 9, '2019-08-12', 21, 'activo'),
+('Los miserables', 22, 1, 4, 23, 17, '1862-04-03', 6, 'activo'),
+('Antología poética', 15, 0, 14, 24, 15, '1958-09-10', 45, 'activo'),
+('El laberinto de la soledad', 18, 1, 6, 25, 11, '1950-02-18', 24, 'activo');
 
 -- Loans
 INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Observation) VALUES
@@ -353,4 +353,5 @@ INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Ob
 
 -- Users
 INSERT INTO Users (Username, Email, FirstName, LastName, Password, Role, ProfilePhoto) VALUES
-('Admin', 'admin@example.com', 'Admin', 'Admin', 'Admin123@', 'administrador', NULL);
+('Admin', 'admin@example.com', 'Admin', 'Admin', 'Admin123@', 'administrador', NULL),
+('Biblio', 'biblio@example.com', 'Biblio', 'Biblio', 'Biblio123@', 'bibliotecario', NULL);
