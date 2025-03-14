@@ -28,7 +28,7 @@
 	<!-- ===================== Main Content ==================== -->
 	<main class="d-flex flex-column overflow-auto bg-body">
 	    <section class="container mt-3">
-	    	<h2 class="text-center">Configuración de Perfil</h2>
+	    	<h2 class="text-center">Configuración de perfil</h2>
 
 			<div class="d-flex justify-content-center">
 			    <figure class="position-relative">
@@ -94,7 +94,7 @@
 	                    <fieldset class="row">
 	                        <!-- User and Email Section -->
 	                        <div class="col-12 col-md-6 mb-3">
-	                            <label for="editProfileUsername" class="form-label">Nombre de Usuario</label>
+	                            <label for="editProfileUsername" class="form-label">Nombre de usuario</label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control w-100" 
@@ -104,7 +104,7 @@
 	                            >
 	                        </div>
 	                        <div class="col-12 col-md-6 mb-3">
-	                            <label for="editProfileEmail" class="form-label">Correo Electrónico</label>
+	                            <label for="editProfileEmail" class="form-label">Correo electrónico</label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control w-100" 
@@ -146,7 +146,7 @@
 	                        
 	                        <!-- Password Section -->
 	                        <div class="col-12 col-md-6 mb-4 position-relative">
-	                            <label for="currentProfilePassword" class="form-label">Contraseña Actual</label>
+	                            <label for="currentProfilePassword" class="form-label">Contraseña actual</label>
 	                            <div class="input-group">
 	                                <input 
 	                                    type="password" 
@@ -164,7 +164,7 @@
 	                            </div>
 	                        </div>
 	                        <div class="col-12 col-md-6 mb-4 position-relative">
-	                            <label for="editProfilePassword" class="form-label">Contraseña Nueva</label>
+	                            <label for="editProfilePassword" class="form-label">Nueva contraseña</label>
 	                            <div class="input-group">       
 	                                <input 
 	                                    type="password" 
@@ -188,7 +188,7 @@
 	                        	<!-- Update Button -->
 	                        	<button type="submit" class="btn btn-custom-primary w-100 fs-6" id="updateProfileBtn" disabled>
 				                    <span id="updateProfileSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-				                    <span id="updateProfileText">Actualizar Perfil</span>
+				                    <span id="updateProfileText">Actualizar perfil</span>
 				                </button>
 	                        </div>
 	                    </div>
@@ -204,7 +204,7 @@
 			<div class="modal-content">
 				<!-- Modal Header -->
 				<div class="modal-header">
-					<h5 class="modal-title" id="cropperModalLabel">Recortar Foto de Perfil</h5>
+					<h5 class="modal-title" id="cropperModalLabel">Recortar foto de perfil</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				
@@ -237,7 +237,7 @@
 			<div class="modal-content">
 				<!-- Modal Header -->
 				<div class="modal-header">
-					<h5 class="modal-title" id="deletePhotoModalLabel">Confirmar Eliminación</h5>
+					<h5 class="modal-title" id="deletePhotoModalLabel">Confirmar eliminación</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
 				</div>
 				
@@ -269,7 +269,7 @@
 
 	<!-- External Libraries -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js" defer></script>
 

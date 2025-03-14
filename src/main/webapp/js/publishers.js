@@ -1,5 +1,6 @@
 /**
  * publishers.js
+ * 
  * Manages the initialization, data loading, and configuration of the publishers table,  
  * as well as handling modals for creating, viewing, editing publisher details, 
  * and performing logical delete (status change) operations on publishers.
@@ -41,7 +42,12 @@ function populateSelectOptions() {
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
-		success: function(data) {
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
 			if (data) {
 				nationalityList = data.nationalities;
 				literaryGenreList = data.literaryGenres;
@@ -53,8 +59,14 @@ function populateSelectOptions() {
 				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 			}
 		},
-		error: function(status, error) {
-			console.error("Error al obtener los datos para los select:", status, error);
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
 		}
 	});
 }
@@ -195,9 +207,18 @@ function loadPublishers() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing publisher data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de las editoriales.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyPublishers');
 			tableBody.empty();
@@ -317,16 +338,27 @@ function handleAddPublisherForm() {
 					success: function(response) {
 						if (response && response.success) {
 							addRowToTable(response.data);
+							
 							$('#addPublisherModal').modal('hide');
 							showToast('Editorial agregada exitosamente.', 'success');
 						} else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							$('#addPublisherModal').modal('hide');
 							showToast('Hubo un error al agregar la editorial.', 'error');
 						}
 					},
-					error: function() {
+					error: function(xhr) {
+						let errorResponse;
+						try {
+							errorResponse = JSON.parse(xhr.responseText);
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+							showToast('Hubo un error al agregar la editorial.', 'error');
+						} catch (e) {
+							console.error("Unexpected error:", xhr.status, xhr.responseText);
+							showToast('Hubo un error inesperado.', 'error');
+						}
+						
 						$('#addPublisherModal').modal('hide');
-						showToast('Hubo un error al agregar la editorial.', 'error');
 					},
 					complete: function() {
 						$("#addPublisherSpinner").addClass("d-none");
@@ -506,18 +538,29 @@ function handleEditPublisherForm() {
 					processData: false,
 					contentType: false,
 					success: function(response) {
-						if (response.success) {
+						if (response && response.success) {
 							updateRowInTable(response.data);
+							
 							$('#editPublisherModal').modal('hide');
 							showToast('Editorial actualizada exitosamente.', 'success');
 						} else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							$('#editPublisherModal').modal('hide');
 							showToast('Hubo un error al actualizar la editorial.', 'error');
 						}
 					},
-					error: function() {
+					error: function(xhr) {
+						let errorResponse;
+						try {
+							errorResponse = JSON.parse(xhr.responseText);
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+							showToast('Hubo un error al actualizar la editorial.', 'error');
+						} catch (e) {
+							console.error("Unexpected error:", xhr.status, xhr.responseText);
+							showToast('Hubo un error inesperado.', 'error');
+						}
+						
 						$('#editPublisherModal').modal('hide');
-						showToast('Hubo un error al actualizar la editorial.', 'error');
 					},
 					complete: function() {
 						$("#editPublisherSpinner").addClass("d-none");
@@ -663,8 +706,8 @@ function loadModalData() {
 				$('#detailsPublisherAddress').text(data.address);
 				$('#detailsPublisherStatus').html(
 					data.status === 'activo'
-						? '<span class="badge bg-success p-1">Activo</span>'
-						: '<span class="badge bg-danger p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
 				if (data.photoBase64) {
 					$('#detailsPublisherImg').attr('src', data.photoBase64).removeClass('d-none');
@@ -674,8 +717,16 @@ function loadModalData() {
 					$('#detailsPublisherSvg').removeClass('d-none');
 				}
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles de la editorial:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading publisher details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles de la editorial.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -730,8 +781,16 @@ function loadModalData() {
 
 				$('#editPublisherPhoto').val('');
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles de la editorial para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading publisher details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos de la editorial.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 
@@ -879,7 +938,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -946,7 +1005,7 @@ function generatePDF(publisherTable) {
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(18);
 	doc.setTextColor(40);
-	doc.text("Lista de Editoriales", pageWidth / 2, topMargin + 18, { align: "center" });
+	doc.text("Lista de editoriales", pageWidth / 2, topMargin + 18, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(10);
@@ -969,7 +1028,7 @@ function generatePDF(publisherTable) {
 	doc.autoTable({
 		startY: topMargin + 35,
 		margin: { left: margin, right: margin },
-		head: [['ID', 'Nombre', 'Nacionalidad', 'Género Literario', 'Estado']],
+		head: [['ID', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
 		body: data,
 		theme: 'grid',
 		headStyles: {
@@ -997,7 +1056,7 @@ function generatePDF(publisherTable) {
 		}
 	});
 
-	const filename = `Lista_de_Editoriales_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_editoriales_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1027,7 +1086,7 @@ function generateExcel(publisherTable) {
 
 	worksheet.mergeCells('A1:E1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Editoriales - BookStudio';
+	titleCell.value = 'Lista de editoriales - BookStudio';
 	titleCell.font = { name: 'Arial', size: 14, bold: true };
 	titleCell.alignment = { horizontal: 'center' };
 
@@ -1045,7 +1104,7 @@ function generateExcel(publisherTable) {
 	];
 
 	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Nombre', 'Nacionalidad', 'Género Literario', 'Estado'];
+	headerRow.values = ['ID', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
 	headerRow.eachCell((cell) => {
 		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1083,7 +1142,7 @@ function generateExcel(publisherTable) {
 		}
 	});
 
-	const filename = `Lista_de_Editoriales_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_editoriales_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

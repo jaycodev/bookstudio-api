@@ -516,7 +516,7 @@
 								<!-- Delete Photo Button -->
 								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteEditPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
-									Eliminar Foto
+									Eliminar foto
 								</button>
 							</div>
 						</div>

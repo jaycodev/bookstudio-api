@@ -48,7 +48,9 @@ public class LoginServlet extends HttpServlet {
 					if (System.currentTimeMillis() < blockTimeValue) {
 						long remainingSeconds = (blockTimeValue - System.currentTimeMillis()) / 1000;
 						response.setContentType("application/json");
-						response.getWriter().write("{\"success\": false, \"message\": \"Demasiados intentos fallidos. Intenta nuevamente en " + remainingSeconds + " segundos.\"}");
+						response.getWriter().write(
+								"{\"success\": false, \"message\": \"Demasiados intentos fallidos. Intenta nuevamente en "
+										+ remainingSeconds + " segundos.\"}");
 						return;
 					} else {
 						blockTimeCookie.setMaxAge(0);
@@ -123,7 +125,9 @@ public class LoginServlet extends HttpServlet {
 					response.addCookie(newBlockCookie);
 
 					response.setContentType("application/json");
-					response.getWriter().write("{\"success\": false, \"message\": \"Demasiados intentos fallidos. Estás bloqueado por " + BLOCK_DURATION_MINUTES + " minutos.\"}");
+					response.getWriter().write(
+							"{\"success\": false, \"message\": \"Demasiados intentos fallidos. Estás bloqueado por "
+									+ BLOCK_DURATION_MINUTES + " minutos.\"}");
 				} else {
 					response.setContentType("application/json");
 					response.getWriter().write("{\"success\": false, \"message\": \"Usuario y/o contraseña incorrectos.\"}");

@@ -32,7 +32,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Estudiantes</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de estudiantes</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -101,7 +101,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addStudentModalLabel">Agregar Estudiante</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addStudentModalLabel">Agregar un estudiante</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -198,7 +198,7 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentEmail" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+	                            <label for="addStudentEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
@@ -215,7 +215,7 @@
 	                    <div class="row">
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentBirthDate" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
+	                            <label for="addStudentBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
@@ -301,7 +301,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">Detalles del Estudiante</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">Detalles del estudiante</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -349,12 +349,12 @@
 	                <!-- Email and Birth Date Section -->
 	                <div class="row">
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Correo Electrónico</h6>
+	                        <h6 class="small text-muted">Correo electrónico</h6>
 	                        <p class="fw-bold" id="detailsStudentEmail"></p>
 	                    </div>
 	                    
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de Nacimiento</h6>
+	                        <h6 class="small text-muted">Fecha de nacimiento</h6>
 	                        <p class="fw-bold" id="detailsStudentBirthDate"></p>
 	                    </div>
 	                </div>
@@ -396,7 +396,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">Editar Estudiante</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">Editar estudiante</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -478,7 +478,7 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentEmail" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+	                            <label for="editStudentEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
@@ -495,7 +495,7 @@
 	                    <div class="row">
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentBirthDate" class="form-label">Fecha de Nacimiento</label>
+	                            <label for="editStudentBirthDate" class="form-label">Fecha de nacimiento</label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 

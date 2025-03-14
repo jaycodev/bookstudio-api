@@ -1,5 +1,6 @@
 /**
  * loans.js
+ * 
  * Manages the initialization, data loading, and configuration of the loans table,  
  * as well as handling modals for creating, viewing, returning, and editing loan details.
  * Utilizes AJAX for CRUD operations on loan data.
@@ -37,7 +38,12 @@ function populateSelectOptions() {
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
-		success: function(data) {
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
 			if (data) {
 				bookList = data.books;
 				studentList = data.students;
@@ -56,11 +62,16 @@ function populateSelectOptions() {
 						$('#addLoanQuantity').attr('max', availableCopies);
 					}
 				});
-
 			}
 		},
-		error: function(status, error) {
-			console.error("Error al obtener los datos para los select:", status, error);
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
 		}
 	});
 }
@@ -122,14 +133,25 @@ function updateBookList() {
 			type: 'populateSelects'
 		},
 		dataType: 'json',
-		success: function(data) {
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
 			if (data) {
 				bookList = data.books;
 				populateSelect('#addLoanBook', bookList, 'bookId', 'title');
 			}
 		},
-		error: function(status, error) {
-			console.error("Error al obtener los datos para los select:", status, error);
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select book options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
 		}
 	});
 }
@@ -244,9 +266,18 @@ function loadLoans() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing loan data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los préstamos.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyLoans');
 			tableBody.empty();
@@ -337,19 +368,30 @@ function handleAddLoanForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					if (response && response.loanId) {
-						addRowToTable(response);
+					if (response && response.success) {
+						addRowToTable(response.data);
+						
 						$('#addLoanModal').modal('hide');
 						showToast('Préstamo agregado exitosamente.', 'success');
-						generateLoanReceipt(response);
+						generateLoanReceipt(response.data);
 					} else {
+						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 						$('#addLoanModal').modal('hide');
 						showToast('Hubo un error al agregar el préstamo.', 'error');
 					}
 				},
-				error: function() {
+				error: function(xhr) {
+					let errorResponse;
+					try {
+						errorResponse = JSON.parse(xhr.responseText);
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						showToast('Hubo un error al agregar el préstamo.', 'error');
+					} catch (e) {
+						console.error("Unexpected error:", xhr.status, xhr.responseText);
+						showToast('Hubo un error inesperado.', 'error');
+					}
+					
 					$('#addLoanModal').modal('hide');
-					showToast('Hubo un error al agregar el préstamo.', 'error');
 				},
 				complete: function() {
 					$("#addLoanSpinner").addClass("d-none");
@@ -436,6 +478,71 @@ function handleAddLoanForm() {
 	}
 }
 
+function handleReturnLoan() {
+	var isSubmitted = false;
+
+	$('#confirmReturn').on('click', function() {
+		if (isSubmitted) return;
+		isSubmitted = true;
+
+		var loanId = $(this).data('loanId');
+
+		$('#confirmReturnIcon').addClass('d-none');
+		$('#confirmReturnSpinner').removeClass('d-none');
+		$('#confirmReturn').prop('disabled', true);
+
+		$.ajax({
+			url: '/bookstudio/LoanServlet',
+			type: 'POST',
+			data: {
+				type: 'confirmReturn',
+				loanId: loanId
+			},
+			success: function(response) {
+				if (response && response.success) {
+					var table = $('#loanTable').DataTable();
+					var row = table.rows().nodes().to$().filter(function() {
+						return $(this).find('td').eq(0).text() === loanId.toString();
+					});
+
+					if (row.length > 0) {
+						row.find('td:eq(6)').html('<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>');
+						row.find('td:eq(7)').find('.btn[aria-label="Devolver el préstamo"]').remove();
+						row.find('button[data-status]').data('status', 'devuelto');
+						table.row(row).invalidate().draw();
+					}
+
+					updateBookList();
+
+					$('#returnLoanModal').modal('hide');
+					showToast('Préstamo devuelto exitosamente.', 'success');
+				} else {
+					console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+					$('#returnLoanModal').modal('hide');
+					showToast('Hubo un error al devolver el préstamo.', 'error');
+				}
+			},
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error returning loan (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al devolver el préstamo.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
+				$('#returnLoanModal').modal('hide');
+			},
+			complete: function() {
+				$('#confirmReturnSpinner').addClass('d-none');
+				$('#confirmReturnIcon').removeClass('d-none');
+				$('#confirmReturn').prop('disabled', false);
+			}
+		});
+	});
+}
+
 function handleEditLoanForm() {
 	let isFirstSubmit = true;
 
@@ -499,19 +606,29 @@ function handleEditLoanForm() {
 				data: data,
 				dataType: 'json',
 				success: function(response) {
-					if (response.success) {
+					if (response && response.success) {
 						updateRowInTable(response.data);
 
 						$('#editLoanModal').modal('hide');
 						showToast('Préstamo actualizado exitosamente.', 'success');
 					} else {
+						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 						$('#editLoanModal').modal('hide');
 						showToast('Hubo un error al actualizar el préstamo.', 'error');
 					}
 				},
-				error: function() {
+				error: function(xhr) {
+					let errorResponse;
+					try {
+						errorResponse = JSON.parse(xhr.responseText);
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						showToast('Hubo un error al actualizar el préstamo.', 'error');
+					} catch (e) {
+						console.error("Unexpected error:", xhr.status, xhr.responseText);
+						showToast('Hubo un error inesperado.', 'error');
+					}
+					
 					$('#editLoanModal').modal('hide');
-					showToast('Hubo un error al actualizar el préstamo.', 'error');
 				},
 				complete: function() {
 					$("#editLoanSpinner").addClass("d-none");
@@ -588,35 +705,19 @@ function validateEditField(field) {
 function loadModalData() {
 	// Add Modal
 	$(document).on('click', '[data-bs-target="#addLoanModal"]', function() {
-		$.ajax({
-			url: '/bookstudio/LoanServlet',
-			type: 'GET',
-			data: { type: 'populateSelects' },
-			dataType: 'json',
-			success: function(data) {
-				if (data) {
-					bookList = data.books;
-					studentList = data.students;
+		populateSelect('#addLoanBook', bookList, 'bookId', 'title');
+		$('#addLoanBook').selectpicker();
 
-					populateSelect('#addLoanBook', bookList, 'bookId', 'title');
-					$('#addLoanBook').selectpicker();
+		populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName');
+		$('#addLoanStudent').selectpicker();
 
-					populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName');
-					$('#addLoanStudent').selectpicker();
+		$('#addLoanForm')[0].reset();
+		$('#addLoanForm .is-invalid').removeClass('is-invalid');
 
-					$('#addLoanForm')[0].reset();
-					$('#addLoanForm .is-invalid').removeClass('is-invalid');
+		var peruTime = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+		$('#addLoanDate').val(peruTime);
 
-					var today = new Date().toISOString().split('T')[0];
-					$('#addLoanDate').val(today);
-
-					placeholderColorDateInput();
-				}
-			},
-			error: function(status, error) {
-				console.error("Error al obtener los datos para los select:", status, error);
-			}
-		});
+		placeholderColorDateInput();
 	});
 
 	// Details Modal
@@ -637,13 +738,21 @@ function loadModalData() {
 				$('#detailsLoanQuantity').text(data.quantity);
 				$('#detailsLoanStatus').html(
 					data.status === 'prestado'
-						? '<span class="badge bg-danger p-1">Prestado</span>'
-						: '<span class="badge bg-success p-1">Devuelto</span>'
+						? '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Prestado</span>'
+						: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>'
 				);
 				$('#detailsLoanObservation').text(data.observation);
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del préstamo:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading loan details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del préstamo.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -660,73 +769,7 @@ function loadModalData() {
 			return;
 		}
 
-		var newStatus = 'devuelto';
-
-		$('#modalMessage').html(
-			'¿Estás seguro de cambiar el estado a <span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1" id="newStatus">Devuelto</span>?'
-		);
-
-		$('#confirmReturn').off('click');
-
-		var isSubmitted = false;
-
-		$('#confirmReturn').on('click', function() {
-			if (isSubmitted) return;
-			isSubmitted = true;
-
-			$('#confirmReturnIcon').addClass('d-none');
-			$('#confirmReturnSpinner').removeClass('d-none');
-			$('#confirmReturn').prop('disabled', true);
-
-			$.ajax({
-				url: '/bookstudio/LoanServlet',
-				type: 'POST',
-				data: {
-					type: 'confirmReturn',
-					loanId: loanId,
-					newStatus: newStatus
-				},
-				success: function(response) {
-					if (response.success) {
-						var table = $('#loanTable').DataTable();
-						var row = table.rows().nodes().to$().filter(function() {
-							return $(this).find('td').eq(0).text() === loanId.toString();
-						});
-
-						if (row.length > 0) {
-							var textStatus = newStatus === 'prestado' ? 'Prestado' : 'Devuelto';
-							var badgeClass = newStatus === 'prestado'
-								? 'text-danger-emphasis bg-danger-subtle border border-danger-subtle'
-								: 'text-success-emphasis bg-success-subtle border border-success-subtle';
-
-							row.find('td:eq(6)').html('<span class="badge ' + badgeClass + ' p-1">' + textStatus + '</span>');
-
-							row.find('td:eq(7)').find('.btn[aria-label="Devolver el préstamo"]').hide();
-
-							row.find('button[data-status]').data('status', newStatus);
-							table.row(row).invalidate().draw();
-						}
-
-						updateBookList();
-
-						$('#returnLoanModal').modal('hide');
-						showToast('Préstamo devuelto exitosamente.', 'success');
-					} else {
-						$('#returnLoanModal').modal('hide');
-						showToast('Hubo un error al devolver el préstamo.', 'error');
-					}
-				},
-				error: function() {
-					$('#returnLoanModal').modal('hide');
-					showToast('Hubo un error al devolver el préstamo.', 'error');
-				},
-				complete: function() {
-					$('#confirmReturnSpinner').addClass('d-none');
-					$('#confirmReturnIcon').removeClass('d-none');
-					$('#confirmReturn').prop('disabled', false);
-				}
-			});
-		});
+		$('#confirmReturn').data('loanId', loanId);
 	});
 
 	// Edit Modal
@@ -760,8 +803,16 @@ function loadModalData() {
 					validateEditField($(this), true);
 				});
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del préstamo para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading loan details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del préstamo.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -774,7 +825,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -839,7 +890,7 @@ function generateLoanReceipt(response) {
 
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(14);
-	doc.text("Recibo de Préstamo", pageWidth / 2, topMargin + 13, { align: "center" });
+	doc.text("Recibo de préstamo", pageWidth / 2, topMargin + 13, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(8);
@@ -847,11 +898,11 @@ function generateLoanReceipt(response) {
 	doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
 
 	const loanDetails = [
-		['ID del Préstamo', response.loanId],
+		['ID', response.loanId],
 		['Libro', response.bookTitle],
 		['Estudiante - DNI', response.studentName],
-		['Fecha de Préstamo', moment(response.loanDate).format('DD/MM/YYYY')],
-		['Fecha de Devolución', moment(response.returnDate).format('DD/MM/YYYY')],
+		['Fecha préstamo', moment(response.loanDate).format('DD/MM/YYYY')],
+		['Fecha devolución', moment(response.returnDate).format('DD/MM/YYYY')],
 		['Cantidad', response.quantity]
 	];
 
@@ -888,7 +939,7 @@ function generateLoanReceipt(response) {
 	doc.text("Este documento es un comprobante del préstamo realizado. Por favor consérvelo hasta la devolución.",
 		pageWidth / 2, finalY, { align: "center" });
 
-	const filename = `Recibo_de_Préstamo_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Recibo_de_préstamo_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
 	const link = document.createElement('a');
@@ -923,7 +974,7 @@ function generatePDF(loanTable) {
 	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(14);
-	doc.text("Lista de Préstamos", pageWidth / 2, topMargin + 13, { align: "center" });
+	doc.text("Lista de préstamos", pageWidth / 2, topMargin + 13, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(8);
@@ -948,7 +999,7 @@ function generatePDF(loanTable) {
 	doc.autoTable({
 		startY: topMargin + 25,
 		margin: { left: margin, right: margin },
-		head: [['ID', 'Libro', 'Estudiante - DNI', 'Fecha Préstamo', 'Fecha Devolución', 'Cantidad', 'Estado']],
+		head: [['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
 		body: data,
 		theme: 'grid',
 		headStyles: {
@@ -972,7 +1023,7 @@ function generatePDF(loanTable) {
 		}
 	});
 
-	const filename = `Lista_de_Préstamos_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_préstamos_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1002,7 +1053,7 @@ function generateExcel(loanTable) {
 
 	worksheet.mergeCells('A1:G1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Préstamos - BookStudio';
+	titleCell.value = 'Lista de préstamos - BookStudio';
 	titleCell.font = { name: 'Arial', size: 14, bold: true };
 	titleCell.alignment = { horizontal: 'center' };
 
@@ -1022,7 +1073,7 @@ function generateExcel(loanTable) {
 	];
 
 	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Libro', 'Estudiante - DNI', 'Fecha Préstamo', 'Fecha Devolución', 'Cantidad', 'Estado'];
+	headerRow.values = ['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
 	headerRow.eachCell((cell) => {
 		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1062,7 +1113,7 @@ function generateExcel(loanTable) {
 		}
 	});
 
-	const filename = `Lista_de_Préstamos_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_préstamos_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -1080,6 +1131,7 @@ function generateExcel(loanTable) {
 $(document).ready(function() {
 	loadLoans();
 	handleAddLoanForm();
+	handleReturnLoan();
 	handleEditLoanForm();
 	loadModalData();
 	populateSelectOptions();

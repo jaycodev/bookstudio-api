@@ -1,5 +1,6 @@
 /**
  * authors.js
+ * 
  * Manages the initialization, data loading, and configuration of the authors table,  
  * as well as handling modals for creating, viewing, editing author details, 
  * and performing logical delete (status change) operations on authors.
@@ -41,7 +42,12 @@ function populateSelectOptions() {
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
-		success: function(data) {
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
 			if (data) {
 				nationalityList = data.nationalities;
 				literaryGenreList = data.literaryGenres;
@@ -53,8 +59,14 @@ function populateSelectOptions() {
 				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 			}
 		},
-		error: function(status, error) {
-			console.error("Error al obtener los datos para los select:", status, error);
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
 		}
 	});
 }
@@ -217,9 +229,18 @@ function loadAuthors() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing author data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los autores.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyAuthors');
 			tableBody.empty();
@@ -342,13 +363,23 @@ function handleAddAuthorForm() {
 							$('#addAuthorModal').modal('hide');
 							showToast('Autor agregado exitosamente.', 'success');
 						} else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							$('#addAuthorModal').modal('hide');
 							showToast('Hubo un error al agregar el autor.', 'error');
 						}
 					},
-					error: function() {
+					error: function(xhr) {
+						let errorResponse;
+						try {
+							errorResponse = JSON.parse(xhr.responseText);
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+							showToast('Hubo un error al agregar el autor.', 'error');
+						} catch (e) {
+							console.error("Unexpected error:", xhr.status, xhr.responseText);
+							showToast('Hubo un error inesperado.', 'error');
+						}
+						
 						$('#addAuthorModal').modal('hide');
-						showToast('Hubo un error al agregar el autor.', 'error');
 					},
 					complete: function() {
 						$("#addAuthorSpinner").addClass("d-none");
@@ -533,18 +564,28 @@ function handleEditAuthorForm() {
 					processData: false,
 					contentType: false,
 					success: function(response) {
-						if (response.success) {
+						if (response && response.success) {
 							updateRowInTable(response.data);
 							$('#editAuthorModal').modal('hide');
 							showToast('Autor actualizado exitosamente.', 'success');
 						} else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							$('#editAuthorModal').modal('hide');
 							showToast('Hubo un error al actualizar el autor.', 'error');
 						}
 					},
-					error: function() {
+					error: function(xhr) {
+						let errorResponse;
+						try {
+							errorResponse = JSON.parse(xhr.responseText);
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+							showToast('Hubo un error al actualizar el autor.', 'error');
+						} catch (e) {
+							console.error("Unexpected error:", xhr.status, xhr.responseText);
+							showToast('Hubo un error inesperado.', 'error');
+						}
+						
 						$('#editAuthorModal').modal('hide');
-						showToast('Hubo un error al actualizar el autor.', 'error');
 					},
 					complete: function() {
 						$("#editAuthorSpinner").addClass("d-none");
@@ -695,8 +736,8 @@ function loadModalData() {
 				$('#detailsAuthorBiography').text(data.biography);
 				$('#detailsAuthorStatus').html(
 					data.status === 'activo'
-						? '<span class="badge bg-success p-1">Activo</span>'
-						: '<span class="badge bg-danger p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
 				if (data.photoBase64) {
 					$('#detailsAuthorImg').attr('src', data.photoBase64).removeClass('d-none');
@@ -706,8 +747,16 @@ function loadModalData() {
 					$('#detailsAuthorSvg').removeClass('d-none');
 				}
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del autor:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading author details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del autor.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -763,8 +812,16 @@ function loadModalData() {
 
 				$('#editAuthorPhoto').val('');
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del autor para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading author details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del autor.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 
@@ -912,7 +969,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -979,7 +1036,7 @@ function generatePDF(dataTable) {
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(18);
 	doc.setTextColor(40);
-	doc.text("Lista de Autores", pageWidth / 2, topMargin + 18, { align: "center" });
+	doc.text("Lista de autores", pageWidth / 2, topMargin + 18, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(10);
@@ -1002,7 +1059,7 @@ function generatePDF(dataTable) {
 	doc.autoTable({
 		startY: topMargin + 35,
 		margin: { left: margin, right: margin },
-		head: [['ID', 'Nombre', 'Nacionalidad', 'Género Literario', 'Estado']],
+		head: [['ID', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
 		body: data,
 		theme: 'grid',
 		headStyles: {
@@ -1030,7 +1087,7 @@ function generatePDF(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Autores_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_autores_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1060,7 +1117,7 @@ function generateExcel(dataTable) {
 
 	worksheet.mergeCells('A1:E1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Autores - BookStudio';
+	titleCell.value = 'Lista de autores - BookStudio';
 	titleCell.font = {
 		name: 'Arial',
 		size: 16,
@@ -1082,7 +1139,7 @@ function generateExcel(dataTable) {
 	];
 
 	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Nombre', 'Nacionalidad', 'Género Literario', 'Estado'];
+	headerRow.values = ['ID', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
 	headerRow.eachCell((cell) => {
 		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1129,7 +1186,7 @@ function generateExcel(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Autores_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_autores_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

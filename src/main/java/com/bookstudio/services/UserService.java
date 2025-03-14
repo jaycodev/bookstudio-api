@@ -2,10 +2,10 @@ package com.bookstudio.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -22,24 +22,20 @@ public class UserService {
 		Object userIdObj = request.getSession().getAttribute(LoginConstants.ID);
 
 		if (userIdObj == null) {
-			throw new IllegalStateException("El ID del usuario no está presente en la sesión. Asegúrate de que el usuario esté logueado.");
+			throw new IllegalStateException("User ID not present in session. Ensure the user is logged in.");
 		}
 
 		int loggedUserId;
 		try {
 			loggedUserId = Integer.parseInt(userIdObj.toString());
 		} catch (NumberFormatException e) {
-			throw new IllegalArgumentException("El ID de usuario no es válido: " + userIdObj);
+			throw new IllegalArgumentException("Invalid user ID: " + userIdObj);
 		}
 
 		List<User> userData = userDao.listUsers(loggedUserId);
 
 		for (User user : userData) {
-			byte[] photo = user.getProfilePhoto();
-			if (photo != null) {
-				String photoBase64 = Base64.getEncoder().encodeToString(photo);
-				user.setProfilePhotoBase64("data:image/jpeg;base64," + photoBase64);
-			}
+			encodeUserPhoto(user);
 		}
 
 		return userData;
@@ -47,13 +43,7 @@ public class UserService {
 
 	public User getUser(String userId) throws SQLException {
 		User user = userDao.getUser(userId);
-		byte[] photo = user.getProfilePhoto();
-		
-		if (photo != null) {
-			String photoBase64 = Base64.getEncoder().encodeToString(photo);
-			user.setProfilePhotoBase64("data:image/jpeg;base64," + photoBase64);
-		}
-		
+		encodeUserPhoto(user);
 		return user;
 	}
 
@@ -65,13 +55,7 @@ public class UserService {
 		String password = getUtf8Parameter(request, "addUserPassword");
 		String role = getUtf8Parameter(request, "addUserRole");
 
-		Part photoPart = request.getPart("addUserProfilePhoto");
-		byte[] profilePhoto = null;
-		if (photoPart != null && photoPart.getSize() > 0) {
-			try (InputStream inputStream = photoPart.getInputStream()) {
-				profilePhoto = inputStream.readAllBytes();
-			}
-		}
+		byte[] profilePhoto = readPhoto(request, "addUserProfilePhoto");
 
 		User user = new User();
 		user.setUsername(username);
@@ -83,11 +67,7 @@ public class UserService {
 		user.setProfilePhoto(profilePhoto);
 
 		User createdUser = userDao.createUser(user);
-
-		if (createdUser.getProfilePhoto() != null) {
-			String photoBase64 = Base64.getEncoder().encodeToString(createdUser.getProfilePhoto());
-			createdUser.setProfilePhotoBase64("data:image/jpeg;base64," + photoBase64);
-		}
+		encodeUserPhoto(createdUser);
 
 		return createdUser;
 	}
@@ -98,19 +78,13 @@ public class UserService {
 		String lastName = getUtf8Parameter(request, "editUserLastName");
 		String password = getUtf8Parameter(request, "editUserPassword");
 		String role = getUtf8Parameter(request, "editUserRole");
-		String deleteProfilePhoto = request.getParameter("deleteProfilePhoto");
-		
+		String deletePhoto = request.getParameter("deleteProfilePhoto");
+
 		byte[] profilePhoto = null;
-		if ("true".equals(deleteProfilePhoto)) {
+		if ("true".equals(deletePhoto)) {
 			profilePhoto = null;
 		} else {
-			try {
-				InputStream inputStream = request.getPart("editUserProfilePhoto").getInputStream();
-				if (inputStream.available() > 0) {
-					profilePhoto = inputStream.readAllBytes();
-				}
-			} catch (Exception e) {
-			}
+			profilePhoto = readPhoto(request, "editUserProfilePhoto");
 			if (profilePhoto == null) {
 				User currentUser = userDao.getUser(userId);
 				profilePhoto = currentUser.getProfilePhoto();
@@ -125,7 +99,10 @@ public class UserService {
 		user.setRole(role);
 		user.setProfilePhoto(profilePhoto);
 
-		return userDao.updateUser(user);
+		User updatedUser = userDao.updateUser(user);
+		encodeUserPhoto(updatedUser);
+
+		return updatedUser;
 	}
 
 	public boolean deleteUser(String userId) throws SQLException {
@@ -136,10 +113,34 @@ public class UserService {
 		Part part = request.getPart(fieldName);
 		if (part != null) {
 			try (InputStream is = part.getInputStream()) {
-				return new String(is.readAllBytes(), "UTF-8");
+				return new String(is.readAllBytes(), StandardCharsets.UTF_8);
 			}
 		}
 		
 		return "";
+	}
+
+	private byte[] readPhoto(HttpServletRequest request, String partName) {
+		try {
+			Part part = request.getPart(partName);
+			if (part != null) {
+				InputStream inputStream = part.getInputStream();
+				if (inputStream.available() > 0) {
+					return inputStream.readAllBytes();
+				}
+			}
+		} catch (Exception e) {
+			System.err.println("Error reading photo from part '" + partName + "': " + e.getMessage());
+		}
+		
+		return null;
+	}
+
+	private void encodeUserPhoto(User user) {
+		byte[] photo = user.getProfilePhoto();
+		if (photo != null) {
+			String photoBase64 = Base64.getEncoder().encodeToString(photo);
+			user.setProfilePhotoBase64("data:image/jpeg;base64," + photoBase64);
+		}
 	}
 }

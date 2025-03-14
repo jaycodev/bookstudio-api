@@ -32,7 +32,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Editoriales</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de editoriales</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -78,7 +78,7 @@
 								<th scope="col" class="text-start">ID</th>
 								<th scope="col" class="text-start">Nombre</th>
 								<th scope="col" class="text-start">Nacionalidad</th>
-								<th scope="col" class="text-start">Género Literario</th>
+								<th scope="col" class="text-start">Género literario</th>
 								<th scope="col" class="text-center">Estado</th>
 								<th scope="col" class="text-center">Foto</th>
 								<th scope="col" class="text-center"></th>
@@ -99,7 +99,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addPublisherModalLabel">Agregar Editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addPublisherModalLabel">Agregar una editorial</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -144,7 +144,7 @@
 	                    <div class="row">
 	                        <!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLiteraryGenre" class="form-label">Género Literario <span class="text-danger">*</span></label>
+	                            <label for="addLiteraryGenre" class="form-label">Género literario <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
 	                                id="addLiteraryGenre" 
@@ -161,7 +161,7 @@
 	                        
 	                        <!-- Foundation Year Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addFoundationYear" class="form-label">Año de Fundación <span class="text-danger">*</span></label>
+	                            <label for="addFoundationYear" class="form-label">Año de fundación <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
@@ -179,7 +179,7 @@
 	                    <div class="row">
 	                        <!-- Website Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addPublisherWebsite" class="form-label">Página Web</label>
+	                            <label for="addPublisherWebsite" class="form-label">Página web</label>
 	                            <input 
 	                                type="url" 
 	                                class="form-control" 
@@ -285,7 +285,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">Detalles de la Editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">Detalles de la editorial</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -312,7 +312,7 @@
 	                    </div>
 	                    
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Género Literario</h6>
+	                        <h6 class="small text-muted">Género literario</h6>
 	                        <p class="fw-bold" id="detailsPublisherGenre"></p>
 	                    </div>
 	                </div>
@@ -320,12 +320,12 @@
 	                <!-- Foundation Year and Website Section -->
 	                <div class="row">  
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Año de Fundación</h6>
+	                        <h6 class="small text-muted">Año de fundación</h6>
 	                        <p class="fw-bold" id="detailsPublisherYear"></p>
 	                    </div>
 	                    
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Página Web</h6>
+	                        <h6 class="small text-muted">Página web</h6>
 	                        <p class="fw-bold" id="detailsPublisherWebsite"><a href="" target="_blank"></a></p>
 	                    </div>
 	                </div>
@@ -371,7 +371,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">Editar Editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">Editar editorial</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -415,7 +415,7 @@
 	                    <div class="row">
 	                        <!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLiteraryGenre" class="form-label">Género Literario <span class="text-danger">*</span></label>
+	                            <label for="editLiteraryGenre" class="form-label">Género literario <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
 	                                id="editLiteraryGenre" 
@@ -431,7 +431,7 @@
 	                        
 	                        <!-- Foundation Year Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editFoundationYear" class="form-label">Año de Fundación <span class="text-danger">*</span></label>
+	                            <label for="editFoundationYear" class="form-label">Año de fundación <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
@@ -449,7 +449,7 @@
 	                    <div class="row">
 	                        <!-- Website Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editPublisherWebsite" class="form-label">Página Web</label>
+	                            <label for="editPublisherWebsite" class="form-label">Página web</label>
 	                            <input 
 	                                type="url" 
 	                                class="form-control" 
@@ -523,7 +523,7 @@
 								<!-- Delete Photo Button -->
 								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteEditPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
-									Eliminar Foto
+									Eliminar foto
 								</button>
 							</div>
 						</div>

@@ -255,10 +255,10 @@ public class LoanDaoImpl implements LoanDao {
 	}
 
 	@Override
-	public int confirmReturn(String loanId, String newStatus) {
+	public int confirmReturn(String loanId) {
 		String sqlSelect = "SELECT Quantity, BookID, Status FROM Loans WHERE LoanID = ?";
 
-		String sqlUpdateState = "UPDATE Loans SET Status = ? WHERE LoanID = ?";
+		String sqlUpdateState = "UPDATE Loans SET Status = 'devuelto' WHERE LoanID = ?";
 
 		String sqlUpdateBook = "UPDATE Books SET LoanedCopies = LoanedCopies - ? WHERE BookID = ?";
 
@@ -277,18 +277,16 @@ public class LoanDaoImpl implements LoanDao {
 					}
 
 					try (PreparedStatement psUpdateState = cn.prepareStatement(sqlUpdateState)) {
-						psUpdateState.setString(1, newStatus);
-						psUpdateState.setString(2, loanId);
+						psUpdateState.setString(1, loanId);
 						psUpdateState.executeUpdate();
 					}
 
-					if ("devuelto".equalsIgnoreCase(newStatus)) {
-						try (PreparedStatement psUpdateBook = cn.prepareStatement(sqlUpdateBook)) {
-							psUpdateBook.setInt(1, quantity);
-							psUpdateBook.setInt(2, bookId);
-							psUpdateBook.executeUpdate();
-						}
+					try (PreparedStatement psUpdateBook = cn.prepareStatement(sqlUpdateBook)) {
+						psUpdateBook.setInt(1, quantity);
+						psUpdateBook.setInt(2, bookId);
+						psUpdateBook.executeUpdate();
 					}
+
 					return 1;
 				} else {
 					System.out.println("No se encontró el préstamo con el ID: " + loanId);

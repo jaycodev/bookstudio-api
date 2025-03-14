@@ -27,7 +27,6 @@ public class ResetPasswordServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
-
 		response.setContentType("application/json");
 
 		String token = request.getParameter("token");
@@ -38,9 +37,9 @@ public class ResetPasswordServlet extends HttpServlet {
 
 		if (tokenDao.isTokenValid(token)) {
 			String email = tokenDao.getEmailByToken(token);
-			
+
 			boolean updated = tokenDao.updatePassword(token, newPassword);
-			
+
 			if (updated) {
 				jsonResponse = "{\"success\": true}";
 
@@ -102,28 +101,19 @@ public class ResetPasswordServlet extends HttpServlet {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
 			message.setSubject("Cambio de contraseña");
 
-			String msg = "<!DOCTYPE html>"
-			        + "<html>"
-			        + "<head>"
-			        + "<meta charset='UTF-8'>"
-			        + "<style>"
-			        + "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }"
-			        + ".container { max-width: 600px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }"
-			        + ".header img { width: 120px; }"
-			        + ".title { font-size: 24px; font-weight: bold; color: #333; text-align: center; }"
-			        + ".content { font-size: 16px; color: #555; line-height: 1.5; text-align: center; }"
-			        + ".footer { font-size: 12px; color: #777; text-align: center; margin-top: 20px; }"
-			        + "</style>"
-			        + "</head>"
-			        + "<body>"
-			        + "<div class='container'>"
-			        + "    <p class='title'>Se cambió tu contraseña</p>"
-			        + "    <p class='content'>Se cambió tu contraseña, tal como lo pediste.</p>"
-			        + "    <p class='content'>Si no realizaste este cambio, contacta con nuestro soporte inmediatamente.</p>"
-			        + "    <p class='footer'>Saludos,<br/>El equipo de BookStudio</p>"
-			        + "</div>"
-			        + "</body>"
-			        + "</html>";
+			String msg = "<!DOCTYPE html>" + "<html>" + "<head>" + "<meta charset='UTF-8'>" + "<style>"
+					+ "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }"
+					+ ".container { max-width: 600px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }"
+					+ ".header img { width: 120px; }"
+					+ ".title { font-size: 24px; font-weight: bold; color: #333; text-align: center; }"
+					+ ".content { font-size: 16px; color: #555; line-height: 1.5; text-align: center; }"
+					+ ".footer { font-size: 12px; color: #777; text-align: center; margin-top: 20px; }" + "</style>"
+					+ "</head>" + "<body>" + "<div class='container'>"
+					+ "    <p class='title'>Se cambió tu contraseña</p>"
+					+ "    <p class='content'>Se cambió tu contraseña, tal como lo pediste.</p>"
+					+ "    <p class='content'>Si no realizaste este cambio, contacta con nuestro soporte inmediatamente.</p>"
+					+ "    <p class='footer'>Saludos,<br/>El equipo de BookStudio</p>" + "</div>" + "</body>"
+					+ "</html>";
 
 			message.setContent(msg, "text/html; charset=UTF-8");
 

@@ -9,5 +9,5 @@ public interface LoanDao {
 	public Loan getLoan(String loanId);
 	public Loan createLoan(Loan loan);
 	public Loan updateLoan(Loan loan);
-	public int confirmReturn(String loanId, String newStatus);
+	public int confirmReturn(String loanId);
 }

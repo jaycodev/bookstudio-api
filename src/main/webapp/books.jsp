@@ -32,7 +32,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Libros</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de libros</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -78,8 +78,8 @@
 							<tr>
 								<th scope="col" class="text-start">ID</th>
 								<th scope="col" class="text-start">Título</th>
-								<th scope="col" class="text-center">Ejemplares Disponibles</th>
-								<th scope="col" class="text-center">Ejemplares Prestados</th>
+								<th scope="col" class="text-center">Ejemplares disponibles</th>
+								<th scope="col" class="text-center">Ejemplares prestados</th>
 								<th scope="col" class="text-start">Autor</th>
 								<th scope="col" class="text-start">Editorial</th>
 								<th scope="col" class="text-center">Estado</th>
@@ -101,7 +101,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addBookModalLabel">Agregar Libro</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addBookModalLabel">Agregar un libro</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -126,7 +126,7 @@
 	                        
 	                        <!-- Total Copies Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookTotalCopies" class="form-label">Ejemplares Totales <span class="text-danger">*</span></label>
+	                            <label for="addBookTotalCopies" class="form-label">Ejemplares totales <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
@@ -270,7 +270,7 @@
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsBookModalLabel">Detalles del Libro</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsBookModalLabel">Detalles del libro</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -292,12 +292,12 @@
 	                <!-- Avaible and Loaned Copies Section -->
 	                <div class="row">
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Ejemplares Disponibles</h6>
+	                        <h6 class="small text-muted">Ejemplares disponibles</h6>
 	                        <p class="fw-bold" id="detailsBookAvaibleCopies"></p>
 	                    </div>
 	                    
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Ejemplares Prestados</h6>
+	                        <h6 class="small text-muted">Ejemplares prestados</h6>
 	                        <p class="fw-bold" id="detailsBookLoanedCopies"></p>
 	                    </div>
 	                </div>
@@ -357,7 +357,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editBookModalLabel">Editar Libro</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editBookModalLabel">Editar libro</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -382,7 +382,7 @@
 	                        
 	                        <!-- Total Copies Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookTotalCopies" class="form-label">Ejemplares Totales <span class="text-danger">*</span></label>
+	                            <label for="editBookTotalCopies" class="form-label">Ejemplares totales <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 

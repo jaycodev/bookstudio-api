@@ -26,8 +26,7 @@ public class DashboardService {
 
 		int currentYear = LocalDate.now().getYear();
 		int previousYear = currentYear - 1;
-		List<MonthlyLoanComparison> monthlyComparison = dashboardDao.getMonthlyLoanComparison(previousYear,
-				currentYear);
+		List<MonthlyLoanComparison> monthlyComparison = dashboardDao.getMonthlyLoanComparison(previousYear, currentYear);
 		data.setMonthlyLoanComparison(monthlyComparison);
 
 		return data;

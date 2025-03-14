@@ -32,7 +32,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Préstamos</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de préstamos</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -79,8 +79,8 @@
 								<th scope="col" class="text-start">ID</th>
 								<th scope="col" class="text-start">Libro</th>
 								<th scope="col" class="text-start">Estudiante - DNI</th>
-								<th scope="col" class="text-center">Fecha Préstamo</th>
-								<th scope="col" class="text-center">Fecha Devolución</th>
+								<th scope="col" class="text-center">Fecha préstamo</th>
+								<th scope="col" class="text-center">Fecha devolución</th>
 								<th scope="col" class="text-center">Cantidad</th>
 								<th scope="col" class="text-center">Estado</th>
 								<th scope="col" class="text-center"></th>
@@ -101,7 +101,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addLoanModalLabel">Agregar Préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addLoanModalLabel">Agregar un préstamo</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -129,7 +129,7 @@
 	                        
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
+	                            <label for="addLoanStudent" class="form-label">Estudiante - DNI <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
 	                                id="addLoanStudent" 
@@ -149,7 +149,7 @@
 	                    <div class="row">
 	                        <!-- Loan Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanDate" class="form-label">Fecha Préstamo</label>
+	                            <label for="addLoanDate" class="form-label">Fecha de préstamo</label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
@@ -161,7 +161,7 @@
 	                        
 	                        <!-- Return Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addReturnDate" class="form-label">Fecha Devolución <span class="text-danger">*</span></label>
+	                            <label for="addReturnDate" class="form-label">Fecha de devolución <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
@@ -227,7 +227,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del Préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del préstamo</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -248,11 +248,11 @@
 	                <!-- Student and Loan Date Section -->
 	                <div class="row">
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Estudiante</h6>
+	                        <h6 class="small text-muted">Estudiante - DNI</h6>
 	                        <p class="fw-bold" id="detailsLoanStudent"></p>
 	                    </div>
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de Préstamo</h6>
+	                        <h6 class="small text-muted">Fecha de préstamo</h6>
 	                        <p class="fw-bold" id="detailsLoanDate"></p>
 	                    </div>
 	                </div>
@@ -260,7 +260,7 @@
 	                <!-- Return Date and Quantity Section -->
 	                <div class="row">
 	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de Devolución</h6>
+	                        <h6 class="small text-muted">Fecha de devolución</h6>
 	                        <p class="fw-bold" id="detailsReturnDate"></p>
 	                    </div>
 	                    <div class="col-md-6 mb-3">
@@ -303,7 +303,7 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <p id="modalMessage">¿Estás seguro de cambiar el estado a <span id="newStatus">Devuelto</span> de este libro?</p>
+	                <p>¿Estás seguro de cambiar el estado a <span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>?</p>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -328,7 +328,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar Préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar préstamo</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -339,7 +339,7 @@
 	                    <div class="row">
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
+	                            <label for="editLoanStudent" class="form-label">Estudiante - DNI <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
 	                                id="editLoanStudent" 
@@ -355,7 +355,7 @@
 	                        
 	                        <!-- Loan Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanDate" class="form-label">Fecha de Préstamo <span class="text-danger">*</span></label>
+	                            <label for="editLoanDate" class="form-label">Fecha de préstamo <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
@@ -372,7 +372,7 @@
 	                    <div class="row">
 	                        <!-- Return Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editReturnDate" class="form-label">Fecha de Devolución <span class="text-danger">*</span></label>
+	                            <label for="editReturnDate" class="form-label">Fecha de devolución <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 

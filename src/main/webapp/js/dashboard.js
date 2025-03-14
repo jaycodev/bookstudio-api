@@ -1,13 +1,19 @@
-$(document).ready(function() {
-	// Initialize charts with Chart.js using jQuery
+/**
+ * dashboard.js
+ * 
+ * Initializes Chart.js charts for borrowed books, returned books, average loan time, and loan comparison.
+ * Retrieves dashboard data via AJAX and updates charts and statistics on the page.
+ * 
+ * @author Jason
+ */
 
-	// Borrowed Books Chart
+$(document).ready(function() {
 	var borrowedBooksChart = new Chart($('#borrowedBooksChart'), {
 		type: 'bar',
 		data: {
 			labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
 			datasets: [{
-				label: 'Libros Prestados',
+				label: 'Libros prestados',
 				data: [],
 				backgroundColor: 'rgba(54, 162, 235, 0.2)',
 				borderColor: 'rgba(54, 162, 235, 1)',
@@ -19,13 +25,12 @@ $(document).ready(function() {
 		}
 	});
 
-	// Returned Books Chart
 	var returnedBooksChart = new Chart($('#returnedBooksChart'), {
 		type: 'bar',
 		data: {
 			labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
 			datasets: [{
-				label: 'Libros Devueltos',
+				label: 'Libros devueltos',
 				data: [],
 				backgroundColor: 'rgba(75, 192, 192, 0.2)',
 				borderColor: 'rgba(75, 192, 192, 1)',
@@ -37,13 +42,12 @@ $(document).ready(function() {
 		}
 	});
 
-	// Average Loan Time Chart
 	var avgLoanTimeChart = new Chart($('#avgLoanTimeChart'), {
 		type: 'line',
 		data: {
 			labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
 			datasets: [{
-				label: 'Duración Promedio de Préstamo (días)',
+				label: 'Duración promedio de préstamo (días)',
 				data: [],
 				borderColor: 'rgba(255, 99, 132, 1)',
 				backgroundColor: 'rgba(255, 99, 132, 0.2)',
@@ -56,14 +60,13 @@ $(document).ready(function() {
 		}
 	});
 
-	// Loan Comparison Chart
 	var loanComparisonChart = new Chart($('#loanComparisonChart'), {
 		type: 'bar',
 		data: {
 			labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'],
 			datasets: [
-				{ label: 'Año Anterior', data: [], backgroundColor: 'rgba(54, 162, 235, 0.7)' },
-				{ label: 'Año Actual', data: [], backgroundColor: 'rgba(255, 99, 132, 0.7)' }
+				{ label: 'Año anterior', data: [], backgroundColor: 'rgba(54, 162, 235, 0.7)' },
+				{ label: 'Año actual', data: [], backgroundColor: 'rgba(255, 99, 132, 0.7)' }
 			]
 		},
 		options: {
@@ -72,7 +75,6 @@ $(document).ready(function() {
 		}
 	});
 
-	// AJAX call to get real dashboard data
 	$.ajax({
 		url: '/bookstudio/DashboardServlet',
 		type: 'GET',
@@ -89,7 +91,6 @@ $(document).ready(function() {
 				avgDurationData.push(data.averageLoanDurationByMonth[m] || 0);
 			}
 
-			// Update charts with server data
 			borrowedBooksChart.data.datasets[0].data = loansData;
 			borrowedBooksChart.update();
 
@@ -99,7 +100,6 @@ $(document).ready(function() {
 			avgLoanTimeChart.data.datasets[0].data = avgDurationData;
 			avgLoanTimeChart.update();
 
-			// Process loan comparison data
 			var comparison = data.monthlyLoanComparison;
 			comparison.sort(function(a, b) { return a.month - b.month; });
 
@@ -121,15 +121,15 @@ $(document).ready(function() {
 			loanComparisonChart.data.datasets[1].data = year2Data;
 			loanComparisonChart.update();
 
-			$('#totalBooks').text(data.totalActiveBooks + " Libros Activos");
-			$('#totalAuthors').text(data.totalActiveAuthors + " Autores Activos");
-			$('#totalPublishers').text(data.totalActivePublishers + " Editoriales Activas");
-			$('#totalCourses').text(data.totalActiveCourses + " Cursos Activos");
-			$('#totalStudents').text(data.totalActiveStudents + " Estudiantes Activos");
-			$('#totalLoans').text(data.totalActiveLoans + " Préstamos Activos");
+			$('#totalBooks').text(data.totalActiveBooks + " Libros activos");
+			$('#totalAuthors').text(data.totalActiveAuthors + " Autores activos");
+			$('#totalPublishers').text(data.totalActivePublishers + " Editoriales activas");
+			$('#totalCourses').text(data.totalActiveCourses + " Cursos activos");
+			$('#totalStudents').text(data.totalActiveStudents + " Estudiantes activos");
+			$('#totalLoans').text(data.totalActiveLoans + " Préstamos activos");
 		},
-		error: function(err) {
-			console.error('Error al recuperar datos del dashboard:', err);
+		error: function(error) {
+			console.error("Error fetching dashboard data from backend:", error);
 		}
 	});
 });

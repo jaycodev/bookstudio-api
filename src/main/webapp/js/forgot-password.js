@@ -1,3 +1,12 @@
+/**
+ * forgot-password.js
+ * 
+ * Handles forgot password form validation, submission, and UI updates. Validates the email format in real-time,
+ * submits the form via AJAX to ForgotPasswordServlet, and updates the UI based on the response.
+ * 
+ * @author Jason
+ */
+
 $(document).ready(function() {
 	var isFirstSubmit = false;
 	

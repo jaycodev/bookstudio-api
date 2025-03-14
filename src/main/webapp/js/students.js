@@ -1,5 +1,6 @@
 /**
  * students.js
+ * 
  * Manages the initialization, data loading, and configuration of the students table,  
  * as well as handling modals for creating, viewing, editing student details, 
  * and performing logical delete (status change) operations on students.
@@ -37,7 +38,12 @@ function populateSelectOptions() {
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
-		success: function(data) {
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
 			if (data) {
 				facultyList = data.faculties;
 
@@ -46,8 +52,14 @@ function populateSelectOptions() {
 				populateSelect('#editStudentFaculty', facultyList, 'facultyId', 'facultyName');
 			}
 		},
-		error: function(status, error) {
-			console.error("Error al obtener los datos para los select:", status, error);
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
 		}
 	});
 }
@@ -204,9 +216,18 @@ function loadStudents() {
 				generateExcel(dataTable);
 			});
 		},
-		error: function(status, error) {
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error listing student data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los estudiantes.', 'error');
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+				showToast('Hubo un error inesperado.', 'error');
+			}
+			
 			clearTimeout(safetyTimer);
-			console.error("Error en la solicitud AJAX:", status, error);
 
 			var tableBody = $('#bodyStudents');
 			tableBody.empty();
@@ -301,6 +322,7 @@ function handleAddStudentForm() {
 				success: function(response) {
 					if (response && response.success) {
 						addRowToTable(response.data);
+						
 						$('#addStudentModal').modal('hide');
 						showToast('Estudiante agregado exitosamente.', 'success');
 					} else {
@@ -309,8 +331,9 @@ function handleAddStudentForm() {
 							$('#addStudentForm').data("submitted", false);
 						}
 						else {
-							showToast(response.message, 'error');
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							$('#addStudentModal').modal('hide');
+							showToast(response.message, 'error');
 						}
 					}
 				},
@@ -326,6 +349,7 @@ function handleAddStudentForm() {
 						setFieldError(errorField, errorMessage);
 						$('#addStudentForm').data("submitted", false);
 					} else {
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
 						showToast(errorMessage, 'error');
 						$('#addStudentModal').modal('hide');
 					}
@@ -399,7 +423,7 @@ function handleAddStudentForm() {
 			if (address.length < 5) {
 				errorMessage = 'La dirección debe tener al menos 5 caracteres.';
 				isValid = false;
-			} else if (!/^[A-Za-z0-9\s,.\-#]+$/.test(address)) {
+			} else if (!/^[A-Za-zÑñ0-9\s,.\-#]+$/.test(address)) {
 				errorMessage = 'La dirección solo puede contener letras, números y los caracteres especiales: ,.-#';
 				isValid = false;
 			}
@@ -512,6 +536,7 @@ function handleEditStudentForm() {
 				success: function(response) {
 					if (response && response.success) {
 						updateRowInTable(response.data);
+						
 						$('#editStudentModal').modal('hide');
 						showToast('Estudiante actualizado exitosamente.', 'success');
 					} else {
@@ -520,6 +545,7 @@ function handleEditStudentForm() {
 							$('#editStudentForm').data("submitted", false);
 						}
 						else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
 							showToast(response.message, 'error');
 							$('#editStudentModal').modal('hide');
 						}
@@ -537,6 +563,7 @@ function handleEditStudentForm() {
 						setFieldError(errorField, errorMessage);
 						$('#editStudentForm').data("submitted", false);
 					} else {
+						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
 						showToast(errorMessage, 'error');
 						$('#editStudentModal').modal('hide');
 					}
@@ -581,7 +608,7 @@ function validateEditField(field) {
 		if (address.length < 5) {
 			errorMessage = 'La dirección debe tener al menos 5 caracteres.';
 			isValid = false;
-		} else if (!/^[A-Za-z0-9\s,.\-#]+$/.test(address)) {
+		} else if (!/^[A-Za-zÑñ0-9\s,.\-#]+$/.test(address)) {
 			errorMessage = 'La dirección solo puede contener letras, números y los caracteres especiales: ,.-#';
 			isValid = false;
 		}
@@ -687,12 +714,20 @@ function loadModalData() {
 				$('#detailsStudentFaculty').text(data.facultyName);
 				$('#detailsStudentStatus').html(
 					data.status === 'activo'
-						? '<span class="badge bg-success p-1">Activo</span>'
-						: '<span class="badge bg-danger p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del estudiante:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading student details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del estudiante.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -755,8 +790,16 @@ function loadModalData() {
 					validateEditField($(this), true);
 				});
 			},
-			error: function(status, error) {
-				console.log("Error al cargar los detalles del estudiante para editar:", status, error);
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Error loading student details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del estudiante.', 'error');
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
 			}
 		});
 	});
@@ -769,7 +812,7 @@ function setupBootstrapSelectDropdownStyles() {
 				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
 					const $dropdown = $(node);
 					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
+					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
 
 					$dropdown.find('li:not(:first-child)').addClass('mt-1');
 
@@ -834,7 +877,7 @@ function generatePDF(dataTable) {
 	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 	doc.setFont("helvetica", "bold");
 	doc.setFontSize(14);
-	doc.text("Lista de Estudiantes", pageWidth / 2, topMargin + 13, { align: "center" });
+	doc.text("Lista de estudiantes", pageWidth / 2, topMargin + 13, { align: "center" });
 
 	doc.setFont("helvetica", "normal");
 	doc.setFontSize(8);
@@ -883,7 +926,7 @@ function generatePDF(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Estudiantes_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_estudiantes_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -913,7 +956,7 @@ function generateExcel(dataTable) {
 
 	worksheet.mergeCells('A1:G1');
 	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de Estudiantes - BookStudio';
+	titleCell.value = 'Lista de estudiantes - BookStudio';
 	titleCell.font = { name: 'Arial', size: 14, bold: true };
 	titleCell.alignment = { horizontal: 'center' };
 
@@ -973,7 +1016,7 @@ function generateExcel(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_Estudiantes_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_estudiantes_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
