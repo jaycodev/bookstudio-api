@@ -34,6 +34,12 @@ function setupDataTable(tableId) {
 		initComplete: function() {
 			toggleButtonAndSpinner('loaded');
 			$('#tableContainer').removeClass('d-none');
+			
+			let $dtSearch = $('.dt-search');
+			$dtSearch.find('label').remove();
+			
+			$dtSearch.addClass('input-group input-group-sm');
+			$dtSearch.prepend('<span class="input-group-text bg-body-secondary"><i class="bi bi-search text-muted"></i></span>');
 		}
 	});
 

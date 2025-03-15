@@ -23,7 +23,7 @@
         
             <!-- Theme Toggle Button -->
             <div class="dropdown me-2">
-                <jsp:include page="buttonTheme.jsp">
+                <jsp:include page="button-theme.jsp">
                 	<jsp:param name="dropdownDirection" value="1" />
                 </jsp:include>
             </div>

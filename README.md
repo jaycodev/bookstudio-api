@@ -31,19 +31,32 @@
 BookStudio is a comprehensive web-based library management system designed for managing book loans at a fictional university library. The primary focus is on streamlining the lending process with clear status tracking (loaned/returned).
 
 The system provides functionalities such as:
-- **User Authentication**:
-  - Login
-  - Forgot Password
-  - Reset Password
-- **Dashboard** for managing:
-  - Loans
-  - Books
-  - Authors
-  - Publishers
-  - Courses
-  - Students
-  - Users
-  - Profile
+
+- **User Authentication**:  
+  - Login  
+  - Forgot Password  
+  - Reset Password  
+
+- **Dashboard**:  
+  - Provides an overview of key data from the system's tables, including loan statistics and report charts.  
+
+- **Management Views (CRUDs)** for:  
+  - Loans  
+  - Books  
+  - Authors  
+  - Publishers  
+  - Courses  
+  - Students  
+  - Users  
+
+- **Profile  Management**:  
+  - Users can view and update their profile information.  
+
+- **Report Generation**:  
+  - For each view (data table), you can generate a report in PDF or Excel format, making data export and analysis straightforward.  
+
+- **Loan Tickets**:  
+  - Each time a new loan is registered, the system automatically generates a ticket or receipt confirming the transaction.  
 
 The system includes **light and dark modes**.
 

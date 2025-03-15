@@ -624,3 +624,40 @@ textarea {
 [data-bs-theme="light"] .alert-danger {
     background-color: #f4c2c6 !important;
 }
+
+/* Configure search icon in DataTables search input */
+.dt-search .input-group-text {
+	border-right: 0 !important;
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dt-search .form-control {
+	border-left: 0 !important;
+}
+
+.dt-search .form-control:focus {
+  outline: none !important;
+  box-shadow: 1px 1px 0 0 var(--bs-border-color), 
+              1px -1px 0 0 var(--bs-border-color), 
+              1px 0 0 0 var(--bs-border-color);
+}
+
+.dt-search .input-group-text:has(+.form-control:focus) {
+  box-shadow: -1px 1px 0 0 var(--bs-border-color), 
+              -1px -1px 0 0 var(--bs-border-color), 
+              0 1px 0 0 var(--bs-border-color), 
+              0 -1px 0 0 var(--bs-border-color);
+}
+
+/* Adjust clear button (X) */
+[data-bs-theme="light"] .dt-search .form-control::-webkit-search-cancel-button,
+[data-bs-theme="light"] .bs-searchbox input::-webkit-search-cancel-button {
+	filter: brightness(0);
+}
+
+.dt-search .form-control::-webkit-search-cancel-button,
+.bs-searchbox input::-webkit-search-cancel-button {
+	cursor: pointer;
+}
