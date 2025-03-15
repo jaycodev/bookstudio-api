@@ -34,7 +34,7 @@ function populateSelect(selector, dataList, valueKey, textKey) {
 
 function populateSelectOptions() {
 	$.ajax({
-		url: '/bookstudio/StudentServlet',
+		url: 'StudentServlet',
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
@@ -171,7 +171,7 @@ function loadStudents() {
 	}, 8000);
 
 	$.ajax({
-		url: '/bookstudio/StudentServlet',
+		url: 'StudentServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
@@ -315,7 +315,7 @@ function handleAddStudentForm() {
 			$("#addStudentIcon").addClass("d-none");
 
 			$.ajax({
-				url: '/bookstudio/StudentServlet',
+				url: 'StudentServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -529,7 +529,7 @@ function handleEditStudentForm() {
 			$("#editStudentIcon").addClass("d-none");
 
 			$.ajax({
-				url: '/bookstudio/StudentServlet',
+				url: 'StudentServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -697,7 +697,7 @@ function loadModalData() {
 		var studentId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/StudentServlet',
+			url: 'StudentServlet',
 			type: 'GET',
 			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
@@ -737,7 +737,7 @@ function loadModalData() {
 		var studentId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/StudentServlet',
+			url: 'StudentServlet',
 			type: 'GET',
 			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
@@ -856,7 +856,7 @@ function initializeTooltips(container) {
 function generatePDF(dataTable) {
 	const { jsPDF } = window.jspdf;
 	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/bookstudio/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
 
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {

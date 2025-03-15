@@ -76,7 +76,7 @@ $(document).ready(function() {
 	});
 
 	$.ajax({
-		url: '/bookstudio/DashboardServlet',
+		url: 'DashboardServlet',
 		type: 'GET',
 		data: { type: 'getDashboardData' },
 		dataType: 'json',

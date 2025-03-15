@@ -58,21 +58,21 @@ We follow a standard Git workflow based on the GitHub Flow:
 
 #### 1. Fork the Repository
 
-1. Navigate to the [BookStudio repository](https://github.com/jason-vila/bookstudio)
+1. Navigate to the [BookStudio repository](https://github.com/jason-vila/bookstudio-v1)
 2. Click the "Fork" button in the top-right corner
 3. Wait for GitHub to create your fork
 
 #### 2. Clone Your Fork
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/bookstudio.git
-cd bookstudio
+git clone https://github.com/YOUR-USERNAME/bookstudio-v1.git
+cd bookstudio-v1
 ```
 
 #### 3. Add Upstream Remote
 
 ```bash
-git remote add upstream https://github.com/jason-vila/bookstudio.git
+git remote add upstream https://github.com/jason-vila/bookstudio-v1.git
 ```
 
 #### 4. Keep Your Fork Updated
@@ -138,7 +138,7 @@ git push origin feat/42-add-search-functionality
 
 1. Navigate to your fork on GitHub
 2. Click "Compare & pull request" button for your branch
-3. Ensure the base repository is `jason-vila/bookstudio` and the base branch is `main`
+3. Ensure the base repository is `jason-vila/bookstudio-v1` and the base branch is `main`
 4. Fill in the PR template with details about your changes
 5. Click "Create pull request"
 

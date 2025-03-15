@@ -98,7 +98,7 @@ $(document).ready(function() {
 			photoFormData.append('deletePhoto', 'false');
 
 			$.ajax({
-				url: '/bookstudio/ProfileServlet',
+				url: 'ProfileServlet',
 				method: 'POST',
 				data: photoFormData,
 				processData: false,
@@ -143,7 +143,7 @@ $(document).ready(function() {
 		photoFormData.append('deletePhoto', 'true');
 
 		$.ajax({
-			url: '/bookstudio/ProfileServlet',
+			url: 'ProfileServlet',
 			method: 'POST',
 			data: photoFormData,
 			processData: false,
@@ -229,7 +229,7 @@ $(document).ready(function() {
 			}
 
 			$.ajax({
-				url: '/bookstudio/ProfileServlet',
+				url: 'ProfileServlet',
 				method: 'GET',
 				data: {
 					type: 'validatePassword',
@@ -273,7 +273,7 @@ $(document).ready(function() {
 		data += '&type=updateProfile';
 
 		$.ajax({
-			url: '/bookstudio/ProfileServlet',
+			url: 'ProfileServlet',
 			method: 'POST',
 			data: data,
 			success: function(response) {

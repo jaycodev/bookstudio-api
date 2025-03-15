@@ -1,29 +1,29 @@
 <h1 align="center">BookStudio - Library Management System</h1>
 
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio/blob/main/src/main/webapp/images/bookstudio-logo.png" width="250" alt="BookStudio Logo" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/bookstudio-logo.png" width="250" alt="BookStudio Logo" />
 </p>
 
 ## Screenshots
 
 ### 📊 Dashboard Interface
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio/blob/main/src/main/webapp/images/dashboard-view.png" width="800" alt="Dashboard Preview" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/dashboard-view.png" width="800" alt="Dashboard Preview" />
 </p>
 
 ### 📚 Editing a Book
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio/blob/main/src/main/webapp/images/book-view.png" width="800" alt="Book Editing Preview" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/book-view.png" width="800" alt="Book Editing Preview" />
 </p>
 
 ### ⚖️ Loans Interface
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio/blob/main/src/main/webapp/images/loans-view.png" width="800" alt="Loans Preview" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/loans-view.png" width="800" alt="Loans Preview" />
 </p>
 
 ### 🔑 Login Interface
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio/blob/main/src/main/webapp/images/login-view.png" width="800" alt="Login Preview" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/login-view.png" width="800" alt="Login Preview" />
 </p>
 
 ## 📃 Description
@@ -78,7 +78,7 @@ The **BookStudio** project follows the **Model-View-Controller (MVC)** architect
 
 2. **View:**
    - The user interface is built with **JSP** and located in `/src/main/webapp`.
-   - Reusable components like `header`, `sidebar`, and `buttonTheme` are in the `includes` folder.
+   - Reusable components like `header`, `sidebar`, and `button-theme` are in the `includes` folder.
    - Page-specific scripts are located in `/webapp/js`.
 
 3. **Controller:**
@@ -122,17 +122,17 @@ The folder structure is organized as follows:
   /js                    --> JavaScript files for page-specific logic, including AJAX requests
   /utils                 --> Utility JS files (e.g., color-modes.js, datatables-setup.js)
   /WEB-INF
-    /includes            --> Reusable JSP components (header, sidebar, buttonTheme, etc.)
+    /includes            --> Reusable JSP components (header, sidebar, button-theme, etc.)
   .jsp                   --> Main JSP pages
 ```
 
-- **`WEB-INF/includes`**: This folder contains reusable JSP components (e.g., `header`, `sidebar`, `buttonTheme`). These are included in the main JSPs to maintain a consistent structure across the application without code duplication.
+- **`WEB-INF/includes`**: This folder contains reusable JSP components (e.g., `header`, `sidebar`, `button-theme`). These are included in the main JSPs to maintain a consistent structure across the application without code duplication.
 
 ## ⚙️ Installation and Setup
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/jason-vila/bookstudio.git
+   git clone https://github.com/jason-vila/bookstudio-v1.git
    ```
 
 2. **Import the Project in Eclipse EE:**
@@ -166,7 +166,7 @@ The folder structure is organized as follows:
 
 5. **Run the Application:**
    - Start Tomcat 8.5 from Eclipse EE or deploy the project to your Tomcat server.
-   - Access the application in your browser at `http://localhost:8080/bookstudio` (or your configured context path).
+   - Access the application in your browser at `http://localhost:8080/bookstudio-v1` (or your configured context path).
 
 ## 🔌 Database Connection Configuration
 

@@ -105,7 +105,7 @@ function loadUsers() {
 	}, 8000);
 
 	$.ajax({
-		url: '/bookstudio/UserServlet',
+		url: 'UserServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
@@ -271,7 +271,7 @@ function handleAddUserForm() {
 				formData.append('type', 'create');
 
 				$.ajax({
-					url: '/bookstudio/UserServlet',
+					url: 'UserServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -534,7 +534,7 @@ function handleEditUserForm() {
 				formData.append('type', 'update');
 
 				$.ajax({
-					url: '/bookstudio/UserServlet',
+					url: 'UserServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -675,7 +675,7 @@ function handleDeleteUser() {
 		var userId = $(this).data('userId');
 
 		$.ajax({
-			url: '/bookstudio/UserServlet',
+			url: 'UserServlet',
 			type: 'POST',
 			data: {
 				type: 'delete',
@@ -768,7 +768,7 @@ function loadModalData() {
 		var userId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/UserServlet',
+			url: 'UserServlet',
 			type: 'GET',
 			data: { type: 'details', userId: userId },
 			dataType: 'json',
@@ -807,7 +807,7 @@ function loadModalData() {
 		var userId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/UserServlet',
+			url: 'UserServlet',
 			type: 'GET',
 			data: { type: 'details', userId: userId },
 			dataType: 'json',
@@ -1073,7 +1073,7 @@ function initializeTooltips(container) {
 function generatePDF(dataTable) {
 	const { jsPDF } = window.jspdf;
 	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/bookstudio/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
 
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {

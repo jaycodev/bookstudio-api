@@ -38,7 +38,7 @@ function populateSelect(selector, dataList, valueKey, textKey) {
 
 function populateSelectOptions() {
 	$.ajax({
-		url: '/bookstudio/PublisherServlet',
+		url: 'PublisherServlet',
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
@@ -162,7 +162,7 @@ function loadPublishers() {
 	}, 8000);
 
 	$.ajax({
-		url: '/bookstudio/PublisherServlet',
+		url: 'PublisherServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
@@ -329,7 +329,7 @@ function handleAddPublisherForm() {
 				formData.append('type', 'create');
 
 				$.ajax({
-					url: '/bookstudio/PublisherServlet',
+					url: 'PublisherServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -531,7 +531,7 @@ function handleEditPublisherForm() {
 				formData.append('type', 'update');
 
 				$.ajax({
-					url: '/bookstudio/PublisherServlet',
+					url: 'PublisherServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -692,7 +692,7 @@ function loadModalData() {
 		var publisherId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/PublisherServlet',
+			url: 'PublisherServlet',
 			type: 'GET',
 			data: { type: 'details', publisherId: publisherId },
 			dataType: 'json',
@@ -736,7 +736,7 @@ function loadModalData() {
 		var publisherId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/PublisherServlet',
+			url: 'PublisherServlet',
 			type: 'GET',
 			data: { type: 'details', publisherId: publisherId },
 			dataType: 'json',
@@ -982,7 +982,7 @@ function initializeTooltips(container) {
 function generatePDF(publisherTable) {
 	const { jsPDF } = window.jspdf;
 	const doc = new jsPDF("p", "mm", "a4");
-	const logoUrl = '/bookstudio/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
 
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {

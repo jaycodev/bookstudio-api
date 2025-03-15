@@ -94,7 +94,7 @@ function loadCourses() {
 	}, 8000);
 
 	$.ajax({
-		url: '/bookstudio/CourseServlet',
+		url: 'CourseServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
@@ -236,7 +236,7 @@ function handleAddCourseForm() {
 			$("#addCourseIcon").addClass("d-none");
 
 			$.ajax({
-				url: '/bookstudio/CourseServlet',
+				url: 'CourseServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -372,7 +372,7 @@ function handleEditCourseForm() {
 			$("#editCourseIcon").addClass("d-none");
 
 			$.ajax({
-				url: '/bookstudio/CourseServlet',
+				url: 'CourseServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -502,7 +502,7 @@ function loadModalData() {
 		var courseId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/CourseServlet',
+			url: 'CourseServlet',
 			type: 'GET',
 			data: { type: 'details', courseId: courseId },
 			dataType: 'json',
@@ -536,7 +536,7 @@ function loadModalData() {
 		var courseId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/CourseServlet',
+			url: 'CourseServlet',
 			type: 'GET',
 			data: { type: 'details', courseId: courseId },
 			dataType: 'json',
@@ -649,7 +649,7 @@ function initializeTooltips(container) {
 function generatePDF(dataTable) {
 	const { jsPDF } = window.jspdf;
 	const doc = new jsPDF("p", "mm", "a4");
-	const logoUrl = '/bookstudio/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
 
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {

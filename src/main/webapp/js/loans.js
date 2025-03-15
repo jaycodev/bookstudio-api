@@ -34,7 +34,7 @@ function populateSelect(selector, dataList, valueKey, textKey) {
 
 function populateSelectOptions() {
 	$.ajax({
-		url: '/bookstudio/LoanServlet',
+		url: 'LoanServlet',
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
@@ -127,7 +127,7 @@ function placeholderColorDateInput() {
 
 function updateBookList() {
 	$.ajax({
-		url: '/bookstudio/LoanServlet',
+		url: 'LoanServlet',
 		type: 'GET',
 		data: {
 			type: 'populateSelects'
@@ -221,7 +221,7 @@ function loadLoans() {
 	}, 8000);
 
 	$.ajax({
-		url: '/bookstudio/LoanServlet',
+		url: 'LoanServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
@@ -363,7 +363,7 @@ function handleAddLoanForm() {
 			$("#addLoanIcon").addClass("d-none");
 
 			$.ajax({
-				url: '/bookstudio/LoanServlet',
+				url: 'LoanServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -492,7 +492,7 @@ function handleReturnLoan() {
 		$('#confirmReturn').prop('disabled', true);
 
 		$.ajax({
-			url: '/bookstudio/LoanServlet',
+			url: 'LoanServlet',
 			type: 'POST',
 			data: {
 				type: 'confirmReturn',
@@ -601,7 +601,7 @@ function handleEditLoanForm() {
 			$("#editLoanIcon").addClass("d-none");
 
 			$.ajax({
-				url: '/bookstudio/LoanServlet',
+				url: 'LoanServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -725,7 +725,7 @@ function loadModalData() {
 		var loanId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/LoanServlet',
+			url: 'LoanServlet',
 			type: 'GET',
 			data: { type: 'details', loanId: loanId },
 			dataType: 'json',
@@ -777,7 +777,7 @@ function loadModalData() {
 		var loanId = $(this).data('id');
 
 		$.ajax({
-			url: '/bookstudio/LoanServlet',
+			url: 'LoanServlet',
 			type: 'GET',
 			data: { type: 'details', loanId: loanId },
 			dataType: 'json',
@@ -885,7 +885,7 @@ function generateLoanReceipt(response) {
 		hour12: true
 	});
 
-	const logoUrl = '/bookstudio/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
 	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 
 	doc.setFont("helvetica", "bold");
@@ -953,7 +953,7 @@ function generateLoanReceipt(response) {
 function generatePDF(loanTable) {
 	const { jsPDF } = window.jspdf;
 	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/bookstudio/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
 
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {
