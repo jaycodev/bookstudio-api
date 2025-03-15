@@ -31,7 +31,10 @@
 BookStudio is a comprehensive web-based library management system designed for managing book loans at a fictional university library. The primary focus is on streamlining the lending process with clear status tracking (loaned/returned).
 
 The system provides functionalities such as:
-- **User Authentication** (Login)
+- **User Authentication**:
+  - Login
+  - Forgot Password
+  - Reset Password
 - **Dashboard** for managing:
   - Loans
   - Books
@@ -132,17 +135,21 @@ The folder structure is organized as follows:
    - Click `Finish`.
    - Once Tomcat is added, right-click on the project in the Project Explorer, select `Run As > Run on Server` to deploy the project to Tomcat.
 
-4. **Configure the Database:**
-   - Ensure MySQL is installed and running.
-   - **Run the SQL script** found at:
+4. **Configure the Database:**  
+   - Ensure MySQL is installed and running.  
+   - **Run the SQL script** found at:  
      ```
      /database/bookstudio_db.sql
      ```
-     This script will create the schema `bookstudio_db` and populate it with initial data, including an **administrator** user.
-   - Update the connection parameters in `DbConnection.java` with your MySQL credentials (username, password, etc.).
-   - **Default Admin Credentials** (once you run the script):
-     - **Username:** `Admin`  
-     - **Password:** `Admin123@`
+     This script will create the schema `bookstudio_db` and populate it with initial data, including **administrator** and **librarian** users.  
+   - Update the connection parameters in `DbConnection.java` with your MySQL credentials (username, password, etc.).  
+   - **Default Credentials** (once you run the script):  
+     - **Administrator:**  
+       - **Username:** `Admin`  
+       - **Password:** `Admin123@`  
+     - **Librarian:**  
+       - **Username:** `Biblio`  
+       - **Password:** `Biblio123@`  
 
 5. **Run the Application:**
    - Start Tomcat 8.5 from Eclipse EE or deploy the project to your Tomcat server.
@@ -198,23 +205,26 @@ public class DbConnection {
 ## 🛠️ Technologies and Dependencies
 
 ### Web Libraries (Loaded via CDN)
-- **jQuery**: v3.7.1
-- **Moment.js**: v2.29.1
-- **Bootstrap Bundle**: v5.3.0 (includes Popper.js functionality)
-- **DataTables**:
-  - Core: v2.1.8
-  - Bootstrap 5 integration: v2.1.8
-  - Responsive extension: v3.0.3
-  - Responsive Bootstrap 5 integration: v3.0.3
-- **Popper.js**: v2.11.6 (if not using Bootstrap Bundle)
-- **Bootstrap-select**: v1.14.0-beta3 (with Spanish localization via defaults-es_ES)
-- **Cropper.js**
+- **jQuery**: v3.7.1  
+- **Moment.js**: v2.29.1  
+- **Bootstrap Bundle**: v5.3.0 (includes Popper.js functionality)  
+- **DataTables**:  
+  - Core: v2.1.8  
+  - Bootstrap 5 integration: v2.1.8  
+  - Responsive extension: v3.0.3  
+  - Responsive Bootstrap 5 integration: v3.0.3  
+- **Popper.js**: v2.11.6 (if not using Bootstrap Bundle)  
+- **Bootstrap-select**: v1.14.0-beta3 (with Spanish localization via defaults-es_ES)  
+- **Cropper.js**: v1.5.12  
+- **jsPDF**: v2.5.1  
+- **ExcelJS**: v4.3.0  
 
 ### Maven Dependencies
-- **Gson** (for JSON processing): 2.8.9
-- **Standard Taglibs**: 1.1.2
-- **MySQL Connector/J**: 8.0.33
-- **Protobuf Java**: 3.25.1
+- **Gson** (for JSON processing): v2.8.9  
+- **Standard Taglibs**: v1.1.2  
+- **MySQL Connector/J**: v8.0.33  
+- **Protobuf Java**: v3.25.1  
+- **JavaMail (javax.mail)**: v1.6.2  
 
 ### Additional Technologies
 - **Programming Language**: Java (code is in English; content is in Spanish)
