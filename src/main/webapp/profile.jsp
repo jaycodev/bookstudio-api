@@ -27,175 +27,181 @@
 
 	<!-- ===================== Main Content ==================== -->
 	<main class="d-flex flex-column overflow-auto bg-body">
-	    <section class="container mt-3">
-	    	<h2 class="text-center">Configuración de perfil</h2>
-
-			<div class="d-flex justify-content-center">
-			    <figure class="position-relative">
-			        <!-- Profile Image -->
-			        <img id="profileImage" 
-			             src="${not empty sessionScope.user_profile_image ? sessionScope.user_profile_image : ''}" 
-			             alt="Foto" 
-			             width="150" 
-			             height="150" 
-			             class="rounded-circle mt-4 mb-4 ${not empty sessionScope.user_profile_image ? '' : 'd-none'}">
+    	<section id="cardContainer" class="card border">
+    		<!-- Card Header -->
+    		<header class="card-header d-flex align-items-center position-relative">
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Configuración de perfil</h5>
+			</header>
+    	
+	    	<!-- Card Body -->
+			<div class="card-body">
+				<div class="d-flex justify-content-center">
+				    <figure class="position-relative">
+				        <!-- Profile Image -->
+				        <img id="profileImage" 
+				             src="${not empty sessionScope.user_profile_image ? sessionScope.user_profile_image : ''}" 
+				             alt="Foto" 
+				             width="150" 
+				             height="150" 
+				             class="rounded-circle mt-4 mb-4 ${not empty sessionScope.user_profile_image ? '' : 'd-none'}">
+				
+				        <!-- Default Icon if no profile image -->
+				        <svg xmlns="http://www.w3.org/2000/svg" 
+				             width="150" 
+				             height="150" 
+				             fill="currentColor" 
+				             class="bi-person-circle mt-4 mb-4 ${not empty sessionScope.user_profile_image ? 'd-none' : ''}" 
+				             viewBox="0 0 16 16">
+				          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+				          <path fill-rule="evenodd" 
+				                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+				        </svg>
+				
+				        <!-- Form for Editing Profile Image -->
+				        <form id="editProfilePhotoForm" enctype="multipart/form-data">     
+				            <!-- Pencil Icon for Edit -->
+				            <label id="photoLabel" for="editProfilePhoto" 
+				                   class="position-absolute rounded-circle d-flex align-items-center justify-content-center pencil-icon"
+				                   data-bs-toggle="dropdown" 
+				                   aria-expanded="false">
+				              <i class="bi bi-pencil"></i>
+				            </label>
+				        
+				            <!-- Dropdown for Profile Options -->
+				            <ul class="dropdown-menu dropdown-menu-start gap-1 p-2 rounded-3 mx-0 shadow bg-body-secondary" aria-labelledby="photoLabel">
+				                <li>
+				                    <!-- Option to Upload New Profile Image -->
+				                    <label for="editProfilePhoto" class="dropdown-item rounded-2 d-flex align-items-center cursor-pointer">
+				                        <i class="bi bi-upload me-2"></i> Subir imagen
+				                    </label>
+				                </li>
+				                <!-- Option to Delete Image (if exists) -->
+				                <c:if test="${not empty sessionScope.user_profile_image}">
+				                    <li class="mt-1">
+				                        <button type="button" class="dropdown-item rounded-2 d-flex align-items-center dropdown-danger" data-bs-toggle="modal" data-bs-target="#deletePhotoModal">
+				                            <i class="bi bi-trash me-2"></i> Eliminar imagen
+				                        </button>
+				                    </li>
+				                </c:if>
+				            </ul>
+				
+				            <!-- Hidden File Input for Image Upload -->
+				            <input type="file" id="editProfilePhoto" name="editProfilePhoto" class="d-none" accept="image/*">
+				        </form>
+				    </figure>
+				</div>
 			
-			        <!-- Default Icon if no profile image -->
-			        <svg xmlns="http://www.w3.org/2000/svg" 
-			             width="150" 
-			             height="150" 
-			             fill="currentColor" 
-			             class="bi-person-circle mt-4 mb-4 ${not empty sessionScope.user_profile_image ? 'd-none' : ''}" 
-			             viewBox="0 0 16 16">
-			          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-			          <path fill-rule="evenodd" 
-			                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-			        </svg>
-			
-			        <!-- Form for Editing Profile Image -->
-			        <form id="editProfilePhotoForm" enctype="multipart/form-data">     
-			            <!-- Pencil Icon for Edit -->
-			            <label id="photoLabel" for="editProfilePhoto" 
-			                   class="position-absolute rounded-circle d-flex align-items-center justify-content-center pencil-icon"
-			                   data-bs-toggle="dropdown" 
-			                   aria-expanded="false">
-			              <i class="bi bi-pencil"></i>
-			            </label>
-			        
-			            <!-- Dropdown for Profile Options -->
-			            <ul class="dropdown-menu dropdown-menu-start gap-1 p-2 rounded-3 mx-0 shadow bg-body-secondary" aria-labelledby="photoLabel">
-			                <li>
-			                    <!-- Option to Upload New Profile Image -->
-			                    <label for="editProfilePhoto" class="dropdown-item rounded-2 d-flex align-items-center cursor-pointer">
-			                        <i class="bi bi-upload me-2"></i> Subir imagen
-			                    </label>
-			                </li>
-			                <!-- Option to Delete Image (if exists) -->
-			                <c:if test="${not empty sessionScope.user_profile_image}">
-			                    <li class="mt-1">
-			                        <button type="button" class="dropdown-item rounded-2 d-flex align-items-center dropdown-danger" data-bs-toggle="modal" data-bs-target="#deletePhotoModal">
-			                            <i class="bi bi-trash me-2"></i> Eliminar imagen
-			                        </button>
-			                    </li>
-			                </c:if>
-			            </ul>
-			
-			            <!-- Hidden File Input for Image Upload -->
-			            <input type="file" id="editProfilePhoto" name="editProfilePhoto" class="d-none" accept="image/*">
-			        </form>
-			    </figure>
+		        <!-- Profile Form -->
+		        <article class="d-flex justify-content-center mb-3">
+		            <div class="col-12 col-md-10 col-lg-8">
+		                <form id="editProfileForm" accept-charset="UTF-8">
+		                    <!-- Form Fields -->
+		                    <fieldset class="row">
+		                        <!-- User and Email Section -->
+		                        <div class="col-12 col-md-6 mb-3">
+		                            <label for="editProfileUsername" class="form-label">Nombre de usuario</label>
+		                            <input 
+		                                type="text" 
+		                                class="form-control w-100" 
+		                                id="editProfileUsername" 
+		                                value="${sessionScope.username}" 
+		                                disabled
+		                            >
+		                        </div>
+		                        <div class="col-12 col-md-6 mb-3">
+		                            <label for="editProfileEmail" class="form-label">Correo electrónico</label>
+		                            <input 
+		                                type="email" 
+		                                class="form-control w-100" 
+		                                id="editProfileEmail" 
+		                                value="${sessionScope.email}" 
+		                                disabled
+		                            >
+		                        </div>
+		                                                
+		                        <!-- First Name and Last Name Section -->
+		                        <div class="col-12 col-md-6 mb-3">
+		                            <label for="editProfileFirstName" class="form-label">Nombres</label>
+		                            <input 
+		                                type="text" 
+		                                class="form-control w-100" 
+		                                id="editProfileFirstName" 
+		                                name="editProfileFirstName" 
+		                                value="${sessionScope.firstname}" 
+		                                placeholder="Actualizar nombres" 
+		                                autocomplete="given-name" 
+		                                pattern="[A-Za-zÀ-ÿ\s]+" 
+		                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
+		                            >
+		                        </div>
+		                        <div class="col-12 col-md-6 mb-3">
+		                            <label for="editProfileLastName" class="form-label">Apellidos</label>
+		                            <input 
+		                                type="text" 
+		                                class="form-control w-100" 
+		                                id="editProfileLastName" 
+		                                name="editProfileLastName" 
+		                                value="${sessionScope.lastname}" 
+		                                placeholder="Actualizar apellidos" 
+		                                autocomplete="family-name" 
+		                                pattern="[A-Za-zÀ-ÿ\s]+" 
+		                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
+		                            >
+		                        </div>
+		                        
+		                        <!-- Password Section -->
+		                        <div class="col-12 col-md-6 mb-4 position-relative">
+		                            <label for="currentProfilePassword" class="form-label">Contraseña actual</label>
+		                            <div class="input-group">
+		                                <input 
+		                                    type="password" 
+		                                    class="form-control password-field" 
+		                                    id="currentProfilePassword" 
+		                                    name="currentProfilePassword" 
+		                                    data-toggle-id="1" 
+		                                    placeholder="Contraseña actual" 
+		                                    autocomplete="current-password"
+		                                >
+		                                <span class="input-group-text cursor-pointer" data-toggle-id="1">
+		                                    <i class="bi bi-eye"></i>
+		                                </span>
+		                                <div class="invalid-feedback"></div>
+		                            </div>
+		                        </div>
+		                        <div class="col-12 col-md-6 mb-4 position-relative">
+		                            <label for="editProfilePassword" class="form-label">Nueva contraseña</label>
+		                            <div class="input-group">       
+		                                <input 
+		                                    type="password" 
+		                                    class="form-control password-field" 
+		                                    id="editProfilePassword" 
+		                                    name="editProfilePassword" 
+		                                    data-toggle-id="2" 
+		                                    placeholder="Actualizar contraseña" 
+		                                    autocomplete="new-password"
+		                                >
+		                                <span class="input-group-text cursor-pointer" data-toggle-id="2">
+		                                    <i class="bi bi-eye"></i>
+		                                </span>
+		                                <div class="invalid-feedback"></div>
+		                            </div>
+		                        </div>
+		                    </fieldset>
+		                    
+		                    <div class="row justify-content-center">
+		                        <div class="col-12 col-md-4">
+		                        	<!-- Update Button -->
+		                        	<button type="submit" class="btn btn-custom-primary w-100 fs-6" id="updateProfileBtn" disabled>
+					                    <span id="updateProfileSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+					                    <span id="updateProfileText">Actualizar perfil</span>
+					                </button>
+		                        </div>
+		                    </div>
+		                </form>
+		            </div>
+		        </article>
 			</div>
-	
-	        <!-- Profile Form -->
-	        <article class="d-flex justify-content-center">
-	            <div class="col-12 col-md-10 col-lg-8">
-	                <form id="editProfileForm" accept-charset="UTF-8">
-	                    <!-- Form Fields -->
-	                    <fieldset class="row">
-	                        <!-- User and Email Section -->
-	                        <div class="col-12 col-md-6 mb-3">
-	                            <label for="editProfileUsername" class="form-label">Nombre de usuario</label>
-	                            <input 
-	                                type="text" 
-	                                class="form-control w-100" 
-	                                id="editProfileUsername" 
-	                                value="${sessionScope.username}" 
-	                                disabled
-	                            >
-	                        </div>
-	                        <div class="col-12 col-md-6 mb-3">
-	                            <label for="editProfileEmail" class="form-label">Correo electrónico</label>
-	                            <input 
-	                                type="email" 
-	                                class="form-control w-100" 
-	                                id="editProfileEmail" 
-	                                value="${sessionScope.email}" 
-	                                disabled
-	                            >
-	                        </div>
-	                                                
-	                        <!-- First Name and Last Name Section -->
-	                        <div class="col-12 col-md-6 mb-3">
-	                            <label for="editProfileFirstName" class="form-label">Nombres</label>
-	                            <input 
-	                                type="text" 
-	                                class="form-control w-100" 
-	                                id="editProfileFirstName" 
-	                                name="editProfileFirstName" 
-	                                value="${sessionScope.firstname}" 
-	                                placeholder="Actualizar nombres" 
-	                                autocomplete="given-name" 
-	                                pattern="[A-Za-zÀ-ÿ\s]+" 
-	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
-	                            >
-	                        </div>
-	                        <div class="col-12 col-md-6 mb-3">
-	                            <label for="editProfileLastName" class="form-label">Apellidos</label>
-	                            <input 
-	                                type="text" 
-	                                class="form-control w-100" 
-	                                id="editProfileLastName" 
-	                                name="editProfileLastName" 
-	                                value="${sessionScope.lastname}" 
-	                                placeholder="Actualizar apellidos" 
-	                                autocomplete="family-name" 
-	                                pattern="[A-Za-zÀ-ÿ\s]+" 
-	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
-	                            >
-	                        </div>
-	                        
-	                        <!-- Password Section -->
-	                        <div class="col-12 col-md-6 mb-4 position-relative">
-	                            <label for="currentProfilePassword" class="form-label">Contraseña actual</label>
-	                            <div class="input-group">
-	                                <input 
-	                                    type="password" 
-	                                    class="form-control password-field" 
-	                                    id="currentProfilePassword" 
-	                                    name="currentProfilePassword" 
-	                                    data-toggle-id="1" 
-	                                    placeholder="Contraseña actual" 
-	                                    autocomplete="current-password"
-	                                >
-	                                <span class="input-group-text cursor-pointer" data-toggle-id="1">
-	                                    <i class="bi bi-eye"></i>
-	                                </span>
-	                                <div class="invalid-feedback"></div>
-	                            </div>
-	                        </div>
-	                        <div class="col-12 col-md-6 mb-4 position-relative">
-	                            <label for="editProfilePassword" class="form-label">Nueva contraseña</label>
-	                            <div class="input-group">       
-	                                <input 
-	                                    type="password" 
-	                                    class="form-control password-field" 
-	                                    id="editProfilePassword" 
-	                                    name="editProfilePassword" 
-	                                    data-toggle-id="2" 
-	                                    placeholder="Actualizar contraseña" 
-	                                    autocomplete="new-password"
-	                                >
-	                                <span class="input-group-text cursor-pointer" data-toggle-id="2">
-	                                    <i class="bi bi-eye"></i>
-	                                </span>
-	                                <div class="invalid-feedback"></div>
-	                            </div>
-	                        </div>
-	                    </fieldset>
-	                    
-	                    <div class="row justify-content-center">
-	                        <div class="col-12 col-md-4">
-	                        	<!-- Update Button -->
-	                        	<button type="submit" class="btn btn-custom-primary w-100 fs-6" id="updateProfileBtn" disabled>
-				                    <span id="updateProfileSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-				                    <span id="updateProfileText">Actualizar perfil</span>
-				                </button>
-	                        </div>
-	                    </div>
-	                </form>
-	            </div>
-	        </article>
-	    </section>
+    	</section>
 	</main>
 	
 	<!-- Modal for Cropping the Image -->
