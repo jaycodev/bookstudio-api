@@ -216,10 +216,6 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 }
 
 /* Utilities */
-.hr-header {
-	margin: 0 15px;
-}
-
 .cursor-pointer {
 	cursor: pointer;
 }

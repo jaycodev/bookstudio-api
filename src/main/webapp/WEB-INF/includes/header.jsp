@@ -13,7 +13,7 @@
         <div class="d-lg-none me-5"></div>
 
         <!-- Logo -->
-		<a href="/bookstudio/dashboard.jsp" class="text-center text-decoration-none text-body-emphasis ms-md-2 d-flex align-items-center">
+		<a href="/bookstudio-v1/dashboard.jsp" class="text-center text-decoration-none text-body-emphasis ms-md-2 d-flex align-items-center">
 		    <img class="logo me-2" alt="Logo de Bookstudio" src="images/logo-light.png">
 		    <span class="fs-5 text-logo">BookStudio</span>
 		</a>

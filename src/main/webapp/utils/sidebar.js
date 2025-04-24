@@ -3,11 +3,9 @@ $(document).ready(function() {
 
 	$('.nav-link').each(function() {
 		const $link = $(this);
-		const $liElement = $link.closest('li');
 		const $icon = $link.find('i');
 
 		if ($link.attr('href') === currentPage) {
-			$liElement.addClass('list-item-with-line');
 			$link.addClass('active-effect');
 
 			if ($icon.length) {
@@ -17,7 +15,6 @@ $(document).ready(function() {
 				}
 			}
 		} else {
-			$liElement.removeClass('list-item-with-line');
 			$link.removeClass('active-effect');
 		}
 	});
