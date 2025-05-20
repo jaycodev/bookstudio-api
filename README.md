@@ -1,29 +1,7 @@
 <h1 align="center">BookStudio - Library Management System</h1>
 
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/bookstudio-logo.png" width="250" alt="BookStudio Logo" />
-</p>
-
-## Screenshots
-
-### 📊 Dashboard Interface
-<p align="center">
-  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/dashboard-view.png" width="800" alt="Dashboard Preview" />
-</p>
-
-### 📚 Editing a Book
-<p align="center">
-  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/book-view.png" width="800" alt="Book Editing Preview" />
-</p>
-
-### ⚖️ Loans Interface
-<p align="center">
-  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/loans-view.png" width="800" alt="Loans Preview" />
-</p>
-
-### 🔑 Login Interface
-<p align="center">
-  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/login-view.png" width="800" alt="Login Preview" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/bookstudio-v1.png" width="800" alt="BookStudio Preview" />
 </p>
 
 ## 📃 Description
@@ -220,14 +198,14 @@ public class DbConnection {
 ### Web Libraries (Loaded via CDN)
 - **jQuery**: v3.7.1  
 - **Moment.js**: v2.29.1  
-- **Bootstrap Bundle**: v5.3.0 (includes Popper.js functionality)  
+- **Bootstrap Bundle**: v5.3.0  
 - **DataTables**:  
   - Core: v2.1.8  
   - Bootstrap 5 integration: v2.1.8  
   - Responsive extension: v3.0.3  
   - Responsive Bootstrap 5 integration: v3.0.3  
-- **Popper.js**: v2.11.6 (if not using Bootstrap Bundle)  
-- **Bootstrap-select**: v1.14.0-beta3 (with Spanish localization via defaults-es_ES)  
+- **Popper.js**: v2.11.6  
+- **Bootstrap-select**: v1.14.0-beta3  
 - **Cropper.js**: v1.5.12  
 - **jsPDF**: v2.5.1  
 - **ExcelJS**: v4.3.0  
