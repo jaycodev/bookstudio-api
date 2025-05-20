@@ -11,4 +11,3 @@ Thumbs.db
 .DS_Store
 *.swp
 *.swo
-src/main/resources/config.properties
