@@ -9,14 +9,14 @@
 <!-- Theme Selector Button -->
 <div class="${dropdownDirection} bd-mode-toggle bd-navbar">
     <!-- Main Theme Toggle Button -->
-    <button class="btn btn-link nav-link py-2 dropdown-toggle d-flex align-items-center link-body-emphasis"
+    <button class="btn btn-link nav-link py-2 d-flex align-items-center link-body-emphasis"
             id="bd-theme"
             type="button"
             aria-expanded="false"
             data-bs-toggle="dropdown"
             data-bs-offset="0,0"
             aria-label="Toggle theme (auto)">
-        <i class="bi my-1 theme-icon-active bi-circle-half"></i>
+        <i class="bi my-1 theme-icon-active bi-tv"></i>
         <span class="visually-hidden" id="bd-theme-text">Cambiar tema</span>
     </button>
 
@@ -45,8 +45,8 @@
         <!-- System Theme Option -->
         <li>
             <button type="button" class="dropdown-item rounded-2 d-flex align-items-center active" 
-                    data-bs-theme-value="auto" data-bs-icon="bi-circle-half" aria-pressed="true">
-                <i class="bi me-2 bi-circle-half"></i>
+                    data-bs-theme-value="auto" data-bs-icon="bi-tv" aria-pressed="true">
+                <i class="bi me-2 bi-tv"></i>
                 Sistema
                 <i class="bi ms-auto d-none bi-check2"></i>
             </button>
