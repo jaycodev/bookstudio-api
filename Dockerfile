@@ -5,6 +5,6 @@ RUN mvn clean package
 
 FROM tomcat:8.5-jdk21
 RUN rm -rf /usr/local/tomcat/webapps/*
-COPY --from=builder /app/target/bookstudio-v1-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=builder /app/target/bookstudio-1.0.0.war /usr/local/tomcat/webapps/ROOT.war
 EXPOSE 8080
 CMD ["catalina.sh", "run"]

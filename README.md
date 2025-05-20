@@ -1,7 +1,7 @@
 <h1 align="center">BookStudio - Library Management System</h1>
 
 <p align="center">
-  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/bookstudio-v1.png" width="800" alt="BookStudio Preview" />
+  <img src="https://github.com/jason-vila/bookstudio-v1/blob/main/src/main/webapp/images/bookstudio.png" width="800" alt="BookStudio Preview" />
 </p>
 
 ## 📃 Description
