@@ -885,7 +885,7 @@ function generateLoanReceipt(response) {
 		hour12: true
 	});
 
-	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/images/bookstudio-logo-no-bg.png';
 	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 
 	doc.setFont("helvetica", "bold");
