@@ -311,7 +311,7 @@ function handleAddStudentForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addStudentSpinner").removeClass("d-none");
+			$("#addStudentSpinnerBtn").removeClass("d-none");
 			$("#addStudentIcon").addClass("d-none");
 
 			$.ajax({
@@ -355,7 +355,7 @@ function handleAddStudentForm() {
 					}
 				},
 				complete: function() {
-					$("#addStudentSpinner").addClass("d-none");
+					$("#addStudentSpinnerBtn").addClass("d-none");
 					$("#addStudentIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -525,7 +525,7 @@ function handleEditStudentForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editStudentSpinner").removeClass("d-none");
+			$("#editStudentSpinnerBtn").removeClass("d-none");
 			$("#editStudentIcon").addClass("d-none");
 
 			$.ajax({
@@ -569,7 +569,7 @@ function handleEditStudentForm() {
 					}
 				},
 				complete: function() {
-					$("#editStudentSpinner").addClass("d-none");
+					$("#editStudentSpinnerBtn").addClass("d-none");
 					$("#editStudentIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -695,6 +695,9 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsStudentModal"]', function() {
 		var studentId = $(this).data('id');
+		
+		$('#detailsStudentSpinner').removeClass('d-none');
+		$('#detailsStudentContent').addClass('d-none');
 
 		$.ajax({
 			url: 'StudentServlet',
@@ -717,6 +720,9 @@ function loadModalData() {
 						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
+				
+				$('#detailsStudentSpinner').addClass('d-none');
+				$('#detailsStudentContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -728,6 +734,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsStudentSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -735,6 +743,10 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editStudentModal"]', function() {
 		var studentId = $(this).data('id');
+		
+		$('#editStudentSpinner').removeClass('d-none');
+		$('#editStudentForm').addClass('d-none');
+		$('#editStudentBtn').prop('disabled', true);
 
 		$.ajax({
 			url: 'StudentServlet',
@@ -789,6 +801,10 @@ function loadModalData() {
 				$('#editStudentForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
+				
+				$('#editStudentSpinner').addClass('d-none');
+				$('#editStudentForm').removeClass('d-none');
+				$('#editStudentBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -800,6 +816,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editStudentSpinner').removeClass('d-none');
+				$('#editStudentBtn').prop('disabled', true);
 			}
 		});
 	});

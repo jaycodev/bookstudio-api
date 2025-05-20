@@ -252,7 +252,7 @@ function handleAddUserForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addUserSpinner").removeClass("d-none");
+			$("#addUserSpinnerBtn").removeClass("d-none");
 			$("#addUserIcon").addClass("d-none");
 
 			if (cropper) {
@@ -313,7 +313,7 @@ function handleAddUserForm() {
 						}
 					},
 					complete: function() {
-						$("#addUserSpinner").addClass("d-none");
+						$("#addUserSpinnerBtn").addClass("d-none");
 						$("#addUserIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
@@ -515,7 +515,7 @@ function handleEditUserForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editUserSpinner").removeClass("d-none");
+			$("#editUserSpinnerBtn").removeClass("d-none");
 			$("#editUserIcon").addClass("d-none");
 
 			if (cropper) {
@@ -566,7 +566,7 @@ function handleEditUserForm() {
 						$('#editUserModal').modal('hide');
 					},
 					complete: function() {
-						$("#editUserSpinner").addClass("d-none");
+						$("#editUserSpinnerBtn").addClass("d-none");
 						$("#editUserIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
@@ -766,6 +766,9 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function() {
 		var userId = $(this).data('id');
+		
+		$('#detailsUserSpinner').removeClass('d-none');
+		$('#detailsUserContent').addClass('d-none');
 
 		$.ajax({
 			url: 'UserServlet',
@@ -787,6 +790,9 @@ function loadModalData() {
 					$('#detailsUserImg').addClass('d-none');
 					$('#detailsUserSvg').removeClass('d-none');
 				}
+				
+				$('#detailsUserSpinner').addClass('d-none');
+				$('#detailsUserContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -798,6 +804,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsUserSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -805,6 +813,10 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editUserModal"]', function() {
 		var userId = $(this).data('id');
+		
+		$('#editUserSpinner').removeClass('d-none');
+		$('#editUserForm').addClass('d-none');
+		$('#editUserBtn').prop('disabled', true);
 
 		$.ajax({
 			url: 'UserServlet',
@@ -848,6 +860,10 @@ function loadModalData() {
 				});
 
 				$('#editUserProfilePhoto').val('');
+				
+				$('#editUserSpinner').addClass('d-none');
+				$('#editUserForm').removeClass('d-none');
+				$('#editUserBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -859,6 +875,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editUserSpinner').removeClass('d-none');
+				$('#editUserBtn').prop('disabled', true);
 			}
 		});
 

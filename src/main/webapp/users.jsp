@@ -28,7 +28,7 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla Usuarios</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de usuarios</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -59,7 +59,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -71,12 +71,12 @@
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">ID</th>
-								<th scope="col" class="text-start">Nombre de Usuario</th>
+								<th scope="col" class="text-start">Nombre de usuario</th>
 								<th scope="col" class="text-start">Correo electrónico</th>
 								<th scope="col" class="text-start">Nombres</th>
 								<th scope="col" class="text-start">Apellidos</th>
 								<th scope="col" class="text-start">Rol</th>
-								<th scope="col" class="text-center">Foto de Perfil</th>
+								<th scope="col" class="text-center">Foto de perfil</th>
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
@@ -95,7 +95,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addUserModalLabel">Agregar Usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addUserModalLabel">Agregar usuario</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -106,7 +106,7 @@
 	                    <div class="row">
 	                        <!-- Username Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserUsername" class="form-label">Nombre de Usuario <span class="text-danger">*</span></label>
+	                            <label for="addUserUsername" class="form-label">Nombre de usuario <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
@@ -122,7 +122,7 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserEmail" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
+	                            <label for="addUserEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
@@ -196,7 +196,7 @@
 	                        
 	                        <!-- Confirm Password Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserConfirmPassword" class="form-label">Confirmar Contraseña <span class="text-danger">*</span></label>
+	                            <label for="addUserConfirmPassword" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
 	                            <div class="input-group">
 	                                <input 
 	                                    type="password" 
@@ -234,7 +234,7 @@
 	                        
 	                        <!-- Profile Photo Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserProfilePhoto" class="form-label">Foto de Perfil</label>
+	                            <label for="addUserProfilePhoto" class="form-label">Foto de perfil</label>
 	                            <input 
 	                                type="file" 
 	                                class="form-control" 
@@ -269,7 +269,7 @@
 								<!-- Delete Photo Button -->
 								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteAddPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
-									Eliminar Foto
+									Eliminar foto
 								</button>
 							</div>
 						</div>
@@ -284,7 +284,7 @@
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addUserForm" id="addUserBtn">
 	                    <span id="addUserIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addUserSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="addUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -298,67 +298,75 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del Usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <!-- ID and Username Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsUserID"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nombre de Usuario</h6>
-	                        <p class="fw-bold" id="detailsUserUsername"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Email and First Name Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Correo Electrónico</h6>
-	                        <p class="fw-bold" id="detailsUserEmail"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nombres</h6>
-	                        <p class="fw-bold" id="detailsUserFirstName"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Last Name and Password Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Apellidos</h6>
-	                        <p class="fw-bold" id="detailsUserLastName"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Contraseña</h6>
-	                        <p class="fw-bold" id="detailsUserPassword"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Role and Profile Photo Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Rol</h6>
-	                        <p class="fw-bold" id="detailsUserRole"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Foto de Perfil</h6>
-	                        <svg id="detailsUserSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
-								<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-								<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-				            </svg>
-				            <img id="detailsUserImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Usuario">
-	                    </div>
-	                </div>
+	            	<div id="detailsUserSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsUserContent" class="d-none">
+		                <!-- ID and Username Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsUserID"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nombre de usuario</h6>
+		                        <p class="fw-bold" id="detailsUserUsername"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Email and First Name Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Correo electrónico</h6>
+		                        <p class="fw-bold" id="detailsUserEmail"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nombres</h6>
+		                        <p class="fw-bold" id="detailsUserFirstName"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Last Name and Password Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Apellidos</h6>
+		                        <p class="fw-bold" id="detailsUserLastName"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Contraseña</h6>
+		                        <p class="fw-bold" id="detailsUserPassword"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Role and Profile Photo Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Rol</h6>
+		                        <p class="fw-bold" id="detailsUserRole"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Foto de perfil</h6>
+		                        <svg id="detailsUserSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+									<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+									<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+					            </svg>
+					            <img id="detailsUserImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Usuario">
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -376,18 +384,24 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar Usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar usuario</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editUserForm" enctype="multipart/form-data" novalidate>
+	            	<div id="editUserSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	                <form id="editUserForm" class="d-none" enctype="multipart/form-data" novalidate>
 	                    <!-- Username and Email Section -->
 	                    <div class="row">
 	                        <!-- Username Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserUsername" class="form-label">Nombre de Usuario</label>
+	                            <label for="editUserUsername" class="form-label">Nombre de usuario</label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
@@ -398,7 +412,7 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserEmail" class="form-label">Correo Electrónico</label>
+	                            <label for="editUserEmail" class="form-label">Correo electrónico</label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
@@ -484,7 +498,7 @@
 	                    <!-- Profile Photo Section -->
 	                    <div class="row">
 	                        <div class="col-md-12 mb-3">
-	                            <label for="editUserProfilePhoto" class="form-label">Foto de Perfil</label>
+	                            <label for="editUserProfilePhoto" class="form-label">Foto de perfil</label>
 	                            <input 
 	                                type="file" 
 	                                class="form-control" 
@@ -529,9 +543,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editUserForm" id="editUserBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editUserForm" id="editUserBtn" disabled>
 	                    <span id="editUserIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editUserSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="editUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>
@@ -545,7 +559,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmar Eliminación</h5>
+	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmar eliminación</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            

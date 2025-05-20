@@ -65,7 +65,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -287,7 +287,7 @@
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addStudentForm" id="addStudentBtn">
 	                    <span id="addStudentIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addStudentSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="addStudentSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -307,78 +307,86 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <!-- ID and DNI Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsStudentID"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">DNI</h6>
-	                        <p class="fw-bold" id="detailsStudentDNI"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- First Name and Last Name Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nombres</h6>
-	                        <p class="fw-bold" id="detailsStudentFirstName"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Apellidos</h6>
-	                        <p class="fw-bold" id="detailsStudentLastName"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Address and Phone Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Dirección</h6>
-	                        <p class="fw-bold" id="detailsStudentAddress"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Teléfono</h6>
-	                        <p class="fw-bold" id="detailsStudentPhone"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Email and Birth Date Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Correo electrónico</h6>
-	                        <p class="fw-bold" id="detailsStudentEmail"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de nacimiento</h6>
-	                        <p class="fw-bold" id="detailsStudentBirthDate"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Gender and Faculty Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Género</h6>
-	                        <p class="fw-bold" id="detailsStudentGender"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Facultad</h6>
-	                        <p class="fw-bold" id="detailsStudentFaculty"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Status Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Estado</h6>
-	                        <p id="detailsStudentStatus"></p>
-	                    </div>
-	                </div>
+	            	<div id="detailsStudentSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsStudentContent" class="d-none">
+		                <!-- ID and DNI Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsStudentID"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">DNI</h6>
+		                        <p class="fw-bold" id="detailsStudentDNI"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- First Name and Last Name Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nombres</h6>
+		                        <p class="fw-bold" id="detailsStudentFirstName"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Apellidos</h6>
+		                        <p class="fw-bold" id="detailsStudentLastName"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Address and Phone Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Dirección</h6>
+		                        <p class="fw-bold" id="detailsStudentAddress"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Teléfono</h6>
+		                        <p class="fw-bold" id="detailsStudentPhone"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Email and Birth Date Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Correo electrónico</h6>
+		                        <p class="fw-bold" id="detailsStudentEmail"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Fecha de nacimiento</h6>
+		                        <p class="fw-bold" id="detailsStudentBirthDate"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Gender and Faculty Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Género</h6>
+		                        <p class="fw-bold" id="detailsStudentGender"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Facultad</h6>
+		                        <p class="fw-bold" id="detailsStudentFaculty"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Status Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsStudentStatus"></p>
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -402,7 +410,13 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editStudentForm" accept-charset="UTF-8" novalidate>
+	            	<div id="editStudentSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	                <form id="editStudentForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Personal Information Section -->
 	                    <div class="row">
 	                        <!-- DNI Field -->
@@ -559,9 +573,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editStudentForm" id="editStudentBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editStudentForm" id="editStudentBtn" disabled>
 	                    <span id="editStudentIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editStudentSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="editStudentSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

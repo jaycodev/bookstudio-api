@@ -323,7 +323,7 @@ function handleAddBookForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addBookSpinner").removeClass("d-none");
+			$("#addBookSpinnerBtn").removeClass("d-none");
 			$("#addBookIcon").addClass("d-none");
 
 			$.ajax({
@@ -356,7 +356,7 @@ function handleAddBookForm() {
 					$('#addBookModal').modal('hide');
 				},
 				complete: function() {
-					$("#addBookSpinner").addClass("d-none");
+					$("#addBookSpinnerBtn").addClass("d-none");
 					$("#addBookIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -481,7 +481,7 @@ function handleEditBookForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editBookSpinner").removeClass("d-none");
+			$("#editBookSpinnerBtn").removeClass("d-none");
 			$("#editBookIcon").addClass("d-none");
 
 			$.ajax({
@@ -515,7 +515,7 @@ function handleEditBookForm() {
 					$('#editBookModal').modal('hide');
 				},
 				complete: function() {
-					$("#editBookSpinner").addClass("d-none");
+					$("#editBookSpinnerBtn").addClass("d-none");
 					$("#editBookIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -638,6 +638,9 @@ function loadModalData() {
 	$(document).on('click', '[data-bs-target="#detailsBookModal"]', function() {
 		var bookId = $(this).data('id');
 
+		$('#detailsBookSpinner').removeClass('d-none');
+		$('#detailsBookContent').addClass('d-none');
+		
 		$.ajax({
 			url: 'BookServlet',
 			type: 'GET',
@@ -658,6 +661,9 @@ function loadModalData() {
 						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
+				
+				$('#detailsBookSpinner').addClass('d-none');
+				$('#detailsBookContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -669,6 +675,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsBookSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -677,6 +685,10 @@ function loadModalData() {
 	$(document).on('click', '[data-bs-target="#editBookModal"]', function() {
 		var bookId = $(this).data('id');
 
+		$('#editBookSpinner').removeClass('d-none');
+		$('#editBookForm').addClass('d-none');
+		$('#editBookBtn').prop('disabled', true);
+		
 		$.ajax({
 			url: 'BookServlet',
 			type: 'GET',
@@ -726,6 +738,10 @@ function loadModalData() {
 				$('#editBookForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
+				
+				$('#editBookSpinner').addClass('d-none');
+				$('#editBookForm').removeClass('d-none');
+				$('#editBookBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -737,6 +753,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editBookSpinner').removeClass('d-none');
+				$('#editBookBtn').prop('disabled', true);
 			}
 		});
 	});

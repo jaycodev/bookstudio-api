@@ -310,7 +310,7 @@ function handleAddPublisherForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addPublisherSpinner").removeClass("d-none");
+			$("#addPublisherSpinnerBtn").removeClass("d-none");
 			$("#addPublisherIcon").addClass("d-none");
 
 			if (cropper) {
@@ -361,7 +361,7 @@ function handleAddPublisherForm() {
 						$('#addPublisherModal').modal('hide');
 					},
 					complete: function() {
-						$("#addPublisherSpinner").addClass("d-none");
+						$("#addPublisherSpinnerBtn").addClass("d-none");
 						$("#addPublisherIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
@@ -512,7 +512,7 @@ function handleEditPublisherForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editPublisherSpinner").removeClass("d-none");
+			$("#editPublisherSpinnerBtn").removeClass("d-none");
 			$("#editPublisherIcon").addClass("d-none");
 
 			if (cropper) {
@@ -563,7 +563,7 @@ function handleEditPublisherForm() {
 						$('#editPublisherModal').modal('hide');
 					},
 					complete: function() {
-						$("#editPublisherSpinner").addClass("d-none");
+						$("#editPublisherSpinnerBtn").addClass("d-none");
 						$("#editPublisherIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
@@ -690,6 +690,9 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsPublisherModal"]', function() {
 		var publisherId = $(this).data('id');
+		
+		$('#detailsPublisherSpinner').removeClass('d-none');
+		$('#detailsPublisherContent').addClass('d-none');
 
 		$.ajax({
 			url: 'PublisherServlet',
@@ -716,6 +719,9 @@ function loadModalData() {
 					$('#detailsPublisherImg').addClass('d-none');
 					$('#detailsPublisherSvg').removeClass('d-none');
 				}
+				
+				$('#detailsPublisherSpinner').addClass('d-none');
+				$('#detailsPublisherContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -727,6 +733,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsPublisherSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -734,6 +742,10 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editPublisherModal"]', function() {
 		var publisherId = $(this).data('id');
+		
+		$('#editPublisherSpinner').removeClass('d-none');
+		$('#editPublisherForm').addClass('d-none');
+		$('#editPublisherBtn').prop('disabled', true);
 
 		$.ajax({
 			url: 'PublisherServlet',
@@ -780,6 +792,10 @@ function loadModalData() {
 				});
 
 				$('#editPublisherPhoto').val('');
+				
+				$('#editPublisherSpinner').addClass('d-none');
+				$('#editPublisherForm').removeClass('d-none');
+				$('#editPublisherBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -791,6 +807,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editPublisherSpinner').removeClass('d-none');
+				$('#editPublisherBtn').prop('disabled', true);
 			}
 		});
 

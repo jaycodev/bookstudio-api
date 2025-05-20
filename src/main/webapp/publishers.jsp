@@ -64,7 +64,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -256,7 +256,7 @@
 								<!-- Delete Photo Button -->
 								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteAddPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
-									Eliminar Foto
+									Eliminar foto
 								</button>
 							</div>
 						</div>
@@ -271,7 +271,7 @@
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addPublisherForm" id="addPublisherBtn">
 	                    <span id="addPublisherIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addPublisherSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="addPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -291,69 +291,77 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <!-- ID and Name Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsPublisherID"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nombre</h6>
-	                        <p class="fw-bold" id="detailsPublisherName"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Nationality and Genre Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nacionalidad</h6>
-	                        <p class="fw-bold" id="detailsPublisherNationality"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Género literario</h6>
-	                        <p class="fw-bold" id="detailsPublisherGenre"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Foundation Year and Website Section -->
-	                <div class="row">  
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Año de fundación</h6>
-	                        <p class="fw-bold" id="detailsPublisherYear"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Página web</h6>
-	                        <p class="fw-bold" id="detailsPublisherWebsite"><a href="" target="_blank"></a></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Address and Status Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Dirección</h6>
-	                        <p class="fw-bold" id="detailsPublisherAddress"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Estado</h6>
-	                        <p id="detailsPublisherStatus"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Photo Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Foto</h6>
-	                        <svg id="detailsPublisherSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
-								<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-								<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-				            </svg>
-				            <img id="detailsPublisherImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto de la Editorial">
-	                    </div>
-	                </div>
+					<div id="detailsPublisherSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsPublisherContent" class="d-none">
+		                <!-- ID and Name Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsPublisherID"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nombre</h6>
+		                        <p class="fw-bold" id="detailsPublisherName"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Nationality and Genre Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nacionalidad</h6>
+		                        <p class="fw-bold" id="detailsPublisherNationality"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Género literario</h6>
+		                        <p class="fw-bold" id="detailsPublisherGenre"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Foundation Year and Website Section -->
+		                <div class="row">  
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Año de fundación</h6>
+		                        <p class="fw-bold" id="detailsPublisherYear"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Página web</h6>
+		                        <p class="fw-bold" id="detailsPublisherWebsite"><a href="" target="_blank"></a></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Address and Status Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Dirección</h6>
+		                        <p class="fw-bold" id="detailsPublisherAddress"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsPublisherStatus"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Photo Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Foto</h6>
+		                        <svg id="detailsPublisherSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+									<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+									<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+					            </svg>
+					            <img id="detailsPublisherImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto de la Editorial">
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -377,7 +385,13 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editPublisherForm" enctype="multipart/form-data" novalidate>
+					<div id="editPublisherSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	                <form id="editPublisherForm" class="d-none" enctype="multipart/form-data" novalidate>
 	                    <!-- Publisher Information Section -->
 	                    <div class="row">
 	                        <!-- Publisher Name Field -->
@@ -536,9 +550,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editPublisherForm" id="editPublisherBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editPublisherForm" id="editPublisherBtn" disabled>
 	                    <span id="editPublisherIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editPublisherSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="editPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

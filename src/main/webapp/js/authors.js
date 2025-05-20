@@ -332,7 +332,7 @@ function handleAddAuthorForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addAuthorSpinner").removeClass("d-none");
+			$("#addAuthorSpinnerBtn").removeClass("d-none");
 			$("#addAuthorIcon").addClass("d-none");
 
 			if (cropper) {
@@ -382,7 +382,7 @@ function handleAddAuthorForm() {
 						$('#addAuthorModal').modal('hide');
 					},
 					complete: function() {
-						$("#addAuthorSpinner").addClass("d-none");
+						$("#addAuthorSpinnerBtn").addClass("d-none");
 						$("#addAuthorIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
@@ -538,7 +538,7 @@ function handleEditAuthorForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editAuthorSpinner").removeClass("d-none");
+			$("#editAuthorSpinnerBtn").removeClass("d-none");
 			$("#editAuthorIcon").addClass("d-none");
 
 			if (cropper) {
@@ -588,7 +588,7 @@ function handleEditAuthorForm() {
 						$('#editAuthorModal').modal('hide');
 					},
 					complete: function() {
-						$("#editAuthorSpinner").addClass("d-none");
+						$("#editAuthorSpinnerBtn").addClass("d-none");
 						$("#editAuthorIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
@@ -721,6 +721,9 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsAuthorModal"]', function() {
 		var authorId = $(this).data('id');
+		
+		$('#detailsAuthorSpinner').removeClass('d-none');
+		$('#detailsAuthorContent').addClass('d-none');
 
 		$.ajax({
 			url: 'AuthorServlet',
@@ -746,6 +749,9 @@ function loadModalData() {
 					$('#detailsAuthorImg').addClass('d-none');
 					$('#detailsAuthorSvg').removeClass('d-none');
 				}
+				
+				$('#detailsAuthorSpinner').addClass('d-none');
+				$('#detailsAuthorContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -757,6 +763,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsAuthorSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -764,6 +772,10 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editAuthorModal"]', function() {
 		var authorId = $(this).data('id');
+		
+		$('#editAuthorSpinner').removeClass('d-none');
+		$('#editAuthorForm').addClass('d-none');
+		$('#editAuthorBtn').prop('disabled', true);
 
 		$.ajax({
 			url: 'AuthorServlet',
@@ -811,6 +823,10 @@ function loadModalData() {
 				});
 
 				$('#editAuthorPhoto').val('');
+				
+				$('#editAuthorSpinner').addClass('d-none');
+				$('#editAuthorForm').removeClass('d-none');
+				$('#editAuthorBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -822,6 +838,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editAuthorSpinner').removeClass('d-none');
+				$('#editAuthorBtn').prop('disabled', true);
 			}
 		});
 

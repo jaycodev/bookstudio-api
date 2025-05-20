@@ -65,7 +65,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -213,7 +213,7 @@
 	                <!-- Loan Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addLoanForm" id="addLoanBtn">
 	                    <span id="addLoanIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addLoanSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="addLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Prestar
 	                </button>
 	            </footer>
@@ -233,53 +233,61 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <!-- ID and Book Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsLoanID"></p>
-	                    </div>
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Libro</h6>
-	                        <p class="fw-bold" id="detailsLoanBook"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Student and Loan Date Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Estudiante - DNI</h6>
-	                        <p class="fw-bold" id="detailsLoanStudent"></p>
-	                    </div>
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de préstamo</h6>
-	                        <p class="fw-bold" id="detailsLoanDate"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Return Date and Quantity Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de devolución</h6>
-	                        <p class="fw-bold" id="detailsReturnDate"></p>
-	                    </div>
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Cantidad</h6>
-	                        <p class="fw-bold" id="detailsLoanQuantity"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Status and Observation Section -->
-	                <div class="row">
-	                    <div class="col-md-6">
-	                        <h6 class="small text-muted">Estado</h6>
-	                        <p id="detailsLoanStatus"></p>
-	                    </div>
-	                    <div class="col-md-6">
-	                        <h6 class="small text-muted">Observación</h6>
-	                        <p class="fw-bold" id="detailsLoanObservation"></p>
-	                    </div>
-	                </div>
+	            	<div id="detailsLoanSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsLoanContent" class="d-none">
+		                <!-- ID and Book Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsLoanID"></p>
+		                    </div>
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Libro</h6>
+		                        <p class="fw-bold" id="detailsLoanBook"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Student and Loan Date Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Estudiante - DNI</h6>
+		                        <p class="fw-bold" id="detailsLoanStudent"></p>
+		                    </div>
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Fecha de préstamo</h6>
+		                        <p class="fw-bold" id="detailsLoanDate"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Return Date and Quantity Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Fecha de devolución</h6>
+		                        <p class="fw-bold" id="detailsReturnDate"></p>
+		                    </div>
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Cantidad</h6>
+		                        <p class="fw-bold" id="detailsLoanQuantity"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Status and Observation Section -->
+		                <div class="row">
+		                    <div class="col-md-6">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsLoanStatus"></p>
+		                    </div>
+		                    <div class="col-md-6">
+		                        <h6 class="small text-muted">Observación</h6>
+		                        <p class="fw-bold" id="detailsLoanObservation"></p>
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -334,7 +342,13 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editLoanForm" accept-charset="UTF-8" novalidate>
+	            	<div id="editLoanSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	                <form id="editLoanForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Student and Loan Date Section -->
 	                    <div class="row">
 	                        <!-- Student Field -->
@@ -418,9 +432,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editLoanForm" id="editLoanBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editLoanForm" id="editLoanBtn" disabled>
 	                    <span id="editLoanIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editLoanSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="editLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

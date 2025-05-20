@@ -65,7 +65,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -244,7 +244,7 @@
 								<!-- Delete Photo Button -->
 								<button type="button" class="btn btn-sm btn-danger d-flex align-items-center mt-2 d-none" id="deleteAddPhotoBtn">
 									<i class="bi bi-trash me-2"></i>
-									Eliminar Foto
+									Eliminar foto
 								</button>
 							</div>
 						</div>
@@ -259,7 +259,7 @@
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addAuthorForm" id="addAuthorBtn">
 	                    <span id="addAuthorIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addAuthorSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="addAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -279,61 +279,69 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <!-- ID and Name Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsAuthorID"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nombre</h6>
-	                        <p class="fw-bold" id="detailsAuthorName"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Nationality and Genre Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nacionalidad</h6>
-	                        <p class="fw-bold" id="detailsAuthorNationality"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Género literario</h6>
-	                        <p class="fw-bold" id="detailsAuthorGenre"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Birth Date and Biography Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de nacimiento</h6>
-	                        <p class="fw-bold" id="detailsAuthorBirthDate"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Biografía</h6>
-	                        <p class="fw-bold" id="detailsAuthorBiography"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Status and Photo Section -->
-	                <div class="row">  
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Estado</h6>
-	                        <p id="detailsAuthorStatus"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="fw-bold">Foto</h6>
-							<svg id="detailsAuthorSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
-								<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-								<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-				            </svg>
-				            <img id="detailsAuthorImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Autor">
-	                    </div>
-	                </div>
+	            	<div id="detailsAuthorSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsAuthorContent" class="d-none">
+		                <!-- ID and Name Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsAuthorID"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nombre</h6>
+		                        <p class="fw-bold" id="detailsAuthorName"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Nationality and Genre Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nacionalidad</h6>
+		                        <p class="fw-bold" id="detailsAuthorNationality"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Género literario</h6>
+		                        <p class="fw-bold" id="detailsAuthorGenre"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Birth Date and Biography Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Fecha de nacimiento</h6>
+		                        <p class="fw-bold" id="detailsAuthorBirthDate"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Biografía</h6>
+		                        <p class="fw-bold" id="detailsAuthorBiography"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Status and Photo Section -->
+		                <div class="row">  
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsAuthorStatus"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="fw-bold">Foto</h6>
+								<svg id="detailsAuthorSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+									<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+									<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+					            </svg>
+					            <img id="detailsAuthorImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Autor">
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -357,7 +365,13 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editAuthorForm" enctype="multipart/form-data" novalidate>
+					<div id="editAuthorSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+	            	
+	                <form id="editAuthorForm" class="d-none" enctype="multipart/form-data" novalidate>
 	                    <!-- Personal Information Section -->
 	                    <div class="row">
 	                        <!-- Author Name Field -->
@@ -501,9 +515,9 @@
 					<button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 
 					<!-- Update Button -->
-					<button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editAuthorForm" id="editAuthorBtn">
+					<button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editAuthorForm" id="editAuthorBtn" disabled>
 						<span id="editAuthorIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-						<span id="editAuthorSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+						<span id="editAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 						Actualizar
 					</button>
 				</footer>

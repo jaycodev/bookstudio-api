@@ -65,7 +65,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -256,7 +256,7 @@
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addBookForm" id="addBookBtn">
 	                    <span id="addBookIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addBookSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="addBookSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -276,70 +276,78 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<!-- ID and Title Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsBookID"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Título</h6>
-	                        <p class="fw-bold" id="detailsBookTitle"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Avaible and Loaned Copies Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Ejemplares disponibles</h6>
-	                        <p class="fw-bold" id="detailsBookAvaibleCopies"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Ejemplares prestados</h6>
-	                        <p class="fw-bold" id="detailsBookLoanedCopies"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Author and Publisher Section -->
-	                <div class="row">
-	                	<div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Autor</h6>
-	                        <p class="fw-bold" id="detailsBookAuthor"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Editorial</h6>
-	                        <p class="fw-bold" id="detailsBookPublisher"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Course and Release Date Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Curso</h6>
-	                        <p class="fw-bold" id="detailsBookCourse"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Fecha de lanzamiento</h6>
-	                        <p class="fw-bold" id="detailsReleaseDate"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Genre and Status Section -->
-	                <div class="row">   
-	                    <div class="col-md-6">
-	                        <h6 class="small text-muted">Género</h6>
-	                        <p class="fw-bold" id="detailsBookGenre"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6">
-	                        <h6 class="small text-muted">Estado</h6>
-	                        <p id="detailsBookStatus"></p>
-	                    </div>
-	                </div>
+	            	<div id="detailsBookSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsBookContent" class="d-none">
+		            	<!-- ID and Title Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsBookID"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Título</h6>
+		                        <p class="fw-bold" id="detailsBookTitle"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Avaible and Loaned Copies Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Ejemplares disponibles</h6>
+		                        <p class="fw-bold" id="detailsBookAvaibleCopies"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Ejemplares prestados</h6>
+		                        <p class="fw-bold" id="detailsBookLoanedCopies"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Author and Publisher Section -->
+		                <div class="row">
+		                	<div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Autor</h6>
+		                        <p class="fw-bold" id="detailsBookAuthor"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Editorial</h6>
+		                        <p class="fw-bold" id="detailsBookPublisher"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Course and Release Date Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Curso</h6>
+		                        <p class="fw-bold" id="detailsBookCourse"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Fecha de lanzamiento</h6>
+		                        <p class="fw-bold" id="detailsReleaseDate"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Genre and Status Section -->
+		                <div class="row">   
+		                    <div class="col-md-6">
+		                        <h6 class="small text-muted">Género</h6>
+		                        <p class="fw-bold" id="detailsBookGenre"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsBookStatus"></p>
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -363,7 +371,13 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editBookForm" accept-charset="UTF-8" novalidate>
+	            	<div id="editBookSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+	            
+	                <form id="editBookForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Title and Total Copies Section -->
 	                    <div class="row">
 	                        <!-- Book Title Field -->
@@ -504,9 +518,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editBookForm" id="editBookBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editBookForm" id="editBookBtn" disabled>
 	                    <span id="editBookIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editBookSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="editBookSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

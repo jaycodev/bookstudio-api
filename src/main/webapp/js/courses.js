@@ -232,7 +232,7 @@ function handleAddCourseForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addCourseSpinner").removeClass("d-none");
+			$("#addCourseSpinnerBtn").removeClass("d-none");
 			$("#addCourseIcon").addClass("d-none");
 
 			$.ajax({
@@ -265,7 +265,7 @@ function handleAddCourseForm() {
 					$('#addCourseModal').modal('hide');
 				},
 				complete: function() {
-					$("#addCourseSpinner").addClass("d-none");
+					$("#addCourseSpinnerBtn").addClass("d-none");
 					$("#addCourseIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -368,7 +368,7 @@ function handleEditCourseForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editCourseSpinner").removeClass("d-none");
+			$("#editCourseSpinnerBtn").removeClass("d-none");
 			$("#editCourseIcon").addClass("d-none");
 
 			$.ajax({
@@ -402,7 +402,7 @@ function handleEditCourseForm() {
 					$('#editCourseModal').modal('hide');
 				},
 				complete: function() {
-					$("#editCourseSpinner").addClass("d-none");
+					$("#editCourseSpinnerBtn").addClass("d-none");
 					$("#editCourseIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -500,6 +500,9 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsCourseModal"]', function() {
 		var courseId = $(this).data('id');
+		
+		$('#detailsCourseSpinner').removeClass('d-none');
+		$('#detailsCourseContent').addClass('d-none');
 
 		$.ajax({
 			url: 'CourseServlet',
@@ -516,6 +519,9 @@ function loadModalData() {
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
 				);
 				$('#detailsCourseDescription').text(data.description);
+				
+				$('#detailsCourseSpinner').addClass('d-none');
+				$('#detailsCourseContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -527,6 +533,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsCourseSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -535,6 +543,10 @@ function loadModalData() {
 	$(document).on('click', '[data-bs-target="#editCourseModal"]', function() {
 		var courseId = $(this).data('id');
 
+		$('#editCourseSpinner').removeClass('d-none');
+		$('#editCourseForm').addClass('d-none');
+		$('#editCourseBtn').prop('disabled', true);
+		
 		$.ajax({
 			url: 'CourseServlet',
 			type: 'GET',
@@ -582,6 +594,10 @@ function loadModalData() {
 				$('#editCourseForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
+				
+				$('#editCourseSpinner').addClass('d-none');
+				$('#editCourseForm').removeClass('d-none');
+				$('#editCourseBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -593,6 +609,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editCourseSpinner').removeClass('d-none');
+				$('#editCourseBtn').prop('disabled', true);
 			}
 		});
 	});

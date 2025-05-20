@@ -359,7 +359,7 @@ function handleAddLoanForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addLoanSpinner").removeClass("d-none");
+			$("#addLoanSpinnerBtn").removeClass("d-none");
 			$("#addLoanIcon").addClass("d-none");
 
 			$.ajax({
@@ -394,7 +394,7 @@ function handleAddLoanForm() {
 					$('#addLoanModal').modal('hide');
 				},
 				complete: function() {
-					$("#addLoanSpinner").addClass("d-none");
+					$("#addLoanSpinnerBtn").addClass("d-none");
 					$("#addLoanIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -597,7 +597,7 @@ function handleEditLoanForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editLoanSpinner").removeClass("d-none");
+			$("#editLoanSpinnerBtn").removeClass("d-none");
 			$("#editLoanIcon").addClass("d-none");
 
 			$.ajax({
@@ -631,7 +631,7 @@ function handleEditLoanForm() {
 					$('#editLoanModal').modal('hide');
 				},
 				complete: function() {
-					$("#editLoanSpinner").addClass("d-none");
+					$("#editLoanSpinnerBtn").addClass("d-none");
 					$("#editLoanIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
@@ -724,6 +724,9 @@ function loadModalData() {
 	$(document).on('click', '[data-bs-target="#detailsLoanModal"]', function() {
 		var loanId = $(this).data('id');
 
+		$('#detailsLoanSpinner').removeClass('d-none');
+		$('#detailsLoanContent').addClass('d-none');
+		
 		$.ajax({
 			url: 'LoanServlet',
 			type: 'GET',
@@ -742,6 +745,9 @@ function loadModalData() {
 						: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>'
 				);
 				$('#detailsLoanObservation').text(data.observation);
+				
+				$('#detailsLoanSpinner').addClass('d-none');
+				$('#detailsLoanContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -753,6 +759,8 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#detailsLoanSpinner').removeClass('d-none');
 			}
 		});
 	});
@@ -776,6 +784,10 @@ function loadModalData() {
 	$(document).on('click', '[data-bs-target="#editLoanModal"]', function() {
 		var loanId = $(this).data('id');
 
+		$('#editLoanSpinner').removeClass('d-none');
+		$('#editLoanForm').addClass('d-none');
+		$('#editLoanBtn').prop('disabled', true);
+		
 		$.ajax({
 			url: 'LoanServlet',
 			type: 'GET',
@@ -802,6 +814,10 @@ function loadModalData() {
 				$('#editLoanForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
+				
+				$('#editLoanSpinner').addClass('d-none');
+				$('#editLoanForm').removeClass('d-none');
+				$('#editLoanBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
@@ -813,6 +829,9 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
+				
+				$('#editLoanSpinner').removeClass('d-none');
+				$('#editLoanBtn').prop('disabled', true);
 			}
 		});
 	});

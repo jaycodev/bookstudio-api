@@ -65,7 +65,7 @@
 			<div class="card-body">
 				<!-- Loading Spinner -->
 				<div id="spinnerLoad"
-					class="d-flex justify-content-center align-items-center h-100">
+					class="d-flex justify-content-center align-items-center my-5">
 					<div class="spinner-border" role="status">
 						<span class="visually-hidden">Cargando...</span>
 					</div>
@@ -176,7 +176,7 @@
 		            <!-- Add Button -->
 		            <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addCourseForm" id="addCourseBtn">
 		                <span id="addCourseIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-		                <span id="addCourseSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+		                <span id="addCourseSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 		                Agregar
 		            </button>
 		        </footer>
@@ -196,39 +196,47 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <!-- ID and Name Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">ID</h6>
-	                        <p class="fw-bold" id="detailsCourseID"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nombre</h6>
-	                        <p class="fw-bold" id="detailsCourseName"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Level and Status Section -->
-	                <div class="row">
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Nivel</h6>
-	                        <p class="fw-bold" id="detailsCourseLevel"></p>
-	                    </div>
-	                    
-	                    <div class="col-md-6 mb-3">
-	                        <h6 class="small text-muted">Estado</h6>
-	                        <p id="detailsCourseStatus"></p>
-	                    </div>
-	                </div>
-	                
-	                <!-- Description Section -->
-	                <div class="row">
-	                    <div class="col-md-12 mb-3">
-	                        <h6 class="small text-muted">Descripción</h6>
-	                        <p class="fw-bold" id="detailsCourseDescription"></p>
-	                    </div>
-	                </div>
+					<div id="detailsCourseSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+					
+	            	<div id="detailsCourseContent" class="d-none">
+		                <!-- ID and Name Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">ID</h6>
+		                        <p class="fw-bold" id="detailsCourseID"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nombre</h6>
+		                        <p class="fw-bold" id="detailsCourseName"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Level and Status Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Nivel</h6>
+		                        <p class="fw-bold" id="detailsCourseLevel"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsCourseStatus"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Description Section -->
+		                <div class="row">
+		                    <div class="col-md-12 mb-3">
+		                        <h6 class="small text-muted">Descripción</h6>
+		                        <p class="fw-bold" id="detailsCourseDescription"></p>
+		                    </div>
+		                </div>
+					</div>
 	            </div>
 	            
 	            <!-- Modal Footer -->
@@ -252,7 +260,13 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="editCourseForm" accept-charset="UTF-8" novalidate>
+	            	<div id="editCourseSpinner" class="text-center my-5">
+						<div class="spinner-border" role="status">
+						  <span class="visually-hidden">Cargando...</span>
+						</div>
+					</div>
+	            
+	                <form id="editCourseForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Course Name and Level Section -->
 	                    <div class="row">
 	                        <!-- Course Name Field -->
@@ -321,9 +335,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editCourseForm" id="editCourseBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editCourseForm" id="editCourseBtn" disabled>
 	                    <span id="editCourseIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editCourseSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <span id="editCourseSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>
