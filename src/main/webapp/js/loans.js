@@ -972,7 +972,7 @@ function generateLoanReceipt(response) {
 function generatePDF(loanTable) {
 	const { jsPDF } = window.jspdf;
 	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/bookstudio-v1/images/bookstudio-logo-no-bg.png';
+	const logoUrl = '/images/bookstudio-logo-no-bg.png';
 
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {
