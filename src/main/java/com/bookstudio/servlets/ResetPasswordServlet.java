@@ -62,24 +62,12 @@ public class ResetPasswordServlet extends HttpServlet {
 	}
 
 	private boolean sendPasswordChangeEmail(String email, HttpServletRequest request) {
-		Properties configProps = new Properties();
-		try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-			if (input == null) {
-				System.err.println("No se pudo encontrar config.properties");
-				return false;
-			}
-			configProps.load(input);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			return false;
-		}
-
-		final String username = configProps.getProperty("bookstudio.email");
-		final String password = configProps.getProperty("bookstudio.password");
+		final String username = System.getenv("BOOKSTUDIO_EMAIL");
+		final String password = System.getenv("BOOKSTUDIO_PASSWORD");
 
 		if (username == null || password == null) {
-			System.err.println("Credenciales de email no encontradas en config.properties");
-			return false;
+		    System.err.println("Credenciales de email no encontradas en variables de entorno");
+		    return false;
 		}
 
 		Properties props = new Properties();
