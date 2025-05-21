@@ -16,7 +16,7 @@ public class UserDaoImpl implements UserDao {
 	public List<User> listUsers(int loggedUserId) {
 		List<User> userList = new ArrayList<>();
 
-		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Password, Role, ProfilePhoto FROM Users WHERE UserID <> ?";
+		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Role, ProfilePhoto FROM Users WHERE UserID <> ?";
 
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
 
@@ -30,7 +30,6 @@ public class UserDaoImpl implements UserDao {
 				user.setEmail(rs.getString("Email"));
 				user.setFirstName(rs.getString("FirstName"));
 				user.setLastName(rs.getString("LastName"));
-				user.setPassword(rs.getString("Password"));
 				user.setRole(rs.getString("Role"));
 				user.setProfilePhoto(rs.getBytes("ProfilePhoto"));
 				userList.add(user);
@@ -46,7 +45,7 @@ public class UserDaoImpl implements UserDao {
 	public User getUser(String userId) {
 		User user = null;
 
-		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Password, Role, ProfilePhoto FROM Users WHERE UserID = ?";
+		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Role, ProfilePhoto FROM Users WHERE UserID = ?";
 
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
 
@@ -59,7 +58,6 @@ public class UserDaoImpl implements UserDao {
 					user.setEmail(rs.getString("Email"));
 					user.setFirstName(rs.getString("FirstName"));
 					user.setLastName(rs.getString("LastName"));
-					user.setPassword(rs.getString("Password"));
 					user.setRole(rs.getString("Role"));
 					user.setProfilePhoto(rs.getBytes("ProfilePhoto"));
 				}
@@ -125,17 +123,16 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User updateUser(User user) {
-		String sql = "UPDATE Users SET FirstName = ?, LastName = ?, Password = ?, Role = ?, ProfilePhoto = ? "
+		String sql = "UPDATE Users SET FirstName = ?, LastName = ?, Role = ?, ProfilePhoto = ? "
 				+ "WHERE UserID = ?";
 
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
 
 			ps.setString(1, user.getFirstName());
 			ps.setString(2, user.getLastName());
-			ps.setString(3, user.getPassword());
-			ps.setString(4, user.getRole());
-			ps.setBytes(5, user.getProfilePhoto());
-			ps.setString(6, user.getUserId());
+			ps.setString(3, user.getRole());
+			ps.setBytes(4, user.getProfilePhoto());
+			ps.setString(5, user.getUserId());
 
 			int resultado = ps.executeUpdate();
 			if (resultado == 0) {

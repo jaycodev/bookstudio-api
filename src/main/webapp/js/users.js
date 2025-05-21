@@ -110,6 +110,7 @@ function loadUsers() {
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
+			console.log(data)
 			clearTimeout(safetyTimer);
 
 			var tableBody = $('#bodyUsers');
@@ -615,17 +616,6 @@ function validateEditField(field) {
 		}
 	}
 
-	// Password validation
-	if (field.is('#editUserPassword')) {
-		const password = field.val();
-		const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-		if (!passwordRegex.test(password)) {
-			errorMessage = 'La contraseña debe tener 8 caracteres, una mayúscula, un número y un símbolo.';
-			isValid = false;
-		}
-	}
-
 	// Profile photo validation
 	if (field.is('#editUserProfilePhoto')) {
 		var file = field[0].files[0];
@@ -781,7 +771,6 @@ function loadModalData() {
 				$('#detailsUserEmail').text(data.email);
 				$('#detailsUserFirstName').text(data.firstName);
 				$('#detailsUserLastName').text(data.lastName);
-				$('#detailsUserPassword').text(data.password);
 				$('#detailsUserRole').text(data.role.charAt(0).toUpperCase() + data.role.slice(1));
 				if (data.profilePhotoBase64) {
 					$('#detailsUserImg').attr('src', data.profilePhotoBase64).removeClass('d-none');
@@ -829,7 +818,6 @@ function loadModalData() {
 				$('#editUserEmail').val(data.email);
 				$('#editUserFirstName').val(data.firstName);
 				$('#editUserLastName').val(data.lastName);
-				$('#editUserPassword').val(data.password);
 
 				$('#editUserRole').selectpicker('destroy').empty().append(
 					$('<option>', {
@@ -847,11 +835,6 @@ function loadModalData() {
 				updateEditImageContainer(data.profilePhotoBase64);
 
 				$('#editUserForm .is-invalid').removeClass('is-invalid');
-
-				$('#editUserForm .password-field').attr('type', 'password');
-				$('#editUserForm .input-group-text').find('i').removeClass('bi-eye-slash').addClass('bi-eye');
-
-				preventSpacesInPasswordField("#editUserPassword");
 
 				placeholderColorEditSelect();
 
