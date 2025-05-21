@@ -345,18 +345,13 @@
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">Contraseña</h6>
-		                        <p class="fw-bold" id="detailsUserPassword"></p>
+		                        <h6 class="small text-muted">Rol</h6>
+		                        <p class="fw-bold" id="detailsUserRole"></p>
 		                    </div>
 		                </div>
 		                
 		                <!-- Role and Profile Photo Section -->
 		                <div class="row">
-		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">Rol</h6>
-		                        <p class="fw-bold" id="detailsUserRole"></p>
-		                    </div>
-		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Foto de perfil</h6>
 		                        <svg id="detailsUserSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
@@ -460,27 +455,6 @@
 	                    
 	                    <!-- Password and Role Section -->
 	                    <div class="row">
-	                        <!-- Password Field -->
-	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
-	                            <div class="input-group">
-	                                <input 
-	                                    type="password" 
-	                                    class="form-control password-field" 
-	                                    data-toggle-id="3" 
-	                                    id="editUserPassword" 
-	                                    name="editUserPassword" 
-	                                    placeholder="Ingrese una contraseña" 
-	                                    autocomplete="current-password" 
-	                                    required
-	                                >
-	                                <span class="input-group-text cursor-pointer" data-toggle-id="3">
-	                                    <i class="bi bi-eye"></i>
-	                                </span>
-	                                <div class="invalid-feedback"></div>
-	                            </div>
-	                        </div>
-	                        
 	                        <!-- Role Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editUserRole" class="form-label">Rol <span class="text-danger">*</span></label>
@@ -493,11 +467,9 @@
 	                                <!-- Options will be dynamically populated via JavaScript -->
 	                            </select>
 	                        </div>
-	                    </div>
-	                    
-	                    <!-- Profile Photo Section -->
-	                    <div class="row">
-	                        <div class="col-md-12 mb-3">
+	                        
+	                        <!-- Profile Photo Field -->
+	                        <div class="col-md-6 mb-3">
 	                            <label for="editUserProfilePhoto" class="form-label">Foto de perfil</label>
 	                            <input 
 	                                type="file" 
