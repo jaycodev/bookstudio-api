@@ -8,6 +8,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/es.min.js" defer></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js" defer></script>
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.js" defer></script>
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js" defer></script>

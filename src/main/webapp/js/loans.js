@@ -168,8 +168,8 @@ function generateRow(loan) {
 			<td class="align-middle text-start">${loan.loanId}</td>
 			<td class="align-middle text-start">${loan.bookTitle}</td>
 			<td class="align-middle text-start">${loan.studentName}</td>
-			<td class="align-middle text-center">${moment(loan.loanDate).format('DD/MM/YYYY')}</td>
-			<td class="align-middle text-center">${moment(loan.returnDate).format('DD/MM/YYYY')}</td>
+			<td class="align-middle text-center">${moment(loan.loanDate).format('DD MMM YYYY')}</td>
+			<td class="align-middle text-center">${moment(loan.returnDate).format('DD MMM YYYY')}</td>
 			<td class="align-middle text-center">${loan.quantity}</td>
 			<td class="align-middle text-center">
 				${loan.status === 'prestado'
@@ -736,8 +736,8 @@ function loadModalData() {
 				$('#detailsLoanID').text(data.loanId);
 				$('#detailsLoanBook').text(data.bookTitle);
 				$('#detailsLoanStudent').text(data.studentName);
-				$('#detailsLoanDate').text(moment(data.loanDate).format('DD/MM/YYYY'));
-				$('#detailsReturnDate').text(moment(data.returnDate).format('DD/MM/YYYY'));
+				$('#detailsLoanDate').text(moment(data.loanDate).format('DD MMM YYYY'));
+				$('#detailsReturnDate').text(moment(data.returnDate).format('DD MMM YYYY'));
 				$('#detailsLoanQuantity').text(data.quantity);
 				$('#detailsLoanStatus').html(
 					data.status === 'prestado'
@@ -958,7 +958,7 @@ function generateLoanReceipt(response) {
 	doc.text("Este documento es un comprobante del préstamo realizado. Por favor consérvelo hasta la devolución.",
 		pageWidth / 2, finalY, { align: "center" });
 
-	const filename = `Recibo_de_préstamo_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Recibo_de_préstamo_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
 	const link = document.createElement('a');
@@ -977,7 +977,7 @@ function generatePDF(loanTable) {
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {
 		day: '2-digit',
-		month: '2-digit',
+		month: 'long',
 		year: 'numeric'
 	});
 	const hora = currentDate.toLocaleTimeString('en-US', {
@@ -1042,7 +1042,7 @@ function generatePDF(loanTable) {
 		}
 	});
 
-	const filename = `Lista_de_préstamos_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_préstamos_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1061,7 +1061,7 @@ function generateExcel(loanTable) {
 	const currentDate = new Date();
 	const dateStr = currentDate.toLocaleDateString('es-ES', {
 		day: '2-digit',
-		month: '2-digit',
+		month: 'long',
 		year: 'numeric'
 	});
 	const timeStr = currentDate.toLocaleTimeString('en-US', {
@@ -1132,7 +1132,7 @@ function generateExcel(loanTable) {
 		}
 	});
 
-	const filename = `Lista_de_préstamos_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_préstamos_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

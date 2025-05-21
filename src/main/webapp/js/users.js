@@ -1097,7 +1097,7 @@ function generatePDF(dataTable) {
 	const currentDate = new Date();
 	const fecha = currentDate.toLocaleDateString('es-ES', {
 		day: '2-digit',
-		month: '2-digit',
+		month: 'long',
 		year: 'numeric'
 	});
 	const hora = currentDate.toLocaleTimeString('en-US', {
@@ -1157,7 +1157,7 @@ function generatePDF(dataTable) {
 		}
 	});
 
-	const filename = `Lista_de_usuarios_BookStudio_${fecha.replace(/\//g, '-')}.pdf`;
+	const filename = `Lista_de_usuarios_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
 
 	const pdfBlob = doc.output('blob');
 	const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1176,7 +1176,7 @@ function generateExcel(dataTable) {
 	const currentDate = new Date();
 	const dateStr = currentDate.toLocaleDateString('es-ES', {
 		day: '2-digit',
-		month: '2-digit',
+		month: 'long',
 		year: 'numeric'
 	});
 	const timeStr = currentDate.toLocaleTimeString('en-US', {
@@ -1232,7 +1232,7 @@ function generateExcel(dataTable) {
 
 	data.forEach(item => worksheet.addRow(item));
 
-	const filename = `Lista_de_usuarios_BookStudio_${dateStr.replace(/\//g, '-')}.xlsx`;
+	const filename = `Lista_de_usuarios_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
 
 	workbook.xlsx.writeBuffer().then(buffer => {
 		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
