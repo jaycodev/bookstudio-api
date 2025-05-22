@@ -169,8 +169,9 @@ public class StudentDaoImpl implements StudentDao {
 	public Student update(Student student) throws SQLException {
 		String sqlCheckEmail = "SELECT COUNT(*) FROM Students WHERE Email = ? AND StudentID != ?";
 
-		String sqlUpdate = "UPDATE Students SET Address = ?, Phone = ?, Email = ?, Gender = ?, FacultyID = ?, Status = ? "
+		String sqlUpdate = "UPDATE Students SET FirstName = ?, LastName = ?, Address = ?, Phone = ?, BirthDate = ?, Email = ?, Gender = ?, FacultyID = ?, Status = ? "
 				+ "WHERE StudentID = ?";
+
 
 		String sqlSelectFaculty = "SELECT FacultyName FROM Faculties WHERE FacultyID = ?";
 
@@ -192,13 +193,16 @@ public class StudentDaoImpl implements StudentDao {
 			ps.close();
 
 			ps = cn.prepareStatement(sqlUpdate);
-			ps.setString(1, student.getAddress());
-			ps.setString(2, student.getPhone());
-			ps.setString(3, student.getEmail());
-			ps.setString(4, student.getGender());
-			ps.setString(5, student.getFacultyId());
-			ps.setString(6, student.getStatus());
-			ps.setString(7, student.getStudentId());
+			ps.setString(1, student.getFirstName());
+			ps.setString(2, student.getLastName());
+			ps.setString(3, student.getAddress());
+			ps.setString(4, student.getPhone());
+			ps.setDate(5, java.sql.Date.valueOf(student.getBirthDate()));
+			ps.setString(6, student.getEmail());
+			ps.setString(7, student.getGender());
+			ps.setString(8, student.getFacultyId());
+			ps.setString(9, student.getStatus());
+			ps.setString(10, student.getStudentId());
 
 			int result = ps.executeUpdate();
 			ps.close();

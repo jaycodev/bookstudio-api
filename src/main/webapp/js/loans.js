@@ -299,13 +299,8 @@ function updateRowInTable(loan) {
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(loan.bookTitle);
 		row.find('td').eq(2).text(loan.studentName);
-		row.find('td').eq(3).text(moment(loan.loanDate).format('DD/MM/YYYY'));
-		row.find('td').eq(4).text(moment(loan.returnDate).format('DD/MM/YYYY'));
-		row.find('td').eq(5).text(loan.quantity);
-
-		row.find('button[data-status]').data('status', loan.status);
+		row.find('td').eq(4).text(moment(loan.returnDate).format('DD MMM YYYY'));
 
 		table.row(row).invalidate().draw();
 

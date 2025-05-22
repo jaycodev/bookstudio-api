@@ -430,15 +430,20 @@
 	                            >
 	                        </div>
 	                        
-	                        <!-- First Name Field -->
+							<!-- First Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentFirstName" class="form-label">Nombres</label>
+	                            <label for="editStudentFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
 	                                id="editStudentFirstName" 
-	                                disabled
+	                                name="editStudentFirstName" 
+	                                pattern="[A-Za-zÀ-ÿ\s]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
+	                                placeholder="Ingrese los nombres del estudiante" 
+	                                required
 	                            >
+	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>
 	                    
@@ -446,14 +451,18 @@
 	                    <div class="row">
 	                        <!-- Last Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentLastName" class="form-label">Apellidos</label>
+	                            <label for="editStudentLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
 	                                id="editStudentLastName" 
 	                                name="editStudentLastName" 
-	                                disabled
+	                                pattern="[A-Za-zÀ-ÿ\s]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
+	                                placeholder="Ingrese los apellidos del estudiante" 
+	                                required
 	                            >
+	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
 	                        <!-- Address Field -->
@@ -509,13 +518,15 @@
 	                    <div class="row">
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentBirthDate" class="form-label">Fecha de nacimiento</label>
+	                            <label for="editStudentBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
 	                                id="editStudentBirthDate" 
-	                                disabled
+	                                name="editStudentBirthDate" 
+	                                required
 	                            >
+	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
 	                        <!-- Gender Field -->

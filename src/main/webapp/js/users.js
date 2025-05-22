@@ -183,8 +183,6 @@ function updateRowInTable(user) {
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(user.username);
-		row.find('td').eq(2).text(user.email);
 		row.find('td').eq(3).text(user.firstName);
 		row.find('td').eq(4).text(user.lastName);
 		row.find('td').eq(5).text(user.role.charAt(0).toUpperCase() + user.role.slice(1));

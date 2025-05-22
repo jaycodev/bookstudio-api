@@ -249,7 +249,6 @@ function updateRowInTable(student) {
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(student.dni);
 		row.find('td').eq(2).text(student.firstName);
 		row.find('td').eq(3).text(student.lastName);
 		row.find('td').eq(4).text(student.phone);
@@ -601,6 +600,26 @@ function validateEditField(field) {
 	} else {
 		field.removeClass('is-invalid');
 	}
+	
+	// Name validation
+	if (field.is('#editStudentFirstName')) {
+		const firstName = field.val();
+	
+		if (firstName.length < 3) {
+			errorMessage = 'El nombre debe tener al menos 3 caracteres.';
+			isValid = false;
+		}
+	}
+	
+	// Last name validation
+	if (field.is('#editStudentLastName')) {
+		const lastName = field.val();
+	
+		if (lastName.length < 3) {
+			errorMessage = 'El apellido debe tener al menos 3 caracteres.';
+			isValid = false;
+		}
+	}
 
 	// Address validation
 	if (field.is('#editStudentAddress')) {
@@ -630,6 +649,16 @@ function validateEditField(field) {
 
 		if (!emailRegex.test(email)) {
 			errorMessage = 'Por favor ingrese un correo electrónico válido.';
+			isValid = false;
+		}
+	}
+
+	// Birthdate validation
+	if (field.is('#editStudentBirthDate')) {
+		const birthDate = new Date(field.val());
+		const today = new Date();
+		if (birthDate > today) {
+			errorMessage = 'La fecha de nacimiento no puede ser en el futuro.';
 			isValid = false;
 		}
 	}
@@ -689,9 +718,8 @@ function loadModalData() {
 		$('#addStudentForm')[0].reset();
 		$('#addStudentForm .is-invalid').removeClass('is-invalid');
 		
-		const today = new Date();
-		const maxDateStr = today.toISOString().split('T')[0];
-		$('#addStudentBirthDate').attr('max', maxDateStr);
+		const today = new Date().toISOString().split('T')[0];
+		$('#addStudentBirthDate').attr('max', today);
 
 		placeholderColorDateInput();
 	});
@@ -765,7 +793,9 @@ function loadModalData() {
 				$('#editStudentPhone').val(data.phone);
 				$('#editStudentEmail').val(data.email);
 				$('#editStudentBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
-
+				const today = new Date().toISOString().split('T')[0];
+				$('#editStudentBirthDate').attr('max', today);
+				
 				$('#editStudentGender').selectpicker('destroy').empty().append(
 					$('<option>', {
 						value: 'Masculino',

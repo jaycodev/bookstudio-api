@@ -376,7 +376,6 @@
 	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-
 	                    </div>
 	                    
 	                    <!-- Return Date and Quantity Section -->
