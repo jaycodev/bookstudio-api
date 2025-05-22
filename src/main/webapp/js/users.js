@@ -260,9 +260,9 @@ function handleAddUserForm() {
 					width: 460,
 					height: 460
 				}).toBlob(function(blob) {
-					formData.set('addUserProfilePhoto', blob, 'photo.png');
+					formData.set('addUserProfilePhoto', blob, 'photo.jpg');
 					sendAddForm(formData);
-				}, 'image/png');
+				}, 'image/jpeg', 0.7);
 			} else {
 				sendAddForm(formData);
 			}
