@@ -612,6 +612,10 @@ function loadModalData() {
 
 		populateSelect('#addBookCourse', courseList, 'courseId', 'name');
 		$('#addBookCourse').selectpicker();
+		
+		const today = new Date();
+		const todayStr = today.toISOString().split('T')[0];
+		$('#addReleaseDate').attr('max', todayStr);
 
 		populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
 		$('#addBookGenre').selectpicker();
@@ -716,6 +720,11 @@ function loadModalData() {
 				$('#editBookGenre').selectpicker();
 
 				$('#editReleaseDate').val(moment(data.releaseDate).format('YYYY-MM-DD'));
+				
+				const today = new Date();
+				const todayStr = today.toISOString().split('T')[0];
+				$('#editReleaseDate').attr('max', todayStr);
+				
 				$('#editBookStatus').selectpicker('destroy').empty().append(
 					$('<option>', {
 						value: 'activo',

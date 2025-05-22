@@ -202,7 +202,7 @@ public class LoanDaoImpl implements LoanDao {
 	public Loan update(Loan loan) {
 		String sqlUpdate = """
 				    UPDATE Loans
-				    SET StudentID = ?, LoanDate = ?, ReturnDate = ?, Observation = ?
+				    SET StudentID = ?, ReturnDate = ?, Observation = ?
 				    WHERE LoanID = ?
 				""";
 
@@ -226,10 +226,9 @@ public class LoanDaoImpl implements LoanDao {
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement psUpdate = cn.prepareStatement(sqlUpdate)) {
 
 			psUpdate.setString(1, loan.getStudentId());
-			psUpdate.setDate(2, java.sql.Date.valueOf(loan.getLoanDate()));
-			psUpdate.setDate(3, java.sql.Date.valueOf(loan.getReturnDate()));
-			psUpdate.setString(4, loan.getObservation());
-			psUpdate.setString(5, loan.getLoanId());
+			psUpdate.setDate(2, java.sql.Date.valueOf(loan.getReturnDate()));
+			psUpdate.setString(3, loan.getObservation());
+			psUpdate.setString(4, loan.getLoanId());
 
 			int resultado = psUpdate.executeUpdate();
 

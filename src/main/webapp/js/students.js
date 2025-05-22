@@ -688,6 +688,10 @@ function loadModalData() {
 
 		$('#addStudentForm')[0].reset();
 		$('#addStudentForm .is-invalid').removeClass('is-invalid');
+		
+		const today = new Date();
+		const maxDateStr = today.toISOString().split('T')[0];
+		$('#addStudentBirthDate').attr('max', maxDateStr);
 
 		placeholderColorDateInput();
 	});

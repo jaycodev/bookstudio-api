@@ -51,7 +51,6 @@ public class LoanService {
 		String loanId = request.getParameter("loanId");
 		String bookId = request.getParameter("editLoanBook");
 		String studentId = request.getParameter("editLoanStudent");
-		LocalDate loanDate = LocalDate.parse(request.getParameter("editLoanDate"));
 		LocalDate returnDate = LocalDate.parse(request.getParameter("editReturnDate"));
 		String observation = request.getParameter("editLoanObservation");
 
@@ -59,7 +58,6 @@ public class LoanService {
 		loan.setLoanId(loanId);
 		loan.setBookId(bookId);
 		loan.setStudentId(studentId);
-		loan.setLoanDate(loanDate);
 		loan.setReturnDate(returnDate);
 		loan.setObservation(observation);
 

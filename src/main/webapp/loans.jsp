@@ -156,7 +156,6 @@
 	                                id="addLoanDate" 
 	                                disabled
 	                            >
-	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
 	                        <!-- Return Date Field -->
@@ -369,16 +368,14 @@
 	                        
 	                        <!-- Loan Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanDate" class="form-label">Fecha de préstamo <span class="text-danger">*</span></label>
+	                            <label for="editLoanDate" class="form-label">Fecha de préstamo</label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
 	                                id="editLoanDate" 
-	                                name="editLoanDate" 
 	                                value="" 
-	                                required
+	                                disabled
 	                            >
-	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>
 	                    

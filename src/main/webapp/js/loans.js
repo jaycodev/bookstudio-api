@@ -714,8 +714,21 @@ function loadModalData() {
 		$('#addLoanForm')[0].reset();
 		$('#addLoanForm .is-invalid').removeClass('is-invalid');
 
-		var peruTime = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
-		$('#addLoanDate').val(peruTime);
+		var today = new Date();
+		var peruDate = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+		$('#addLoanDate').val(peruDate);
+
+		var minReturnDate = new Date(today);
+		minReturnDate.setDate(today.getDate() + 1);
+
+		var maxReturnDate = new Date(today);
+		maxReturnDate.setDate(today.getDate() + 14);
+
+		var minDateStr = minReturnDate.toISOString().split('T')[0];
+		var maxDateStr = maxReturnDate.toISOString().split('T')[0];
+
+		$('#addReturnDate').attr('min', minDateStr);
+		$('#addReturnDate').attr('max', maxDateStr);
 
 		placeholderColorDateInput();
 	});
@@ -806,6 +819,19 @@ function loadModalData() {
 				$('#editloanObservation').val(data.observation);
 
 				$('#editLoanForm .is-invalid').removeClass('is-invalid');
+				
+				var loanDate = new Date(data.loanDate);
+				var minReturnDate = new Date(loanDate);
+				minReturnDate.setDate(loanDate.getDate() + 1);
+
+				var maxReturnDate = new Date(loanDate);
+				maxReturnDate.setDate(loanDate.getDate() + 14);
+
+				var minDateStr = minReturnDate.toISOString().split('T')[0];
+				var maxDateStr = maxReturnDate.toISOString().split('T')[0];
+
+				$('#editReturnDate').attr('min', minDateStr);
+				$('#editReturnDate').attr('max', maxDateStr);
 
 				placeholderColorEditSelect();
 				placeholderColorDateInput();
