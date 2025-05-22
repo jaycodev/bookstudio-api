@@ -62,7 +62,6 @@ public class ProfileServlet extends HttpServlet {
 			if (updatedUser != null) {
 				request.getSession().setAttribute(LoginConstants.FIRSTNAME, updatedUser.getFirstName());
 				request.getSession().setAttribute(LoginConstants.LASTNAME, updatedUser.getLastName());
-				request.getSession().setAttribute(LoginConstants.PASSWORD, updatedUser.getPassword());
 				response.getWriter().write("{\"success\": true, \"message\": \"Perfil actualizado con éxito.\"}");
 			} else {
 				response.getWriter().write("{\"success\": false, \"message\": \"Error al actualizar el perfil.\"}");

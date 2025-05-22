@@ -13,7 +13,7 @@ import com.bookstudio.utils.DbConnection;
 
 public class LoanDaoImpl implements LoanDao {
 	@Override
-	public List<Loan> listLoans() {
+	public List<Loan> listAll() {
 		List<Loan> loanList = new ArrayList<>();
 
 		String sql = """
@@ -69,7 +69,7 @@ public class LoanDaoImpl implements LoanDao {
 	}
 
 	@Override
-	public Loan getLoan(String loanId) {
+	public Loan getById(String loanId) {
 		Loan loan = null;
 
 		String sql = """
@@ -125,7 +125,7 @@ public class LoanDaoImpl implements LoanDao {
 	}
 
 	@Override
-	public Loan createLoan(Loan loan) {
+	public Loan create(Loan loan) {
 		String sqlInsert = """
 				    INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Observation)
 				    VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -199,7 +199,7 @@ public class LoanDaoImpl implements LoanDao {
 	}
 
 	@Override
-	public Loan updateLoan(Loan loan) {
+	public Loan update(Loan loan) {
 		String sqlUpdate = """
 				    UPDATE Loans
 				    SET StudentID = ?, LoanDate = ?, ReturnDate = ?, Observation = ?

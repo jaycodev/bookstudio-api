@@ -89,7 +89,6 @@ public class LoginServlet extends HttpServlet {
 				sessionProject.saveSessionString(request, LoginConstants.USERNAME, user.getUsername());
 				sessionProject.saveSessionString(request, LoginConstants.FIRSTNAME, user.getFirstName());
 				sessionProject.saveSessionString(request, LoginConstants.LASTNAME, user.getLastName());
-				sessionProject.saveSessionString(request, LoginConstants.PASSWORD, user.getPassword());
 				sessionProject.saveSessionString(request, LoginConstants.EMAIL, user.getEmail());
 				sessionProject.saveSessionString(request, LoginConstants.ROLE, user.getRole());
 

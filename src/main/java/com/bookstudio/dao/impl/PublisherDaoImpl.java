@@ -13,7 +13,7 @@ import com.bookstudio.utils.DbConnection;
 
 public class PublisherDaoImpl implements PublisherDao {
 	@Override
-	public List<Publisher> listPublishers() {
+	public List<Publisher> listAll() {
 		List<Publisher> publisherList = new ArrayList<>();
 
 		String sql = """
@@ -58,7 +58,7 @@ public class PublisherDaoImpl implements PublisherDao {
 	}
 
 	@Override
-	public Publisher getPublisher(String publisherId) {
+	public Publisher getById(String publisherId) {
 		Publisher publisher = null;
 
 		String sql = """
@@ -105,7 +105,7 @@ public class PublisherDaoImpl implements PublisherDao {
 	}
 
 	@Override
-	public Publisher createPublisher(Publisher publisher) {
+	public Publisher create(Publisher publisher) {
 		String sqlInsert = """
 				    INSERT INTO Publishers (
 				        Name, NationalityID, LiteraryGenreID, Photo,
@@ -172,7 +172,7 @@ public class PublisherDaoImpl implements PublisherDao {
 	}
 
 	@Override
-	public Publisher updatePublisher(Publisher publisher) {
+	public Publisher update(Publisher publisher) {
 		String sqlUpdate = """
 				    UPDATE Publishers
 				    SET Name = ?, NationalityID = ?, LiteraryGenreID = ?,

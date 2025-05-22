@@ -11,17 +11,26 @@ import com.bookstudio.utils.DbConnection;
 public class ProfileDaoImpl implements ProfileDao {
 	@Override
 	public User updateProfile(User user) {
-		String sql = "UPDATE Users SET FirstName = ?, LastName = ?, Password = ? WHERE UserID = ?";
+	    boolean updatePassword = user.getPassword() != null;
+
+	    String sql = updatePassword
+	        ? "UPDATE Users SET FirstName = ?, LastName = ?, Password = ? WHERE UserID = ?"
+	        : "UPDATE Users SET FirstName = ?, LastName = ? WHERE UserID = ?";
 
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
 
 			ps.setString(1, user.getFirstName());
 			ps.setString(2, user.getLastName());
-			ps.setString(3, user.getPassword());
-			ps.setString(4, user.getUserId());
+			
+	        if (updatePassword) {
+	            ps.setString(3, user.getPassword());
+	            ps.setString(4, user.getUserId());
+	        } else {
+	            ps.setString(3, user.getUserId());
+	        }
 
-			int resultado = ps.executeUpdate();
-			if (resultado == 0) {
+			int result = ps.executeUpdate();
+			if (result == 0) {
 				System.out.println("No se encontró el usuario con el ID proporcionado.");
 			}
 		} catch (SQLException e) {
@@ -40,8 +49,8 @@ public class ProfileDaoImpl implements ProfileDao {
 			ps.setBytes(1, user.getProfilePhoto());
 			ps.setString(2, user.getUserId());
 
-			int resultado = ps.executeUpdate();
-			if (resultado == 0) {
+			int result = ps.executeUpdate();
+			if (result == 0) {
 				System.out.println("No se encontró el usuario con el ID proporcionado.");
 			}
 		} catch (SQLException e) {
@@ -49,5 +58,24 @@ public class ProfileDaoImpl implements ProfileDao {
 		}
 		
 		return user;
+	}
+	
+	@Override
+	public String getPasswordByUserId(String userId) {
+	    String sql = "SELECT Password FROM Users WHERE UserID = ?";
+	    String hashedPassword = null;
+
+	    try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
+	        ps.setString(1, userId);
+	        var rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            hashedPassword = rs.getString("Password");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return hashedPassword;
 	}
 }

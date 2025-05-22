@@ -26,7 +26,7 @@ public class AuthorService {
 	private LiteraryGenreDao literaryGenreDao = new LiteraryGenreDaoImpl();
 
 	public List<Author> listAuthors() throws Exception {
-		List<Author> authorData = authorDao.listAuthors();
+		List<Author> authorData = authorDao.listAll();
 
 		for (Author author : authorData) {
 			encodeAuthorPhoto(author);
@@ -36,7 +36,7 @@ public class AuthorService {
 	}
 
 	public Author getAuthor(String authorId) throws Exception {
-		Author author = authorDao.getAuthor(authorId);
+		Author author = authorDao.getById(authorId);
 		encodeAuthorPhoto(author);
 		
 		return author;
@@ -61,7 +61,7 @@ public class AuthorService {
 		author.setStatus(status);
 		author.setPhoto(photo);
 
-		Author createdAuthor = authorDao.createAuthor(author);
+		Author createdAuthor = authorDao.create(author);
 		encodeAuthorPhoto(createdAuthor);
 
 		return createdAuthor;
@@ -83,7 +83,7 @@ public class AuthorService {
 		} else {
 			photo = readPhoto(request, "editAuthorPhoto");
 			if (photo == null) {
-				Author currentAuthor = authorDao.getAuthor(authorId);
+				Author currentAuthor = authorDao.getById(authorId);
 				photo = currentAuthor.getPhoto();
 			}
 		}
@@ -98,7 +98,7 @@ public class AuthorService {
 		author.setStatus(status);
 		author.setPhoto(photo);
 
-		return authorDao.updateAuthor(author);
+		return authorDao.update(author);
 	}
 
 	public SelectOptions populateSelects() throws Exception {

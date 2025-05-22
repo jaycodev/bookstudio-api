@@ -13,7 +13,7 @@ import com.bookstudio.utils.DbConnection;
 
 public class StudentDaoImpl implements StudentDao {
 	@Override
-	public List<Student> listStudents() {
+	public List<Student> listAll() {
 		List<Student> studentList = new ArrayList<>();
 
 		String sql = "SELECT s.StudentID, s.DNI, s.FirstName, s.LastName, s.Address, " +
@@ -51,7 +51,7 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public Student getStudent(String studentId) {
+	public Student getById(String studentId) {
 		Student student = null;
 
 		String sql = """
@@ -91,7 +91,7 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public Student createStudent(Student student) throws SQLException {
+	public Student create(Student student) throws SQLException {
 		String sqlCheckDni = "SELECT COUNT(*) FROM Students WHERE DNI = ?";
 
 		String sqlCheckEmail = "SELECT COUNT(*) FROM Students WHERE Email = ?";
@@ -166,7 +166,7 @@ public class StudentDaoImpl implements StudentDao {
 	}
 
 	@Override
-	public Student updateStudent(Student student) throws SQLException {
+	public Student update(Student student) throws SQLException {
 		String sqlCheckEmail = "SELECT COUNT(*) FROM Students WHERE Email = ? AND StudentID != ?";
 
 		String sqlUpdate = "UPDATE Students SET Address = ?, Phone = ?, Email = ?, Gender = ?, FacultyID = ?, Status = ? "

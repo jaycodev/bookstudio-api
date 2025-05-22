@@ -12,11 +12,11 @@ public class CourseService {
 	private CourseDao courseDao = new CourseDaoImpl();
 
 	public List<Course> listCourses() throws SQLException {
-		return courseDao.listCourses();
+		return courseDao.listAll();
 	}
 
 	public Course getCourse(String courseId) throws SQLException {
-		return courseDao.getCourse(courseId);
+		return courseDao.getById(courseId);
 	}
 
 	public Course createCourse(HttpServletRequest request) throws Exception {
@@ -31,7 +31,7 @@ public class CourseService {
 		course.setDescription(description);
 		course.setStatus(status);
 
-		return courseDao.createCourse(course);
+		return courseDao.create(course);
 	}
 
 	public Course updateCourse(HttpServletRequest request) throws Exception {
@@ -48,6 +48,6 @@ public class CourseService {
 		course.setDescription(description);
 		course.setStatus(status);
 
-		return courseDao.updateCourse(course);
+		return courseDao.update(course);
 	}
 }

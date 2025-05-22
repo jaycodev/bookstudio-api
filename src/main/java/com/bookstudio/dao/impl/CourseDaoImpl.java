@@ -13,7 +13,7 @@ import com.bookstudio.utils.DbConnection;
 
 public class CourseDaoImpl implements CourseDao {
 	@Override
-	public List<Course> listCourses() {
+	public List<Course> listAll() {
 		List<Course> courseList = new ArrayList<>();
 
 		String sql = "SELECT CourseID, Name, Level, Description, Status FROM Courses";
@@ -39,7 +39,7 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public Course getCourse(String courseId) {
+	public Course getById(String courseId) {
 		Course course = null;
 
 		String sql = "SELECT CourseID, Name, Level, Description, Status FROM Courses WHERE CourseID = ?";
@@ -65,7 +65,7 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public Course createCourse(Course course) {
+	public Course create(Course course) {
 		String sql = "INSERT INTO Courses (Name, Level, Description, Status) VALUES (?, ?, ?, ?)";
 
 		try (Connection cn = DbConnection.getConexion();
@@ -95,7 +95,7 @@ public class CourseDaoImpl implements CourseDao {
 	}
 
 	@Override
-	public Course updateCourse(Course course) {
+	public Course update(Course course) {
 		String sql = "UPDATE Courses SET Name = ?, Level = ?, Description = ?, Status = ? WHERE CourseID = ?";
 
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sql)) {
