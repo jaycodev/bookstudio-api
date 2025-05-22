@@ -808,6 +808,9 @@ function loadModalData() {
 			success: function(data) {
 				$('#editLoanForm').data('loanId', data.loanId);
 				$('#editLoanForm').data('bookId', data.bookId);
+				
+				$('#editLoanBook').val(data.bookTitle);
+				$('#editLoanBook').selectpicker();
 
 				populateSelect('#editLoanStudent', studentList, 'studentId', 'firstName');
 				$('#editLoanStudent').val(data.studentId);

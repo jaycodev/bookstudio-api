@@ -350,6 +350,17 @@
 	                <form id="editLoanForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Student and Loan Date Section -->
 	                    <div class="row">
+	                    	<!-- Book Field -->
+	                    	<div class="col-md-6 mb-3">
+	                            <label for="editLoanBook" class="form-label">Libro</label>
+	                            <input 
+	                                type="text" 
+	                                class="form-control" 
+	                                id="editLoanBook" 
+	                                disabled
+	                            >
+	                        </div>
+	                    
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editLoanStudent" class="form-label">Estudiante - DNI <span class="text-danger">*</span></label>
@@ -365,7 +376,11 @@
 	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                        
+
+	                    </div>
+	                    
+	                    <!-- Return Date and Quantity Section -->
+	                    <div class="row">              
 	                        <!-- Loan Date Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editLoanDate" class="form-label">Fecha de préstamo</label>
@@ -377,10 +392,7 @@
 	                                disabled
 	                            >
 	                        </div>
-	                    </div>
-	                    
-	                    <!-- Return Date and Quantity Section -->
-	                    <div class="row">
+	                        
 	                        <!-- Return Date Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editReturnDate" class="form-label">Fecha de devolución <span class="text-danger">*</span></label>
@@ -394,8 +406,11 @@
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                        
-	                        <!-- Quantity Field -->
+	                    </div>
+	                    
+	                    <!-- Quantity and Observation Section -->
+	                    <div class="row">
+	                    	<!-- Quantity Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editLoanQuantity" class="form-label">Cantidad</label>
 	                            <input 
@@ -405,11 +420,9 @@
 	                                disabled
 	                            >
 	                        </div>
-	                    </div>
 	                    
-	                    <!-- Observation Section -->
-	                    <div class="row">
-	                        <div class="col-md-12 mb-3">
+	                    	<!-- Observation Field -->
+	                        <div class="col-md-6 mb-3">
 	                            <label for="editloanObservation" class="form-label">Observación</label>
 	                            <textarea 
 	                                class="form-control" 
