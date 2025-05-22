@@ -76,7 +76,6 @@ public class UserService {
 		String userId = request.getParameter("userId");
 		String firstName = getUtf8Parameter(request, "editUserFirstName");
 		String lastName = getUtf8Parameter(request, "editUserLastName");
-		String password = getUtf8Parameter(request, "editUserPassword");
 		String role = getUtf8Parameter(request, "editUserRole");
 		String deletePhoto = request.getParameter("deleteProfilePhoto");
 
@@ -95,7 +94,6 @@ public class UserService {
 		user.setUserId(userId);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
-		user.setPassword(password);
 		user.setRole(role);
 		user.setProfilePhoto(profilePhoto);
 
