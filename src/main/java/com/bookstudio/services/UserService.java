@@ -32,7 +32,7 @@ public class UserService {
 			throw new IllegalArgumentException("Invalid user ID: " + userIdObj);
 		}
 
-		List<User> userData = userDao.listUsers(loggedUserId);
+		List<User> userData = userDao.listAll(loggedUserId);
 
 		for (User user : userData) {
 			encodeUserPhoto(user);
@@ -42,7 +42,7 @@ public class UserService {
 	}
 
 	public User getUser(String userId) throws SQLException {
-		User user = userDao.getUser(userId);
+		User user = userDao.getById(userId);
 		encodeUserPhoto(user);
 		return user;
 	}
@@ -66,7 +66,7 @@ public class UserService {
 		user.setRole(role);
 		user.setProfilePhoto(profilePhoto);
 
-		User createdUser = userDao.createUser(user);
+		User createdUser = userDao.create(user);
 		encodeUserPhoto(createdUser);
 
 		return createdUser;
@@ -85,7 +85,7 @@ public class UserService {
 		} else {
 			profilePhoto = readPhoto(request, "editUserProfilePhoto");
 			if (profilePhoto == null) {
-				User currentUser = userDao.getUser(userId);
+				User currentUser = userDao.getById(userId);
 				profilePhoto = currentUser.getProfilePhoto();
 			}
 		}
@@ -97,7 +97,7 @@ public class UserService {
 		user.setRole(role);
 		user.setProfilePhoto(profilePhoto);
 
-		User updatedUser = userDao.updateUser(user);
+		User updatedUser = userDao.update(user);
 		encodeUserPhoto(updatedUser);
 
 		return updatedUser;

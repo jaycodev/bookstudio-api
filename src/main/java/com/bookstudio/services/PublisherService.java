@@ -24,7 +24,7 @@ public class PublisherService {
 	private LiteraryGenreDao literaryGenreDao = new LiteraryGenreDaoImpl();
 
 	public List<Publisher> listPublishers() throws Exception {
-		List<Publisher> publisherData = publisherDao.listPublishers();
+		List<Publisher> publisherData = publisherDao.listAll();
 		
 		for (Publisher publisher : publisherData) {
 			encodePublisherPhoto(publisher);
@@ -34,7 +34,7 @@ public class PublisherService {
 	}
 
 	public Publisher getPublisher(String publisherId) throws Exception {
-		Publisher publisher = publisherDao.getPublisher(publisherId);
+		Publisher publisher = publisherDao.getById(publisherId);
 		encodePublisherPhoto(publisher);
 		
 		return publisher;
@@ -61,7 +61,7 @@ public class PublisherService {
 		publisher.setStatus(status);
 		publisher.setPhoto(photo);
 
-		Publisher createdPublisher = publisherDao.createPublisher(publisher);
+		Publisher createdPublisher = publisherDao.create(publisher);
 		encodePublisherPhoto(createdPublisher);
 		
 		return createdPublisher;
@@ -84,7 +84,7 @@ public class PublisherService {
 		} else {
 			photo = readPhoto(request, "editPublisherPhoto");
 			if (photo == null) {
-				Publisher currentPublisher = publisherDao.getPublisher(publisherId);
+				Publisher currentPublisher = publisherDao.getById(publisherId);
 				photo = currentPublisher.getPhoto();
 			}
 		}
@@ -100,7 +100,7 @@ public class PublisherService {
 		publisher.setStatus(status);
 		publisher.setPhoto(photo);
 
-		return publisherDao.updatePublisher(publisher);
+		return publisherDao.update(publisher);
 	}
 
 	public SelectOptions populateSelects() throws Exception {

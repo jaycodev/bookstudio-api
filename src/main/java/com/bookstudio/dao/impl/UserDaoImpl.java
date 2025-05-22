@@ -13,7 +13,7 @@ import com.bookstudio.utils.DbConnection;
 
 public class UserDaoImpl implements UserDao {
 	@Override
-	public List<User> listUsers(int loggedUserId) {
+	public List<User> listAll(int loggedUserId) {
 		List<User> userList = new ArrayList<>();
 
 		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Role, ProfilePhoto FROM Users WHERE UserID <> ?";
@@ -42,7 +42,7 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User getUser(String userId) {
+	public User getById(String userId) {
 		User user = null;
 
 		String sql = "SELECT UserID, Username, Email, FirstName, LastName, Role, ProfilePhoto FROM Users WHERE UserID = ?";
@@ -70,7 +70,7 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User createUser(User user) throws SQLException {
+	public User create(User user) throws SQLException {
 		String sqlCheckUsername = "SELECT COUNT(*) FROM Users WHERE Username = ?";
 
 		String sqlCheckEmail = "SELECT COUNT(*) FROM Users WHERE Email = ?";
@@ -122,7 +122,7 @@ public class UserDaoImpl implements UserDao {
 	}
 
 	@Override
-	public User updateUser(User user) {
+	public User update(User user) {
 		String sql = "UPDATE Users SET FirstName = ?, LastName = ?, Role = ?, ProfilePhoto = ? "
 				+ "WHERE UserID = ?";
 
@@ -159,5 +159,10 @@ public class UserDaoImpl implements UserDao {
 		}
 		
 		return isDeleted;
+	}
+
+	@Override
+	public List<User> listAll() {
+	    throw new UnsupportedOperationException("Use listAll(int loggedUserId) instead.");
 	}
 }

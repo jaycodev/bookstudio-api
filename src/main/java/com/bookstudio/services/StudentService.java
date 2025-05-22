@@ -17,11 +17,11 @@ public class StudentService {
 	private FacultyDao facultyDao = new FacultyDaoImpl();
 
 	public List<Student> listStudents() throws SQLException {
-		return studentDao.listStudents();
+		return studentDao.listAll();
 	}
 
 	public Student getStudent(String studentId) throws SQLException {
-		return studentDao.getStudent(studentId);
+		return studentDao.getById(studentId);
 	}
 
 	public Student createStudent(HttpServletRequest request) throws Exception {
@@ -48,7 +48,7 @@ public class StudentService {
 		student.setFacultyId(facultyId);
 		student.setStatus(status);
 
-		return studentDao.createStudent(student);
+		return studentDao.create(student);
 	}
 
 	public Student updateStudent(HttpServletRequest request) throws Exception {
@@ -69,7 +69,7 @@ public class StudentService {
 		student.setFacultyId(facultyId);
 		student.setStatus(status);
 
-		return studentDao.updateStudent(student);
+		return studentDao.update(student);
 	}
 
 	public SelectOptions populateSelects() throws SQLException {

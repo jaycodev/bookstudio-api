@@ -13,7 +13,7 @@ import com.bookstudio.utils.DbConnection;
 
 public class BookDaoImpl implements BookDao {
 	@Override
-	public List<Book> listBooks() {
+	public List<Book> listAll() {
 		List<Book> bookList = new ArrayList<>();
 
 		String sql = """
@@ -69,7 +69,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public Book getBook(String idLibro) {
+	public Book getById(String idLibro) {
 		Book book = null;
 
 		String sql = """
@@ -126,7 +126,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public Book createBook(Book book) {
+	public Book create(Book book) {
 		String sqlInsert = """
 				    INSERT INTO Books (Title, TotalCopies, LoanedCopies, AuthorID, PublisherID, CourseID, ReleaseDate, GenreID, Status)
 				    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -191,7 +191,7 @@ public class BookDaoImpl implements BookDao {
 	}
 
 	@Override
-	public Book updateBook(Book book) {
+	public Book update(Book book) {
 		String sqlUpdate = """
 				    UPDATE Books
 				    SET Title = ?, TotalCopies = ?,

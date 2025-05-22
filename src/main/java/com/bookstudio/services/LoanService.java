@@ -19,11 +19,11 @@ public class LoanService {
 	private StudentDao studentDao = new StudentDaoImpl();
 
 	public List<Loan> listLoans() throws Exception {
-		return loanDao.listLoans();
+		return loanDao.listAll();
 	}
 
 	public Loan getLoan(String loanId) throws Exception {
-		return loanDao.getLoan(loanId);
+		return loanDao.getById(loanId);
 	}
 
 	public Loan createLoan(HttpServletRequest request) throws Exception {
@@ -44,7 +44,7 @@ public class LoanService {
 		loan.setStatus(status);
 		loan.setObservation(observation);
 
-		return loanDao.createLoan(loan);
+		return loanDao.create(loan);
 	}
 
 	public Loan updateLoan(HttpServletRequest request) throws Exception {
@@ -63,7 +63,7 @@ public class LoanService {
 		loan.setReturnDate(returnDate);
 		loan.setObservation(observation);
 
-		return loanDao.updateLoan(loan);
+		return loanDao.update(loan);
 	}
 
 	public int confirmReturn(String loanId) throws Exception {

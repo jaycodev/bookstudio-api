@@ -1,14 +1,10 @@
 package com.bookstudio.dao;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import com.bookstudio.models.User;
 
-public interface UserDao {
-	List<User> listUsers(int loggedUserId);
-	User getUser(String userId);
-	User createUser(User user) throws SQLException;
-	User updateUser(User user);
+public interface UserDao extends CrudDao<User, String> {
+	List<User> listAll(int loggedUserId);
 	boolean deleteUser(String userId);
 }

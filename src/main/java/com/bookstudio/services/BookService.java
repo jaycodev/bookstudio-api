@@ -25,11 +25,11 @@ public class BookService {
 	private GenreDao genreDao = new GenreDaoImpl();
 
 	public List<Book> listBooks() throws Exception {
-		return bookDao.listBooks();
+		return bookDao.listAll();
 	}
 
 	public Book getBook(String bookId) throws Exception {
-		return bookDao.getBook(bookId);
+		return bookDao.getById(bookId);
 	}
 
 	public Book createBook(HttpServletRequest request) throws Exception {
@@ -52,7 +52,7 @@ public class BookService {
 		book.setGenreId(genreId);
 		book.setStatus(status);
 
-		return bookDao.createBook(book);
+		return bookDao.create(book);
 	}
 
 	public Book updateBook(HttpServletRequest request) throws Exception {
@@ -77,7 +77,7 @@ public class BookService {
 		book.setGenreId(genreId);
 		book.setStatus(status);
 
-		return bookDao.updateBook(book);
+		return bookDao.update(book);
 	}
 
 	public SelectOptions populateSelects() throws Exception {

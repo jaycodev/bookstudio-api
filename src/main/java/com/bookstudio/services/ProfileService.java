@@ -47,7 +47,7 @@ public class ProfileService {
 				profilePhoto = new byte[(int) photoPart.getSize()];
 				photoPart.getInputStream().read(profilePhoto);
 			} else {
-				User currentUser = userDao.getUser(userId);
+				User currentUser = userDao.getById(userId);
 				if (currentUser != null) {
 					profilePhoto = currentUser.getProfilePhoto();
 				}
