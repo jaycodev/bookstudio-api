@@ -76,7 +76,7 @@
 					<table id="bookTable" class="table table-sm">
 						<thead>
 							<tr>
-								<th scope="col" class="text-start">ID</th>
+								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Título</th>
 								<th scope="col" class="text-center">Ejemplares disponibles</th>
 								<th scope="col" class="text-center">Ejemplares prestados</th>
@@ -286,7 +286,7 @@
 		            	<!-- ID and Title Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">ID</h6>
+		                        <h6 class="small text-muted">Código</h6>
 		                        <p class="fw-bold" id="detailsBookID"></p>
 		                    </div>
 		                    

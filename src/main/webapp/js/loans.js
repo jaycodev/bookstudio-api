@@ -952,7 +952,7 @@ function generateLoanReceipt(response) {
 		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
 	
 		const loanDetails = [
-			['ID', formatLoanCode(response.loanId)],
+			['Código', formatLoanCode(response.loanId)],
 			['Libro', response.bookTitle],
 			['Estudiante - DNI', response.studentName],
 			['Fecha préstamo', moment(response.loanDate).format('DD MMM YYYY')],
@@ -1071,7 +1071,7 @@ function generatePDF(loanTable) {
 		doc.autoTable({
 			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
+			head: [['Código', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
@@ -1154,7 +1154,7 @@ function generateExcel(loanTable) {
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
+		headerRow.values = ['Código', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };

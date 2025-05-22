@@ -1125,7 +1125,7 @@ function generatePDF(dataTable) {
 		doc.autoTable({
 			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['ID', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
+			head: [['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
@@ -1205,7 +1205,7 @@ function generateExcel(dataTable) {
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['ID', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
+		headerRow.values = ['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
