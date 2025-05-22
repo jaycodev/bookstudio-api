@@ -48,10 +48,14 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
+function formatUserCode(id) {
+	return `U${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(user) {
 	return `
 		<tr>
-			<td class="align-middle text-start">${user.userId}</td>
+			<td class="align-middle text-start">${formatUserCode(user.userId)}</td>
 			<td class="align-middle text-start">${user.username}</td>
 			<td class="align-middle text-start">${user.email}</td>
 			<td class="align-middle text-start">${user.firstName}</td>
@@ -179,7 +183,7 @@ function updateRowInTable(user) {
 	var table = $('#userTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === user.userId.toString();
+		return $(this).find('td').eq(0).text() === formatUserCode(user.userId.toString());
 	});
 
 	if (row.length > 0) {
@@ -675,7 +679,7 @@ function handleDeleteUser() {
 
 					table.rows().every(function() {
 						var data = this.data();
-						if (data[0] == userId) {
+						if (data[0] == formatUserCode(userId)) {
 							this.remove();
 						}
 					});
@@ -762,7 +766,7 @@ function loadModalData() {
 			data: { type: 'details', userId: userId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsUserID').text(data.userId);
+				$('#detailsUserID').text(formatUserCode(data.userId));
 				$('#detailsUserUsername').text(data.username);
 				$('#detailsUserEmail').text(data.email);
 				$('#detailsUserFirstName').text(data.firstName);

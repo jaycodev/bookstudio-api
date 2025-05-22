@@ -129,12 +129,16 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
+function formatBookCode(id) {
+	return `L${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(book) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${book.bookId}</td>
+			<td class="align-middle text-start">${formatBookCode(book.bookId)}</td>
 			<td class="align-middle text-start">${book.title}</td>
 			<td class="align-middle text-center">${book.availableCopies}</td>
 			<td class="align-middle text-center">${book.loanedCopies}</td>
@@ -257,7 +261,7 @@ function updateRowInTable(book) {
 	var table = $('#bookTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === book.bookId.toString();
+		return $(this).find('td').eq(0).text() === formatBookCode(book.bookId.toString());
 	});
 
 	if (row.length > 0) {
@@ -651,7 +655,7 @@ function loadModalData() {
 			data: { type: 'details', bookId: bookId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsBookID').text(data.bookId);
+				$('#detailsBookID').text(formatBookCode(data.bookId));
 				$('#detailsBookTitle').text(data.title);
 				$('#detailsBookAvaibleCopies').text(data.availableCopies);
 				$('#detailsBookLoanedCopies').text(data.loanedCopies);

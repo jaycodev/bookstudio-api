@@ -160,12 +160,16 @@ function updateBookList() {
  * TABLE HANDLING
  *****************************************/
 
+function formatLoanCode(id) {
+	return `P${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(loan) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${loan.loanId}</td>
+			<td class="align-middle text-start">${formatLoanCode(loan.loanId)}</td>
 			<td class="align-middle text-start">${loan.bookTitle}</td>
 			<td class="align-middle text-start">${loan.studentName}</td>
 			<td class="align-middle text-center">${moment(loan.loanDate).format('DD MMM YYYY')}</td>
@@ -295,7 +299,7 @@ function updateRowInTable(loan) {
 	var table = $('#loanTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === loan.loanId.toString();
+		return $(this).find('td').eq(0).text() === formatLoanCode(loan.loanId.toString());
 	});
 
 	if (row.length > 0) {
@@ -497,7 +501,7 @@ function handleReturnLoan() {
 				if (response && response.success) {
 					var table = $('#loanTable').DataTable();
 					var row = table.rows().nodes().to$().filter(function() {
-						return $(this).find('td').eq(0).text() === loanId.toString();
+						return $(this).find('td').eq(0).text() === formatLoanCode(loanId.toString());
 					});
 
 					if (row.length > 0) {
@@ -741,7 +745,7 @@ function loadModalData() {
 			data: { type: 'details', loanId: loanId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsLoanID').text(data.loanId);
+				$('#detailsLoanID').text(formatLoanCode(data.loanId));
 				$('#detailsLoanBook').text(data.bookTitle);
 				$('#detailsLoanStudent').text(data.studentName);
 				$('#detailsLoanDate').text(moment(data.loanDate).format('DD MMM YYYY'));
@@ -948,7 +952,7 @@ function generateLoanReceipt(response) {
 		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
 	
 		const loanDetails = [
-			['ID', response.loanId],
+			['ID', formatLoanCode(response.loanId)],
 			['Libro', response.bookTitle],
 			['Estudiante - DNI', response.studentName],
 			['Fecha préstamo', moment(response.loanDate).format('DD MMM YYYY')],

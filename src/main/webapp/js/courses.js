@@ -42,12 +42,16 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
+function formatCourseCode(id) {
+	return `C${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(course) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${course.courseId}</td>
+			<td class="align-middle text-start">${formatCourseCode(course.courseId)}</td>
 			<td class="align-middle text-start">${course.name}</td>
 			<td class="align-middle text-start">${course.level}</td>
 			<td class="align-middle text-start">${course.description}</td>
@@ -168,7 +172,7 @@ function updateRowInTable(course) {
 	var table = $('#courseTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === course.courseId.toString();
+		return $(this).find('td').eq(0).text() === formatCourseCode(course.courseId.toString());
 	});
 
 	if (row.length > 0) {
@@ -510,7 +514,7 @@ function loadModalData() {
 			data: { type: 'details', courseId: courseId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsCourseID').text(data.courseId);
+				$('#detailsCourseID').text(formatCourseCode(data.courseId));
 				$('#detailsCourseName').text(data.name);
 				$('#detailsCourseLevel').text(data.level);
 				$('#detailsCourseStatus').html(

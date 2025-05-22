@@ -117,12 +117,16 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
+function formatStudentCode(id) {
+	return `ES${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(student) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${student.studentId}</td>
+			<td class="align-middle text-start">${formatStudentCode(student.studentId)}</td>
 			<td class="align-middle text-start">${student.dni}</td>
 			<td class="align-middle text-start">${student.firstName}</td>
 			<td class="align-middle text-start">${student.lastName}</td>
@@ -245,7 +249,7 @@ function updateRowInTable(student) {
 	var table = $('#studentTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === student.studentId.toString();
+		return $(this).find('td').eq(0).text() === formatStudentCode(student.studentId.toString());
 	});
 
 	if (row.length > 0) {
@@ -737,7 +741,7 @@ function loadModalData() {
 			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsStudentID').text(data.studentId);
+				$('#detailsStudentID').text(formatStudentCode(data.studentId));
 				$('#detailsStudentDNI').text(data.dni);
 				$('#detailsStudentFirstName').text(data.firstName);
 				$('#detailsStudentLastName').text(data.lastName);

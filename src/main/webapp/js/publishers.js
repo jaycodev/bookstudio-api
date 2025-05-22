@@ -102,12 +102,16 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
+function formatPublisherCode(id) {
+	return `ED${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(publisher) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${publisher.publisherId}</td>
+			<td class="align-middle text-start">${formatPublisherCode(publisher.publisherId)}</td>
 			<td class="align-middle text-start">${publisher.name}</td>
 			<td class="align-middle text-start">${publisher.nationalityName}</td>
 			<td class="align-middle text-start">${publisher.literaryGenreName}</td>
@@ -236,7 +240,7 @@ function updateRowInTable(publisher) {
 	var table = $('#publisherTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === publisher.publisherId.toString();
+		return $(this).find('td').eq(0).text() === formatPublisherCode(publisher.publisherId.toString());
 	});
 
 	if (row.length > 0) {
@@ -700,7 +704,7 @@ function loadModalData() {
 			data: { type: 'details', publisherId: publisherId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsPublisherID').text(data.publisherId);
+				$('#detailsPublisherID').text(formatPublisherCode(data.publisherId));
 				$('#detailsPublisherName').text(data.name);
 				$('#detailsPublisherNationality').text(data.nationalityName);
 				$('#detailsPublisherGenre').text(data.literaryGenreName);
