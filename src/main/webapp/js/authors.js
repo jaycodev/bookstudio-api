@@ -340,9 +340,9 @@ function handleAddAuthorForm() {
 					width: 460,
 					height: 460
 				}).toBlob(function(blob) {
-					formData.set('addAuthorPhoto', blob, 'photo.png');
+					formData.set('addAuthorPhoto', blob, 'photo.jpg');
 					sendAddForm(formData);
-				}, 'image/png');
+				}, 'image/jpeg', 0.7);
 			} else {
 				sendAddForm(formData);
 			}
