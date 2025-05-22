@@ -8,6 +8,7 @@ import com.bookstudio.dao.impl.ProfileDaoImpl;
 import com.bookstudio.dao.impl.UserDaoImpl;
 import com.bookstudio.models.User;
 import com.bookstudio.utils.LoginConstants;
+import com.bookstudio.utils.PasswordUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,15 +22,16 @@ public class ProfileService {
 		String lastName = request.getParameter("editProfileLastName");
 		String password = request.getParameter("editProfilePassword");
 
-		if (password == null || password.isEmpty()) {
-			password = (String) request.getSession().getAttribute(LoginConstants.PASSWORD);
-		}
-
 		User user = new User();
 		user.setUserId(userId);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
-		user.setPassword(password);
+		
+	    if (password != null && !password.isEmpty()) {
+	        user.setPassword(PasswordUtils.hashPassword(password));
+	    } else {
+	        user.setPassword(null);
+	    }
 
 		return profileDao.updateProfile(user);
 	}
@@ -63,8 +65,18 @@ public class ProfileService {
 
 	public boolean validatePassword(HttpServletRequest request) {
 		String confirmCurrentPassword = request.getParameter("confirmCurrentPassword").trim();
-		String sessionPassword = (String) request.getSession().getAttribute(LoginConstants.PASSWORD);
+		String userId = (String) request.getSession().getAttribute(LoginConstants.ID);
 		
-		return sessionPassword != null && sessionPassword.equals(confirmCurrentPassword);
+	    if (userId == null || confirmCurrentPassword.isEmpty()) {
+	        return false;
+	    }
+	    
+	    String hashedPassword = profileDao.getPasswordByUserId(userId);
+
+	    if (hashedPassword == null) {
+	        return false;
+	    }
+	    
+	    return PasswordUtils.checkPassword(confirmCurrentPassword, hashedPassword);
 	}
 }
