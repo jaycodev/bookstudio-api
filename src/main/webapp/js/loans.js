@@ -759,8 +759,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#detailsLoanSpinner').removeClass('d-none');
+				$('#detailsLoanModal').modal('hide');
 			}
 		});
 	});
@@ -829,9 +828,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#editLoanSpinner').removeClass('d-none');
-				$('#editLoanBtn').prop('disabled', true);
+				$('#editLoanModal').modal('hide');
 			}
 		});
 	});
@@ -886,261 +883,304 @@ function initializeTooltips(container) {
 }
 
 function generateLoanReceipt(response) {
-	const { jsPDF } = window.jspdf;
-	const doc = new jsPDF("p", "mm", [150, 200]);
-	const pageWidth = doc.internal.pageSize.getWidth();
-	const margin = 10;
-	const topMargin = 5;
-
-	const currentDate = new Date();
-	const fecha = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric'
-	});
-	const hora = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	const logoUrl = '/images/bookstudio-logo-no-bg.png';
-	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
-
-	doc.setFont("helvetica", "bold");
-	doc.setFontSize(14);
-	doc.text("Recibo de préstamo", pageWidth / 2, topMargin + 13, { align: "center" });
-
-	doc.setFont("helvetica", "normal");
-	doc.setFontSize(8);
-	doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
-	doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
-
-	const loanDetails = [
-		['ID', response.loanId],
-		['Libro', response.bookTitle],
-		['Estudiante - DNI', response.studentName],
-		['Fecha préstamo', moment(response.loanDate).format('DD/MM/YYYY')],
-		['Fecha devolución', moment(response.returnDate).format('DD/MM/YYYY')],
-		['Cantidad', response.quantity]
-	];
-
-	if (response.observation) {
-		loanDetails.push(['Observación', response.observation]);
-	}
-
-	doc.autoTable({
-		startY: topMargin + 25,
-		margin: { left: margin, right: margin },
-		head: [['Detalle', 'Información']],
-		body: loanDetails,
-		theme: 'grid',
-		headStyles: {
-			fillColor: [0, 0, 0],
-			textColor: 255,
-			fontStyle: 'bold',
-			fontSize: 10,
-			halign: 'left'
-		},
-		bodyStyles: {
-			font: "helvetica",
-			fontSize: 9,
-			halign: 'left'
-		},
-		columnStyles: {
-			0: { fontStyle: 'bold', cellWidth: 50 }
+	let hasWarnings = false;
+	
+	try {
+		const { jsPDF } = window.jspdf;
+		const doc = new jsPDF("p", "mm", [150, 200]);
+		const pageWidth = doc.internal.pageSize.getWidth();
+		const margin = 10;
+		const topMargin = 5;
+	
+		const currentDate = new Date();
+		const fecha = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const hora = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		const logoUrl = '/images/bookstudio-logo-no-bg.png';
+		
+		try {
+			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
+		} catch (imgError) {
+			console.warn("Logo not available:", imgError);
+			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
+			hasWarnings = true;
 		}
-	});
-
-	const finalY = doc.previousAutoTable.finalY + 10;
-	doc.setFontSize(8);
-	doc.setFont("helvetica", "italic");
-	doc.text("Este documento es un comprobante del préstamo realizado. Por favor consérvelo hasta la devolución.",
-		pageWidth / 2, finalY, { align: "center" });
-
-	const filename = `Recibo_de_préstamo_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
-	const pdfBlob = doc.output('blob');
-	const blobUrl = URL.createObjectURL(pdfBlob);
-	const link = document.createElement('a');
-	link.href = blobUrl;
-	link.download = filename;
-	document.body.appendChild(link);
-	link.click();
-	document.body.removeChild(link);
+	
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(14);
+		doc.text("Recibo de préstamo", pageWidth / 2, topMargin + 13, { align: "center" });
+	
+		doc.setFont("helvetica", "normal");
+		doc.setFontSize(8);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
+	
+		const loanDetails = [
+			['ID', response.loanId],
+			['Libro', response.bookTitle],
+			['Estudiante - DNI', response.studentName],
+			['Fecha préstamo', moment(response.loanDate).format('DD MMM YYYY')],
+			['Fecha devolución', moment(response.returnDate).format('DD MMM YYYY')],
+			['Cantidad', response.quantity]
+		];
+	
+		if (response.observation) {
+			loanDetails.push(['Observación', response.observation]);
+		}
+	
+		doc.autoTable({
+			startY: topMargin + 25,
+			margin: { left: margin, right: margin },
+			head: [['Detalle', 'Información']],
+			body: loanDetails,
+			theme: 'grid',
+			headStyles: {
+				fillColor: [0, 0, 0],
+				textColor: 255,
+				fontStyle: 'bold',
+				fontSize: 10,
+				halign: 'left'
+			},
+			bodyStyles: {
+				font: "helvetica",
+				fontSize: 9,
+				halign: 'left'
+			},
+			columnStyles: {
+				0: { fontStyle: 'bold', cellWidth: 50 }
+			}
+		});
+	
+		const finalY = doc.previousAutoTable.finalY + 10;
+		doc.setFontSize(8);
+		doc.setFont("helvetica", "italic");
+		doc.text("Este documento es un comprobante del préstamo realizado. Por favor consérvelo hasta la devolución.",
+			pageWidth / 2, finalY, { align: "center" });
+	
+		const filename = `Recibo_de_préstamo_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+		const pdfBlob = doc.output('blob');
+		const blobUrl = URL.createObjectURL(pdfBlob);
+		const link = document.createElement('a');
+		link.href = blobUrl;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		if (!hasWarnings) {
+			showToast("PDF generado exitosamente.", "success");
+		}
+	} catch (error) {
+		console.error("Error al generar el PDF:", error);
+		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	}
 }
 
 function generatePDF(loanTable) {
-	const { jsPDF } = window.jspdf;
-	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/images/bookstudio-logo-no-bg.png';
-
-	const currentDate = new Date();
-	const fecha = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const hora = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	const pageWidth = doc.internal.pageSize.getWidth();
-	const margin = 10;
-	const topMargin = 5;
-
-	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
-	doc.setFont("helvetica", "bold");
-	doc.setFontSize(14);
-	doc.text("Lista de préstamos", pageWidth / 2, topMargin + 13, { align: "center" });
-
-	doc.setFont("helvetica", "normal");
-	doc.setFontSize(8);
-	doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
-	doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
-
-	const data = loanTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		let estado = row.cells[6].innerText.trim();
-		estado = estado.includes("Devuelto") ? "Devuelto" : "Prestado";
-
-		return [
-			row.cells[0].innerText.trim(),
-			row.cells[1].innerText.trim(),
-			row.cells[2].innerText.trim(),
-			row.cells[3].innerText.trim(),
-			row.cells[4].innerText.trim(),
-			row.cells[5].innerText.trim(),
-			estado
-		];
-	});
-
-	doc.autoTable({
-		startY: topMargin + 25,
-		margin: { left: margin, right: margin },
-		head: [['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
-		body: data,
-		theme: 'grid',
-		headStyles: {
-			fillColor: [0, 0, 0],
-			textColor: 255,
-			fontStyle: 'bold',
-			fontSize: 8,
-			halign: 'left'
-		},
-		bodyStyles: {
-			font: "helvetica",
-			fontSize: 7,
-			halign: 'left'
-		},
-		didParseCell: function(data) {
-			if (data.section === 'body' && data.column.index === 6) {
-				data.cell.styles.textColor = data.cell.raw === "Devuelto"
-					? [0, 128, 0]
-					: [255, 0, 0];
-			}
+	let hasWarnings = false;
+	
+	try {
+		const { jsPDF } = window.jspdf;
+		const doc = new jsPDF("l", "mm", "a4");
+		const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	
+		const currentDate = new Date();
+		const fecha = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const hora = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		const pageWidth = doc.internal.pageSize.getWidth();
+		const margin = 10;
+		const topMargin = 5;
+	
+		try {
+			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
+		} catch (imgError) {
+			console.warn("Logo not available:", imgError);
+			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
+			hasWarnings = true;
 		}
-	});
-
-	const filename = `Lista_de_préstamos_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
-
-	const pdfBlob = doc.output('blob');
-	const blobUrl = URL.createObjectURL(pdfBlob);
-	const link = document.createElement('a');
-	link.href = blobUrl;
-	link.download = filename;
-	document.body.appendChild(link);
-	link.click();
-	document.body.removeChild(link);
+		
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(14);
+		doc.text("Lista de préstamos", pageWidth / 2, topMargin + 13, { align: "center" });
+	
+		doc.setFont("helvetica", "normal");
+		doc.setFontSize(8);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
+	
+		const data = loanTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[6].innerText.trim();
+			estado = estado.includes("Devuelto") ? "Devuelto" : "Prestado";
+	
+			return [
+				row.cells[0].innerText.trim(),
+				row.cells[1].innerText.trim(),
+				row.cells[2].innerText.trim(),
+				row.cells[3].innerText.trim(),
+				row.cells[4].innerText.trim(),
+				row.cells[5].innerText.trim(),
+				estado
+			];
+		});
+	
+		doc.autoTable({
+			startY: topMargin + 25,
+			margin: { left: margin, right: margin },
+			head: [['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
+			body: data,
+			theme: 'grid',
+			headStyles: {
+				fillColor: [0, 0, 0],
+				textColor: 255,
+				fontStyle: 'bold',
+				fontSize: 8,
+				halign: 'left'
+			},
+			bodyStyles: {
+				font: "helvetica",
+				fontSize: 7,
+				halign: 'left'
+			},
+			didParseCell: function(data) {
+				if (data.section === 'body' && data.column.index === 6) {
+					data.cell.styles.textColor = data.cell.raw === "Devuelto"
+						? [0, 128, 0]
+						: [255, 0, 0];
+				}
+			}
+		});
+	
+		const filename = `Lista_de_préstamos_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+	
+		const pdfBlob = doc.output('blob');
+		const blobUrl = URL.createObjectURL(pdfBlob);
+		const link = document.createElement('a');
+		link.href = blobUrl;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		if (!hasWarnings) {
+			showToast("PDF generado exitosamente.", "success");
+		}
+	} catch (error) {
+		console.error("Error al generar el PDF:", error);
+		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	}
 }
 
 function generateExcel(loanTable) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Préstamos');
-
-	const currentDate = new Date();
-	const dateStr = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const timeStr = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	worksheet.mergeCells('A1:G1');
-	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de préstamos - BookStudio';
-	titleCell.font = { name: 'Arial', size: 14, bold: true };
-	titleCell.alignment = { horizontal: 'center' };
-
-	worksheet.mergeCells('A2:G2');
-	const dateTimeCell = worksheet.getCell('A2');
-	dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
-	dateTimeCell.alignment = { horizontal: 'center' };
-
-	worksheet.columns = [
-		{ key: 'id', width: 10 },
-		{ key: 'libro', width: 30 },
-		{ key: 'estudiante', width: 30 },
-		{ key: 'fecha_prestamo', width: 20 },
-		{ key: 'fecha_devolucion', width: 20 },
-		{ key: 'cantidad', width: 10 },
-		{ key: 'estado', width: 15 }
-	];
-
-	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
-	headerRow.eachCell((cell) => {
-		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
-		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
-		cell.alignment = { horizontal: 'left', vertical: 'middle' };
-		cell.border = {
-			top: { style: 'thin', color: { argb: 'FFFFFF' } },
-			bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
-			left: { style: 'thin', color: { argb: 'FFFFFF' } },
-			right: { style: 'thin', color: { argb: 'FFFFFF' } }
-		};
-	});
-
-	const data = loanTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		let estado = row.cells[6].innerText.trim();
-		estado = estado.includes("Devuelto") ? "Devuelto" : "Prestado";
-
-		return {
-			id: row.cells[0].innerText.trim(),
-			libro: row.cells[1].innerText.trim(),
-			estudiante: row.cells[2].innerText.trim(),
-			fecha_prestamo: row.cells[3].innerText.trim(),
-			fecha_devolucion: row.cells[4].innerText.trim(),
-			cantidad: row.cells[5].innerText.trim(),
-			estado: estado
-		};
-	});
-
-	data.forEach((item) => {
-		const row = worksheet.addRow(item);
-		const estadoCell = row.getCell(7);
-		if (estadoCell.value === "Devuelto") {
-			estadoCell.font = { color: { argb: '008000' } };
-			estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };
-		} else {
-			estadoCell.font = { color: { argb: 'FF0000' } };
-			estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6' } };
-		}
-	});
-
-	const filename = `Lista_de_préstamos_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
-
-	workbook.xlsx.writeBuffer().then(buffer => {
-		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = filename;
-		link.click();
-	});
+	try {
+		const workbook = new ExcelJS.Workbook();
+		const worksheet = workbook.addWorksheet('Préstamos');
+	
+		const currentDate = new Date();
+		const dateStr = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const timeStr = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		worksheet.mergeCells('A1:G1');
+		const titleCell = worksheet.getCell('A1');
+		titleCell.value = 'Lista de préstamos - BookStudio';
+		titleCell.font = { name: 'Arial', size: 14, bold: true };
+		titleCell.alignment = { horizontal: 'center' };
+	
+		worksheet.mergeCells('A2:G2');
+		const dateTimeCell = worksheet.getCell('A2');
+		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
+		dateTimeCell.alignment = { horizontal: 'center' };
+	
+		worksheet.columns = [
+			{ key: 'id', width: 10 },
+			{ key: 'libro', width: 30 },
+			{ key: 'estudiante', width: 30 },
+			{ key: 'fecha_prestamo', width: 20 },
+			{ key: 'fecha_devolucion', width: 20 },
+			{ key: 'cantidad', width: 10 },
+			{ key: 'estado', width: 15 }
+		];
+	
+		const headerRow = worksheet.getRow(4);
+		headerRow.values = ['ID', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
+		headerRow.eachCell((cell) => {
+			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
+			cell.alignment = { horizontal: 'left', vertical: 'middle' };
+			cell.border = {
+				top: { style: 'thin', color: { argb: 'FFFFFF' } },
+				bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
+				left: { style: 'thin', color: { argb: 'FFFFFF' } },
+				right: { style: 'thin', color: { argb: 'FFFFFF' } }
+			};
+		});
+	
+		const data = loanTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[6].innerText.trim();
+			estado = estado.includes("Devuelto") ? "Devuelto" : "Prestado";
+	
+			return {
+				id: row.cells[0].innerText.trim(),
+				libro: row.cells[1].innerText.trim(),
+				estudiante: row.cells[2].innerText.trim(),
+				fecha_prestamo: row.cells[3].innerText.trim(),
+				fecha_devolucion: row.cells[4].innerText.trim(),
+				cantidad: row.cells[5].innerText.trim(),
+				estado: estado
+			};
+		});
+	
+		data.forEach((item) => {
+			const row = worksheet.addRow(item);
+			const estadoCell = row.getCell(7);
+			if (estadoCell.value === "Devuelto") {
+				estadoCell.font = { color: { argb: '008000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };
+			} else {
+				estadoCell.font = { color: { argb: 'FF0000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6' } };
+			}
+		});
+	
+		const filename = `Lista_de_préstamos_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+	
+		workbook.xlsx.writeBuffer().then(buffer => {
+			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+			const link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			link.download = filename;
+			link.click();
+		});
+		
+		showToast("Excel generado exitosamente.", "success");
+	} catch (error) {
+		console.error("Error al generar el Excel:", error);
+		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+	}
 }
 
 /*****************************************
