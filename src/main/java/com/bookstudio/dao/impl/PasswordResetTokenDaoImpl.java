@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 
 import com.bookstudio.dao.PasswordResetTokenDao;
 import com.bookstudio.utils.DbConnection;
+import com.bookstudio.utils.PasswordUtils;
 
 public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 	@Override
@@ -81,10 +82,12 @@ public class PasswordResetTokenDaoImpl implements PasswordResetTokenDao {
 		if (email == null) {
 			return false;
 		}
+		
+		String hashedPassword = PasswordUtils.hashPassword(newPassword);
 
 		String sqlUpdate = "UPDATE Users SET Password = ? WHERE Email = ?";
 		try (Connection cn = DbConnection.getConexion(); PreparedStatement ps = cn.prepareStatement(sqlUpdate)) {
-			ps.setString(1, newPassword);
+			ps.setString(1, hashedPassword);
 			ps.setString(2, email);
 			int rowsAffected = ps.executeUpdate();
 			if (rowsAffected > 0) {
