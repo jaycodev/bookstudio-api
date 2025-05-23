@@ -53,18 +53,24 @@ public class StudentService {
 
 	public Student updateStudent(HttpServletRequest request) throws Exception {
 		String studentId = request.getParameter("studentId");
+		String firstName = request.getParameter("editStudentFirstName");
+		String lastName = request.getParameter("editStudentLastName");
 		String address = request.getParameter("editStudentAddress");
 		String phone = request.getParameter("editStudentPhone");
 		String email = request.getParameter("editStudentEmail");
+		LocalDate birthDate = LocalDate.parse(request.getParameter("editStudentBirthDate"));
 		String gender = request.getParameter("editStudentGender");
 		String facultyId = request.getParameter("editStudentFaculty");
 		String status = request.getParameter("editStudentStatus");
 
 		Student student = new Student();
 		student.setStudentId(studentId);
+		student.setFirstName(firstName);
+		student.setLastName(lastName);
 		student.setAddress(address);
 		student.setPhone(phone);
 		student.setEmail(email);
+		student.setBirthDate(birthDate);
 		student.setGender(gender);
 		student.setFacultyId(facultyId);
 		student.setStatus(status);

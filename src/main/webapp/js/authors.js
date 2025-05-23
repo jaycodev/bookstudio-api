@@ -124,12 +124,16 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
+function formatAuthorCode(id) {
+	return `A${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(author) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${author.authorId}</td>
+			<td class="align-middle text-start">${formatAuthorCode(author.authorId)}</td>
 			<td class="align-middle text-start">${author.name}</td>
 			<td class="align-middle text-start">${author.nationalityName}</td>
 			<td class="align-middle text-start">${author.literaryGenreName}</td>
@@ -258,7 +262,7 @@ function updateRowInTable(author) {
 	var table = $('#authorTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === author.authorId.toString();
+		return $(this).find('td').eq(0).text() === formatAuthorCode(author.authorId.toString());
 	});
 
 	if (row.length > 0) {
@@ -708,6 +712,12 @@ function loadModalData() {
 
 		$('#addAuthorForm')[0].reset();
 		$('#addAuthorForm .is-invalid').removeClass('is-invalid');
+		
+		const today = new Date();
+		const minAge = 10;
+		const maxBirthDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+		const maxDateStr = maxBirthDate.toISOString().split('T')[0];
+		$('#addAuthorBirthDate').attr('max', maxDateStr);
 
 		placeholderColorDateInput();
 
@@ -721,6 +731,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsAuthorModal"]', function() {
 		var authorId = $(this).data('id');
+		$('#detailsAuthorModalID').text(formatAuthorCode(authorId));
 		
 		$('#detailsAuthorSpinner').removeClass('d-none');
 		$('#detailsAuthorContent').addClass('d-none');
@@ -731,7 +742,7 @@ function loadModalData() {
 			data: { type: 'details', authorId: authorId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsAuthorID').text(data.authorId);
+				$('#detailsAuthorID').text(formatAuthorCode(data.authorId));
 				$('#detailsAuthorName').text(data.name);
 				$('#detailsAuthorNationality').text(data.nationalityName);
 				$('#detailsAuthorGenre').text(data.literaryGenreName);
@@ -763,8 +774,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#detailsAuthorSpinner').removeClass('d-none');
+				$('#detailsAuthorModal').modal('hide');
 			}
 		});
 	});
@@ -772,6 +782,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editAuthorModal"]', function() {
 		var authorId = $(this).data('id');
+		$('#editAuthorModalID').text(formatAuthorCode(authorId));
 		
 		$('#editAuthorSpinner').removeClass('d-none');
 		$('#editAuthorForm').addClass('d-none');
@@ -796,6 +807,13 @@ function loadModalData() {
 				$('#editLiteraryGenre').selectpicker();
 
 				$('#editAuthorBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
+				const today = new Date();
+				const minAge = 10;
+				const maxBirthDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+				const maxDateStr = maxBirthDate.toISOString().split('T')[0];
+
+				$('#editAuthorBirthDate').attr('max', maxDateStr);
+				
 				$('#editAuthorBiography').val(data.biography);
 
 				$('#editAuthorStatus').selectpicker('destroy').empty().append(
@@ -838,9 +856,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#editAuthorSpinner').removeClass('d-none');
-				$('#editAuthorBtn').prop('disabled', true);
+				$('#editAuthorModal').modal('hide');
 			}
 		});
 
@@ -1030,190 +1046,214 @@ function initializeTooltips(container) {
 }
 
 function generatePDF(dataTable) {
-	const { jsPDF } = window.jspdf;
-	const doc = new jsPDF("p", "mm", "a4");
-	const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	let hasWarnings = false;
 
-	const currentDate = new Date();
-	const fecha = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const hora = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	const pageWidth = doc.internal.pageSize.getWidth();
-	const margin = 15;
-	const topMargin = 5;
-
-	doc.addImage(logoUrl, 'PNG', margin, topMargin, 30, 30);
-
-	doc.setFont("helvetica", "bold");
-	doc.setFontSize(18);
-	doc.setTextColor(40);
-	doc.text("Lista de autores", pageWidth / 2, topMargin + 18, { align: "center" });
-
-	doc.setFont("helvetica", "normal");
-	doc.setFontSize(10);
-	doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 15, { align: "right" });
-	doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 20, { align: "right" });
-
-	const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		let estado = row.cells[4].innerText.trim();
-		estado = estado.includes("Activo") ? "Activo" : "Inactivo";
-
-		return [
-			row.cells[0].innerText.trim(),
-			row.cells[1].innerText.trim(),
-			row.cells[2].innerText.trim(),
-			row.cells[3].innerText.trim(),
-			estado
-		];
-	});
-
-	doc.autoTable({
-		startY: topMargin + 35,
-		margin: { left: margin, right: margin },
-		head: [['ID', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
-		body: data,
-		theme: 'grid',
-		headStyles: {
-			fillColor: [0, 0, 0],
-			textColor: 255,
-			fontStyle: 'bold',
-			halign: 'left'
-		},
-		bodyStyles: {
-			font: "helvetica",
-			fontSize: 10,
-			halign: 'left'
-		},
-		columnStyles: {
-			0: { cellWidth: 20 },
-			1: { cellWidth: 50 },
-			2: { cellWidth: 30 },
-			3: { cellWidth: 50 },
-			4: { cellWidth: 30 }
-		},
-		didParseCell: function(data) {
-			if (data.section === 'body' && data.column.index === 4) {
-				data.cell.styles.textColor = data.cell.raw === "Activo" ? [0, 128, 0] : [255, 0, 0];
-			}
+	try {
+		const { jsPDF } = window.jspdf;
+		const doc = new jsPDF("p", "mm", "a4");
+		const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	
+		const currentDate = new Date();
+		const fecha = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const hora = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		const pageWidth = doc.internal.pageSize.getWidth();
+		const margin = 15;
+		const topMargin = 5;
+	
+		try {
+			doc.addImage(logoUrl, 'PNG', margin, topMargin, 30, 30);
+		} catch (imgError) {
+			console.warn("Logo not available:", imgError);
+			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
+			hasWarnings = true;
 		}
-	});
-
-	const filename = `Lista_de_autores_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
-
-	const pdfBlob = doc.output('blob');
-	const blobUrl = URL.createObjectURL(pdfBlob);
-	const link = document.createElement('a');
-	link.href = blobUrl;
-	link.download = filename;
-	document.body.appendChild(link);
-	link.click();
-	document.body.removeChild(link);
+	
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(18);
+		doc.setTextColor(40);
+		doc.text("Lista de autores", pageWidth / 2, topMargin + 18, { align: "center" });
+	
+		doc.setFont("helvetica", "normal");
+		doc.setFontSize(10);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 15, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 20, { align: "right" });
+	
+		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[4].innerText.trim();
+			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
+	
+			return [
+				row.cells[0].innerText.trim(),
+				row.cells[1].innerText.trim(),
+				row.cells[2].innerText.trim(),
+				row.cells[3].innerText.trim(),
+				estado
+			];
+		});
+	
+		doc.autoTable({
+			startY: topMargin + 35,
+			margin: { left: margin, right: margin },
+			head: [['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
+			body: data,
+			theme: 'grid',
+			headStyles: {
+				fillColor: [0, 0, 0],
+				textColor: 255,
+				fontStyle: 'bold',
+				halign: 'left'
+			},
+			bodyStyles: {
+				font: "helvetica",
+				fontSize: 10,
+				halign: 'left'
+			},
+			columnStyles: {
+				0: { cellWidth: 20 },
+				1: { cellWidth: 50 },
+				2: { cellWidth: 30 },
+				3: { cellWidth: 50 },
+				4: { cellWidth: 30 }
+			},
+			didParseCell: function(data) {
+				if (data.section === 'body' && data.column.index === 4) {
+					data.cell.styles.textColor = data.cell.raw === "Activo" ? [0, 128, 0] : [255, 0, 0];
+				}
+			}
+		});
+	
+		const filename = `Lista_de_autores_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+	
+		const pdfBlob = doc.output('blob');
+		const blobUrl = URL.createObjectURL(pdfBlob);
+		const link = document.createElement('a');
+		link.href = blobUrl;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		
+		if (!hasWarnings) {
+			showToast("PDF generado exitosamente.", "success");
+		}
+	} catch (error) {
+		console.error("Error al generar el PDF:", error);
+		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	}
 }
 
 function generateExcel(dataTable) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Autores');
-
-	const currentDate = new Date();
-	const dateStr = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const timeStr = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	worksheet.mergeCells('A1:E1');
-	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de autores - BookStudio';
-	titleCell.font = {
-		name: 'Arial',
-		size: 16,
-		bold: true
-	};
-	titleCell.alignment = { horizontal: 'center' };
-
-	worksheet.mergeCells('A2:E2');
-	const dateTimeCell = worksheet.getCell('A2');
-	dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
-	dateTimeCell.alignment = { horizontal: 'center' };
-
-	worksheet.columns = [
-		{ key: 'id', width: 10 },
-		{ key: 'nombre', width: 30 },
-		{ key: 'nacionalidad', width: 20 },
-		{ key: 'genero', width: 25 },
-		{ key: 'estado', width: 15 }
-	];
-
-	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
-	headerRow.eachCell((cell) => {
-		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
-		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
-		cell.alignment = { horizontal: 'left', vertical: 'middle' };
-		cell.border = {
-			top: { style: 'thin', color: { argb: 'FFFFFF' } },
-			bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
-			left: { style: 'thin', color: { argb: 'FFFFFF' } },
-			right: { style: 'thin', color: { argb: 'FFFFFF' } }
+	try {
+		const workbook = new ExcelJS.Workbook();
+		const worksheet = workbook.addWorksheet('Autores');
+	
+		const currentDate = new Date();
+		const dateStr = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const timeStr = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		worksheet.mergeCells('A1:E1');
+		const titleCell = worksheet.getCell('A1');
+		titleCell.value = 'Lista de autores - BookStudio';
+		titleCell.font = {
+			name: 'Arial',
+			size: 16,
+			bold: true
 		};
-	});
-
-	const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		let estado = row.cells[4].innerText.trim();
-		estado = estado.includes("Activo") ? "Activo" : "Inactivo";
-
-		return {
-			id: row.cells[0].innerText.trim(),
-			nombre: row.cells[1].innerText.trim(),
-			nacionalidad: row.cells[2].innerText.trim(),
-			genero: row.cells[3].innerText.trim(),
-			estado: estado
-		};
-	});
-
-	data.forEach((item) => {
-		const row = worksheet.addRow(item);
-
-		const estadoCell = row.getCell(5);
-		if (estadoCell.value === "Activo") {
-			estadoCell.font = { color: { argb: '008000' } };
-			estadoCell.fill = {
-				type: 'pattern',
-				pattern: 'solid',
-				fgColor: { argb: 'E6F2E6' }
+		titleCell.alignment = { horizontal: 'center' };
+	
+		worksheet.mergeCells('A2:E2');
+		const dateTimeCell = worksheet.getCell('A2');
+		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
+		dateTimeCell.alignment = { horizontal: 'center' };
+	
+		worksheet.columns = [
+			{ key: 'id', width: 10 },
+			{ key: 'nombre', width: 30 },
+			{ key: 'nacionalidad', width: 20 },
+			{ key: 'genero', width: 25 },
+			{ key: 'estado', width: 15 }
+		];
+	
+		const headerRow = worksheet.getRow(4);
+		headerRow.values = ['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
+		headerRow.eachCell((cell) => {
+			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
+			cell.alignment = { horizontal: 'left', vertical: 'middle' };
+			cell.border = {
+				top: { style: 'thin', color: { argb: 'FFFFFF' } },
+				bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
+				left: { style: 'thin', color: { argb: 'FFFFFF' } },
+				right: { style: 'thin', color: { argb: 'FFFFFF' } }
 			};
-		} else {
-			estadoCell.font = { color: { argb: 'FF0000' } };
-			estadoCell.fill = {
-				type: 'pattern',
-				pattern: 'solid',
-				fgColor: { argb: 'FFE6E6' }
+		});
+	
+		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[4].innerText.trim();
+			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
+	
+			return {
+				id: row.cells[0].innerText.trim(),
+				nombre: row.cells[1].innerText.trim(),
+				nacionalidad: row.cells[2].innerText.trim(),
+				genero: row.cells[3].innerText.trim(),
+				estado: estado
 			};
-		}
-	});
-
-	const filename = `Lista_de_autores_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
-
-	workbook.xlsx.writeBuffer().then(buffer => {
-		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = filename;
-		link.click();
-	});
+		});
+	
+		data.forEach((item) => {
+			const row = worksheet.addRow(item);
+	
+			const estadoCell = row.getCell(5);
+			if (estadoCell.value === "Activo") {
+				estadoCell.font = { color: { argb: '008000' } };
+				estadoCell.fill = {
+					type: 'pattern',
+					pattern: 'solid',
+					fgColor: { argb: 'E6F2E6' }
+				};
+			} else {
+				estadoCell.font = { color: { argb: 'FF0000' } };
+				estadoCell.fill = {
+					type: 'pattern',
+					pattern: 'solid',
+					fgColor: { argb: 'FFE6E6' }
+				};
+			}
+		});
+	
+		const filename = `Lista_de_autores_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+	
+		workbook.xlsx.writeBuffer().then(buffer => {
+			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+			const link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			link.download = filename;
+			link.click();
+		});
+		
+		showToast("Excel generado exitosamente.", "success");
+	} catch (error) {
+		console.error("Error al generar el Excel:", error);
+		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+	}
 }
 
 /*****************************************

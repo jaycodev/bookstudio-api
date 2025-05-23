@@ -70,7 +70,7 @@
 					<table id="userTable" class="table table-sm">
 						<thead>
 							<tr>
-								<th scope="col" class="text-start">ID</th>
+								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Nombre de usuario</th>
 								<th scope="col" class="text-start">Correo electrónico</th>
 								<th scope="col" class="text-start">Nombres</th>
@@ -298,7 +298,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario - <span id="detailsUserModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -314,7 +314,7 @@
 		                <!-- ID and Username Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">ID</h6>
+		                        <h6 class="small text-muted">Código</h6>
 		                        <p class="fw-bold" id="detailsUserID"></p>
 		                    </div>
 		                    
@@ -379,7 +379,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar usuario - <span id="editUserModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -531,7 +531,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmar eliminación</h5>
+	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmación de usuario - <span id="deleteUserModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            

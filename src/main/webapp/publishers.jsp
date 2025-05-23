@@ -75,7 +75,7 @@
 					<table id="publisherTable" class="table table-sm">
 						<thead>
 							<tr>
-								<th scope="col" class="text-start">ID</th>
+								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Nombre</th>
 								<th scope="col" class="text-start">Nacionalidad</th>
 								<th scope="col" class="text-start">Género literario</th>
@@ -285,7 +285,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">Detalles de la editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">Detalles de la editorial - <span id="detailsPublisherModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -301,7 +301,7 @@
 		                <!-- ID and Name Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">ID</h6>
+		                        <h6 class="small text-muted">Código</h6>
 		                        <p class="fw-bold" id="detailsPublisherID"></p>
 		                    </div>
 		                    
@@ -379,7 +379,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">Editar editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">Editar editorial - <span id="editPublisherModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

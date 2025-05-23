@@ -48,10 +48,14 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
+function formatUserCode(id) {
+	return `U${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(user) {
 	return `
 		<tr>
-			<td class="align-middle text-start">${user.userId}</td>
+			<td class="align-middle text-start">${formatUserCode(user.userId)}</td>
 			<td class="align-middle text-start">${user.username}</td>
 			<td class="align-middle text-start">${user.email}</td>
 			<td class="align-middle text-start">${user.firstName}</td>
@@ -179,12 +183,10 @@ function updateRowInTable(user) {
 	var table = $('#userTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === user.userId.toString();
+		return $(this).find('td').eq(0).text() === formatUserCode(user.userId.toString());
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(user.username);
-		row.find('td').eq(2).text(user.email);
 		row.find('td').eq(3).text(user.firstName);
 		row.find('td').eq(4).text(user.lastName);
 		row.find('td').eq(5).text(user.role.charAt(0).toUpperCase() + user.role.slice(1));
@@ -677,7 +679,7 @@ function handleDeleteUser() {
 
 					table.rows().every(function() {
 						var data = this.data();
-						if (data[0] == userId) {
+						if (data[0] == formatUserCode(userId)) {
 							this.remove();
 						}
 					});
@@ -692,7 +694,7 @@ function handleDeleteUser() {
 					showToast("Hubo un error al eliminar el usuario.", 'error');
 				}
 			},
-			error: function() {
+			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
@@ -702,7 +704,6 @@ function handleDeleteUser() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
 				$('#deleteUserModal').modal('hide');
 			},
 			complete: function() {
@@ -755,6 +756,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function() {
 		var userId = $(this).data('id');
+		$('#detailsUserModalID').text(formatUserCode(userId));
 		
 		$('#detailsUserSpinner').removeClass('d-none');
 		$('#detailsUserContent').addClass('d-none');
@@ -765,7 +767,7 @@ function loadModalData() {
 			data: { type: 'details', userId: userId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsUserID').text(data.userId);
+				$('#detailsUserID').text(formatUserCode(data.userId));
 				$('#detailsUserUsername').text(data.username);
 				$('#detailsUserEmail').text(data.email);
 				$('#detailsUserFirstName').text(data.firstName);
@@ -792,8 +794,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#detailsUserSpinner').removeClass('d-none');
+				$('#detailsUserModal').modal('hide');
 			}
 		});
 	});
@@ -801,6 +802,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editUserModal"]', function() {
 		var userId = $(this).data('id');
+		$('#editUserModalID').text(formatUserCode(userId));
 		
 		$('#editUserSpinner').removeClass('d-none');
 		$('#editUserForm').addClass('d-none');
@@ -857,9 +859,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#editUserSpinner').removeClass('d-none');
-				$('#editUserBtn').prop('disabled', true);
+				$('#editUserModal').modal('hide');
 			}
 		});
 
@@ -875,7 +875,8 @@ function loadModalData() {
 	$('#deleteUserModal').on('show.bs.modal', function(event) {
 		var button = $(event.relatedTarget);
 		var userId = button.data('id');
-
+		
+		$('#deleteUserModalID').text(formatUserCode(userId));
 		$('#confirmDeleteUser').data('userId', userId);
 	});
 }
@@ -1072,157 +1073,182 @@ function initializeTooltips(container) {
 }
 
 function generatePDF(dataTable) {
-	const { jsPDF } = window.jspdf;
-	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	let hasWarnings = false;
 
-	const currentDate = new Date();
-	const fecha = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const hora = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	const pageWidth = doc.internal.pageSize.getWidth();
-	const margin = 10;
-	const topMargin = 5;
-
-	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
-	doc.setFont("helvetica", "bold");
-	doc.setFontSize(14);
-	doc.text("Lista de usuarios", pageWidth / 2, topMargin + 13, { align: "center" });
-
-	doc.setFont("helvetica", "normal");
-	doc.setFontSize(8);
-	doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
-	doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
-
-	const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-
-		return [
-			row.cells[0].innerText.trim(),
-			row.cells[1].innerText.trim(),
-			row.cells[2].innerText.trim(),
-			row.cells[3].innerText.trim(),
-			row.cells[4].innerText.trim(),
-			row.cells[5].innerText.trim()
-		];
-	});
-
-	doc.autoTable({
-		startY: topMargin + 25,
-		margin: { left: margin, right: margin },
-		head: [['ID', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
-		body: data,
-		theme: 'grid',
-		headStyles: {
-			fillColor: [0, 0, 0],
-			textColor: 255,
-			fontStyle: 'bold',
-			fontSize: 8,
-			halign: 'left'
-		},
-		bodyStyles: {
-			font: "helvetica",
-			fontSize: 7,
-			halign: 'left'
-		},
-		didParseCell: function(data) {
-			if (data.section === 'body' && data.column.index === 6) {
-				data.cell.styles.textColor = [0, 0, 0];
-			}
+	try {
+		const { jsPDF } = window.jspdf;
+		const doc = new jsPDF("l", "mm", "a4");
+		const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	
+		const currentDate = new Date();
+		const fecha = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const hora = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		const pageWidth = doc.internal.pageSize.getWidth();
+		const margin = 10;
+		const topMargin = 5;
+		
+		try {
+			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
+		} catch (imgError) {
+			console.warn("Logo not available:", imgError);
+			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
+			hasWarnings = true;
 		}
-	});
+		
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(14);
+		doc.text("Lista de usuarios", pageWidth / 2, topMargin + 13, { align: "center" });
+	
+		doc.setFont("helvetica", "normal");
+		doc.setFontSize(8);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
+	
+		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+	
+			return [
+				row.cells[0].innerText.trim(),
+				row.cells[1].innerText.trim(),
+				row.cells[2].innerText.trim(),
+				row.cells[3].innerText.trim(),
+				row.cells[4].innerText.trim(),
+				row.cells[5].innerText.trim()
+			];
+		});
+	
+		doc.autoTable({
+			startY: topMargin + 25,
+			margin: { left: margin, right: margin },
+			head: [['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
+			body: data,
+			theme: 'grid',
+			headStyles: {
+				fillColor: [0, 0, 0],
+				textColor: 255,
+				fontStyle: 'bold',
+				fontSize: 8,
+				halign: 'left'
+			},
+			bodyStyles: {
+				font: "helvetica",
+				fontSize: 7,
+				halign: 'left'
+			},
+			didParseCell: function(data) {
+				if (data.section === 'body' && data.column.index === 6) {
+					data.cell.styles.textColor = [0, 0, 0];
+				}
+			}
+		});
+	
+		const filename = `Lista_de_usuarios_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+	
+		const pdfBlob = doc.output('blob');
+		const blobUrl = URL.createObjectURL(pdfBlob);
+		const link = document.createElement('a');
+		link.href = blobUrl;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 
-	const filename = `Lista_de_usuarios_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
-
-	const pdfBlob = doc.output('blob');
-	const blobUrl = URL.createObjectURL(pdfBlob);
-	const link = document.createElement('a');
-	link.href = blobUrl;
-	link.download = filename;
-	document.body.appendChild(link);
-	link.click();
-	document.body.removeChild(link);
+		if (!hasWarnings) {
+			showToast("PDF generado exitosamente.", "success");
+		}
+	} catch (error) {
+		console.error("Error al generar el PDF:", error);
+		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	}
 }
 
 function generateExcel(dataTable) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Usuarios');
-
-	const currentDate = new Date();
-	const dateStr = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const timeStr = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	worksheet.mergeCells('A1:F1');
-	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de usuarios - BookStudio';
-	titleCell.font = { name: 'Arial', size: 14, bold: true };
-	titleCell.alignment = { horizontal: 'center' };
-
-	worksheet.mergeCells('A2:F2');
-	const dateTimeCell = worksheet.getCell('A2');
-	dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
-	dateTimeCell.alignment = { horizontal: 'center' };
-
-	worksheet.columns = [
-		{ key: 'id', width: 10 },
-		{ key: 'usuario', width: 20 },
-		{ key: 'correo', width: 30 },
-		{ key: 'nombres', width: 30 },
-		{ key: 'apellidos', width: 30 },
-		{ key: 'rol', width: 20 }
-	];
-
-	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
-	headerRow.eachCell((cell) => {
-		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
-		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
-		cell.alignment = { horizontal: 'left', vertical: 'middle' };
-		cell.border = {
-			top: { style: 'thin', color: { argb: 'FFFFFF' } },
-			bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
-			left: { style: 'thin', color: { argb: 'FFFFFF' } },
-			right: { style: 'thin', color: { argb: 'FFFFFF' } }
-		};
-	});
-
-	const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		return {
-			id: row.cells[0].innerText.trim(),
-			usuario: row.cells[1].innerText.trim(),
-			correo: row.cells[2].innerText.trim(),
-			nombres: row.cells[3].innerText.trim(),
-			apellidos: row.cells[4].innerText.trim(),
-			rol: row.cells[5].innerText.trim()
-		};
-	});
-
-	data.forEach(item => worksheet.addRow(item));
-
-	const filename = `Lista_de_usuarios_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
-
-	workbook.xlsx.writeBuffer().then(buffer => {
-		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = filename;
-		link.click();
-	});
+	try {
+		const workbook = new ExcelJS.Workbook();
+		const worksheet = workbook.addWorksheet('Usuarios');
+	
+		const currentDate = new Date();
+		const dateStr = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const timeStr = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		worksheet.mergeCells('A1:F1');
+		const titleCell = worksheet.getCell('A1');
+		titleCell.value = 'Lista de usuarios - BookStudio';
+		titleCell.font = { name: 'Arial', size: 14, bold: true };
+		titleCell.alignment = { horizontal: 'center' };
+	
+		worksheet.mergeCells('A2:F2');
+		const dateTimeCell = worksheet.getCell('A2');
+		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
+		dateTimeCell.alignment = { horizontal: 'center' };
+	
+		worksheet.columns = [
+			{ key: 'id', width: 10 },
+			{ key: 'usuario', width: 20 },
+			{ key: 'correo', width: 30 },
+			{ key: 'nombres', width: 30 },
+			{ key: 'apellidos', width: 30 },
+			{ key: 'rol', width: 20 }
+		];
+	
+		const headerRow = worksheet.getRow(4);
+		headerRow.values = ['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
+		headerRow.eachCell((cell) => {
+			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
+			cell.alignment = { horizontal: 'left', vertical: 'middle' };
+			cell.border = {
+				top: { style: 'thin', color: { argb: 'FFFFFF' } },
+				bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
+				left: { style: 'thin', color: { argb: 'FFFFFF' } },
+				right: { style: 'thin', color: { argb: 'FFFFFF' } }
+			};
+		});
+	
+		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			return {
+				id: row.cells[0].innerText.trim(),
+				usuario: row.cells[1].innerText.trim(),
+				correo: row.cells[2].innerText.trim(),
+				nombres: row.cells[3].innerText.trim(),
+				apellidos: row.cells[4].innerText.trim(),
+				rol: row.cells[5].innerText.trim()
+			};
+		});
+	
+		data.forEach(item => worksheet.addRow(item));
+	
+		const filename = `Lista_de_usuarios_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+	
+		workbook.xlsx.writeBuffer().then(buffer => {
+			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+			const link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			link.download = filename;
+			link.click();
+		});
+		
+		showToast("Excel generado exitosamente.", "success");
+	} catch (error) {
+		console.error("Error al generar el Excel:", error);
+		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+	}
 }
 
 /*****************************************

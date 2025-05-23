@@ -76,7 +76,7 @@
 					<table id=studentTable class="table table-sm">
 						<thead>
 							<tr>
-								<th scope="col" class="text-start">ID</th>
+								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">DNI</th>
 								<th scope="col" class="text-start">Nombres</th>
 								<th scope="col" class="text-start">Apellidos</th>
@@ -301,7 +301,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">Detalles del estudiante</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">Detalles del estudiante - <span id="detailsStudentModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -317,7 +317,7 @@
 		                <!-- ID and DNI Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">ID</h6>
+		                        <h6 class="small text-muted">Código</h6>
 		                        <p class="fw-bold" id="detailsStudentID"></p>
 		                    </div>
 		                    
@@ -404,7 +404,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">Editar estudiante</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">Editar estudiante - <span id="editStudentModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -430,15 +430,20 @@
 	                            >
 	                        </div>
 	                        
-	                        <!-- First Name Field -->
+							<!-- First Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentFirstName" class="form-label">Nombres</label>
+	                            <label for="editStudentFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
 	                                id="editStudentFirstName" 
-	                                disabled
+	                                name="editStudentFirstName" 
+	                                pattern="[A-Za-zÀ-ÿ\s]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
+	                                placeholder="Ingrese los nombres del estudiante" 
+	                                required
 	                            >
+	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>
 	                    
@@ -446,14 +451,18 @@
 	                    <div class="row">
 	                        <!-- Last Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentLastName" class="form-label">Apellidos</label>
+	                            <label for="editStudentLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
 	                                id="editStudentLastName" 
 	                                name="editStudentLastName" 
-	                                disabled
+	                                pattern="[A-Za-zÀ-ÿ\s]+" 
+	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
+	                                placeholder="Ingrese los apellidos del estudiante" 
+	                                required
 	                            >
+	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
 	                        <!-- Address Field -->
@@ -509,13 +518,15 @@
 	                    <div class="row">
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentBirthDate" class="form-label">Fecha de nacimiento</label>
+	                            <label for="editStudentBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
 	                                id="editStudentBirthDate" 
-	                                disabled
+	                                name="editStudentBirthDate" 
+	                                required
 	                            >
+	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
 	                        <!-- Gender Field -->

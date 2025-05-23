@@ -114,6 +114,7 @@ $(document).ready(function() {
 				},
 				error: function() {
 					showToast("Error al actualizar la foto.", 'error');
+					$('#cropperModal').modal('hide');
 				},
 				complete: function() {
 					$('#savePhotoIcon').removeClass('d-none');
@@ -159,6 +160,7 @@ $(document).ready(function() {
 			},
 			error: function() {
 				showToast("Error al eliminar la foto.", 'error');
+				$('#deletePhotoModal').modal('hide');
 			},
 			complete: function() {
 				$('#deletePhotoIcon').removeClass('d-none');

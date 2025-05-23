@@ -117,12 +117,16 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
+function formatStudentCode(id) {
+	return `ES${String(id).padStart(4, '0')}`;
+}
+
 function generateRow(student) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${student.studentId}</td>
+			<td class="align-middle text-start">${formatStudentCode(student.studentId)}</td>
 			<td class="align-middle text-start">${student.dni}</td>
 			<td class="align-middle text-start">${student.firstName}</td>
 			<td class="align-middle text-start">${student.lastName}</td>
@@ -245,11 +249,10 @@ function updateRowInTable(student) {
 	var table = $('#studentTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === student.studentId.toString();
+		return $(this).find('td').eq(0).text() === formatStudentCode(student.studentId.toString());
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(student.dni);
 		row.find('td').eq(2).text(student.firstName);
 		row.find('td').eq(3).text(student.lastName);
 		row.find('td').eq(4).text(student.phone);
@@ -601,6 +604,26 @@ function validateEditField(field) {
 	} else {
 		field.removeClass('is-invalid');
 	}
+	
+	// Name validation
+	if (field.is('#editStudentFirstName')) {
+		const firstName = field.val();
+	
+		if (firstName.length < 3) {
+			errorMessage = 'El nombre debe tener al menos 3 caracteres.';
+			isValid = false;
+		}
+	}
+	
+	// Last name validation
+	if (field.is('#editStudentLastName')) {
+		const lastName = field.val();
+	
+		if (lastName.length < 3) {
+			errorMessage = 'El apellido debe tener al menos 3 caracteres.';
+			isValid = false;
+		}
+	}
 
 	// Address validation
 	if (field.is('#editStudentAddress')) {
@@ -630,6 +653,16 @@ function validateEditField(field) {
 
 		if (!emailRegex.test(email)) {
 			errorMessage = 'Por favor ingrese un correo electrónico válido.';
+			isValid = false;
+		}
+	}
+
+	// Birthdate validation
+	if (field.is('#editStudentBirthDate')) {
+		const birthDate = new Date(field.val());
+		const today = new Date();
+		if (birthDate > today) {
+			errorMessage = 'La fecha de nacimiento no puede ser en el futuro.';
 			isValid = false;
 		}
 	}
@@ -688,6 +721,9 @@ function loadModalData() {
 
 		$('#addStudentForm')[0].reset();
 		$('#addStudentForm .is-invalid').removeClass('is-invalid');
+		
+		const today = new Date().toISOString().split('T')[0];
+		$('#addStudentBirthDate').attr('max', today);
 
 		placeholderColorDateInput();
 	});
@@ -695,6 +731,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsStudentModal"]', function() {
 		var studentId = $(this).data('id');
+		$('#detailsStudentModalID').text(formatStudentCode(studentId));
 		
 		$('#detailsStudentSpinner').removeClass('d-none');
 		$('#detailsStudentContent').addClass('d-none');
@@ -705,7 +742,7 @@ function loadModalData() {
 			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsStudentID').text(data.studentId);
+				$('#detailsStudentID').text(formatStudentCode(data.studentId));
 				$('#detailsStudentDNI').text(data.dni);
 				$('#detailsStudentFirstName').text(data.firstName);
 				$('#detailsStudentLastName').text(data.lastName);
@@ -734,8 +771,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#detailsStudentSpinner').removeClass('d-none');
+				$('#detailsStudentModal').modal('hide');
 			}
 		});
 	});
@@ -743,6 +779,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editStudentModal"]', function() {
 		var studentId = $(this).data('id');
+		$('#editStudentModalID').text(formatStudentCode(studentId));
 		
 		$('#editStudentSpinner').removeClass('d-none');
 		$('#editStudentForm').addClass('d-none');
@@ -762,7 +799,9 @@ function loadModalData() {
 				$('#editStudentPhone').val(data.phone);
 				$('#editStudentEmail').val(data.email);
 				$('#editStudentBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
-
+				const today = new Date().toISOString().split('T')[0];
+				$('#editStudentBirthDate').attr('max', today);
+				
 				$('#editStudentGender').selectpicker('destroy').empty().append(
 					$('<option>', {
 						value: 'Masculino',
@@ -816,9 +855,7 @@ function loadModalData() {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				
-				$('#editStudentSpinner').removeClass('d-none');
-				$('#editStudentBtn').prop('disabled', true);
+				$('#editStudentModal').modal('hide');
 			}
 		});
 	});
@@ -873,177 +910,202 @@ function initializeTooltips(container) {
 }
 
 function generatePDF(dataTable) {
-	const { jsPDF } = window.jspdf;
-	const doc = new jsPDF("l", "mm", "a4");
-	const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	let hasWarnings = false;
 
-	const currentDate = new Date();
-	const fecha = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const hora = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	const pageWidth = doc.internal.pageSize.getWidth();
-	const margin = 10;
-	const topMargin = 5;
-
-	doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
-	doc.setFont("helvetica", "bold");
-	doc.setFontSize(14);
-	doc.text("Lista de estudiantes", pageWidth / 2, topMargin + 13, { align: "center" });
-
-	doc.setFont("helvetica", "normal");
-	doc.setFontSize(8);
-	doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
-	doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
-
-	const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		let estado = row.cells[6].innerText.trim();
-		estado = estado.includes("Activo") ? "Activo" : "Inactivo";
-
-		return [
-			row.cells[0].innerText.trim(),
-			row.cells[1].innerText.trim(),
-			row.cells[2].innerText.trim(),
-			row.cells[3].innerText.trim(),
-			row.cells[4].innerText.trim(),
-			row.cells[5].innerText.trim(),
-			estado
-		];
-	});
-
-	doc.autoTable({
-		startY: topMargin + 25,
-		margin: { left: margin, right: margin },
-		head: [['ID', 'DNI', 'Nombres', 'Apellidos', 'Teléfono', 'Correo electrónico', 'Estado']],
-		body: data,
-		theme: 'grid',
-		headStyles: {
-			fillColor: [0, 0, 0],
-			textColor: 255,
-			fontStyle: 'bold',
-			fontSize: 8,
-			halign: 'left'
-		},
-		bodyStyles: {
-			font: "helvetica",
-			fontSize: 7,
-			halign: 'left'
-		},
-		didParseCell: function(data) {
-			if (data.section === 'body' && data.column.index === 6) {
-				data.cell.styles.textColor = data.cell.raw === "Activo"
-					? [0, 128, 0]
-					: [255, 0, 0];
-			}
+	try {
+		const { jsPDF } = window.jspdf;
+		const doc = new jsPDF("l", "mm", "a4");
+		const logoUrl = '/images/bookstudio-logo-no-bg.png';
+	
+		const currentDate = new Date();
+		const fecha = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const hora = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		const pageWidth = doc.internal.pageSize.getWidth();
+		const margin = 10;
+		const topMargin = 5;
+		
+		try {
+			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
+		} catch (imgError) {
+			console.warn("Logo not available:", imgError);
+			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
+			hasWarnings = true;
 		}
-	});
+		
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(14);
+		doc.text("Lista de estudiantes", pageWidth / 2, topMargin + 13, { align: "center" });
+	
+		doc.setFont("helvetica", "normal");
+		doc.setFontSize(8);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
+	
+		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[6].innerText.trim();
+			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
+	
+			return [
+				row.cells[0].innerText.trim(),
+				row.cells[1].innerText.trim(),
+				row.cells[2].innerText.trim(),
+				row.cells[3].innerText.trim(),
+				row.cells[4].innerText.trim(),
+				row.cells[5].innerText.trim(),
+				estado
+			];
+		});
+	
+		doc.autoTable({
+			startY: topMargin + 25,
+			margin: { left: margin, right: margin },
+			head: [['Código', 'DNI', 'Nombres', 'Apellidos', 'Teléfono', 'Correo electrónico', 'Estado']],
+			body: data,
+			theme: 'grid',
+			headStyles: {
+				fillColor: [0, 0, 0],
+				textColor: 255,
+				fontStyle: 'bold',
+				fontSize: 8,
+				halign: 'left'
+			},
+			bodyStyles: {
+				font: "helvetica",
+				fontSize: 7,
+				halign: 'left'
+			},
+			didParseCell: function(data) {
+				if (data.section === 'body' && data.column.index === 6) {
+					data.cell.styles.textColor = data.cell.raw === "Activo"
+						? [0, 128, 0]
+						: [255, 0, 0];
+				}
+			}
+		});
+	
+		const filename = `Lista_de_estudiantes_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+	
+		const pdfBlob = doc.output('blob');
+		const blobUrl = URL.createObjectURL(pdfBlob);
+		const link = document.createElement('a');
+		link.href = blobUrl;
+		link.download = filename;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 
-	const filename = `Lista_de_estudiantes_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
-
-	const pdfBlob = doc.output('blob');
-	const blobUrl = URL.createObjectURL(pdfBlob);
-	const link = document.createElement('a');
-	link.href = blobUrl;
-	link.download = filename;
-	document.body.appendChild(link);
-	link.click();
-	document.body.removeChild(link);
+		if (!hasWarnings) {
+			showToast("PDF generado exitosamente.", "success");
+		}
+	} catch (error) {
+		console.error("Error al generar el PDF:", error);
+		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	}
 }
 
 function generateExcel(dataTable) {
-	const workbook = new ExcelJS.Workbook();
-	const worksheet = workbook.addWorksheet('Estudiantes');
-
-	const currentDate = new Date();
-	const dateStr = currentDate.toLocaleDateString('es-ES', {
-		day: '2-digit',
-		month: 'long',
-		year: 'numeric'
-	});
-	const timeStr = currentDate.toLocaleTimeString('en-US', {
-		hour: '2-digit',
-		minute: '2-digit',
-		hour12: true
-	});
-
-	worksheet.mergeCells('A1:G1');
-	const titleCell = worksheet.getCell('A1');
-	titleCell.value = 'Lista de estudiantes - BookStudio';
-	titleCell.font = { name: 'Arial', size: 14, bold: true };
-	titleCell.alignment = { horizontal: 'center' };
-
-	worksheet.mergeCells('A2:G2');
-	const dateTimeCell = worksheet.getCell('A2');
-	dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
-	dateTimeCell.alignment = { horizontal: 'center' };
-
-	worksheet.columns = [
-		{ key: 'id', width: 10 },
-		{ key: 'dni', width: 15 },
-		{ key: 'nombres', width: 30 },
-		{ key: 'apellidos', width: 30 },
-		{ key: 'telefono', width: 20 },
-		{ key: 'correo', width: 30 },
-		{ key: 'estado', width: 15 }
-	];
-
-	const headerRow = worksheet.getRow(4);
-	headerRow.values = ['ID', 'DNI', 'Nombres', 'Apellidos', 'Teléfono', 'Correo electrónico', 'Estado'];
-	headerRow.eachCell((cell) => {
-		cell.font = { bold: true, color: { argb: 'FFFFFF' } };
-		cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
-		cell.alignment = { horizontal: 'left', vertical: 'middle' };
-		cell.border = {
-			top: { style: 'thin', color: { argb: 'FFFFFF' } },
-			bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
-			left: { style: 'thin', color: { argb: 'FFFFFF' } },
-			right: { style: 'thin', color: { argb: 'FFFFFF' } }
-		};
-	});
-
-	const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-		let estado = row.cells[6].innerText.trim();
-		estado = estado.includes("Activo") ? "Activo" : "Inactivo";
-
-		return {
-			id: row.cells[0].innerText.trim(),
-			dni: row.cells[1].innerText.trim(),
-			nombres: row.cells[2].innerText.trim(),
-			apellidos: row.cells[3].innerText.trim(),
-			telefono: row.cells[4].innerText.trim(),
-			correo: row.cells[5].innerText.trim(),
-			estado: estado
-		};
-	});
-
-	data.forEach((item) => {
-		const row = worksheet.addRow(item);
-		const estadoCell = row.getCell(7);
-		if (estadoCell.value === "Activo") {
-			estadoCell.font = { color: { argb: '008000' } };
-			estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };
-		} else {
-			estadoCell.font = { color: { argb: 'FF0000' } };
-			estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6' } };
-		}
-	});
-
-	const filename = `Lista_de_estudiantes_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
-
-	workbook.xlsx.writeBuffer().then(buffer => {
-		const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-		const link = document.createElement('a');
-		link.href = URL.createObjectURL(blob);
-		link.download = filename;
-		link.click();
-	});
+	try {
+		const workbook = new ExcelJS.Workbook();
+		const worksheet = workbook.addWorksheet('Estudiantes');
+	
+		const currentDate = new Date();
+		const dateStr = currentDate.toLocaleDateString('es-ES', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric'
+		});
+		const timeStr = currentDate.toLocaleTimeString('en-US', {
+			hour: '2-digit',
+			minute: '2-digit',
+			hour12: true
+		});
+	
+		worksheet.mergeCells('A1:G1');
+		const titleCell = worksheet.getCell('A1');
+		titleCell.value = 'Lista de estudiantes - BookStudio';
+		titleCell.font = { name: 'Arial', size: 14, bold: true };
+		titleCell.alignment = { horizontal: 'center' };
+	
+		worksheet.mergeCells('A2:G2');
+		const dateTimeCell = worksheet.getCell('A2');
+		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
+		dateTimeCell.alignment = { horizontal: 'center' };
+	
+		worksheet.columns = [
+			{ key: 'id', width: 10 },
+			{ key: 'dni', width: 15 },
+			{ key: 'nombres', width: 30 },
+			{ key: 'apellidos', width: 30 },
+			{ key: 'telefono', width: 20 },
+			{ key: 'correo', width: 30 },
+			{ key: 'estado', width: 15 }
+		];
+	
+		const headerRow = worksheet.getRow(4);
+		headerRow.values = ['Código', 'DNI', 'Nombres', 'Apellidos', 'Teléfono', 'Correo electrónico', 'Estado'];
+		headerRow.eachCell((cell) => {
+			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
+			cell.alignment = { horizontal: 'left', vertical: 'middle' };
+			cell.border = {
+				top: { style: 'thin', color: { argb: 'FFFFFF' } },
+				bottom: { style: 'thin', color: { argb: 'FFFFFF' } },
+				left: { style: 'thin', color: { argb: 'FFFFFF' } },
+				right: { style: 'thin', color: { argb: 'FFFFFF' } }
+			};
+		});
+	
+		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[6].innerText.trim();
+			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
+	
+			return {
+				id: row.cells[0].innerText.trim(),
+				dni: row.cells[1].innerText.trim(),
+				nombres: row.cells[2].innerText.trim(),
+				apellidos: row.cells[3].innerText.trim(),
+				telefono: row.cells[4].innerText.trim(),
+				correo: row.cells[5].innerText.trim(),
+				estado: estado
+			};
+		});
+	
+		data.forEach((item) => {
+			const row = worksheet.addRow(item);
+			const estadoCell = row.getCell(7);
+			if (estadoCell.value === "Activo") {
+				estadoCell.font = { color: { argb: '008000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };
+			} else {
+				estadoCell.font = { color: { argb: 'FF0000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6' } };
+			}
+		});
+	
+		const filename = `Lista_de_estudiantes_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+	
+		workbook.xlsx.writeBuffer().then(buffer => {
+			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+			const link = document.createElement('a');
+			link.href = URL.createObjectURL(blob);
+			link.download = filename;
+			link.click();
+		});
+		
+		showToast("Excel generado exitosamente.", "success");
+	} catch (error) {
+		console.error("Error al generar el Excel:", error);
+		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+	}
 }
 
 /*****************************************

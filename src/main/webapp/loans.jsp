@@ -76,7 +76,7 @@
 					<table id="loanTable" class="table table-sm">
 						<thead>
 							<tr>
-								<th scope="col" class="text-start">ID</th>
+								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Libro</th>
 								<th scope="col" class="text-start">Estudiante - DNI</th>
 								<th scope="col" class="text-center">Fecha préstamo</th>
@@ -156,7 +156,6 @@
 	                                id="addLoanDate" 
 	                                disabled
 	                            >
-	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
 	                        <!-- Return Date Field -->
@@ -227,7 +226,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del préstamo - <span id="detailsLoanModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -243,7 +242,7 @@
 		                <!-- ID and Book Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">ID</h6>
+		                        <h6 class="small text-muted">Código</h6>
 		                        <p class="fw-bold" id="detailsLoanID"></p>
 		                    </div>
 		                    <div class="col-md-6 mb-3">
@@ -305,7 +304,7 @@
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">Confirmación</h5>
+	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">Confirmación de préstamo - <span id="returnLoanModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            
@@ -336,7 +335,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar préstamo - <span id="editLoanModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -351,6 +350,17 @@
 	                <form id="editLoanForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Student and Loan Date Section -->
 	                    <div class="row">
+	                    	<!-- Book Field -->
+	                    	<div class="col-md-6 mb-3">
+	                            <label for="editLoanBook" class="form-label">Libro</label>
+	                            <input 
+	                                type="text" 
+	                                class="form-control" 
+	                                id="editLoanBook" 
+	                                disabled
+	                            >
+	                        </div>
+	                    
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editLoanStudent" class="form-label">Estudiante - DNI <span class="text-danger">*</span></label>
@@ -366,24 +376,22 @@
 	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                        
+	                    </div>
+	                    
+	                    <!-- Return Date and Quantity Section -->
+	                    <div class="row">              
 	                        <!-- Loan Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanDate" class="form-label">Fecha de préstamo <span class="text-danger">*</span></label>
+	                            <label for="editLoanDate" class="form-label">Fecha de préstamo</label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
 	                                id="editLoanDate" 
-	                                name="editLoanDate" 
 	                                value="" 
-	                                required
+	                                disabled
 	                            >
-	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                    </div>
-	                    
-	                    <!-- Return Date and Quantity Section -->
-	                    <div class="row">
+	                        
 	                        <!-- Return Date Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editReturnDate" class="form-label">Fecha de devolución <span class="text-danger">*</span></label>
@@ -397,8 +405,11 @@
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                        
-	                        <!-- Quantity Field -->
+	                    </div>
+	                    
+	                    <!-- Quantity and Observation Section -->
+	                    <div class="row">
+	                    	<!-- Quantity Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="editLoanQuantity" class="form-label">Cantidad</label>
 	                            <input 
@@ -408,11 +419,9 @@
 	                                disabled
 	                            >
 	                        </div>
-	                    </div>
 	                    
-	                    <!-- Observation Section -->
-	                    <div class="row">
-	                        <div class="col-md-12 mb-3">
+	                    	<!-- Observation Field -->
+	                        <div class="col-md-6 mb-3">
 	                            <label for="editloanObservation" class="form-label">Observación</label>
 	                            <textarea 
 	                                class="form-control" 

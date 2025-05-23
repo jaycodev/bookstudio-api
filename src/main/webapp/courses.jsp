@@ -76,7 +76,7 @@
 					<table id="courseTable" class="table table-sm">
 						<thead>
 							<tr>
-								<th scope="col" class="text-start">ID</th>
+								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Nombre</th>
 								<th scope="col" class="text-start">Nivel</th>
 								<th scope="col" class="text-start">Descripción</th>
@@ -190,7 +190,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del curso</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del curso - <span id="detailsCourseModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -206,7 +206,7 @@
 		                <!-- ID and Name Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">ID</h6>
+		                        <h6 class="small text-muted">Código</h6>
 		                        <p class="fw-bold" id="detailsCourseID"></p>
 		                    </div>
 		                    
@@ -254,7 +254,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar curso</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar curso - <span id="editCourseModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
