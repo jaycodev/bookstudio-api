@@ -504,6 +504,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsCourseModal"]', function() {
 		var courseId = $(this).data('id');
+		$('#detailsCourseModalID').text(formatCourseCode(courseId));
 		
 		$('#detailsCourseSpinner').removeClass('d-none');
 		$('#detailsCourseContent').addClass('d-none');
@@ -545,6 +546,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editCourseModal"]', function() {
 		var courseId = $(this).data('id');
+		$('#editCourseModalID').text(formatCourseCode(courseId));
 
 		$('#editCourseSpinner').removeClass('d-none');
 		$('#editCourseForm').addClass('d-none');

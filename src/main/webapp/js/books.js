@@ -645,6 +645,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsBookModal"]', function() {
 		var bookId = $(this).data('id');
+		$('#detailsBookModalID').text(formatBookCode(bookId));
 
 		$('#detailsBookSpinner').removeClass('d-none');
 		$('#detailsBookContent').addClass('d-none');
@@ -654,7 +655,7 @@ function loadModalData() {
 			type: 'GET',
 			data: { type: 'details', bookId: bookId },
 			dataType: 'json',
-			success: function(data) {
+			success: function(data) {				
 				$('#detailsBookID').text(formatBookCode(data.bookId));
 				$('#detailsBookTitle').text(data.title);
 				$('#detailsBookAvaibleCopies').text(data.availableCopies);
@@ -691,7 +692,8 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editBookModal"]', function() {
 		var bookId = $(this).data('id');
-
+		$('#editBookModalID').text(formatBookCode(bookId));
+		
 		$('#editBookSpinner').removeClass('d-none');
 		$('#editBookForm').addClass('d-none');
 		$('#editBookBtn').prop('disabled', true);

@@ -694,6 +694,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsPublisherModal"]', function() {
 		var publisherId = $(this).data('id');
+		$('#detailsPublisherModalID').text(formatPublisherCode(publisherId));
 		
 		$('#detailsPublisherSpinner').removeClass('d-none');
 		$('#detailsPublisherContent').addClass('d-none');
@@ -745,6 +746,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editPublisherModal"]', function() {
 		var publisherId = $(this).data('id');
+		$('#editPublisherModalID').text(formatPublisherCode(publisherId));
 		
 		$('#editPublisherSpinner').removeClass('d-none');
 		$('#editPublisherForm').addClass('d-none');

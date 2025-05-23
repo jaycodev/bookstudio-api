@@ -226,7 +226,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del préstamo - <span id="detailsLoanModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -304,7 +304,7 @@
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">Confirmación</h5>
+	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">Confirmación de préstamo - <span id="returnLoanModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            
@@ -335,7 +335,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar préstamo - <span id="editLoanModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

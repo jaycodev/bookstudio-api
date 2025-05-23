@@ -285,7 +285,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">Detalles de la editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">Detalles de la editorial - <span id="detailsPublisherModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -379,7 +379,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">Editar editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">Editar editorial - <span id="editPublisherModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

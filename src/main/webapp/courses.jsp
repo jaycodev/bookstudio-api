@@ -190,7 +190,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del curso</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del curso - <span id="detailsCourseModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -254,7 +254,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar curso</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar curso - <span id="editCourseModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

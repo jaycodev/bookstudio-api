@@ -735,6 +735,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsLoanModal"]', function() {
 		var loanId = $(this).data('id');
+		$('#detailsLoanModalID').text(formatLoanCode(loanId));
 
 		$('#detailsLoanSpinner').removeClass('d-none');
 		$('#detailsLoanContent').addClass('d-none');
@@ -782,6 +783,8 @@ function loadModalData() {
 		var loanId = button.data('id');
 		var currentStatus = button.data('status');
 
+		$('#returnLoanModalID').text(formatLoanCode(loanId));
+		
 		if (currentStatus !== 'prestado') {
 			$('#returnLoanModal').modal('hide');
 			showToast('Este préstamo ya ha sido devuelto.', 'error');
@@ -794,6 +797,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editLoanModal"]', function() {
 		var loanId = $(this).data('id');
+		$('#editLoanModalID').text(formatLoanCode(loanId));
 
 		$('#editLoanSpinner').removeClass('d-none');
 		$('#editLoanForm').addClass('d-none');

@@ -731,6 +731,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsStudentModal"]', function() {
 		var studentId = $(this).data('id');
+		$('#detailsStudentModalID').text(formatStudentCode(studentId));
 		
 		$('#detailsStudentSpinner').removeClass('d-none');
 		$('#detailsStudentContent').addClass('d-none');
@@ -778,6 +779,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editStudentModal"]', function() {
 		var studentId = $(this).data('id');
+		$('#editStudentModalID').text(formatStudentCode(studentId));
 		
 		$('#editStudentSpinner').removeClass('d-none');
 		$('#editStudentForm').addClass('d-none');

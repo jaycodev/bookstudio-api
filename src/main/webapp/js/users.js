@@ -756,6 +756,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function() {
 		var userId = $(this).data('id');
+		$('#detailsUserModalID').text(formatUserCode(userId));
 		
 		$('#detailsUserSpinner').removeClass('d-none');
 		$('#detailsUserContent').addClass('d-none');
@@ -801,6 +802,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editUserModal"]', function() {
 		var userId = $(this).data('id');
+		$('#editUserModalID').text(formatUserCode(userId));
 		
 		$('#editUserSpinner').removeClass('d-none');
 		$('#editUserForm').addClass('d-none');
@@ -873,7 +875,8 @@ function loadModalData() {
 	$('#deleteUserModal').on('show.bs.modal', function(event) {
 		var button = $(event.relatedTarget);
 		var userId = button.data('id');
-
+		
+		$('#deleteUserModalID').text(formatUserCode(userId));
 		$('#confirmDeleteUser').data('userId', userId);
 	});
 }

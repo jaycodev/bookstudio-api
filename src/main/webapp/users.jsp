@@ -298,7 +298,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario - <span id="detailsUserModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -379,7 +379,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar usuario - <span id="editUserModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -531,7 +531,7 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmar eliminación</h5>
+	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmación de usuario - <span id="deleteUserModalID"></span></h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            
