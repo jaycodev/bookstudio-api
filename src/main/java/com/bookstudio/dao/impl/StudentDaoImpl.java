@@ -231,7 +231,7 @@ public class StudentDaoImpl implements StudentDao {
 		List<Student> studentList = new ArrayList<>();
 
 		String sql = """
-				    SELECT StudentID, FirstName, LastName, DNI
+				    SELECT StudentID, FirstName, LastName
 				    FROM Students
 				    WHERE Status = 'activo'
 				""";
@@ -243,9 +243,7 @@ public class StudentDaoImpl implements StudentDao {
 			while (rs.next()) {
 				Student student = new Student();
 				student.setStudentId(rs.getString("StudentID"));
-				String fullNameWithDNI = rs.getString("FirstName") + " " + rs.getString("LastName") + " - "
-						+ rs.getString("DNI");
-				student.setFirstName(fullNameWithDNI);
+				student.setFirstName(rs.getString("FirstName") + " " + rs.getString("LastName"));
 				studentList.add(student);
 			}
 		} catch (Exception e) {

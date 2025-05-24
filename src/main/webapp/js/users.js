@@ -48,19 +48,25 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
-function formatUserCode(id) {
-	return `U${String(id).padStart(4, '0')}`;
-}
-
 function generateRow(user) {
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatUserCode(user.userId)}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${user.formattedUserId}</span>
+			</td>
 			<td class="align-middle text-start">${user.username}</td>
 			<td class="align-middle text-start">${user.email}</td>
 			<td class="align-middle text-start">${user.firstName}</td>
 			<td class="align-middle text-start">${user.lastName}</td>
-			<td class="align-middle text-start">${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</td>
+			<td class="align-middle text-start">
+			  <span class="badge bg-body-secondary text-body-emphasis border">
+			    ${
+			      user.role === 'administrador'
+			        ? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+			        : '<i class="bi bi-person-workspace me-1"></i> Bibliotecario'
+			    }
+			  </span>
+			</td>
 			<td class="align-middle text-center">
 				${user.profilePhotoBase64 ?
 					`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
@@ -72,15 +78,15 @@ function generateRow(user) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsUserModal" data-id="${user.userId}">
+						data-bs-toggle="modal" data-bs-target="#detailsUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-						data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="${user.userId}">
+						data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-pencil"></i>
 					</button>
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Eliminar"
-						data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="${user.userId}">
+						data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-trash"></i>
 					</button>
 				</div>
@@ -94,7 +100,7 @@ function addRowToTable(user) {
 	var rowHtml = generateRow(user);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -183,13 +189,15 @@ function updateRowInTable(user) {
 	var table = $('#userTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatUserCode(user.userId.toString());
+		return $(this).find('td').eq(0).text().trim() === user.formattedUserId.toString();
 	});
 
 	if (row.length > 0) {
 		row.find('td').eq(3).text(user.firstName);
 		row.find('td').eq(4).text(user.lastName);
-		row.find('td').eq(5).text(user.role.charAt(0).toUpperCase() + user.role.slice(1));
+		row.find('td').eq(5).find('span').html(user.role === 'administrador'
+			? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+			: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario');
 
 		if (user.profilePhotoBase64 && user.profilePhotoBase64.trim() !== "") {
 			row.find('td').eq(6).html(`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
@@ -202,7 +210,7 @@ function updateRowInTable(user) {
 			`);
 		}
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -664,6 +672,7 @@ function handleDeleteUser() {
 		$('#confirmDeleteUser').prop('disabled', true);
 
 		var userId = $(this).data('userId');
+		var formattedUserId = $(this).data('formattedUserId');
 
 		$.ajax({
 			url: 'UserServlet',
@@ -679,12 +688,12 @@ function handleDeleteUser() {
 
 					table.rows().every(function() {
 						var data = this.data();
-						if (data[0] == formatUserCode(userId)) {
+						if (data[0] == formattedUserId) {
 							this.remove();
 						}
 					});
 
-					table.draw();
+					table.draw(false);
 
 					$('#deleteUserModal').modal('hide');
 					showToast("Usuario eliminado exitosamente.", 'success');
@@ -756,7 +765,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function() {
 		var userId = $(this).data('id');
-		$('#detailsUserModalID').text(formatUserCode(userId));
+		$('#detailsUserModalID').text($(this).data('formatted-id'));
 		
 		$('#detailsUserSpinner').removeClass('d-none');
 		$('#detailsUserContent').addClass('d-none');
@@ -767,12 +776,16 @@ function loadModalData() {
 			data: { type: 'details', userId: userId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsUserID').text(formatUserCode(data.userId));
+				$('#detailsUserID').text(data.formattedUserId);
 				$('#detailsUserUsername').text(data.username);
 				$('#detailsUserEmail').text(data.email);
 				$('#detailsUserFirstName').text(data.firstName);
 				$('#detailsUserLastName').text(data.lastName);
-				$('#detailsUserRole').text(data.role.charAt(0).toUpperCase() + data.role.slice(1));
+				$('#detailsUserRole').html(
+					data.role === 'administrador'
+						? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+						: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario'
+				);
 				if (data.profilePhotoBase64) {
 					$('#detailsUserImg').attr('src', data.profilePhotoBase64).removeClass('d-none');
 					$('#detailsUserSvg').addClass('d-none');
@@ -802,7 +815,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editUserModal"]', function() {
 		var userId = $(this).data('id');
-		$('#editUserModalID').text(formatUserCode(userId));
+		$('#editUserModalID').text($(this).data('formatted-id'));
 		
 		$('#editUserSpinner').removeClass('d-none');
 		$('#editUserForm').addClass('d-none');
@@ -875,9 +888,11 @@ function loadModalData() {
 	$('#deleteUserModal').on('show.bs.modal', function(event) {
 		var button = $(event.relatedTarget);
 		var userId = button.data('id');
+		var formattedUserId = button.data('formatted-id');
 		
-		$('#deleteUserModalID').text(formatUserCode(userId));
+		$('#deleteUserModalID').text(formattedUserId);
 		$('#confirmDeleteUser').data('userId', userId);
+		$('#confirmDeleteUser').data('formattedUserId', formattedUserId);
 	});
 }
 

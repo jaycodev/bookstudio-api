@@ -32,7 +32,10 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de préstamos</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">
+					<i class="bi pe-none me-1 bi-file-earmark-text"></i>
+					Tabla de préstamos
+				</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -78,7 +81,7 @@
 							<tr>
 								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Libro</th>
-								<th scope="col" class="text-start">Estudiante - DNI</th>
+								<th scope="col" class="text-start">Estudiante</th>
 								<th scope="col" class="text-center">Fecha préstamo</th>
 								<th scope="col" class="text-center">Fecha devolución</th>
 								<th scope="col" class="text-center">Cantidad</th>
@@ -129,7 +132,7 @@
 	                        
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanStudent" class="form-label">Estudiante - DNI <span class="text-danger">*</span></label>
+	                            <label for="addLoanStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
 	                                id="addLoanStudent" 
@@ -226,7 +229,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">Detalles del préstamo - <span id="detailsLoanModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">
+	                	Detalles del préstamo 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsLoanModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -243,7 +249,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="fw-bold" id="detailsLoanID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsLoanID"></p>
 		                    </div>
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Libro</h6>
@@ -254,7 +260,7 @@
 		                <!-- Student and Loan Date Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">Estudiante - DNI</h6>
+		                        <h6 class="small text-muted">Estudiante</h6>
 		                        <p class="fw-bold" id="detailsLoanStudent"></p>
 		                    </div>
 		                    <div class="col-md-6 mb-3">
@@ -271,7 +277,7 @@
 		                    </div>
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Cantidad</h6>
-		                        <p class="fw-bold" id="detailsLoanQuantity"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsLoanQuantity"></p>
 		                    </div>
 		                </div>
 		                
@@ -304,7 +310,10 @@
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">Confirmación de préstamo - <span id="returnLoanModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">
+	                	Confirmación de préstamo 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="returnLoanModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            
@@ -335,7 +344,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">Editar préstamo - <span id="editLoanModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">
+	                	Editar préstamo 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editLoanModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -352,18 +364,13 @@
 	                    <div class="row">
 	                    	<!-- Book Field -->
 	                    	<div class="col-md-6 mb-3">
-	                            <label for="editLoanBook" class="form-label">Libro</label>
-	                            <input 
-	                                type="text" 
-	                                class="form-control" 
-	                                id="editLoanBook" 
-	                                disabled
-	                            >
+	                            <div class="form-label mb-2">Libro</div>
+								<div class="form-control bg-body-tertiary" id="editLoanBook"></div>
 	                        </div>
 	                    
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanStudent" class="form-label">Estudiante - DNI <span class="text-danger">*</span></label>
+	                            <label for="editLoanStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
 	                                id="editLoanStudent" 

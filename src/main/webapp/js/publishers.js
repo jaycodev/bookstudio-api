@@ -22,15 +22,22 @@ var literaryGenreList = [];
 // Global variable to handle photo deletion in edit modal
 let deletePhotoFlag = false;
 
-function populateSelect(selector, dataList, valueKey, textKey) {
-	var select = $(selector).selectpicker('destroy').empty();
+function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
+	const select = $(selector).selectpicker('destroy').empty();
+
 	dataList.forEach(item => {
 		if (item[valueKey]) {
+			let content = item[textKey];
+
+			if (badgeValueKey && item[badgeValueKey] !== undefined) {
+				const badgeValue = item[badgeValueKey];
+				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
+			}
+
 			select.append(
 				$('<option>', {
-					value: item[valueKey],
-					text: item[textKey]
-				})
+					value: item[valueKey]
+				}).attr('data-content', content)
 			);
 		}
 	});
@@ -102,23 +109,25 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
-function formatPublisherCode(id) {
-	return `ED${String(id).padStart(4, '0')}`;
-}
-
 function generateRow(publisher) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatPublisherCode(publisher.publisherId)}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${publisher.formattedPublisherId}</span>
+			</td>
 			<td class="align-middle text-start">${publisher.name}</td>
-			<td class="align-middle text-start">${publisher.nationalityName}</td>
-			<td class="align-middle text-start">${publisher.literaryGenreName}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${publisher.nationalityName}</span>
+			</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${publisher.literaryGenreName}</span>
+			</td>
 			<td class="align-middle text-center">
 				${publisher.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'}
+					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
 			</td>
 			<td class="align-middle text-center">
 				${publisher.photoBase64 ?
@@ -131,12 +140,12 @@ function generateRow(publisher) {
             <td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsPublisherModal" data-id="${publisher.publisherId}">
+						data-bs-toggle="modal" data-bs-target="#detailsPublisherModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editPublisherModal" data-id="${publisher.publisherId}">
+							data-bs-toggle="modal" data-bs-target="#editPublisherModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 					: ''}
@@ -151,7 +160,7 @@ function addRowToTable(publisher) {
 	var rowHtml = generateRow(publisher);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -240,16 +249,16 @@ function updateRowInTable(publisher) {
 	var table = $('#publisherTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatPublisherCode(publisher.publisherId.toString());
+		return $(this).find('td').eq(0).text().trim() === publisher.formattedPublisherId.toString();
 	});
 
 	if (row.length > 0) {
 		row.find('td').eq(1).text(publisher.name);
-		row.find('td').eq(2).text(publisher.nationalityName);
-		row.find('td').eq(3).text(publisher.literaryGenreName);
+		row.find('td').eq(2).find('span').text(publisher.nationalityName);
+		row.find('td').eq(3).find('span').text(publisher.literaryGenreName);
 		row.find('td').eq(4).html(publisher.status === 'activo'
-			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>');
+			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
 		if (publisher.photoBase64 && publisher.photoBase64.trim() !== "") {
 			row.find('td').eq(5).html(`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
@@ -262,7 +271,7 @@ function updateRowInTable(publisher) {
 			`);
 		}
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -694,7 +703,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsPublisherModal"]', function() {
 		var publisherId = $(this).data('id');
-		$('#detailsPublisherModalID').text(formatPublisherCode(publisherId));
+		$('#detailsPublisherModalID').text($(this).data('formatted-id'));
 		
 		$('#detailsPublisherSpinner').removeClass('d-none');
 		$('#detailsPublisherContent').addClass('d-none');
@@ -705,7 +714,7 @@ function loadModalData() {
 			data: { type: 'details', publisherId: publisherId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsPublisherID').text(formatPublisherCode(data.publisherId));
+				$('#detailsPublisherID').text(data.formattedPublisherId);
 				$('#detailsPublisherName').text(data.name);
 				$('#detailsPublisherNationality').text(data.nationalityName);
 				$('#detailsPublisherGenre').text(data.literaryGenreName);
@@ -714,8 +723,8 @@ function loadModalData() {
 				$('#detailsPublisherAddress').text(data.address);
 				$('#detailsPublisherStatus').html(
 					data.status === 'activo'
-						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
 				if (data.photoBase64) {
 					$('#detailsPublisherImg').attr('src', data.photoBase64).removeClass('d-none');
@@ -746,7 +755,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editPublisherModal"]', function() {
 		var publisherId = $(this).data('id');
-		$('#editPublisherModalID').text(formatPublisherCode(publisherId));
+		$('#editPublisherModalID').text($(this).data('formatted-id'));
 		
 		$('#editPublisherSpinner').removeClass('d-none');
 		$('#editPublisherForm').addClass('d-none');

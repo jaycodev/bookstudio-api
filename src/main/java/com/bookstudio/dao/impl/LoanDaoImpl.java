@@ -28,8 +28,7 @@ public class LoanDaoImpl implements LoanDao {
 				        lo.Observation,
 				        b.Title AS BookTitle,
 				        s.FirstName AS StudentFirstName,
-				        s.LastName AS StudentLastName,
-				        s.DNI AS StudentDNI
+				        s.LastName AS StudentLastName
 				    FROM
 				        Loans lo
 				    INNER JOIN
@@ -48,11 +47,7 @@ public class LoanDaoImpl implements LoanDao {
 				loan.setBookId(rs.getString("BookID"));
 				loan.setStudentId(rs.getString("StudentID"));
 				loan.setBookTitle(rs.getString("BookTitle"));
-
-				String fullNameWithDNI = rs.getString("StudentFirstName") + " " + rs.getString("StudentLastName")
-						+ " - " + rs.getString("StudentDNI");
-				loan.setStudentName(fullNameWithDNI);
-
+			    loan.setStudentFullName(rs.getString("StudentFirstName") + " " + rs.getString("StudentLastName"));
 				loan.setLoanDate(rs.getDate("LoanDate").toLocalDate());
 				loan.setReturnDate(rs.getDate("ReturnDate").toLocalDate());
 				loan.setQuantity(rs.getInt("Quantity"));
@@ -84,8 +79,7 @@ public class LoanDaoImpl implements LoanDao {
 				        lo.Observation,
 				        b.Title AS BookTitle,
 				        s.FirstName AS StudentFirstName,
-				        s.LastName AS StudentLastName,
-				        s.DNI AS StudentDNI
+				        s.LastName AS StudentLastName
 				    FROM
 				        Loans lo
 				    INNER JOIN
@@ -105,11 +99,7 @@ public class LoanDaoImpl implements LoanDao {
 					loan.setBookId(rs.getString("BookID"));
 					loan.setStudentId(rs.getString("StudentID"));
 					loan.setBookTitle(rs.getString("BookTitle"));
-
-					String fullNameWithDNI = rs.getString("StudentFirstName") + " " + rs.getString("StudentLastName")
-							+ " - " + rs.getString("StudentDNI");
-					loan.setStudentName(fullNameWithDNI);
-
+				    loan.setStudentFullName(rs.getString("StudentFirstName") + " " + rs.getString("StudentLastName"));
 					loan.setLoanDate(rs.getDate("LoanDate").toLocalDate());
 					loan.setReturnDate(rs.getDate("ReturnDate").toLocalDate());
 					loan.setQuantity(rs.getInt("Quantity"));
@@ -141,8 +131,7 @@ public class LoanDaoImpl implements LoanDao {
 				    SELECT
 				        b.Title AS BookTitle,
 				        s.FirstName AS StudentFirstName,
-				        s.LastName AS StudentLastName,
-				        s.DNI AS StudentDNI
+				        s.LastName AS StudentLastName
 				    FROM
 				        Loans lo
 				    INNER JOIN
@@ -184,9 +173,7 @@ public class LoanDaoImpl implements LoanDao {
 					try (ResultSet rs = psSelect.executeQuery()) {
 						if (rs.next()) {
 							loan.setBookTitle(rs.getString("BookTitle"));
-							String fullNameWithDNI = rs.getString("StudentFirstName") + " "
-									+ rs.getString("StudentLastName") + " - " + rs.getString("StudentDNI");
-							loan.setStudentName(fullNameWithDNI);
+						    loan.setStudentFullName(rs.getString("StudentFirstName") + " " + rs.getString("StudentLastName"));
 						}
 					}
 				}
@@ -211,7 +198,6 @@ public class LoanDaoImpl implements LoanDao {
 				        b.Title AS BookTitle,
 				        s.FirstName AS StudentFirstName,
 				        s.LastName AS StudentLastName,
-				        s.DNI AS StudentDNI,
 				        lo.Quantity
 				    FROM
 				        Loans lo
@@ -238,9 +224,7 @@ public class LoanDaoImpl implements LoanDao {
 					try (ResultSet rs = psSelect.executeQuery()) {
 						if (rs.next()) {
 							loan.setBookTitle(rs.getString("BookTitle"));
-							String fullNameWithDNI = rs.getString("StudentFirstName") + " "
-									+ rs.getString("StudentLastName") + " - " + rs.getString("StudentDNI");
-							loan.setStudentName(fullNameWithDNI);
+						    loan.setStudentFullName(rs.getString("StudentFirstName") + " " + rs.getString("StudentLastName"));
 							loan.setQuantity(rs.getInt("Quantity"));
 						}
 					}

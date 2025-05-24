@@ -42,33 +42,37 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
-function formatCourseCode(id) {
-	return `C${String(id).padStart(4, '0')}`;
-}
-
 function generateRow(course) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatCourseCode(course.courseId)}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${course.formattedCourseId}</span>
+			</td>
 			<td class="align-middle text-start">${course.name}</td>
-			<td class="align-middle text-start">${course.level}</td>
+			<td class="align-middle text-start">
+			  ${course.level === 'Básico'
+			    ? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
+			    : course.level === 'Intermedio'
+			      ? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>'
+			      : '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>'}
+			</td>
 			<td class="align-middle text-start">${course.description}</td>
 			<td class="align-middle text-center">
 				${course.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'}
+					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
 			</td>
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsCourseModal" data-id="${course.courseId}">
+						data-bs-toggle="modal" data-bs-target="#detailsCourseModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editCourseModal" data-id="${course.courseId}">
+							data-bs-toggle="modal" data-bs-target="#editCourseModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 					: ''}
@@ -83,7 +87,7 @@ function addRowToTable(course) {
 	var rowHtml = generateRow(course);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -172,19 +176,25 @@ function updateRowInTable(course) {
 	var table = $('#courseTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatCourseCode(course.courseId.toString());
+		return $(this).find('td').eq(0).text().trim() === course.formattedCourseId.toString();
 	});
 
 	if (row.length > 0) {
 		row.find('td').eq(1).text(course.name);
-		row.find('td').eq(2).text(course.level);
+		row.find('td').eq(2).html(
+			course.level === 'Básico'
+				? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
+				: course.level === 'Intermedio'
+					? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>'
+		);
 		row.find('td').eq(3).text(course.description);
 
 		row.find('td').eq(4).html(course.status === 'activo'
-			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>');
+			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -504,7 +514,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsCourseModal"]', function() {
 		var courseId = $(this).data('id');
-		$('#detailsCourseModalID').text(formatCourseCode(courseId));
+		$('#detailsCourseModalID').text($(this).data('formatted-id'));
 		
 		$('#detailsCourseSpinner').removeClass('d-none');
 		$('#detailsCourseContent').addClass('d-none');
@@ -515,13 +525,19 @@ function loadModalData() {
 			data: { type: 'details', courseId: courseId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsCourseID').text(formatCourseCode(data.courseId));
+				$('#detailsCourseID').text(data.formattedCourseId);
 				$('#detailsCourseName').text(data.name);
-				$('#detailsCourseLevel').text(data.level);
+				$('#detailsCourseLevel').html(
+					data.level === 'Básico'
+						? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
+						: data.level === 'Intermedio'
+							? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>'
+							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>'
+				);
 				$('#detailsCourseStatus').html(
 					data.status === 'activo'
-						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
 				$('#detailsCourseDescription').text(data.description);
 				
@@ -546,7 +562,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editCourseModal"]', function() {
 		var courseId = $(this).data('id');
-		$('#editCourseModalID').text(formatCourseCode(courseId));
+		$('#editCourseModalID').text($(this).data('formatted-id'));
 
 		$('#editCourseSpinner').removeClass('d-none');
 		$('#editCourseForm').addClass('d-none');

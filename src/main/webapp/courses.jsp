@@ -32,7 +32,10 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de cursos</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">
+					<i class="bi pe-none me-1 bi-stickies"></i>
+					Tabla de cursos
+				</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -190,7 +193,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">Detalles del curso - <span id="detailsCourseModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">
+	                	Detalles del curso 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsCourseModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -207,7 +213,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="fw-bold" id="detailsCourseID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsCourseID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
@@ -254,7 +260,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">Editar curso - <span id="editCourseModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">
+	                	Editar curso 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editCourseModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

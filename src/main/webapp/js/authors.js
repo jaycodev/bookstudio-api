@@ -22,15 +22,22 @@ var literaryGenreList = [];
 // Global variable to handle photo deletion in edit modal
 let deletePhotoFlag = false;
 
-function populateSelect(selector, dataList, valueKey, textKey) {
-	var select = $(selector).selectpicker('destroy').empty();
+function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
+	const select = $(selector).selectpicker('destroy').empty();
+
 	dataList.forEach(item => {
 		if (item[valueKey]) {
+			let content = item[textKey];
+
+			if (badgeValueKey && item[badgeValueKey] !== undefined) {
+				const badgeValue = item[badgeValueKey];
+				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
+			}
+
 			select.append(
 				$('<option>', {
-					value: item[valueKey],
-					text: item[textKey]
-				})
+					value: item[valueKey]
+				}).attr('data-content', content)
 			);
 		}
 	});
@@ -124,23 +131,25 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
-function formatAuthorCode(id) {
-	return `A${String(id).padStart(4, '0')}`;
-}
-
 function generateRow(author) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatAuthorCode(author.authorId)}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${author.formattedAuthorId}</span>
+			</td>
 			<td class="align-middle text-start">${author.name}</td>
-			<td class="align-middle text-start">${author.nationalityName}</td>
-			<td class="align-middle text-start">${author.literaryGenreName}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${author.nationalityName}</span>
+			</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${author.literaryGenreName}</span>
+			</td>
 			<td class="align-middle text-center">
 				${author.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'}
+					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
 			</td>
 			<td class="align-middle text-center">
 				${author.photoBase64 ?
@@ -153,12 +162,12 @@ function generateRow(author) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsAuthorModal" data-id="${author.authorId}">
+						data-bs-toggle="modal" data-bs-target="#detailsAuthorModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editAuthorModal" data-id="${author.authorId}">
+							data-bs-toggle="modal" data-bs-target="#editAuthorModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 					: ''}
@@ -173,7 +182,7 @@ function addRowToTable(author) {
 	var rowHtml = generateRow(author);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -262,16 +271,16 @@ function updateRowInTable(author) {
 	var table = $('#authorTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatAuthorCode(author.authorId.toString());
+		return $(this).find('td').eq(0).text().trim() === author.formattedAuthorId.toString();
 	});
 
 	if (row.length > 0) {
 		row.find('td').eq(1).text(author.name);
-		row.find('td').eq(2).text(author.nationalityName);
-		row.find('td').eq(3).text(author.literaryGenreName);
+		row.find('td').eq(2).find('span').text(author.nationalityName);
+		row.find('td').eq(3).find('span').text(author.literaryGenreName);
 		row.find('td').eq(4).html(author.status === 'activo'
-			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>');
+			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
 		if (author.photoBase64 && author.photoBase64.trim() !== "") {
 			row.find('td').eq(5).html(`<img src="${author.photoBase64}" alt="Foto del Autor" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
@@ -284,7 +293,7 @@ function updateRowInTable(author) {
 			`);
 		}
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -731,7 +740,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsAuthorModal"]', function() {
 		var authorId = $(this).data('id');
-		$('#detailsAuthorModalID').text(formatAuthorCode(authorId));
+		$('#detailsAuthorModalID').text($(this).data('formatted-id'));
 		
 		$('#detailsAuthorSpinner').removeClass('d-none');
 		$('#detailsAuthorContent').addClass('d-none');
@@ -742,7 +751,7 @@ function loadModalData() {
 			data: { type: 'details', authorId: authorId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsAuthorID').text(formatAuthorCode(data.authorId));
+				$('#detailsAuthorID').text(data.formattedAuthorId);
 				$('#detailsAuthorName').text(data.name);
 				$('#detailsAuthorNationality').text(data.nationalityName);
 				$('#detailsAuthorGenre').text(data.literaryGenreName);
@@ -750,8 +759,8 @@ function loadModalData() {
 				$('#detailsAuthorBiography').text(data.biography);
 				$('#detailsAuthorStatus').html(
 					data.status === 'activo'
-						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
 				if (data.photoBase64) {
 					$('#detailsAuthorImg').attr('src', data.photoBase64).removeClass('d-none');
@@ -782,7 +791,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editAuthorModal"]', function() {
 		var authorId = $(this).data('id');
-		$('#editAuthorModalID').text(formatAuthorCode(authorId));
+		$('#editAuthorModalID').text($(this).data('formatted-id'));
 		
 		$('#editAuthorSpinner').removeClass('d-none');
 		$('#editAuthorForm').addClass('d-none');
