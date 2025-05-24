@@ -1,7 +1,10 @@
 package com.bookstudio.models;
 
+import com.bookstudio.utils.IdFormatter;
+
 public class Course {
 	private String courseId;
+	private String formattedCourseId;
 	private String name;
 	private String level;
 	private String description;
@@ -13,6 +16,11 @@ public class Course {
 
 	public void setCourseId(String courseId) {
 		this.courseId = courseId;
+        this.formattedCourseId = IdFormatter.formatId(courseId, "C");
+	}
+
+	public String getFormattedCourseId() {
+		return formattedCourseId;
 	}
 
 	public String getName() {

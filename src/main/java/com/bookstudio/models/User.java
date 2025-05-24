@@ -1,7 +1,10 @@
 package com.bookstudio.models;
 
+import com.bookstudio.utils.IdFormatter;
+
 public class User {
 	private String userId;
+	private String formattedUserId;
 	private String username;
 	private String email;
 	private String firstName;
@@ -17,6 +20,11 @@ public class User {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+        this.formattedUserId = IdFormatter.formatId(userId, "US");
+	}
+	
+	public String getFormattedUserId() {
+		return formattedUserId;
 	}
 
 	public String getUsername() {

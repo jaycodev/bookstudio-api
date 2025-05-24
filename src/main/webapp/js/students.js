@@ -18,15 +18,22 @@
 // Global list of faculties for the selectpickers
 var facultyList = [];
 
-function populateSelect(selector, dataList, valueKey, textKey) {
-	var select = $(selector).selectpicker('destroy').empty();
+function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
+	const select = $(selector).selectpicker('destroy').empty();
+
 	dataList.forEach(item => {
 		if (item[valueKey]) {
+			let content = item[textKey];
+
+			if (badgeValueKey && item[badgeValueKey] !== undefined) {
+				const badgeValue = item[badgeValueKey];
+				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
+			}
+
 			select.append(
 				$('<option>', {
-					value: item[valueKey],
-					text: item[textKey]
-				})
+					value: item[valueKey]
+				}).attr('data-content', content)
 			);
 		}
 	});
@@ -126,26 +133,32 @@ function generateRow(student) {
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatStudentCode(student.studentId)}</td>
-			<td class="align-middle text-start">${student.dni}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${student.formattedStudentId}</span>
+			</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${student.dni}</span>
+			</td>
 			<td class="align-middle text-start">${student.firstName}</td>
 			<td class="align-middle text-start">${student.lastName}</td>
-			<td class="align-middle text-start">${student.phone}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${student.phone}</span>
+			</td>
 			<td class="align-middle text-start">${student.email}</td>
 			<td class="align-middle text-center">
 				${student.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'}
+					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
 			</td>
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsStudentModal" data-id="${student.studentId}">
+						data-bs-toggle="modal" data-bs-target="#detailsStudentModal" data-id="${student.studentId}" data-formatted-id="${student.formattedStudentId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editStudentModal" data-id="${student.studentId}">
+							data-bs-toggle="modal" data-bs-target="#editStudentModal" data-id="${student.studentId}" data-formatted-id="${student.formattedStudentId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 					: ''}
@@ -160,7 +173,7 @@ function addRowToTable(student) {
 	var rowHtml = generateRow(student);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -249,20 +262,20 @@ function updateRowInTable(student) {
 	var table = $('#studentTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatStudentCode(student.studentId.toString());
+		return $(this).find('td').eq(0).text().trim() === student.formattedStudentId.toString();
 	});
 
 	if (row.length > 0) {
 		row.find('td').eq(2).text(student.firstName);
 		row.find('td').eq(3).text(student.lastName);
-		row.find('td').eq(4).text(student.phone);
+		row.find('td').eq(4).find('span').text(student.phone);
 		row.find('td').eq(5).text(student.email);
 
 		row.find('td').eq(6).html(student.status === 'activo'
-			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>');
+			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -731,7 +744,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsStudentModal"]', function() {
 		var studentId = $(this).data('id');
-		$('#detailsStudentModalID').text(formatStudentCode(studentId));
+		$('#detailsStudentModalID').text($(this).data('formatted-id'));
 		
 		$('#detailsStudentSpinner').removeClass('d-none');
 		$('#detailsStudentContent').addClass('d-none');
@@ -742,7 +755,7 @@ function loadModalData() {
 			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsStudentID').text(formatStudentCode(data.studentId));
+				$('#detailsStudentID').text(data.formattedStudentId);
 				$('#detailsStudentDNI').text(data.dni);
 				$('#detailsStudentFirstName').text(data.firstName);
 				$('#detailsStudentLastName').text(data.lastName);
@@ -754,8 +767,8 @@ function loadModalData() {
 				$('#detailsStudentFaculty').text(data.facultyName);
 				$('#detailsStudentStatus').html(
 					data.status === 'activo'
-						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
 				
 				$('#detailsStudentSpinner').addClass('d-none');
@@ -779,7 +792,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editStudentModal"]', function() {
 		var studentId = $(this).data('id');
-		$('#editStudentModalID').text(formatStudentCode(studentId));
+		$('#editStudentModalID').text($(this).data('formatted-id'));
 		
 		$('#editStudentSpinner').removeClass('d-none');
 		$('#editStudentForm').addClass('d-none');

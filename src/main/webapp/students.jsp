@@ -32,7 +32,10 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de estudiantes</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">
+					<i class="bi pe-none me-1 bi-mortarboard"></i>
+					Tabla de estudiantes
+				</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -301,7 +304,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">Detalles del estudiante - <span id="detailsStudentModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">
+	                	Detalles del estudiante 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsStudentModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -318,12 +324,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="fw-bold" id="detailsStudentID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsStudentID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">DNI</h6>
-		                        <p class="fw-bold" id="detailsStudentDNI"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentDNI"></p>
 		                    </div>
 		                </div>
 		                
@@ -349,7 +355,7 @@
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Teléfono</h6>
-		                        <p class="fw-bold" id="detailsStudentPhone"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentPhone"></p>
 		                    </div>
 		                </div>
 		                
@@ -404,7 +410,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">Editar estudiante - <span id="editStudentModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">
+	                	Editar estudiante 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editStudentModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

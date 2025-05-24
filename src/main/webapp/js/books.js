@@ -21,15 +21,22 @@ var publisherList = [];
 var courseList = [];
 var genreList = [];
 
-function populateSelect(selector, dataList, valueKey, textKey) {
-	var select = $(selector).selectpicker('destroy').empty();
+function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
+	const select = $(selector).selectpicker('destroy').empty();
+
 	dataList.forEach(item => {
 		if (item[valueKey]) {
+			let content = item[textKey];
+
+			if (badgeValueKey && item[badgeValueKey] !== undefined) {
+				const badgeValue = item[badgeValueKey];
+				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
+			}
+
 			select.append(
 				$('<option>', {
-					value: item[valueKey],
-					text: item[textKey]
-				})
+					value: item[valueKey]
+				}).attr('data-content', content)
 			);
 		}
 	});
@@ -53,14 +60,14 @@ function populateSelectOptions() {
 				courseList = data.courses;
 				genreList = data.genres;
 
-				populateSelect('#addBookAuthor', authorList, 'authorId', 'name');
-				populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name');
-				populateSelect('#addBookCourse', courseList, 'courseId', 'name');
+				populateSelect('#addBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
+				populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
+				populateSelect('#addBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
 				populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
 
-				populateSelect('#editBookAuthor', authorList, 'authorId', 'name');
-				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name');
-				populateSelect('#editBookCourse', courseList, 'courseId', 'name');
+				populateSelect('#editBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
+				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
+				populateSelect('#editBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
 				populateSelect('#editBookGenre', genreList, 'genreId', 'genreName');
 			}
 		},
@@ -129,35 +136,43 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
-function formatBookCode(id) {
-	return `L${String(id).padStart(4, '0')}`;
-}
-
 function generateRow(book) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatBookCode(book.bookId)}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${book.formattedBookId}</span>
+			</td>
 			<td class="align-middle text-start">${book.title}</td>
-			<td class="align-middle text-center">${book.availableCopies}</td>
-			<td class="align-middle text-center">${book.loanedCopies}</td>
-			<td class="align-middle text-start">${book.authorName}</td>
-			<td class="align-middle text-start">${book.publisherName}</td>
+			<td class="align-middle text-center">
+				<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">${book.availableCopies}</span>
+			</td>
+			<td class="align-middle text-center">
+				<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">${book.loanedCopies}</span>
+			</td>
+			<td class="align-middle text-start">
+				${book.authorName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedAuthorId}</span>
+			</td>
+			<td class="align-middle text-start">
+				${book.publisherName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedPublisherId}</span>
+			</td>
 			<td class="align-middle text-center">
 				${book.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'}
+					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
 			</td>
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsBookModal" data-id="${book.bookId}">
+						data-bs-toggle="modal" data-bs-target="#detailsBookModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editBookModal" data-id="${book.bookId}">
+							data-bs-toggle="modal" data-bs-target="#editBookModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 					: ''}
@@ -172,7 +187,7 @@ function addRowToTable(book) {
 	var rowHtml = generateRow(book);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -192,6 +207,7 @@ function loadBooks() {
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
+			console.log(data)
 			clearTimeout(safetyTimer);
 
 			var tableBody = $('#bodyBooks');
@@ -261,21 +277,30 @@ function updateRowInTable(book) {
 	var table = $('#bookTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatBookCode(book.bookId.toString());
+		return $(this).find('td').eq(0).text().trim() === book.formattedBookId.toString();
 	});
 
 	if (row.length > 0) {
 		row.find('td').eq(1).text(book.title);
-		row.find('td').eq(2).text(book.availableCopies);
-		row.find('td').eq(3).text(book.loanedCopies);
-		row.find('td').eq(4).text(book.authorName);
-		row.find('td').eq(5).text(book.publisherName);
-
+		row.find('td').eq(2).html(`
+			<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">${book.availableCopies}</span>
+		`);
+		row.find('td').eq(3).html(`
+			<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">${book.loanedCopies}</span>
+		`);
+		row.find('td').eq(4).html(`
+			${book.authorName}
+			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedAuthorId}</span>
+		`);
+		row.find('td').eq(5).html(`
+			${book.publisherName}
+			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedPublisherId}</span>
+		`);
 		row.find('td').eq(6).html(book.status === 'activo'
-			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>');
+			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -608,13 +633,13 @@ function validateEditField(field) {
 function loadModalData() {
 	// Add Modal
 	$(document).on('click', '[data-bs-target="#addBookModal"]', function() {
-		populateSelect('#addBookAuthor', authorList, 'authorId', 'name');
+		populateSelect('#addBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
 		$('#addBookAuthor').selectpicker();
 
-		populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name');
+		populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
 		$('#addBookPublisher').selectpicker();
 
-		populateSelect('#addBookCourse', courseList, 'courseId', 'name');
+		populateSelect('#addBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
 		$('#addBookCourse').selectpicker();
 		
 		const today = new Date();
@@ -645,7 +670,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsBookModal"]', function() {
 		var bookId = $(this).data('id');
-		$('#detailsBookModalID').text(formatBookCode(bookId));
+		$('#detailsBookModalID').text($(this).data('formatted-id'));
 
 		$('#detailsBookSpinner').removeClass('d-none');
 		$('#detailsBookContent').addClass('d-none');
@@ -656,19 +681,30 @@ function loadModalData() {
 			data: { type: 'details', bookId: bookId },
 			dataType: 'json',
 			success: function(data) {				
-				$('#detailsBookID').text(formatBookCode(data.bookId));
+				$('#detailsBookID').text(data.formattedBookId);
 				$('#detailsBookTitle').text(data.title);
 				$('#detailsBookAvaibleCopies').text(data.availableCopies);
 				$('#detailsBookLoanedCopies').text(data.loanedCopies);
-				$('#detailsBookAuthor').text(data.authorName);
-				$('#detailsBookPublisher').text(data.publisherName);
-				$('#detailsBookCourse').text(data.courseName);
+				
+				$('#detailsBookAuthor').html(`
+					${data.authorName}
+					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedAuthorId}</span>
+				`);
+				$('#detailsBookPublisher').html(`
+					${data.publisherName}
+					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedPublisherId}</span>
+				`);
+				$('#detailsBookCourse').html(`
+					${data.courseName}
+					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedCourseId}</span>
+				`);
+				
 				$('#detailsReleaseDate').text(moment(data.releaseDate).format('DD MMM YYYY'));
 				$('#detailsBookGenre').text(data.genreName);
 				$('#detailsBookStatus').html(
 					data.status === 'activo'
-						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Activo</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Inactivo</span>'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
 				
 				$('#detailsBookSpinner').addClass('d-none');
@@ -692,7 +728,7 @@ function loadModalData() {
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editBookModal"]', function() {
 		var bookId = $(this).data('id');
-		$('#editBookModalID').text(formatBookCode(bookId));
+		$('#editBookModalID').text($(this).data('formatted-id'));
 		
 		$('#editBookSpinner').removeClass('d-none');
 		$('#editBookForm').addClass('d-none');
@@ -707,17 +743,17 @@ function loadModalData() {
 				$('#editBookForm').data('bookId', data.bookId);
 				$('#editBookTitle').val(data.title);
 				$('#editBookTotalCopies').val(data.totalCopies);
-				$('#editBookTotalCopies').attr('min', data.loanedCopies);
-
-				populateSelect('#editBookAuthor', authorList, 'authorId', 'name');
+				$('#editBookTotalCopies').attr('min', Math.max(1, data.loanedCopies));
+				
+				populateSelect('#editBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
 				$('#editBookAuthor').val(data.authorId);
 				$('#editBookAuthor').selectpicker();
 
-				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name');
+				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
 				$('#editBookPublisher').val(data.publisherId);
 				$('#editBookPublisher').selectpicker();
 
-				populateSelect('#editBookCourse', courseList, 'courseId', 'name');
+				populateSelect('#editBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
 				$('#editBookCourse').val(data.courseId);
 				$('#editBookCourse').selectpicker();
 
@@ -846,6 +882,28 @@ function initializeTooltips(container) {
 	});
 }
 
+function formatStrings(str) {
+  const parts = str?.split(/\s+|\n/).filter(Boolean) || [];
+  return parts.length > 1
+    ? parts.slice(0, -1).join(' ') + ' - ' + parts.at(-1)
+    : parts[0] || '';
+}
+
+function applyTextColorByColumnPDF(data) {
+	const col = data.column.index;
+	const value = data.cell.raw;
+
+	const colorMap = {
+		2: [0, 128, 0],
+		3: [255, 0, 0],
+		6: value === "Activo" ? [0, 128, 0] : [255, 0, 0]
+	};
+
+	if (colorMap.hasOwnProperty(col)) {
+		data.cell.styles.textColor = colorMap[col];
+	}
+}
+
 function generatePDF(dataTable) {
 	let hasWarnings = false;
 	
@@ -896,8 +954,8 @@ function generatePDF(dataTable) {
 				row.cells[1].innerText.trim(),
 				row.cells[2].innerText.trim(),
 				row.cells[3].innerText.trim(),
-				row.cells[4].innerText.trim(),
-				row.cells[5].innerText.trim(),
+				formatStrings(row.cells[4].innerText.trim()),
+				formatStrings(row.cells[5].innerText.trim()),
 				estado
 			];
 		});
@@ -905,7 +963,7 @@ function generatePDF(dataTable) {
 		doc.autoTable({
 			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['Código', 'Título', 'Ejemplares disponibles', 'Ejemplares prestados', 'Autor', 'Editorial', 'Estado']],
+			head: [['Código', 'Título', 'Ej. disp.', 'Ej. prest.', 'Autor - Código', 'Editorial - Código', 'Estado']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
@@ -921,10 +979,8 @@ function generatePDF(dataTable) {
 				halign: 'left'
 			},
 			didParseCell: function(data) {
-				if (data.section === 'body' && data.column.index === 6) {
-					data.cell.styles.textColor = data.cell.raw === "Activo"
-						? [0, 128, 0]
-						: [255, 0, 0];
+				if (data.section === 'body') {
+					applyTextColorByColumnPDF(data);
 				}
 			}
 		});
@@ -980,15 +1036,15 @@ function generateExcel(dataTable) {
 		worksheet.columns = [
 			{ key: 'id', width: 10 },
 			{ key: 'titulo', width: 40 },
-			{ key: 'disponibles', width: 20 },
-			{ key: 'prestados', width: 20 },
-			{ key: 'autor', width: 30 },
-			{ key: 'editorial', width: 30 },
+			{ key: 'disponibles', width: 10 },
+			{ key: 'prestados', width: 10 },
+			{ key: 'autor', width: 50 },
+			{ key: 'editorial', width: 50 },
 			{ key: 'estado', width: 15 }
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['Código', 'Título', 'Ejemplares disponibles', 'Ejemplares prestados', 'Autor', 'Editorial', 'Estado'];
+		headerRow.values = ['Código', 'Título', 'Ej. disp.', 'Ej. prest.', 'Autor - Código', 'Editorial - Código', 'Estado'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1010,31 +1066,36 @@ function generateExcel(dataTable) {
 				titulo: row.cells[1].innerText.trim(),
 				disponibles: row.cells[2].innerText.trim(),
 				prestados: row.cells[3].innerText.trim(),
-				autor: row.cells[4].innerText.trim(),
-				editorial: row.cells[5].innerText.trim(),
+				autor: formatStrings(row.cells[4].innerText.trim()),
+				editorial: formatStrings(row.cells[5].innerText.trim()),
 				estado: estado
 			};
 		});
+		
+		function applyCellStyle(cell, colorHex, backgroundHex) {
+			cell.font = { color: { argb: colorHex } };
+			cell.fill = {
+				type: 'pattern',
+				pattern: 'solid',
+				fgColor: { argb: backgroundHex }
+			};
+		}
 	
 		data.forEach((item) => {
 			const row = worksheet.addRow(item);
 	
 			const estadoCell = row.getCell(7);
 			if (estadoCell.value === "Activo") {
-				estadoCell.font = { color: { argb: '008000' } };
-				estadoCell.fill = {
-					type: 'pattern',
-					pattern: 'solid',
-					fgColor: { argb: 'E6F2E6' }
-				};
+				applyCellStyle(estadoCell, '008000', 'E6F2E6');
 			} else {
-				estadoCell.font = { color: { argb: 'FF0000' } };
-				estadoCell.fill = {
-					type: 'pattern',
-					pattern: 'solid',
-					fgColor: { argb: 'FFE6E6' }
-				};
+				applyCellStyle(estadoCell, 'FF0000', 'FFE6E6');
 			}
+			
+			const disponiblesCell = row.getCell(3);
+			applyCellStyle(disponiblesCell, '008000', 'E6F2E6');
+			
+			const prestadosCell = row.getCell(4);
+			applyCellStyle(prestadosCell, 'FF0000', 'FFE6E6');
 		});
 	
 		const filename = `Lista_de_libros_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;

@@ -18,15 +18,22 @@
 var bookList = [];
 var studentList = [];
 
-function populateSelect(selector, dataList, valueKey, textKey) {
-	var select = $(selector).selectpicker('destroy').empty();
+function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
+	const select = $(selector).selectpicker('destroy').empty();
+
 	dataList.forEach(item => {
 		if (item[valueKey]) {
+			let content = item[textKey];
+
+			if (badgeValueKey && item[badgeValueKey] !== undefined) {
+				const badgeValue = item[badgeValueKey];
+				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
+			}
+
 			select.append(
 				$('<option>', {
-					value: item[valueKey],
-					text: item[textKey]
-				})
+					value: item[valueKey]
+				}).attr('data-content', content)
 			);
 		}
 	});
@@ -48,10 +55,10 @@ function populateSelectOptions() {
 				bookList = data.books;
 				studentList = data.students;
 
-				populateSelect('#addLoanBook', bookList, 'bookId', 'title');
-				populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName');
+				populateSelect('#addLoanBook', bookList, 'bookId', 'title', 'formattedBookId');
+				populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName', 'formattedStudentId');
 
-				populateSelect('#editLoanStudent', studentList, 'studentId', 'firstName');
+				populateSelect('#editLoanStudent', studentList, 'studentId', 'firstName', 'formattedStudentId');
 
 				$('#addLoanBook').on('change', function() {
 					var selectedBookId = $(this).val();
@@ -141,7 +148,7 @@ function updateBookList() {
 			
 			if (data) {
 				bookList = data.books;
-				populateSelect('#addLoanBook', bookList, 'bookId', 'title');
+				populateSelect('#addLoanBook', bookList, 'bookId', 'title', 'formattedBookId');
 			}
 		},
 		error: function(xhr) {
@@ -160,42 +167,48 @@ function updateBookList() {
  * TABLE HANDLING
  *****************************************/
 
-function formatLoanCode(id) {
-	return `P${String(id).padStart(4, '0')}`;
-}
-
 function generateRow(loan) {
 	const userRole = sessionStorage.getItem('userRole');
 
 	return `
 		<tr>
-			<td class="align-middle text-start">${formatLoanCode(loan.loanId)}</td>
-			<td class="align-middle text-start">${loan.bookTitle}</td>
-			<td class="align-middle text-start">${loan.studentName}</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-tertiary text-body-emphasis border">${loan.formattedLoanId}</span>
+			</td>
+			<td class="align-middle text-start">
+				${loan.bookTitle}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${loan.formattedBookId}</span>
+			</td>
+			<td class="align-middle text-start">
+				${loan.studentFullName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${loan.formattedStudentId}</span>
+			</td>
 			<td class="align-middle text-center">${moment(loan.loanDate).format('DD MMM YYYY')}</td>
 			<td class="align-middle text-center">${moment(loan.returnDate).format('DD MMM YYYY')}</td>
-			<td class="align-middle text-center">${loan.quantity}</td>
+			<td class="align-middle text-center">
+				<span class="badge bg-body-secondary text-body-emphasis border">${loan.quantity}</span>
+			</td>
 			<td class="align-middle text-center">
 				${loan.status === 'prestado'
-					? '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Prestado</span>'
-					: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>'}
+					? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Prestado</span>'
+					: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>'}
 			</td>
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsLoanModal" data-id="${loan.loanId}">
+						data-bs-toggle="modal" data-bs-target="#detailsLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
 						<i class="bi bi-eye"></i>
 					</button>
 					${loan.status === 'prestado' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Devolver" 
 							data-bs-toggle="modal" data-bs-target="#returnLoanModal" aria-label="Devolver el préstamo"
-							data-id="${loan.loanId}" data-status="${loan.status}">
+							data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}" data-status="${loan.status}">
 							<i class="bi bi-check2-square"></i>
 						</button>`
 					: ''}
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editLoanModal" data-id="${loan.loanId}">
+							data-bs-toggle="modal" data-bs-target="#editLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 					: ''}
@@ -210,7 +223,7 @@ function addRowToTable(loan) {
 	var rowHtml = generateRow(loan);
 	var $row = $(rowHtml);
 
-	table.row.add($row).draw();
+	table.row.add($row).draw(false);
 
 	initializeTooltips($row);
 }
@@ -299,14 +312,17 @@ function updateRowInTable(loan) {
 	var table = $('#loanTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text() === formatLoanCode(loan.loanId.toString());
+		return $(this).find('td').eq(0).text().trim() === loan.formattedLoanId.toString();
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(2).text(loan.studentName);
+		row.find('td').eq(2).html(`
+			${loan.studentFullName}
+			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${loan.formattedStudentId}</span>
+		`);
 		row.find('td').eq(4).text(moment(loan.returnDate).format('DD MMM YYYY'));
 
-		table.row(row).invalidate().draw();
+		table.row(row).invalidate().draw(false);
 
 		initializeTooltips(row);
 	}
@@ -485,6 +501,7 @@ function handleReturnLoan() {
 		isSubmitted = true;
 
 		var loanId = $(this).data('loanId');
+		var formattedLoanId = $(this).data('formattedLoanId');
 
 		$('#confirmReturnIcon').addClass('d-none');
 		$('#confirmReturnSpinner').removeClass('d-none');
@@ -501,14 +518,14 @@ function handleReturnLoan() {
 				if (response && response.success) {
 					var table = $('#loanTable').DataTable();
 					var row = table.rows().nodes().to$().filter(function() {
-						return $(this).find('td').eq(0).text() === formatLoanCode(loanId.toString());
+						return $(this).find('td').eq(0).text().trim() === formattedLoanId.toString();
 					});
 
 					if (row.length > 0) {
-						row.find('td:eq(6)').html('<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>');
+						row.find('td:eq(6)').html('<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>');
 						row.find('td:eq(7)').find('.btn[aria-label="Devolver el préstamo"]').remove();
 						row.find('button[data-status]').data('status', 'devuelto');
-						table.row(row).invalidate().draw();
+						table.row(row).invalidate().draw(false);
 					}
 
 					updateBookList();
@@ -704,10 +721,10 @@ function validateEditField(field) {
 function loadModalData() {
 	// Add Modal
 	$(document).on('click', '[data-bs-target="#addLoanModal"]', function() {
-		populateSelect('#addLoanBook', bookList, 'bookId', 'title');
+		populateSelect('#addLoanBook', bookList, 'bookId', 'title', 'formattedBookId');
 		$('#addLoanBook').selectpicker();
 
-		populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName');
+		populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName', 'formattedStudentId');
 		$('#addLoanStudent').selectpicker();
 
 		$('#addLoanForm')[0].reset();
@@ -735,7 +752,7 @@ function loadModalData() {
 	// Details Modal
 	$(document).on('click', '[data-bs-target="#detailsLoanModal"]', function() {
 		var loanId = $(this).data('id');
-		$('#detailsLoanModalID').text(formatLoanCode(loanId));
+		$('#detailsLoanModalID').text($(this).data('formatted-id'));
 
 		$('#detailsLoanSpinner').removeClass('d-none');
 		$('#detailsLoanContent').addClass('d-none');
@@ -746,16 +763,24 @@ function loadModalData() {
 			data: { type: 'details', loanId: loanId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsLoanID').text(formatLoanCode(data.loanId));
-				$('#detailsLoanBook').text(data.bookTitle);
-				$('#detailsLoanStudent').text(data.studentName);
+				$('#detailsLoanID').text(data.formattedLoanId);
+				
+				$('#detailsLoanBook').html(`
+					${data.bookTitle}
+					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>
+				`);
+				$('#detailsLoanStudent').html(`
+					${data.studentFullName}
+					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedStudentId}</span>
+				`);
+				
 				$('#detailsLoanDate').text(moment(data.loanDate).format('DD MMM YYYY'));
 				$('#detailsReturnDate').text(moment(data.returnDate).format('DD MMM YYYY'));
 				$('#detailsLoanQuantity').text(data.quantity);
 				$('#detailsLoanStatus').html(
 					data.status === 'prestado'
-						? '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle p-1">Prestado</span>'
-						: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle p-1">Devuelto</span>'
+						? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Prestado</span>'
+						: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>'
 				);
 				$('#detailsLoanObservation').text(data.observation);
 				
@@ -781,9 +806,11 @@ function loadModalData() {
 	$('#returnLoanModal').on('show.bs.modal', function(event) {
 		var button = $(event.relatedTarget);
 		var loanId = button.data('id');
+		var formattedLoanId = button.data('formatted-id');
+		
 		var currentStatus = button.data('status');
 
-		$('#returnLoanModalID').text(formatLoanCode(loanId));
+		$('#returnLoanModalID').text(formattedLoanId);
 		
 		if (currentStatus !== 'prestado') {
 			$('#returnLoanModal').modal('hide');
@@ -792,12 +819,13 @@ function loadModalData() {
 		}
 
 		$('#confirmReturn').data('loanId', loanId);
+		$('#confirmReturn').data('formattedLoanId', formattedLoanId);
 	});
 
 	// Edit Modal
 	$(document).on('click', '[data-bs-target="#editLoanModal"]', function() {
 		var loanId = $(this).data('id');
-		$('#editLoanModalID').text(formatLoanCode(loanId));
+		$('#editLoanModalID').text($(this).data('formatted-id'));
 
 		$('#editLoanSpinner').removeClass('d-none');
 		$('#editLoanForm').addClass('d-none');
@@ -812,10 +840,9 @@ function loadModalData() {
 				$('#editLoanForm').data('loanId', data.loanId);
 				$('#editLoanForm').data('bookId', data.bookId);
 				
-				$('#editLoanBook').val(data.bookTitle);
-				$('#editLoanBook').selectpicker();
+				$('#editLoanBook').html(`${data.bookTitle} <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>`);
 
-				populateSelect('#editLoanStudent', studentList, 'studentId', 'firstName');
+				populateSelect('#editLoanStudent', studentList, 'studentId', 'firstName', 'formattedStudentId');
 				$('#editLoanStudent').val(data.studentId);
 				$('#editLoanStudent').selectpicker();
 
@@ -914,6 +941,13 @@ function initializeTooltips(container) {
 	});
 }
 
+function formatStrings(str) {
+  const parts = str?.split(/\s+|\n/).filter(Boolean) || [];
+  return parts.length > 1
+    ? parts.slice(0, -1).join(' ') + ' - ' + parts.at(-1)
+    : parts[0] || '';
+}
+
 function generateLoanReceipt(response) {
 	let hasWarnings = false;
 	
@@ -956,9 +990,9 @@ function generateLoanReceipt(response) {
 		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
 	
 		const loanDetails = [
-			['Código', formatLoanCode(response.loanId)],
-			['Libro', response.bookTitle],
-			['Estudiante - DNI', response.studentName],
+			['Código', response.formattedLoanId],
+			['Libro - Código', response.bookTitle + " - " + response.formattedBookId],
+			['Estudiante - Código', response.studentFullName + " - " + response.formattedStudentId],
 			['Fecha préstamo', moment(response.loanDate).format('DD MMM YYYY')],
 			['Fecha devolución', moment(response.returnDate).format('DD MMM YYYY')],
 			['Cantidad', response.quantity]
@@ -1063,8 +1097,8 @@ function generatePDF(loanTable) {
 	
 			return [
 				row.cells[0].innerText.trim(),
-				row.cells[1].innerText.trim(),
-				row.cells[2].innerText.trim(),
+				formatStrings(row.cells[1].innerText.trim()),
+				formatStrings(row.cells[2].innerText.trim()),
 				row.cells[3].innerText.trim(),
 				row.cells[4].innerText.trim(),
 				row.cells[5].innerText.trim(),
@@ -1075,7 +1109,7 @@ function generatePDF(loanTable) {
 		doc.autoTable({
 			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['Código', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
+			head: [['Código', 'Libro - Código', 'Estudiante - Código', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
@@ -1149,8 +1183,8 @@ function generateExcel(loanTable) {
 	
 		worksheet.columns = [
 			{ key: 'id', width: 10 },
-			{ key: 'libro', width: 30 },
-			{ key: 'estudiante', width: 30 },
+			{ key: 'libro', width: 50 },
+			{ key: 'estudiante', width: 50 },
 			{ key: 'fecha_prestamo', width: 20 },
 			{ key: 'fecha_devolucion', width: 20 },
 			{ key: 'cantidad', width: 10 },
@@ -1158,7 +1192,7 @@ function generateExcel(loanTable) {
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['Código', 'Libro', 'Estudiante - DNI', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
+		headerRow.values = ['Código', 'Libro - Código', 'Estudiante - Código', 'Fecha préstamo', 'Fecha devolución', 'Cantidad', 'Estado'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1177,8 +1211,8 @@ function generateExcel(loanTable) {
 	
 			return {
 				id: row.cells[0].innerText.trim(),
-				libro: row.cells[1].innerText.trim(),
-				estudiante: row.cells[2].innerText.trim(),
+				libro: formatStrings(row.cells[1].innerText.trim()),
+				estudiante: formatStrings(row.cells[2].innerText.trim()),
 				fecha_prestamo: row.cells[3].innerText.trim(),
 				fecha_devolucion: row.cells[4].innerText.trim(),
 				cantidad: row.cells[5].innerText.trim(),

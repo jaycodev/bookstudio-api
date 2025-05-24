@@ -32,7 +32,10 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de autores</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">
+					<i class="bi pe-none me-1 bi-person-plus"></i>
+					Tabla de autores
+				</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -273,7 +276,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">Detalles del autor - <span id="detailsAuthorModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">
+	                	Detalles del autor 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsAuthorModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -290,7 +296,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="fw-bold" id="detailsAuthorID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsAuthorID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
@@ -303,12 +309,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nacionalidad</h6>
-		                        <p class="fw-bold" id="detailsAuthorNationality"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsAuthorNationality"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Género literario</h6>
-		                        <p class="fw-bold" id="detailsAuthorGenre"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsAuthorGenre"></p>
 		                    </div>
 		                </div>
 		                
@@ -359,7 +365,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">Editar autor - <span id="editAuthorModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">
+	                	Editar autor 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editAuthorModalID"></span>
+					</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            

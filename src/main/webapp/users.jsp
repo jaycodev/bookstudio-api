@@ -28,7 +28,10 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de usuarios</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">
+					<i class="bi pe-none me-1 bi-people"></i>
+					Tabla de usuarios
+				</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -298,7 +301,9 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario - <span id="detailsUserModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsUserModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -315,7 +320,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="fw-bold" id="detailsUserID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsUserID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
@@ -346,7 +351,7 @@
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Rol</h6>
-		                        <p class="fw-bold" id="detailsUserRole"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsUserRole"></p>
 		                    </div>
 		                </div>
 		                
@@ -379,7 +384,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">Editar usuario - <span id="editUserModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">
+	                	Editar usuario 
+						<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editUserModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -531,7 +539,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">Confirmación de usuario - <span id="deleteUserModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">
+	                	Confirmación de usuario 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="deleteUserModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
 	            

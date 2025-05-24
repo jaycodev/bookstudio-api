@@ -32,7 +32,10 @@
 			<header
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
-				<h5 class="card-title text-body-emphasis mb-2 mt-2">Tabla de libros</h5>
+				<h5 class="card-title text-body-emphasis mb-2 mt-2">
+					<i class="bi pe-none me-1 bi-journal-bookmark"></i>
+					Tabla de libros
+				</h5>
 
 				<!-- Excel Button -->
 				<button
@@ -78,8 +81,8 @@
 							<tr>
 								<th scope="col" class="text-start">Código</th>
 								<th scope="col" class="text-start">Título</th>
-								<th scope="col" class="text-center">Ejemplares disponibles</th>
-								<th scope="col" class="text-center">Ejemplares prestados</th>
+								<th scope="col" class="text-center">Ej. disp.</th>
+								<th scope="col" class="text-center">Ej. prest.</th>
 								<th scope="col" class="text-start">Autor</th>
 								<th scope="col" class="text-start">Editorial</th>
 								<th scope="col" class="text-center">Estado</th>
@@ -270,7 +273,10 @@
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsBookModalLabel">Detalles del libro - <span id="detailsBookModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="detailsBookModalLabel">
+	                	Detalles del libro 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsBookModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -287,7 +293,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="fw-bold" id="detailsBookID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsBookID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
@@ -300,12 +306,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Ejemplares disponibles</h6>
-		                        <p class="fw-bold" id="detailsBookAvaibleCopies"></p>
+		                        <p class="badge text-success-emphasis bg-success-subtle border border-success-subtle" id="detailsBookAvaibleCopies"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Ejemplares prestados</h6>
-		                        <p class="fw-bold" id="detailsBookLoanedCopies"></p>
+		                        <p class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle" id="detailsBookLoanedCopies"></p>
 		                    </div>
 		                </div>
 		                
@@ -339,7 +345,7 @@
 		                <div class="row">   
 		                    <div class="col-md-6">
 		                        <h6 class="small text-muted">Género</h6>
-		                        <p class="fw-bold" id="detailsBookGenre"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsBookGenre"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6">
@@ -365,7 +371,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editBookModalLabel">Editar libro - <span id="editBookModalID"></span></h5>
+	                <h5 class="modal-title text-body-emphasis" id="editBookModalLabel">
+	                	Editar libro 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editBookModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
