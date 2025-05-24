@@ -1,7 +1,10 @@
 package com.bookstudio.models;
 
+import com.bookstudio.utils.IdFormatter;
+
 public class Publisher {
 	private String publisherId;
+	private String formattedPublisherId;
 	private String name;
 	private String nationalityId;
 	private String nationalityName;
@@ -20,6 +23,11 @@ public class Publisher {
 
 	public void setPublisherId(String publisherId) {
 		this.publisherId = publisherId;
+        this.formattedPublisherId = IdFormatter.formatId(publisherId, "ED");
+	}
+	
+	public String getFormattedPublisherId() {
+		return formattedPublisherId;
 	}
 
 	public String getName() {

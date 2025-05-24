@@ -2,8 +2,11 @@ package com.bookstudio.models;
 
 import java.time.LocalDate;
 
+import com.bookstudio.utils.IdFormatter;
+
 public class Student {
 	private String studentId;
+	private String formattedStudentId;
 	private String dni;
 	private String firstName;
 	private String lastName;
@@ -22,6 +25,11 @@ public class Student {
 
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
+        this.formattedStudentId = IdFormatter.formatId(studentId, "ES");
+	}
+	
+	public String getFormattedStudentId() {
+		return formattedStudentId;
 	}
 
 	public String getDni() {

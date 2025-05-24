@@ -1,18 +1,23 @@
 package com.bookstudio.models;
 
 import java.time.LocalDate;
+import com.bookstudio.utils.IdFormatter;
 
 public class Book {
 	private String bookId;
+	private String formattedBookId;
 	private String title;
 	private int totalCopies;
 	private int availableCopies;
 	private int loanedCopies;
 	private String authorId;
+	private String formattedAuthorId;
 	private String authorName;
 	private String publisherId;
+	private String formattedPublisherId;
 	private String publisherName;
 	private String courseId;
+	private String formattedCourseId;
 	private String courseName;
 	private LocalDate releaseDate;
 	private String genreId;
@@ -25,6 +30,11 @@ public class Book {
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
+        this.formattedBookId = IdFormatter.formatId(bookId, "L");
+	}
+
+	public String getFormattedBookId() {
+		return formattedBookId;
 	}
 
 	public String getTitle() {
@@ -63,8 +73,13 @@ public class Book {
 		return authorId;
 	}
 
-	public void setAuthorId(String authorId) {
-		this.authorId = authorId;
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+        this.formattedAuthorId = IdFormatter.formatId(authorId, "A");
+    }
+    
+	public String getFormattedAuthorId() {
+		return formattedAuthorId;
 	}
 
 	public String getAuthorName() {
@@ -81,6 +96,11 @@ public class Book {
 
 	public void setPublisherId(String publisherId) {
 		this.publisherId = publisherId;
+        this.formattedPublisherId = IdFormatter.formatId(publisherId, "ED");
+	}
+	
+	public String getFormattedPublisherId() {
+		return formattedPublisherId;
 	}
 
 	public String getPublisherName() {
@@ -97,6 +117,11 @@ public class Book {
 
 	public void setCourseId(String courseId) {
 		this.courseId = courseId;
+        this.formattedCourseId = IdFormatter.formatId(courseId, "C");
+	}
+	
+	public String getFormattedCourseId() {
+		return formattedCourseId;
 	}
 
 	public String getCourseName() {

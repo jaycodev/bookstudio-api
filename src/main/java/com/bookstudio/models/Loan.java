@@ -2,12 +2,17 @@ package com.bookstudio.models;
 
 import java.time.LocalDate;
 
+import com.bookstudio.utils.IdFormatter;
+
 public class Loan {
 	private String loanId;
+	private String formattedLoanId;
 	private String bookId;
+	private String formattedBookId;
 	private String bookTitle;
 	private String studentId;
-	private String studentName;
+	private String formattedStudentId;
+	private String studentFullName;
 	private LocalDate loanDate;
 	private LocalDate returnDate;
 	private int quantity;
@@ -17,9 +22,14 @@ public class Loan {
 	public String getLoanId() {
 		return loanId;
 	}
-
+	
 	public void setLoanId(String loanId) {
 		this.loanId = loanId;
+        this.formattedLoanId = IdFormatter.formatId(loanId, "P");
+	}
+	
+	public String getFormattedLoanId() {
+		return formattedLoanId;
 	}
 
 	public String getBookId() {
@@ -28,6 +38,11 @@ public class Loan {
 
 	public void setBookId(String bookId) {
 		this.bookId = bookId;
+        this.formattedBookId = IdFormatter.formatId(bookId, "L");
+	}
+	
+	public String getFormattedBookId() {
+		return formattedBookId;
 	}
 
 	public String getBookTitle() {
@@ -44,14 +59,19 @@ public class Loan {
 
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
+        this.formattedStudentId = IdFormatter.formatId(studentId, "ES");
+	}
+	
+	public String getFormattedStudentId() {
+		return formattedStudentId;
 	}
 
-	public String getStudentName() {
-		return studentName;
+	public String getStudentFullName() {
+		return studentFullName;
 	}
 
-	public void setStudentName(String studentName) {
-		this.studentName = studentName;
+	public void setStudentFullName(String studentFullName) {
+		this.studentFullName = studentFullName;
 	}
 
 	public LocalDate getLoanDate() {
