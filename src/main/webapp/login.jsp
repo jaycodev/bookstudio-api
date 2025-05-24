@@ -73,7 +73,7 @@
 						<!-- Login Button -->
 						<button type="submit" class="btn btn-custom-primary w-100" id="loginBtn">
 		                    <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-		                    <span id="loginText">Iniciar Sesión</span>
+		                    <span id="loginText">Iniciar sesión</span>
 		                </button>
 					</form>
 				</div>
