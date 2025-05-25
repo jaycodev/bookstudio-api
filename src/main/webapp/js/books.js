@@ -207,7 +207,6 @@ function loadBooks() {
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
-			console.log(data)
 			clearTimeout(safetyTimer);
 
 			var tableBody = $('#bodyBooks');

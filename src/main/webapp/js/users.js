@@ -688,7 +688,8 @@ function handleDeleteUser() {
 
 					table.rows().every(function() {
 						var data = this.data();
-						if (data[0] == formattedUserId) {
+						var spanText = $('<div>').html(data[0]).text().trim();
+						if (spanText == formattedUserId) {
 							this.remove();
 						}
 					});
