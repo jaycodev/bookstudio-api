@@ -59,6 +59,14 @@ public class SessionFilter implements Filter {
 				httpResponse.sendRedirect(contextPath + DASHBOARD_PAGE);
 				return;
 			}
+			
+		    if (relativePath.equals("/users.jsp")) {
+		        String userRole = (String) session.getAttribute(LoginConstants.ROLE);
+		        if (userRole == null || !userRole.equals("administrador")) {
+		            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+		            return;
+		        }
+		    }
 		}
 
 		if (session == null || session.getAttribute("user") == null) {
@@ -69,6 +77,7 @@ public class SessionFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}
+			
 			if (!(relativePath.contains(STATIC_RESOURCES) || relativePath.contains(JS_RESOURCES)
 					|| relativePath.contains(UTILS_RESOURCES) || relativePath.contains(IMAGES_RESOURCES))) {
 				httpResponse.sendRedirect(contextPath + LOGIN_PAGE);
