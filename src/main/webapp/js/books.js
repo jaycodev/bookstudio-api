@@ -644,8 +644,8 @@ function loadModalData() {
 		$('#addBookCourse').selectpicker();
 		
 		const today = new Date();
-		const todayStr = today.toISOString().split('T')[0];
-		$('#addReleaseDate').attr('max', todayStr);
+		const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+		$('#addReleaseDate').attr('max', peruDateStr);
 
 		populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
 		$('#addBookGenre').selectpicker();
@@ -765,8 +765,8 @@ function loadModalData() {
 				$('#editReleaseDate').val(moment(data.releaseDate).format('YYYY-MM-DD'));
 				
 				const today = new Date();
-				const todayStr = today.toISOString().split('T')[0];
-				$('#editReleaseDate').attr('max', todayStr);
+				const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+				$('#editReleaseDate').attr('max', peruDateStr);
 				
 				$('#editBookStatus').selectpicker('destroy').empty().append(
 					$('<option>', {

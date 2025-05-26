@@ -736,11 +736,13 @@ function loadModalData() {
 		var peruDate = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
 		$('#addLoanDate').val(peruDate);
 
-		var minReturnDate = new Date(today);
-		minReturnDate.setDate(today.getDate() + 1);
+		var baseDate = new Date(peruDate + "T00:00:00");
 
-		var maxReturnDate = new Date(today);
-		maxReturnDate.setDate(today.getDate() + 14);
+		var minReturnDate = new Date(baseDate);
+		minReturnDate.setDate(minReturnDate.getDate() + 1);
+
+		var maxReturnDate = new Date(baseDate);
+		maxReturnDate.setDate(maxReturnDate.getDate() + 14);
 
 		var minDateStr = minReturnDate.toISOString().split('T')[0];
 		var maxDateStr = maxReturnDate.toISOString().split('T')[0];

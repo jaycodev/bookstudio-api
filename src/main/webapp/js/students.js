@@ -733,8 +733,8 @@ function loadModalData() {
 		$('#addStudentForm')[0].reset();
 		$('#addStudentForm .is-invalid').removeClass('is-invalid');
 		
-		const today = new Date().toISOString().split('T')[0];
-		$('#addStudentBirthDate').attr('max', today);
+		const peruToday = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00').toISOString().split('T')[0];
+		$('#addStudentBirthDate').attr('max', peruToday);
 
 		placeholderColorDateInput();
 	});
@@ -810,8 +810,9 @@ function loadModalData() {
 				$('#editStudentPhone').val(data.phone);
 				$('#editStudentEmail').val(data.email);
 				$('#editStudentBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
-				const today = new Date().toISOString().split('T')[0];
-				$('#editStudentBirthDate').attr('max', today);
+				
+				const peruToday = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00').toISOString().split('T')[0];
+				$('#editStudentBirthDate').attr('max', peruToday);
 				
 				$('#editStudentGender').selectpicker('destroy').empty().append(
 					$('<option>', {

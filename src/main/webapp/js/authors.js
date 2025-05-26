@@ -724,10 +724,8 @@ function loadModalData() {
 		$('#addAuthorForm')[0].reset();
 		$('#addAuthorForm .is-invalid').removeClass('is-invalid');
 		
-		const today = new Date();
-		const minAge = 10;
-		const maxBirthDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-		const maxDateStr = maxBirthDate.toISOString().split('T')[0];
+		const d = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00');
+		const maxDateStr = new Date(d.getFullYear() - 10, d.getMonth(), d.getDate()).toISOString().split('T')[0];
 		$('#addAuthorBirthDate').attr('max', maxDateStr);
 
 		placeholderColorDateInput();
@@ -818,11 +816,8 @@ function loadModalData() {
 				$('#editLiteraryGenre').selectpicker();
 
 				$('#editAuthorBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
-				const today = new Date();
-				const minAge = 10;
-				const maxBirthDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-				const maxDateStr = maxBirthDate.toISOString().split('T')[0];
-
+				const d = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00');
+				const maxDateStr = new Date(d.getFullYear() - 10, d.getMonth(), d.getDate()).toISOString().split('T')[0];
 				$('#editAuthorBirthDate').attr('max', maxDateStr);
 				
 				$('#editAuthorBiography').val(data.biography);
