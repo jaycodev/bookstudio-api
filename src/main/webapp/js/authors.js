@@ -11,6 +11,8 @@
  * @author [Jason]
  */
 
+import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
@@ -722,10 +724,8 @@ function loadModalData() {
 		$('#addAuthorForm')[0].reset();
 		$('#addAuthorForm .is-invalid').removeClass('is-invalid');
 		
-		const today = new Date();
-		const minAge = 10;
-		const maxBirthDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-		const maxDateStr = maxBirthDate.toISOString().split('T')[0];
+		const d = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00');
+		const maxDateStr = new Date(d.getFullYear() - 10, d.getMonth(), d.getDate()).toISOString().split('T')[0];
 		$('#addAuthorBirthDate').attr('max', maxDateStr);
 
 		placeholderColorDateInput();
@@ -816,11 +816,8 @@ function loadModalData() {
 				$('#editLiteraryGenre').selectpicker();
 
 				$('#editAuthorBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
-				const today = new Date();
-				const minAge = 10;
-				const maxBirthDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
-				const maxDateStr = maxBirthDate.toISOString().split('T')[0];
-
+				const d = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00');
+				const maxDateStr = new Date(d.getFullYear() - 10, d.getMonth(), d.getDate()).toISOString().split('T')[0];
 				$('#editAuthorBirthDate').attr('max', maxDateStr);
 				
 				$('#editAuthorBiography').val(data.biography);
@@ -1055,6 +1052,9 @@ function initializeTooltips(container) {
 }
 
 function generatePDF(dataTable) {
+	const pdfBtn = $('#generatePDF');
+	toggleButtonLoading(pdfBtn, true);
+	
 	let hasWarnings = false;
 
 	try {
@@ -1155,12 +1155,17 @@ function generatePDF(dataTable) {
 			showToast("PDF generado exitosamente.", "success");
 		}
 	} catch (error) {
-		console.error("Error al generar el PDF:", error);
+		console.error("Error generating PDF file:", error);
 		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	} finally {
+		toggleButtonLoading(pdfBtn, false);
 	}
 }
 
 function generateExcel(dataTable) {
+	const excelBtn = $('#generateExcel');
+	toggleButtonLoading(excelBtn, true);
+	
 	try {
 		const workbook = new ExcelJS.Workbook();
 		const worksheet = workbook.addWorksheet('Autores');
@@ -1256,12 +1261,18 @@ function generateExcel(dataTable) {
 			link.href = URL.createObjectURL(blob);
 			link.download = filename;
 			link.click();
+	
+			showToast("Excel generado exitosamente.", "success");
+		}).catch(error => {
+			console.error("Error generating Excel file:", error);
+			showToast("Ocurrió un error al generar el Excel.", "error");
+		}).finally(() => {
+			toggleButtonLoading(excelBtn, false);
 		});
-		
-		showToast("Excel generado exitosamente.", "success");
 	} catch (error) {
-		console.error("Error al generar el Excel:", error);
-		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+		console.error("General error while generating Excel file:", error);
+		showToast("Ocurrió un error inesperado al generar el Excel.", "error");
+		toggleButtonLoading(excelBtn, false);
 	}
 }
 

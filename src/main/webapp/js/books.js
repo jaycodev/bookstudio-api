@@ -11,6 +11,8 @@
  * @author [Jason]
  */
 
+import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
@@ -207,7 +209,6 @@ function loadBooks() {
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
-			console.log(data)
 			clearTimeout(safetyTimer);
 
 			var tableBody = $('#bodyBooks');
@@ -643,8 +644,8 @@ function loadModalData() {
 		$('#addBookCourse').selectpicker();
 		
 		const today = new Date();
-		const todayStr = today.toISOString().split('T')[0];
-		$('#addReleaseDate').attr('max', todayStr);
+		const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+		$('#addReleaseDate').attr('max', peruDateStr);
 
 		populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
 		$('#addBookGenre').selectpicker();
@@ -764,8 +765,8 @@ function loadModalData() {
 				$('#editReleaseDate').val(moment(data.releaseDate).format('YYYY-MM-DD'));
 				
 				const today = new Date();
-				const todayStr = today.toISOString().split('T')[0];
-				$('#editReleaseDate').attr('max', todayStr);
+				const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+				$('#editReleaseDate').attr('max', peruDateStr);
 				
 				$('#editBookStatus').selectpicker('destroy').empty().append(
 					$('<option>', {
@@ -834,31 +835,6 @@ function setupBootstrapSelectDropdownStyles() {
 	});
 }
 
-function setupBootstrapSelectDropdownStyles() {
-	const observer = new MutationObserver((mutationsList) => {
-		mutationsList.forEach((mutation) => {
-			mutation.addedNodes.forEach((node) => {
-				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
-					const $dropdown = $(node);
-					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between'); // Alineación
-
-					$dropdown.find('li:not(:first-child)').addClass('mt-1');
-
-					updateDropdownIcons($dropdown);
-				}
-			});
-		});
-	});
-
-	observer.observe(document.body, { childList: true, subtree: true });
-
-	$(document).on('click', '.bootstrap-select .dropdown-item', function() {
-		const $dropdown = $(this).closest('.dropdown-menu');
-		updateDropdownIcons($dropdown);
-	});
-}
-
 function updateDropdownIcons($dropdown) {
 	$dropdown.find('.dropdown-item').each(function() {
 		const $item = $(this);
@@ -905,6 +881,9 @@ function applyTextColorByColumnPDF(data) {
 }
 
 function generatePDF(dataTable) {
+	const pdfBtn = $('#generatePDF');
+	toggleButtonLoading(pdfBtn, true);
+	
 	let hasWarnings = false;
 	
 	try {
@@ -1000,12 +979,17 @@ function generatePDF(dataTable) {
 			showToast("PDF generado exitosamente.", "success");
 		}
 	} catch (error) {
-		console.error("Error al generar el PDF:", error);
+		console.error("Error generating PDF file:", error);
 		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	} finally {
+		toggleButtonLoading(pdfBtn, false);
 	}
 }
 
 function generateExcel(dataTable) {
+	const excelBtn = $('#generateExcel');
+	toggleButtonLoading(excelBtn, true);
+	
 	try {
 		const workbook = new ExcelJS.Workbook();
 		const worksheet = workbook.addWorksheet('Libros');
@@ -1106,12 +1090,18 @@ function generateExcel(dataTable) {
 			link.href = URL.createObjectURL(blob);
 			link.download = filename;
 			link.click();
+	
+			showToast("Excel generado exitosamente.", "success");
+		}).catch(error => {
+			console.error("Error generating Excel file:", error);
+			showToast("Ocurrió un error al generar el Excel.", "error");
+		}).finally(() => {
+			toggleButtonLoading(excelBtn, false);
 		});
-		
-		showToast("Excel generado exitosamente.", "success");
 	} catch (error) {
-		console.error("Error al generar el Excel:", error);
-		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+		console.error("General error while generating Excel file:", error);
+		showToast("Ocurrió un error inesperado al generar el Excel.", "error");
+		toggleButtonLoading(excelBtn, false);
 	}
 }
 

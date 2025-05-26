@@ -1,6 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<header class="header position-fixed d-flex align-items-center px-3 bg-body-secondary border-bottom">
+<header class="header position-fixed d-flex align-items-center px-4 bg-body-secondary border-bottom">
     <!-- Menu Button (Visible on Mobile) -->
     <button class="btn-menu nav-link d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Abrir menú lateral">
         <i class="bi bi-list header-icon"></i>
@@ -13,7 +13,7 @@
         <div class="d-lg-none me-5"></div>
 
         <!-- Logo -->
-		<a href="dashboard.jsp" class="text-center text-decoration-none text-body-emphasis ms-md-2 d-flex align-items-center">
+		<a href="dashboard.jsp" class="text-center text-decoration-none text-body-emphasis d-flex align-items-center">
 		    <img class="logo me-2" alt="Logo de Bookstudio" src="images/logo-light.png">
 		    <span class="fs-5 text-logo">BookStudio</span>
 		</a>

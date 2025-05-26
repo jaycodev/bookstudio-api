@@ -14,6 +14,7 @@ import com.bookstudio.dao.UserDao;
 import com.bookstudio.dao.impl.UserDaoImpl;
 import com.bookstudio.models.User;
 import com.bookstudio.utils.LoginConstants;
+import com.bookstudio.utils.PasswordUtils;
 
 public class UserService {
 	private UserDao userDao = new UserDaoImpl();
@@ -62,7 +63,13 @@ public class UserService {
 		user.setEmail(email);
 		user.setFirstName(firstName);
 		user.setLastName(lastName);
-		user.setPassword(password);
+		
+	    if (password != null && !password.isEmpty()) {
+	        user.setPassword(PasswordUtils.hashPassword(password));
+	    } else {
+	        user.setPassword(null);
+	    }
+	    
 		user.setRole(role);
 		user.setProfilePhoto(profilePhoto);
 

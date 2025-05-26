@@ -144,7 +144,8 @@ aside.position-fixed, main {
 
 /* Selects and Modals */
 .dropdown-menu {
-	--bs-dropdown-link-hover-bg: var(--bg-tertiary-color) !important;
+	--bs-dropdown-link-hover-bg: var(--bg-tertiary-color);
+	--bs-dropdown-border-color: var(--bs-border-color);
 }
 
 .dropdown-divider {
@@ -656,4 +657,22 @@ textarea {
 .dt-search .form-control::-webkit-search-cancel-button,
 .bs-searchbox input::-webkit-search-cancel-button {
 	cursor: pointer;
+}
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--bg-secondary-color);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--bs-border-color);
+	border-radius: 5px;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--bs-border-color) var(--bg-secondary-color);
 }

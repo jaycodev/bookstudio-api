@@ -80,7 +80,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	
 	<!-- Custom Scripts -->
-	<script src="js/forgot-password.js" defer></script>
-	<script src="utils/toast.js" defer></script>
+	<script type="module" src="js/forgot-password.js" defer></script>
 </body>
 </html>
