@@ -23,8 +23,7 @@
 <!-- Custom Scripts -->
 <script src="utils/header.js" defer></script>
 <script src="utils/sidebar.js" defer></script>
-<script src="utils/toast.js" defer></script>
 <script src="utils/datatables-setup.js" defer></script>
 
 <!-- Page-Specific Script -->
-<script src="js/<%= currentPage %>" defer></script>
+<script type="module" src="js/<%= currentPage %>" defer></script>

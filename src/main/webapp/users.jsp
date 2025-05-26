@@ -37,7 +37,8 @@
 				<button
 					class="btn btn-custom-secondary excel d-flex align-items-center me-2"
 					id="generateExcel" aria-label="Generar Excel" disabled>
-					<i class="bi bi-file-earmark-excel text-success me-2"></i>
+					<span class="me-2"><i class="bi bi-file-earmark-excel text-success"></i></span>
+				    <span class="spinner-border spinner-border-sm me-2 text-success d-none" role="status" aria-hidden="true"></span>
 					Excel
 				</button>
 
@@ -45,7 +46,8 @@
 				<button
 					class="btn btn-custom-secondary d-flex align-items-center me-2"
 					id="generatePDF" aria-label="Generar PDF" disabled>
-					<i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+					<span class="me-2"><i class="bi bi-file-earmark-pdf text-danger"></i></span>
+				    <span class="spinner-border spinner-border-sm me-2 text-danger d-none" role="status" aria-hidden="true"></span>
 					PDF
 				</button>
 

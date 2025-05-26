@@ -11,6 +11,8 @@
  * @author [Jason]
  */
 
+import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
@@ -123,10 +125,6 @@ function placeholderColorDateInput() {
 /*****************************************
  * TABLE HANDLING
  *****************************************/
-
-function formatStudentCode(id) {
-	return `ES${String(id).padStart(4, '0')}`;
-}
 
 function generateRow(student) {
 	const userRole = sessionStorage.getItem('userRole');
@@ -923,6 +921,9 @@ function initializeTooltips(container) {
 }
 
 function generatePDF(dataTable) {
+	const pdfBtn = $('#generatePDF');
+	toggleButtonLoading(pdfBtn, true);
+	
 	let hasWarnings = false;
 
 	try {
@@ -1015,17 +1016,22 @@ function generatePDF(dataTable) {
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
-
+		
 		if (!hasWarnings) {
 			showToast("PDF generado exitosamente.", "success");
 		}
 	} catch (error) {
-		console.error("Error al generar el PDF:", error);
+		console.error("Error generating PDF file:", error);
 		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	} finally {
+		toggleButtonLoading(pdfBtn, false);
 	}
 }
 
 function generateExcel(dataTable) {
+	const excelBtn = $('#generateExcel');
+	toggleButtonLoading(excelBtn, true);
+	
 	try {
 		const workbook = new ExcelJS.Workbook();
 		const worksheet = workbook.addWorksheet('Estudiantes');
@@ -1112,12 +1118,18 @@ function generateExcel(dataTable) {
 			link.href = URL.createObjectURL(blob);
 			link.download = filename;
 			link.click();
+	
+			showToast("Excel generado exitosamente.", "success");
+		}).catch(error => {
+			console.error("Error generating Excel file:", error);
+			showToast("Ocurrió un error al generar el Excel.", "error");
+		}).finally(() => {
+			toggleButtonLoading(excelBtn, false);
 		});
-		
-		showToast("Excel generado exitosamente.", "success");
 	} catch (error) {
-		console.error("Error al generar el Excel:", error);
-		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+		console.error("General error while generating Excel file:", error);
+		showToast("Ocurrió un error inesperado al generar el Excel.", "error");
+		toggleButtonLoading(excelBtn, false);
 	}
 }
 

@@ -8,6 +8,8 @@
  * @author [Jason]
  */
 
+import { showToast } from '../utils/ui/index.js';
+
 $(document).ready(function() {
 	let formSubmitted = false;
 

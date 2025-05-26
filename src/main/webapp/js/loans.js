@@ -14,6 +14,8 @@
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
 
+import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+
 // Global list of books and students for the selectpickers
 var bookList = [];
 var studentList = [];
@@ -1051,6 +1053,9 @@ function generateLoanReceipt(response) {
 }
 
 function generatePDF(loanTable) {
+	const pdfBtn = $('#generatePDF');
+	toggleButtonLoading(pdfBtn, true);
+	
 	let hasWarnings = false;
 	
 	try {
@@ -1148,12 +1153,17 @@ function generatePDF(loanTable) {
 			showToast("PDF generado exitosamente.", "success");
 		}
 	} catch (error) {
-		console.error("Error al generar el PDF:", error);
+		console.error("Error generating PDF file:", error);
 		showToast("Ocurrió un error al generar el PDF. Inténtalo nuevamente.", "error");
+	} finally {
+		toggleButtonLoading(pdfBtn, false);
 	}
 }
 
 function generateExcel(loanTable) {
+	const excelBtn = $('#generateExcel');
+	toggleButtonLoading(excelBtn, true);
+	
 	try {
 		const workbook = new ExcelJS.Workbook();
 		const worksheet = workbook.addWorksheet('Préstamos');
@@ -1240,12 +1250,18 @@ function generateExcel(loanTable) {
 			link.href = URL.createObjectURL(blob);
 			link.download = filename;
 			link.click();
+	
+			showToast("Excel generado exitosamente.", "success");
+		}).catch(error => {
+			console.error("Error generating Excel file:", error);
+			showToast("Ocurrió un error al generar el Excel.", "error");
+		}).finally(() => {
+			toggleButtonLoading(excelBtn, false);
 		});
-		
-		showToast("Excel generado exitosamente.", "success");
 	} catch (error) {
-		console.error("Error al generar el Excel:", error);
-		showToast("Ocurrió un error al generar el Excel. Inténtalo nuevamente.", "error");
+		console.error("General error while generating Excel file:", error);
+		showToast("Ocurrió un error inesperado al generar el Excel.", "error");
+		toggleButtonLoading(excelBtn, false);
 	}
 }
 

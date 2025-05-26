@@ -266,3 +266,21 @@ a:hover {
 [data-bs-theme="light"] .alert-danger {
     background-color: #f4c2c6 !important;
 }
+
+::-webkit-scrollbar {
+	width: 5px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--bg-secondary-color);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--bs-border-color);
+	border-radius: 5px;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--bs-border-color) var(--bg-secondary-color);
+}
