@@ -13,9 +13,6 @@
 	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-	<!-- Set user role from session -->
-	<c:set var="userRole" value="${sessionScope.role}" />
-
 	<!-- ===================== Header ===================== -->
 	<jsp:include page="WEB-INF/includes/header.jsp"></jsp:include>
 
@@ -54,16 +51,14 @@
 				    <span class="spinner-border spinner-border-sm me-2 text-danger d-none" role="status" aria-hidden="true"></span>
 					PDF
 				</button>
-
-				<c:if test="${userRole == 'administrador'}">
-					<!-- Add Button -->
-					<button class="btn btn-custom-primary d-flex align-items-center"
-						data-bs-toggle="modal" data-bs-target="#addLoanModal"
-						aria-label="Prestar libro" disabled>
-						<i class="bi bi-plus-lg me-2"></i>
-						Prestar
-					</button>
-				</c:if>
+				
+				<!-- Add Button -->
+				<button class="btn btn-custom-primary d-flex align-items-center"
+					data-bs-toggle="modal" data-bs-target="#addLoanModal"
+					aria-label="Prestar libro" disabled>
+					<i class="bi bi-plus-lg me-2"></i>
+					Prestar
+				</button>
 			</header>
 
 			<!-- Card Body -->

@@ -170,8 +170,6 @@ function updateBookList() {
  *****************************************/
 
 function generateRow(loan) {
-	const userRole = sessionStorage.getItem('userRole');
-
 	return `
 		<tr>
 			<td class="align-middle text-start">
@@ -208,12 +206,10 @@ function generateRow(loan) {
 							<i class="bi bi-check2-square"></i>
 						</button>`
 					: ''}
-					${userRole === 'administrador' ?
-						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
-							<i class="bi bi-pencil"></i>
-						</button>`
-					: ''}
+					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
+						data-bs-toggle="modal" data-bs-target="#editLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
+						<i class="bi bi-pencil"></i>
+					</button>
 				</div>
 			</td>
 		</tr>

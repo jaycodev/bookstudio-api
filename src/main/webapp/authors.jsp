@@ -13,7 +13,6 @@
     <link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-	<!-- Set user role from session -->
 	<c:set var="userRole" value="${sessionScope.role}" />
 
 	<!-- ===================== Header ===================== -->
