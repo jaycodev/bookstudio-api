@@ -26,7 +26,7 @@
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
 					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
-					<h3 class="fw-bold mb-0">Crear nueva contraseña</h3>
+					<h3 class="fw-bold mb-0 text-body-emphasis">Crear nueva contraseña</h3>
 					<p class="text-muted mb-0">Ingresa la nueva contraseña para tu cuenta de Bookstudio a continuación.</p>
 				</header>
 				
