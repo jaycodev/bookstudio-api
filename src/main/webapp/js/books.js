@@ -377,7 +377,20 @@ function handleAddBookForm() {
 					try {
 						errorResponse = JSON.parse(xhr.responseText);
 						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-						showToast('Hubo un error al agregar el libro.', 'error');
+						switch (xhr.status) {
+							case 403:
+								showToast('No tienes permisos para agregar libros.', 'warning');
+								break;
+							case 400:
+								showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+								break;
+							case 500:
+								showToast('Error interno del servidor. Intenta más tarde.', 'error');
+								break;
+							default:
+								showToast(errorResponse.message || 'Hubo un error al agregar el libro.', 'error');
+								break;
+						}
 					} catch (e) {
 						console.error("Unexpected error:", xhr.status, xhr.responseText);
 						showToast('Hubo un error inesperado.', 'error');
@@ -536,7 +549,20 @@ function handleEditBookForm() {
 					try {
 						errorResponse = JSON.parse(xhr.responseText);
 						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-						showToast('Hubo un error al actualizar el libro.', 'error');
+						switch (xhr.status) {
+							case 403:
+								showToast('No tienes permisos para actualizar libros.', 'warning');
+								break;
+							case 400:
+								showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+								break;
+							case 500:
+								showToast('Error interno del servidor. Intenta más tarde.', 'error');
+								break;
+							default:
+								showToast(errorResponse.message || 'Hubo un error al actualizar el libro.', 'error');
+								break;
+						}
 					} catch (e) {
 						console.error("Unexpected error:", xhr.status, xhr.responseText);
 						showToast('Hubo un error inesperado.', 'error');

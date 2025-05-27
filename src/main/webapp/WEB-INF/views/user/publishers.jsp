@@ -5,23 +5,22 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <jsp:include page="WEB-INF/includes/styles.jsp"></jsp:include>
-    <title>BookStudio</title>
-    <link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-    <link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<jsp:include page="/WEB-INF/includes/styles.jsp"></jsp:include>
+	<title>BookStudio</title>
+	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-	<!-- Set user role from session -->
 	<c:set var="userRole" value="${sessionScope.role}" />
 
 	<!-- ===================== Header ===================== -->
-	<jsp:include page="WEB-INF/includes/header.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/includes/header.jsp"></jsp:include>
 
 	<!-- ===================== Sidebar ==================== -->
-	<jsp:include page="WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="authors.jsp" />
+	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
+		<jsp:param name="currentPage" value="publishers" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->
@@ -33,8 +32,8 @@
 				class="card-header d-flex align-items-center position-relative"
 				id="buttonGroupHeader">
 				<h5 class="card-title text-body-emphasis mb-2 mt-2">
-					<i class="bi pe-none me-1 bi-person-plus"></i>
-					Tabla de autores
+					<i class="bi pe-none me-1 bi-map"></i>
+					Tabla de editoriales
 				</h5>
 
 				<!-- Excel Button -->
@@ -58,10 +57,9 @@
 				<c:if test="${userRole == 'administrador'}">
 					<!-- Add Button -->
 					<button class="btn btn-custom-primary d-flex align-items-center"
-						data-bs-toggle="modal" data-bs-target="#addAuthorModal"
-						aria-label="Agregar autor" disabled>
-						<i class="bi bi-plus-lg me-2"></i>
-						Agregar
+						data-bs-toggle="modal" data-bs-target="#addPublisherModal"
+						aria-label="Agregar editorial" disabled>
+						<i class="bi bi-plus-lg me-2"></i> Agregar
 					</button>
 				</c:if>
 			</header>
@@ -78,7 +76,7 @@
 
 				<!-- Table Container -->
 				<section id="tableContainer" class="d-none small">
-					<table id="authorTable" class="table table-sm">
+					<table id="publisherTable" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -90,7 +88,7 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyAuthors">
+						<tbody id="bodyPublishers">
 							<!-- Data will be populated here via JavaScript -->
 						</tbody>
 					</table>
@@ -99,44 +97,42 @@
 		</section>
 	</main>
 
-	<!-- Add Author Modal -->
-    <div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-            	<!-- Modal Header -->
-                <header class="modal-header">
-                    <h5 class="modal-title text-body-emphasis" id="addAuthorModalLabel">Agregar un autor</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </header>
-                
-                <!-- Modal Body -->
-                <div class="modal-body">
-                    <form id="addAuthorForm" enctype="multipart/form-data" novalidate>
-                    	<!-- Personal Information Section -->
-                        <div class="row">
-                        	<!-- Author Name Field -->
-                            <div class="col-md-6 mb-3">
-	                            <label for="addAuthorName" class="form-label">Nombre <span class="text-danger">*</span></label>
+	<!-- Add Publisher Modal -->
+	<div class="modal fade" id="addPublisherModal" tabindex="-1" aria-labelledby="addPublisherModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	    <div class="modal-dialog modal-lg">
+	        <div class="modal-content">
+	            <!-- Modal Header -->
+	            <header class="modal-header">
+	                <h5 class="modal-title text-body-emphasis" id="addPublisherModalLabel">Agregar una editorial</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </header>
+	            
+	            <!-- Modal Body -->
+	            <div class="modal-body">
+	                <form id="addPublisherForm" enctype="multipart/form-data" novalidate>
+	                    <!-- Publisher Information Section -->
+	                    <div class="row">
+	                        <!-- Publisher Name Field -->
+	                        <div class="col-md-6 mb-3">
+	                            <label for="addPublisherName" class="form-label">Nombre <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addAuthorName" 
-	                                name="addAuthorName" 
-	                                pattern="[A-Za-zÀ-ÿ\s.]+" 
-	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s.]/g, '');" 
-	                                placeholder="Ingrese el nombre del autor" 
+	                                id="addPublisherName" 
+	                                name="addPublisherName" 
+	                                placeholder="Ingrese el nombre de la editorial" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-                            
-                            <!-- Nationality Field -->
-                            <div class="col-md-6 mb-3">
-	                            <label for="addAuthorNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
+	                        
+	                        <!-- Nationality Field -->
+	                        <div class="col-md-6 mb-3">
+	                            <label for="addPublisherNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addAuthorNationality" 
-	                                name="addAuthorNationality" 
+	                                id="addPublisherNationality" 
+	                                name="addPublisherNationality" 
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione una nacionalidad" 
@@ -146,11 +142,11 @@
 	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-                        </div>
-                        
-                        <!-- Author Details Section -->
+	                    </div>
+	                    
+	                    <!-- Genre and Foundation Year Section -->
 	                    <div class="row">
-	                    	<!-- Literary Genre Field -->
+	                        <!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="addLiteraryGenre" class="form-label">Género literario <span class="text-danger">*</span></label>
 	                            <select 
@@ -167,41 +163,58 @@
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
-	                        <!-- Birth Date Field -->
+	                        <!-- Foundation Year Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+	                            <label for="addFoundationYear" class="form-label">Año de fundación <span class="text-danger">*</span></label>
 	                            <input 
-	                                type="date" 
+	                                type="number" 
 	                                class="form-control" 
-	                                id="addAuthorBirthDate" 
-	                                name="addAuthorBirthDate" 
+	                                id="addFoundationYear" 
+	                                name="addFoundationYear" 
+	                                min="1000" 
+	                                placeholder="Ingrese el año de fundación" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- Additional Information Section -->
+	                    <!-- Website and Address Section -->
 	                    <div class="row">
-	                        <!-- Biography Field -->
+	                        <!-- Website Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorBiography" class="form-label">Biografía</label>
-	                            <textarea 
+	                            <label for="addPublisherWebsite" class="form-label">Página web</label>
+	                            <input 
+	                                type="url" 
 	                                class="form-control" 
-	                                id="addAuthorBiography" 
-	                                name="addAuthorBiography" 
-	                                rows="1" 
-	                                placeholder="Escribe una breve biografía"
-	                            ></textarea>
+	                                id="addPublisherWebsite" 
+	                                name="addPublisherWebsite" 
+	                                placeholder="https://ejemplo.com"
+	                            >
 	                        </div>
 	                        
+	                        <!-- Address Field -->
+	                        <div class="col-md-6 mb-3">
+	                            <label for="addPublisherAddress" class="form-label">Dirección</label>
+	                            <textarea 
+	                                class="form-control" 
+	                                id="addPublisherAddress" 
+	                                name="addPublisherAddress" 
+	                                rows="1" 
+	                                placeholder="Ingrese la dirección de la editorial"
+	                            ></textarea>
+	                        </div>
+	                    </div>
+	                    
+	                    <!-- Status and Photo Section -->
+	                    <div class="row">
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="addPublisherStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addAuthorStatus" 
-	                                name="addAuthorStatus" 
+	                                id="addPublisherStatus" 
+	                                name="addPublisherStatus" 
 	                                title="Seleccione un estado" 
 	                                required
 	                            >
@@ -209,17 +222,15 @@
 	                            </select>
 	                            <div class="invalid-feedback"></div>
 	                        </div>
-	                    </div>
-	                    
-	                    <!-- Photo Upload Section -->
-	                    <div class="row">
-	                        <div class="col-md-12 mb-3">
-	                            <label for="addAuthorPhoto" class="form-label">Foto</label>
+	                        
+	                        <!-- Photo Field -->
+	                        <div class="col-md-6 mb-3">
+	                            <label for="addPublisherPhoto" class="form-label">Foto</label>
 	                            <input 
 	                                type="file" 
 	                                class="form-control" 
-	                                id="addAuthorPhoto" 
-	                                name="addAuthorPhoto" 
+	                                id="addPublisherPhoto" 
+	                                name="addPublisherPhoto" 
 	                                accept="image/*"
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -237,8 +248,8 @@
 								</div>
 							</div>
 						</div>
-	                    
-	                    <!-- Image Cropper Section -->
+
+						<!-- Image Cropper Section -->
 	                    <div id="cropperContainerAdd" class="d-none">
 	                        <img id="imageToCropAdd" src="#" alt="Imagen" />
 	                    </div>
@@ -262,48 +273,48 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Add Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addAuthorForm" id="addAuthorBtn">
-	                    <span id="addAuthorIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
-	                    <span id="addAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addPublisherForm" id="addPublisherBtn">
+	                    <span id="addPublisherIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+	                    <span id="addPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
 	        </div>
 	    </div>
 	</div>
-    
-    <!-- Author Details Modal -->
-	<div class="modal fade" id="detailsAuthorModal" tabindex="-1" aria-labelledby="detailsAuthorModalLabel" aria-hidden="true">
+	
+	<!-- Publisher Details Modal -->
+	<div class="modal fade" id="detailsPublisherModal" tabindex="-1" aria-labelledby="detailsPublisherModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">
-	                	Detalles del autor 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsAuthorModalID"></span>
+	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">
+	                	Detalles de la editorial 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsPublisherModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="detailsAuthorSpinner" class="text-center my-5">
+					<div id="detailsPublisherSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsAuthorContent" class="d-none">
+	            	<div id="detailsPublisherContent" class="d-none">
 		                <!-- ID and Name Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsAuthorID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsPublisherID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nombre</h6>
-		                        <p class="fw-bold" id="detailsAuthorName"></p>
+		                        <p class="fw-bold" id="detailsPublisherName"></p>
 		                    </div>
 		                </div>
 		                
@@ -311,42 +322,50 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nacionalidad</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsAuthorNationality"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsPublisherNationality"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Género literario</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsAuthorGenre"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsPublisherGenre"></p>
 		                    </div>
 		                </div>
 		                
-		                <!-- Birth Date and Biography Section -->
-		                <div class="row">
-		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">Fecha de nacimiento</h6>
-		                        <p class="fw-bold" id="detailsAuthorBirthDate"></p>
-		                    </div>
-		                    
-		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">Biografía</h6>
-		                        <p class="fw-bold" id="detailsAuthorBiography"></p>
-		                    </div>
-		                </div>
-		                
-		                <!-- Status and Photo Section -->
+		                <!-- Foundation Year and Website Section -->
 		                <div class="row">  
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="small text-muted">Estado</h6>
-		                        <p id="detailsAuthorStatus"></p>
+		                        <h6 class="small text-muted">Año de fundación</h6>
+		                        <p class="fw-bold" id="detailsPublisherYear"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
-		                        <h6 class="fw-bold">Foto</h6>
-								<svg id="detailsAuthorSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+		                        <h6 class="small text-muted">Página web</h6>
+		                        <p class="fw-bold" id="detailsPublisherWebsite"><a href="" target="_blank"></a></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Address and Status Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Dirección</h6>
+		                        <p class="fw-bold" id="detailsPublisherAddress"></p>
+		                    </div>
+		                    
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Estado</h6>
+		                        <p id="detailsPublisherStatus"></p>
+		                    </div>
+		                </div>
+		                
+		                <!-- Photo Section -->
+		                <div class="row">
+		                    <div class="col-md-6 mb-3">
+		                        <h6 class="small text-muted">Foto</h6>
+		                        <svg id="detailsPublisherSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 									<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
 									<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
 					            </svg>
-					            <img id="detailsAuthorImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Autor">
+					            <img id="detailsPublisherImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto de la Editorial">
 		                    </div>
 		                </div>
 					</div>
@@ -361,41 +380,39 @@
 	    </div>
 	</div>
 	
-	<!-- Edit Author Modal -->
-	<div class="modal fade" id="editAuthorModal" tabindex="-1" aria-labelledby="editAuthorModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Publisher Modal -->
+	<div class="modal fade" id="editPublisherModal" tabindex="-1" aria-labelledby="editPublisherModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">
-	                	Editar autor 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editAuthorModalID"></span>
-					</h5>
+	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">
+	                	Editar editorial 
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editPublisherModalID"></span>
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-					<div id="editAuthorSpinner" class="text-center my-5">
+					<div id="editPublisherSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
-	            	
-	                <form id="editAuthorForm" class="d-none" enctype="multipart/form-data" novalidate>
-	                    <!-- Personal Information Section -->
+					
+	                <form id="editPublisherForm" class="d-none" enctype="multipart/form-data" novalidate>
+	                    <!-- Publisher Information Section -->
 	                    <div class="row">
-	                        <!-- Author Name Field -->
+	                        <!-- Publisher Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorName" class="form-label">Nombre <span class="text-danger">*</span></label>
+	                            <label for="editPublisherName" class="form-label">Nombre <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editAuthorName" 
-	                                name="editAuthorName" 
-	                                pattern="[A-Za-zÀ-ÿ\s.]+" 
-	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s.]/g, '');" 
-	                                placeholder="Ingrese el nombre del autor" 
+	                                id="editPublisherName" 
+	                                name="editPublisherName" 
+	                                placeholder="Ingrese el nombre de la editorial" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -403,11 +420,11 @@
 	                        
 	                        <!-- Nationality Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
+	                            <label for="editPublisherNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editAuthorNationality" 
-	                                name="editAuthorNationality" 
+	                                id="editPublisherNationality" 
+	                                name="editPublisherNationality" 
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -418,7 +435,7 @@
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- Author Details Section -->
+	                    <!-- Genre and Foundation Year Section -->
 	                    <div class="row">
 	                        <!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
@@ -436,57 +453,74 @@
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
-	                        <!-- Birth Date Field -->
+	                        <!-- Foundation Year Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+	                            <label for="editFoundationYear" class="form-label">Año de fundación <span class="text-danger">*</span></label>
 	                            <input 
-	                                type="date" 
+	                                type="number" 
 	                                class="form-control" 
-	                                id="editAuthorBirthDate" 
-	                                name="editAuthorBirthDate" 
+	                                id="editFoundationYear" 
+	                                name="editFoundationYear" 
+	                                min="1000" 
+	                                placeholder="Ingrese el año de fundación" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- Additional Information Section -->
+	                    <!-- Website and Address Section -->
 	                    <div class="row">
-	                        <!-- Biography Field -->
+	                        <!-- Website Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorBiography" class="form-label">Biografía</label>
-	                            <textarea 
+	                            <label for="editPublisherWebsite" class="form-label">Página web</label>
+	                            <input 
+	                                type="url" 
 	                                class="form-control" 
-	                                id="editAuthorBiography" 
-	                                name="editAuthorBiography" 
-	                                rows="1" 
-	                                placeholder="Escribe una breve biografía"
-	                            ></textarea>
+	                                id="editPublisherWebsite" 
+	                                name="editPublisherWebsite" 
+	                                placeholder="https://ejemplo.com" 
+	                                required
+	                            >
 	                        </div>
 	                        
+	                        <!-- Address Field -->
+	                        <div class="col-md-6 mb-3">
+	                            <label for="editPublisherAddress" class="form-label">Dirección</label>
+	                            <textarea 
+	                                class="form-control" 
+	                                id="editPublisherAddress" 
+	                                name="editPublisherAddress" 
+	                                rows="1" 
+	                                placeholder="Ingrese la dirección de la editorial"
+	                            ></textarea>
+	                        </div>
+	                    </div>
+	                    
+	                    <!-- Status and Photo Section -->
+	                    <div class="row">
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="editPublisherStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editAuthorStatus" 
-	                                name="editAuthorStatus" 
+	                                id="editPublisherStatus" 
+	                                name="editPublisherStatus" 
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
 	                            </select>
-	                        </div>      
-	                    </div>
-	                    
-	                    <!-- Photo Upload Section -->
-	                    <div class="row">
-	                        <div class="col-md-12 mb-3">
-	                            <label for="editAuthorPhoto" class="form-label">Foto</label>
+	                            <div class="invalid-feedback"></div>
+	                        </div>
+	                        
+	                        <!-- Photo Field -->
+	                        <div class="col-md-6 mb-3">
+	                            <label for="editPublisherPhoto" class="form-label">Foto</label>
 	                            <input 
-	                            	type="file" 
+	                                type="file" 
 	                                class="form-control" 
-	                                id="editAuthorPhoto" 
-	                                name="editAuthorPhoto" 
+	                                id="editPublisherPhoto" 
+	                                name="editPublisherPhoto" 
 	                                accept="image/*"
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -506,7 +540,7 @@
 						<div id="cropperContainerEdit" class="d-none">
 							<img id="imageToCropEdit" src="#" alt="Imagen" />
 						</div>
-
+						
 						<!-- Delete Photo Section -->
 						<div class="row">
 							<div class="col-md-12 d-flex justify-content-center">
@@ -519,30 +553,30 @@
 						</div>
 					</form>
 	            </div>
-
-				<!-- Modal Footer -->
-				<footer class="modal-footer">
-					<!-- Cancel Button -->
-					<button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
-
-					<!-- Update Button -->
-					<button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editAuthorForm" id="editAuthorBtn" disabled>
-						<span id="editAuthorIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-						<span id="editAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-						Actualizar
-					</button>
-				</footer>
-			</div>
+	            
+	            <!-- Modal Footer -->
+	            <footer class="modal-footer">
+	            	<!-- Cancel Button -->
+	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
+	                
+	                <!-- Update Button -->
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editPublisherForm" id="editPublisherBtn" disabled>
+	                    <span id="editPublisherIcon" class="me-2"><i class="bi bi-floppy"></i></span>
+	                    <span id="editPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    Actualizar
+	                </button>
+	            </footer>
+	        </div>
 	    </div>
 	</div>
-
+	
 	<!-- Toast Container -->
 	<div class="toast-container" id="toast-container">
 		<!-- Toasts will be added here by JavaScript -->
 	</div>
-
-	<jsp:include page="WEB-INF/includes/scripts.jsp">
-		<jsp:param name="currentPage" value="authors.js" />
+	
+	<jsp:include page="/WEB-INF/includes/scripts.jsp">
+		<jsp:param name="currentPage" value="publishers.js" />
 	</jsp:include>
 </body>
 </html>

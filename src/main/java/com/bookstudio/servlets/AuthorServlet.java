@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.bookstudio.models.Author;
 import com.bookstudio.services.AuthorService;
 import com.bookstudio.utils.LocalDateAdapter;
+import com.bookstudio.utils.LoginConstants;
 import com.bookstudio.utils.SelectOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -60,6 +61,13 @@ public class AuthorServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json");
+		
+	    String userRole = (String) request.getSession().getAttribute(LoginConstants.ROLE);
+	    if (userRole == null || !userRole.equals("administrador")) {
+	        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	        response.getWriter().write("{\"success\": false, \"message\": \"Unauthorized: insufficient role.\", \"statusCode\": 403}");
+	        return;
+	    }
 
 		String type = request.getParameter("type");
 		switch (type) {

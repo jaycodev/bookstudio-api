@@ -135,7 +135,7 @@ public class LoginServlet extends HttpServlet {
 		} else if (type.equals("logout")) {
 			SessionDaoImpl sessionProject = new SessionDaoImpl();
 			sessionProject.invalidateSession(request);
-			response.sendRedirect(request.getContextPath() + "/login.jsp");
+			response.sendRedirect(request.getContextPath() + "/login");
 		}
 	}
 }

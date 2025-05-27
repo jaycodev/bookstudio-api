@@ -14,11 +14,11 @@ import javax.servlet.http.HttpSession;
 
 @WebFilter("/*")
 public class SessionFilter implements Filter {
-	private static final String LOGIN_PAGE = "/login.jsp";
+	private static final String LOGIN_PAGE = "/login";
 	private static final String LOGIN_SERVLET = "/LoginServlet";
-	private static final String DASHBOARD_PAGE = "/dashboard.jsp";
-	private static final String RESET_PASSWORD_PAGE = "/reset-password.jsp";
-	private static final String FORGOT_PASSWORD_PAGE = "/forgot-password.jsp";
+	private static final String DASHBOARD_PAGE = "/dashboard";
+	private static final String RESET_PASSWORD_PAGE = "/reset-password";
+	private static final String FORGOT_PASSWORD_PAGE = "/forgot-password";
 	private static final String RESET_PASSWORD_SERVLET = "/ResetPasswordServlet";
 	private static final String FORGOT_PASSWORD_SERVLET = "/ForgotPasswordServlet";
 	private static final String VALIDATE_TOKEN_SERVLET = "/ValidateTokenServlet";
@@ -59,6 +59,14 @@ public class SessionFilter implements Filter {
 				httpResponse.sendRedirect(contextPath + DASHBOARD_PAGE);
 				return;
 			}
+			
+		    if (relativePath.equals("/users")) {
+		        String userRole = (String) session.getAttribute(LoginConstants.ROLE);
+		        if (userRole == null || !userRole.equals("administrador")) {
+		            httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+		            return;
+		        }
+		    }
 		}
 
 		if (session == null || session.getAttribute("user") == null) {
@@ -69,6 +77,7 @@ public class SessionFilter implements Filter {
 				chain.doFilter(request, response);
 				return;
 			}
+			
 			if (!(relativePath.contains(STATIC_RESOURCES) || relativePath.contains(JS_RESOURCES)
 					|| relativePath.contains(UTILS_RESOURCES) || relativePath.contains(IMAGES_RESOURCES))) {
 				httpResponse.sendRedirect(contextPath + LOGIN_PAGE);

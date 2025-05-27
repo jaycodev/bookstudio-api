@@ -167,7 +167,20 @@ function loadUsers() {
 			try {
 				errorResponse = JSON.parse(xhr.responseText);
 				console.error(`Error listing user data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-				showToast('Hubo un error al listar los datos de los usuarios.', 'error');
+				switch (xhr.status) {
+		            case 403:
+		                showToast('No tienes permisos para listar los usuarios.', 'warning');
+		                break;
+		            case 400:
+		                showToast('Solicitud inválida. Verifica la petición.', 'error');
+		                break;
+		            case 500:
+		                showToast('Error interno del servidor. Intenta más tarde.', 'error');
+		                break;
+		            default:
+		                showToast('Hubo un error al listar los datos de los usuarios.', 'error');
+		                break;
+		        }
 			} catch (e) {
 				console.error("Unexpected error:", xhr.status, xhr.responseText);
 				showToast('Hubo un error inesperado.', 'error');
@@ -319,8 +332,21 @@ function handleAddUserForm() {
 							setFieldError(errorField, errorMessage);
 							$('#addUserForm').data("submitted", false);
 						} else {
-							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-							showToast(errorMessage, 'error');
+							console.error(`Server error (${xhr.responseJSON ? xhr.responseJSON.errorType : 'unknown'} - ${xhr.status}):`, errorMessage);
+							switch (xhr.status) {
+					            case 403:
+					                showToast('No tienes permisos para agregar usuarios.', 'warning');
+					                break;
+					            case 400:
+					                showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+					                break;
+					            case 500:
+					                showToast('Error interno del servidor. Intenta más tarde.', 'error');
+					                break;
+					            default:
+					                showToast(errorMessage || 'Hubo un error al agregar el usuario.', 'error');
+					                break;
+					        }
 							$('#addUserModal').modal('hide');
 						}
 					},
@@ -569,7 +595,20 @@ function handleEditUserForm() {
 						try {
 							errorResponse = JSON.parse(xhr.responseText);
 							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-							showToast('Hubo un error al actualizar el usuario.', 'error');
+							switch (xhr.status) {
+								case 403:
+									showToast('No tienes permisos para actualizar usuarios.', 'warning');
+									break;
+								case 400:
+									showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+									break;
+								case 500:
+									showToast('Error interno del servidor. Intenta más tarde.', 'error');
+									break;
+								default:
+									showToast(errorResponse.message || 'Hubo un error al actualizar el usuario.', 'error');
+									break;
+							}
 						} catch (e) {
 							console.error("Unexpected error:", xhr.status, xhr.responseText);
 							showToast('Hubo un error inesperado.', 'error');
@@ -711,7 +750,20 @@ function handleDeleteUser() {
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
 					console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al eliminar el usuario.', 'error');
+					switch (xhr.status) {
+						case 403:
+							showToast('No tienes permisos para eliminar usuarios.', 'warning');
+							break;
+						case 400:
+							showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+							break;
+						case 500:
+							showToast('Error interno del servidor. Intenta más tarde.', 'error');
+							break;
+						default:
+							showToast(errorResponse.message || 'Hubo un error al eliminar el usuario.', 'error');
+							break;
+					}
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');

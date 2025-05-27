@@ -86,7 +86,7 @@ public class ForgotPasswordServlet extends HttpServlet {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
 			message.setSubject("Restablecer tu contraseña");
 
-			String resetLink = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/reset-password.jsp?token=" + token;
+			String resetLink = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/reset-password?token=" + token;
 
 			String msg = "<!DOCTYPE html>" + "<html>" + "<head>" + "<meta charset='UTF-8'>" + "<style>"
 					+ "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }"

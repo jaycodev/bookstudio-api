@@ -13,7 +13,7 @@
         <div class="d-lg-none me-5"></div>
 
         <!-- Logo -->
-		<a href="dashboard.jsp" class="text-center text-decoration-none text-body-emphasis d-flex align-items-center">
+		<a href="dashboard" class="text-center text-decoration-none text-body-emphasis d-flex align-items-center">
 		    <img class="logo me-2" alt="Logo de Bookstudio" src="images/logo-light.png">
 		    <span class="fs-5 text-logo">BookStudio</span>
 		</a>
@@ -50,7 +50,7 @@
                 <ul class="dropdown-menu dropdown-menu-end text-small gap-1 p-2 rounded-3 mx-0 shadow bg-body-secondary border">
                     <li>
                     	<!-- Profile Button -->
-                    	<a class="dropdown-item rounded-2 d-flex align-items-center" href="profile.jsp">
+                    	<a class="dropdown-item rounded-2 d-flex align-items-center" href="profile">
                     		<i class="bi bi-person me-2"></i>
                     		Perfil
                     	</a>
