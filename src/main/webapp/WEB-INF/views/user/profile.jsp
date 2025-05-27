@@ -18,10 +18,10 @@
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
-	<jsp:include page="WEB-INF/includes/header.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/includes/header.jsp"></jsp:include>
 
 	<!-- ===================== Sidebar ==================== -->
-	<jsp:include page="WEB-INF/includes/sidebar.jsp">
+	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
 		<jsp:param name="currentPage" value="" />
 	</jsp:include>
 

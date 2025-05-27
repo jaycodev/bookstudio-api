@@ -3,7 +3,7 @@
 <html lang="es" data-bs-theme="auto">
 <head>
 	<meta charset="UTF-8">
-	<meta name="description" content="Acceso denegado - BookStudio">
+	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="utils/color-modes.js"></script>
@@ -28,7 +28,7 @@
 					<button onclick="window.history.back()" class="btn btn-custom-secondary">
 						Volver
 					</button>
-					<a href="dashboard.jsp" class="btn btn-custom-primary text-decoration-none">
+					<a href="dashboard" class="btn btn-custom-primary text-decoration-none">
 						Ir al inicio
 					</a>
 				</div>

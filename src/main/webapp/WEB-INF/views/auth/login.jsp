@@ -21,82 +21,83 @@
 	<div class="d-flex justify-content-center align-items-center vh-100">
 		<!-- ===================== Main Content ==================== -->
 		<main class="w-100 mx-4" style="max-width: 384px;">
-			<!-- Card -->
+			<!-- Card Container -->
 			<section class="card border">
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
-					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
-					<h3 class="fw-bold mb-0">Crear nueva contraseña</h3>
-					<p class="text-muted mb-0">Ingresa la nueva contraseña para tu cuenta de Bookstudio a continuación.</p>
+					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="${pageContext.request.contextPath}/images/logo-light.png">
+					<h3 class="fw-bold mb-0">Iniciar sesión</h3>
+					<p class="text-muted mb-0">Empieza a gestionar tus préstamos.</p>
 				</header>
 				
 				<!-- Card body -->
 				<div class="card-body">
-					<form id="resetPasswordForm" accept-charset="UTF-8" novalidate>
-						<!-- New Password field -->
+					<form id="loginForm" novalidate>
+						<!-- Username field -->
 						<div class="mb-4">
-							<label for="newPassword" class="form-label">Nueva contraseña</label>
+							<label for="txtUsername" class="form-label">Nombre de usuario</label>
+							<input
+	                            id="txtUsername" 
+	                            name="txtUsername" 
+	                            type="text" 
+	                            class="form-control" 
+	                            placeholder="Ingrese su nombre de usuario" 
+	                            pattern="[A-Za-zÀ-ÿ0-9_]+" 
+								oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ0-9_]/g, '');" 
+	                            aria-describedby="usernameHelp" 
+	                            autocomplete="username">
+						</div>
+						
+						<!-- Password field -->
+						<div class="mb-4">
+							<div class="d-flex justify-content-between align-items-center">
+								<label for="txtPassword" class="form-label">Contraseña</label>
+								<a href="forgot-password" class="text-body-emphasis"><small>¿Olvidaste tu contraseña?</small></a>
+							</div>
 							<div class="input-group">
 								<input
-	                                id="newPassword" 
-	                                name="newPassword" 
+	                                id="txtPassword" 
+	                                name="txtPassword" 
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="1" 
-	                                placeholder="Nueva contraseña">
+	                                placeholder="Ingrese su contraseña" 
+	                                aria-describedby="passwordHelp" 
+	                                autocomplete="current-password">
 	                            <span class="input-group-text cursor-pointer" data-toggle-id="1">
 	                                <i class="bi bi-eye"></i>
 	                            </span>
-	                            <div class="invalid-feedback"></div>
 							</div>
 						</div>
 						
-						<!-- Confirm New Password field -->
-						<div class="mb-4">
-							<label for="confirmNewPassword" class="form-label">Confirmar contraseña nueva</label>
-							<div class="input-group">
-								<input
-	                                id="confirmNewPassword" 
-	                                name="confirmNewPassword" 
-	                                type="password" 
-	                                class="form-control password-field" 
-	                                data-toggle-id="2" 
-	                                placeholder="Confirmar contraseña nueva">
-	                            <span class="input-group-text cursor-pointer" data-toggle-id="2">
-	                                <i class="bi bi-eye"></i>
-	                            </span>
-	                            <div class="invalid-feedback"></div>
-							</div>
-						</div>
-						
-						<!-- Create Password Button -->
-						<button type="submit" class="btn btn-custom-primary w-100" id="createBtn">
+						<!-- Login Button -->
+						<button type="submit" class="btn btn-custom-primary w-100" id="loginBtn">
 		                    <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-		                    <span id="resetText">Crear contraseña</span>
+		                    <span id="loginText">Iniciar sesión</span>
 		                </button>
 					</form>
 				</div>
 			</section>
 		</main>
 	</div>
-	
+
 	<!-- Toast Container -->
 	<div class="toast-container" id="toast-container"></div>
 
 	<!-- Theme toggle button -->
 	<div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3">
-		<jsp:include page="WEB-INF/includes/button-theme.jsp">
+		<jsp:include page="/WEB-INF/includes/button-theme.jsp">
 			<jsp:param name="dropdownDirection" value="2" />
 		</jsp:include>
 	</div>
-	
+
 	<!-- External Libraries -->
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-	
+
 	<!-- Custom Scripts -->
-	<script type="module" src="js/reset-password.js" defer></script>
+	<script type="module" src="js/login.js" defer></script>
 	<script src="utils/password.js" defer></script>
 </body>
 </html>

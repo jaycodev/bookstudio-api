@@ -18,7 +18,7 @@ $(document).ready(function() {
 	}
 
 	function redirectToForgotPassword() {
-		window.location.href = "forgot-password.jsp?linkInvalid=true";
+		window.location.href = "forgot-password?linkInvalid=true";
 	}
 
 	var token = getTokenFromURL();
@@ -110,7 +110,7 @@ $(document).ready(function() {
 
 					if ($("#backToLogin").length === 0) {
 						$("#resetPasswordForm").append(`
-							<a href="login.jsp" class="btn btn-custom-primary w-100 text-decoration-none" id="backToLogin">Volver al inicio de sesión</a>
+							<a href="login" class="btn btn-custom-primary w-100 text-decoration-none" id="backToLogin">Volver al inicio de sesión</a>
 						`);
 					}
 				} else {

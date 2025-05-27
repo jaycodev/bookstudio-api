@@ -7,18 +7,18 @@
 	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<jsp:include page="WEB-INF/includes/styles.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/includes/styles.jsp"></jsp:include>
 	<title>BookStudio</title>
 	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
 	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
-	<jsp:include page="WEB-INF/includes/header.jsp"></jsp:include>
+	<jsp:include page="/WEB-INF/includes/header.jsp"></jsp:include>
 
 	<!-- ===================== Sidebar ==================== -->
-	<jsp:include page="WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="students.jsp" />
+	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
+		<jsp:param name="currentPage" value="students" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->
@@ -605,7 +605,7 @@
 		<!-- Toasts will be added here by JavaScript -->
 	</div>
 
-	<jsp:include page="WEB-INF/includes/scripts.jsp">
+	<jsp:include page="/WEB-INF/includes/scripts.jsp">
 		<jsp:param name="currentPage" value="students.js" />
 	</jsp:include>
 </body>

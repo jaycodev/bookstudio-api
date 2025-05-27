@@ -28,7 +28,7 @@
 					<button onclick="window.history.back()" class="btn btn-custom-secondary">
 						Volver
 					</button>
-					<a href="dashboard.jsp" class="btn btn-custom-primary text-decoration-none">
+					<a href="dashboard" class="btn btn-custom-primary text-decoration-none">
 						Ir al inicio
 					</a>
 				</div>

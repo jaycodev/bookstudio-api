@@ -109,7 +109,7 @@ $(document).ready(function() {
 					if (response && response.success) {
 						sessionStorage.setItem('toastMessage', 'Foto de perfil subida exitosamente.');
 						sessionStorage.setItem('toastType', 'success');
-						window.location.href = "profile.jsp";
+						window.location.href = "profile";
 					} else {
 						showToast(response.message, 'error');
 					}
@@ -155,7 +155,7 @@ $(document).ready(function() {
 				if (response && response.success) {
 					sessionStorage.setItem('toastMessage', 'Foto de perfil eliminada exitosamente.');
 					sessionStorage.setItem('toastType', 'success');
-					window.location.href = "profile.jsp";
+					window.location.href = "profile";
 				} else {
 					showToast(response.message, 'error');
 				}
@@ -284,7 +284,7 @@ $(document).ready(function() {
 				if (response && response.success) {
 					sessionStorage.setItem('toastMessage', 'Perfil actualizado exitosamente.');
 					sessionStorage.setItem('toastType', 'success');
-					window.location.href = "profile.jsp";
+					window.location.href = "profile";
 				} else {
 					showToast(response.message, 'error');
 					formSubmitted = false;

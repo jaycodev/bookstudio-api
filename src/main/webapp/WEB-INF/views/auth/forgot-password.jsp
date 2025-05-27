@@ -55,7 +55,7 @@
 		                </button>
 		                
 		                <!-- Cancel Button -->
-						<a href="login.jsp" class="btn btn-custom-secondary w-100 mt-3 text-decoration-none">
+						<a href="login" class="btn btn-custom-secondary w-100 mt-3 text-decoration-none">
 							Cancelar
 						</a>
 					</form>
@@ -69,7 +69,7 @@
 
 	<!-- Theme toggle button -->
 	<div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3">
-		<jsp:include page="WEB-INF/includes/button-theme.jsp">
+		<jsp:include page="/WEB-INF/includes/button-theme.jsp">
 			<jsp:param name="dropdownDirection" value="2" />
 		</jsp:include>
 	</div>
