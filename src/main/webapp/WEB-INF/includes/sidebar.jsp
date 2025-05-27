@@ -13,7 +13,7 @@
     <!-- Navigation Links -->
     <ul class="nav flex-column p-3 flex-grow-1">
         <li class="mb-1">
-            <a href="dashboard" aria-label="Dashboard" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
+            <a href="./" aria-label="Dashboard" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2 bi-bar-chart"></i>
                 <span class="sidebar-link">Dashboard</span>
             </a>
@@ -86,7 +86,7 @@
     <nav class="offcanvas-body d-flex flex-column p-0">
         <ul class="nav flex-column p-3 flex-grow-1">
             <li class="mb-1">
-                <a href="dashboard" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
+                <a href="./" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                     <i class="bi pe-none me-2 bi-bar-chart"></i>
                     Dashboard
                 </a>

@@ -20,7 +20,7 @@
 
 	<!-- ===================== Sidebar ==================== -->
 	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="dashboard" />
+		<jsp:param name="currentPage" value="./" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->

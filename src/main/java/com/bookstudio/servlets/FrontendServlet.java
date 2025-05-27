@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = {
 	"/login", "/forgot-password", "/reset-password",
-	"/dashboard", "/authors", "/books", "/courses",
+	"", "/authors", "/books", "/courses",
 	"/loans", "/profile", "/publishers", "/students", "/users"
 })
 public class FrontendServlet extends HttpServlet {
@@ -36,7 +36,7 @@ public class FrontendServlet extends HttpServlet {
             case "/login" -> "/WEB-INF/views/auth/login.jsp";
             case "/forgot-password" -> "/WEB-INF/views/auth/forgot-password.jsp";
             case "/reset-password" -> "/WEB-INF/views/auth/reset-password.jsp";
-            case "/dashboard" -> "/WEB-INF/views/user/dashboard.jsp";
+            case "" -> "/WEB-INF/views/user/dashboard.jsp";
             case "/authors" -> "/WEB-INF/views/user/authors.jsp";
             case "/books" -> "/WEB-INF/views/user/books.jsp";
             case "/courses" -> "/WEB-INF/views/user/courses.jsp";

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 public class SessionFilter implements Filter {
 	private static final String LOGIN_PAGE = "/login";
 	private static final String LOGIN_SERVLET = "/LoginServlet";
-	private static final String DASHBOARD_PAGE = "/dashboard";
+	private static final String DASHBOARD_PAGE = "/";
 	private static final String RESET_PASSWORD_PAGE = "/reset-password";
 	private static final String FORGOT_PASSWORD_PAGE = "/forgot-password";
 	private static final String RESET_PASSWORD_SERVLET = "/ResetPasswordServlet";

@@ -28,7 +28,7 @@
 					<button onclick="window.history.back()" class="btn btn-custom-secondary">
 						Volver
 					</button>
-					<a href="${pageContext.request.contextPath}/dashboard" class="btn btn-custom-primary text-decoration-none">
+					<a href="${pageContext.request.contextPath}/" class="btn btn-custom-primary text-decoration-none">
 						Ir al inicio
 					</a>
 				</div>

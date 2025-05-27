@@ -85,7 +85,7 @@ $(document).ready(function() {
 			dataType: "json",
 			success: function(response) {
 				if (response && response.success) {
-					window.location.href = "dashboard";
+					window.location.href = "./";
 				} else {
 					showToast(response.message, "error");
 					$("#txtUsername").removeClass("is-invalid");
