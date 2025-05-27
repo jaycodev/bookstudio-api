@@ -6,12 +6,12 @@
 	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="utils/color-modes.js"></script>
+	<script src="${pageContext.request.contextPath}/utils/color-modes.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/auth-forms-styles.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth-forms-styles.css">
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="${pageContext.request.contextPath}/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="${pageContext.request.contextPath}/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<main class="bg-body-secondary">
@@ -28,7 +28,7 @@
 					<button onclick="window.history.back()" class="btn btn-custom-secondary">
 						Volver
 					</button>
-					<a href="dashboard" class="btn btn-custom-primary text-decoration-none">
+					<a href="${pageContext.request.contextPath}/dashboard" class="btn btn-custom-primary text-decoration-none">
 						Ir al inicio
 					</a>
 				</div>
