@@ -18,7 +18,8 @@ public class DbConnection {
             String user = System.getenv("MYSQL_USER");
             String password = System.getenv("MYSQL_PASSWORD");
 
-            String url = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false&useTimezone=true&serverTimezone=UTC";
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + database +
+                    "?useSSL=true&requireSSL=true&verifyServerCertificate=false";
 
             con = DriverManager.getConnection(url, user, password);
 
