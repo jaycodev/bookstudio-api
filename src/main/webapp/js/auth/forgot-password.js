@@ -7,7 +7,7 @@
  * @author Jason
  */
 
-import { showToast } from '../utils/ui/index.js';
+import { showToast } from '../../utils/ui/index.js';
 
 $(document).ready(function() {
 	var isFirstSubmit = false;

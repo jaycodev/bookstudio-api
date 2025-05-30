@@ -1,27 +1,24 @@
 /**
- * books.js
+ * students.js
  * 
- * Manages the initialization, data loading, and configuration of the books table,  
- * as well as handling modals for creating, viewing, and editing book details.
- * Also supports logical delete (status change) operations on book records.
- * Utilizes AJAX for CRUD operations on book data.
+ * Manages the initialization, data loading, and configuration of the students table,  
+ * as well as handling modals for creating, viewing, editing student details, 
+ * and performing logical delete (status change) operations on students.
+ * Utilizes AJAX for CRUD operations on student data.
  * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
  * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
  * 
  * @author [Jason]
  */
 
-import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+import { showToast, toggleButtonLoading } from '../../utils/ui/index.js';
 
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
 
-// Global list of authors, publishers, courses, and genres for the selectpickers
-var authorList = [];
-var publisherList = [];
-var courseList = [];
-var genreList = [];
+// Global list of faculties for the selectpickers
+var facultyList = [];
 
 function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
 	const select = $(selector).selectpicker('destroy').empty();
@@ -46,7 +43,7 @@ function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
 
 function populateSelectOptions() {
 	$.ajax({
-		url: 'BookServlet',
+		url: 'StudentServlet',
 		type: 'GET',
 		data: { type: 'populateSelects' },
 		dataType: 'json',
@@ -57,20 +54,11 @@ function populateSelectOptions() {
 			}
 			
 			if (data) {
-				authorList = data.authors;
-				publisherList = data.publishers;
-				courseList = data.courses;
-				genreList = data.genres;
+				facultyList = data.faculties;
 
-				populateSelect('#addBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
-				populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
-				populateSelect('#addBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
-				populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
+				populateSelect('#addStudentFaculty', facultyList, 'facultyId', 'facultyName');
 
-				populateSelect('#editBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
-				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
-				populateSelect('#editBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
-				populateSelect('#editBookGenre', genreList, 'genreId', 'genreName');
+				populateSelect('#editStudentFaculty', facultyList, 'facultyId', 'facultyName');
 			}
 		},
 		error: function(xhr) {
@@ -138,55 +126,45 @@ function placeholderColorDateInput() {
  * TABLE HANDLING
  *****************************************/
 
-function generateRow(book) {
-	const userRole = sessionStorage.getItem('userRole');
-
+function generateRow(student) {
 	return `
 		<tr>
 			<td class="align-middle text-start">
-				<span class="badge bg-body-tertiary text-body-emphasis border">${book.formattedBookId}</span>
-			</td>
-			<td class="align-middle text-start">${book.title}</td>
-			<td class="align-middle text-center">
-				<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">${book.availableCopies}</span>
-			</td>
-			<td class="align-middle text-center">
-				<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">${book.loanedCopies}</span>
+				<span class="badge bg-body-tertiary text-body-emphasis border">${student.formattedStudentId}</span>
 			</td>
 			<td class="align-middle text-start">
-				${book.authorName}
-				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedAuthorId}</span>
+				<span class="badge bg-body-secondary text-body-emphasis border">${student.dni}</span>
 			</td>
+			<td class="align-middle text-start">${student.firstName}</td>
+			<td class="align-middle text-start">${student.lastName}</td>
 			<td class="align-middle text-start">
-				${book.publisherName}
-				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedPublisherId}</span>
+				<span class="badge bg-body-secondary text-body-emphasis border">${student.phone}</span>
 			</td>
+			<td class="align-middle text-start">${student.email}</td>
 			<td class="align-middle text-center">
-				${book.status === 'activo'
+				${student.status === 'activo'
 					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
 			</td>
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsBookModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
+						data-bs-toggle="modal" data-bs-target="#detailsStudentModal" data-id="${student.studentId}" data-formatted-id="${student.formattedStudentId}">
 						<i class="bi bi-eye"></i>
 					</button>
-					${userRole === 'administrador' ?
-						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editBookModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
-							<i class="bi bi-pencil"></i>
-						</button>`
-					: ''}
+					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
+						data-bs-toggle="modal" data-bs-target="#editStudentModal" data-id="${student.studentId}" data-formatted-id="${student.formattedStudentId}">
+						<i class="bi bi-pencil"></i>
+					</button>
 				</div>
 			</td>
 		</tr>
 	`;
 }
 
-function addRowToTable(book) {
-	var table = $('#bookTable').DataTable();
-	var rowHtml = generateRow(book);
+function addRowToTable(student) {
+	var table = $('#studentTable').DataTable();
+	var rowHtml = generateRow(student);
 	var $row = $(rowHtml);
 
 	table.row.add($row).draw(false);
@@ -194,7 +172,7 @@ function addRowToTable(book) {
 	initializeTooltips($row);
 }
 
-function loadBooks() {
+function loadStudents() {
 	toggleButtonAndSpinner('loading');
 
 	let safetyTimer = setTimeout(function() {
@@ -204,19 +182,19 @@ function loadBooks() {
 	}, 8000);
 
 	$.ajax({
-		url: 'BookServlet',
+		url: 'StudentServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
 			clearTimeout(safetyTimer);
 
-			var tableBody = $('#bodyBooks');
+			var tableBody = $('#bodyStudents');
 			tableBody.empty();
 
 			if (data && data.length > 0) {
-				data.forEach(function(book) {
-					var row = generateRow(book);
+				data.forEach(function(student) {
+					var row = generateRow(student);
 					tableBody.append(row);
 				});
 
@@ -224,10 +202,10 @@ function loadBooks() {
 			}
 
 			if ($.fn.DataTable.isDataTable('#bookTable')) {
-				$('#bookTable').DataTable().destroy();
+				$('#studentTable').DataTable().destroy();
 			}
 
-			let dataTable = setupDataTable('#bookTable');
+			let dataTable = setupDataTable('#studentTable');
 
 			if (data && data.length > 0) {
 				$("#generatePDF, #generateExcel").prop("disabled", false);
@@ -253,8 +231,8 @@ function loadBooks() {
 			let errorResponse;
 			try {
 				errorResponse = JSON.parse(xhr.responseText);
-				console.error(`Error listing book data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-				showToast('Hubo un error al listar los datos de los libros.', 'error');
+				console.error(`Error listing student data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de los estudiantes.', 'error');
 			} catch (e) {
 				console.error("Unexpected error:", xhr.status, xhr.responseText);
 				showToast('Hubo un error inesperado.', 'error');
@@ -262,42 +240,32 @@ function loadBooks() {
 			
 			clearTimeout(safetyTimer);
 
-			var tableBody = $('#bodyBooks');
+			var tableBody = $('#bodyStudents');
 			tableBody.empty();
 
-			if ($.fn.DataTable.isDataTable('#bookTable')) {
-				$('#bookTable').DataTable().destroy();
+			if ($.fn.DataTable.isDataTable('#studentTable')) {
+				$('#studentTable').DataTable().destroy();
 			}
 
-			setupDataTable('#bookTable');
+			setupDataTable('#studentTable');
 		}
 	});
 }
 
-function updateRowInTable(book) {
-	var table = $('#bookTable').DataTable();
+function updateRowInTable(student) {
+	var table = $('#studentTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text().trim() === book.formattedBookId.toString();
+		return $(this).find('td').eq(0).text().trim() === student.formattedStudentId.toString();
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(book.title);
-		row.find('td').eq(2).html(`
-			<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">${book.availableCopies}</span>
-		`);
-		row.find('td').eq(3).html(`
-			<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">${book.loanedCopies}</span>
-		`);
-		row.find('td').eq(4).html(`
-			${book.authorName}
-			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedAuthorId}</span>
-		`);
-		row.find('td').eq(5).html(`
-			${book.publisherName}
-			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedPublisherId}</span>
-		`);
-		row.find('td').eq(6).html(book.status === 'activo'
+		row.find('td').eq(2).text(student.firstName);
+		row.find('td').eq(3).text(student.lastName);
+		row.find('td').eq(4).find('span').text(student.phone);
+		row.find('td').eq(5).text(student.email);
+
+		row.find('td').eq(6).html(student.status === 'activo'
 			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
@@ -311,21 +279,21 @@ function updateRowInTable(book) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddBookForm() {
+function handleAddStudentForm() {
 	let isFirstSubmit = true;
 
-	$('#addBookModal').on('hidden.bs.modal', function() {
+	$('#addStudentModal').on('hidden.bs.modal', function() {
 		isFirstSubmit = true;
-		$('#addBookForm').data("submitted", false);
+		$('#addStudentForm').data("submitted", false);
 	});
 
-	$('#addBookForm').on('input change', 'input, select', function() {
+	$('#addStudentForm').on('input change', 'input, select', function() {
 		if (!isFirstSubmit) {
 			validateAddField($(this));
 		}
 	});
 
-	$('#addBookForm').on('submit', function(event) {
+	$('#addStudentForm').on('submit', function(event) {
 		event.preventDefault();
 
 		if ($(this).data("submitted") === true) {
@@ -349,61 +317,64 @@ function handleAddBookForm() {
 		});
 
 		if (isValid) {
-			var data = $('#addBookForm').serialize() + '&type=create';
+			var data = $(this).serialize() + '&type=create';
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addBookSpinnerBtn").removeClass("d-none");
-			$("#addBookIcon").addClass("d-none");
+			$("#addStudentSpinnerBtn").removeClass("d-none");
+			$("#addStudentIcon").addClass("d-none");
 
 			$.ajax({
-				url: 'BookServlet',
+				url: 'StudentServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
 				success: function(response) {
 					if (response && response.success) {
 						addRowToTable(response.data);
-						$('#addBookModal').modal('hide');
-						showToast('Libro agregado exitosamente.', 'success');
+						
+						$('#addStudentModal').modal('hide');
+						showToast('Estudiante agregado exitosamente.', 'success');
 					} else {
-						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-						$('#addBookModal').modal('hide');
-						showToast('Hubo un error al agregar el libro.', 'error');
+						if (response.field) {
+							setFieldError(response.field, response.message);
+							$('#addStudentForm').data("submitted", false);
+						}
+						else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+							$('#addStudentModal').modal('hide');
+							showToast(response.message, 'error');
+						}
 					}
 				},
 				error: function(xhr) {
-					let errorResponse;
-					try {
-						errorResponse = JSON.parse(xhr.responseText);
+					var errorMessage = (xhr.responseJSON && xhr.responseJSON.message)
+						? xhr.responseJSON.message
+						: 'Hubo un error al agregar el estudiante.';
+					var errorField = xhr.responseJSON && xhr.responseJSON.field
+						? xhr.responseJSON.field
+						: null;
+
+					if (errorField) {
+						setFieldError(errorField, errorMessage);
+						$('#addStudentForm').data("submitted", false);
+					} else {
 						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-						switch (xhr.status) {
-							case 403:
-								showToast('No tienes permisos para agregar libros.', 'warning');
-								break;
-							case 400:
-								showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
-								break;
-							case 500:
-								showToast('Error interno del servidor. Intenta más tarde.', 'error');
-								break;
-							default:
-								showToast(errorResponse.message || 'Hubo un error al agregar el libro.', 'error');
-								break;
-						}
-					} catch (e) {
-						console.error("Unexpected error:", xhr.status, xhr.responseText);
-						showToast('Hubo un error inesperado.', 'error');
+						showToast(errorMessage, 'error');
+						$('#addStudentModal').modal('hide');
 					}
-					
-					$('#addBookModal').modal('hide');
 				},
 				complete: function() {
-					$("#addBookSpinnerBtn").addClass("d-none");
-					$("#addBookIcon").removeClass("d-none");
+					$("#addStudentSpinnerBtn").addClass("d-none");
+					$("#addStudentIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
 			});
+			function setFieldError(fieldId, message) {
+				var field = $('#' + fieldId);
+				field.addClass('is-invalid');
+				field.siblings('.invalid-feedback').html(message).show();
+			}
 		} else {
 			$(this).data("submitted", false);
 		}
@@ -426,34 +397,74 @@ function handleAddBookForm() {
 			field.removeClass('is-invalid');
 		}
 
-		// Title validation
-		if (field.is('#addBookTitle')) {
-			const title = field.val().trim();
-
-			if (title.length < 3) {
-				errorMessage = 'El título debe tener al menos 3 caracteres.';
+		// DNI validation
+		if (field.is('#addStudentDNI')) {
+			const dni = field.val();
+			const dniPattern = /^\d{8}$/;
+			if (!dniPattern.test(dni)) {
+				errorMessage = 'El DNI debe contener exactamente 8 dígitos numéricos.';
 				isValid = false;
 			}
 		}
 
-		// Total copies validation
-		if (field.is('#addBookTotalCopies')) {
-			const copies = parseInt(field.val(), 10);
-			const maxCopies = 1000;
+		// Name validation
+		if (field.is('#addStudentFirstName')) {
+			const firstName = field.val();
 
-			if (copies > maxCopies) {
-				errorMessage = `El número máximo de ejemplares es ${maxCopies}.`;
+			if (firstName.length < 3) {
+				errorMessage = 'El nombre debe tener al menos 3 caracteres.';
 				isValid = false;
 			}
 		}
 
-		// Release date validation
-		if (field.is('#addReleaseDate')) {
-			const releaseDate = new Date(field.val());
+		// Last name validation
+		if (field.is('#addStudentLastName')) {
+			const lastName = field.val();
+
+			if (lastName.length < 3) {
+				errorMessage = 'El apellido debe tener al menos 3 caracteres.';
+				isValid = false;
+			}
+		}
+
+		// Address validation
+		if (field.is('#addStudentAddress')) {
+			const address = field.val();
+			if (address.length < 5) {
+				errorMessage = 'La dirección debe tener al menos 5 caracteres.';
+				isValid = false;
+			} else if (!/^[A-Za-zÑñ0-9\s,.\-#]+$/.test(address)) {
+				errorMessage = 'La dirección solo puede contener letras, números y los caracteres especiales: ,.-#';
+				isValid = false;
+			}
+		}
+
+		// Phone validation
+		if (field.is('#addStudentPhone')) {
+			const phone = field.val();
+			if (!/^[9]\d{8}$/.test(phone)) {
+				errorMessage = 'El número de teléfono debe comenzar con 9 y tener exactamente 9 dígitos.';
+				isValid = false;
+			}
+		}
+
+		// Email validation
+		if (field.is('#addStudentEmail')) {
+			const email = field.val();
+			const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+			if (!emailRegex.test(email)) {
+				errorMessage = 'Por favor ingrese un correo electrónico válido.';
+				isValid = false;
+			}
+		}
+
+		// Birthdate validation
+		if (field.is('#addStudentBirthDate')) {
+			const birthDate = new Date(field.val());
 			const today = new Date();
-
-			if (releaseDate > today) {
-				errorMessage = 'La fecha de lanzamiento no puede ser en el futuro.';
+			if (birthDate > today) {
+				errorMessage = 'La fecha de nacimiento no puede ser en el futuro.';
 				isValid = false;
 			}
 		}
@@ -477,21 +488,21 @@ function handleAddBookForm() {
 	}
 }
 
-function handleEditBookForm() {
+function handleEditStudentForm() {
 	let isFirstSubmit = true;
 
-	$('#editBookModal').on('hidden.bs.modal', function() {
+	$('#editStudentModal').on('hidden.bs.modal', function() {
 		isFirstSubmit = true;
-		$('#editBookForm').data("submitted", false);
+		$('#editStudentForm').data("submitted", false);
 	});
 
-	$('#editBookForm').on('input change', 'input, select', function() {
+	$('#editStudentForm').on('input change', 'input, select', function() {
 		if (!isFirstSubmit) {
 			validateEditField($(this));
 		}
 	});
 
-	$('#editBookForm').on('submit', function(event) {
+	$('#editStudentForm').on('submit', function(event) {
 		event.preventDefault();
 
 		if ($(this).data("submitted") === true) {
@@ -517,18 +528,18 @@ function handleEditBookForm() {
 		if (isValid) {
 			var data = $(this).serialize() + '&type=update';
 
-			var bookId = $(this).data('bookId');
-			if (bookId) {
-				data += '&bookId=' + encodeURIComponent(bookId);
+			var studentId = $(this).data('studentId');
+			if (studentId) {
+				data += '&studentId=' + encodeURIComponent(studentId);
 			}
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editBookSpinnerBtn").removeClass("d-none");
-			$("#editBookIcon").addClass("d-none");
+			$("#editStudentSpinnerBtn").removeClass("d-none");
+			$("#editStudentIcon").addClass("d-none");
 
 			$.ajax({
-				url: 'BookServlet',
+				url: 'StudentServlet',
 				type: 'POST',
 				data: data,
 				dataType: 'json',
@@ -536,46 +547,48 @@ function handleEditBookForm() {
 					if (response && response.success) {
 						updateRowInTable(response.data);
 						
-						$('#editBookModal').modal('hide');
-						showToast('Libro actualizado exitosamente.', 'success');
+						$('#editStudentModal').modal('hide');
+						showToast('Estudiante actualizado exitosamente.', 'success');
 					} else {
-						console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-						$('#editBookModal').modal('hide');
-						showToast('Hubo un error al actualizar el libro.', 'error');
+						if (response.field) {
+							setFieldError(response.field, response.message);
+							$('#editStudentForm').data("submitted", false);
+						}
+						else {
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+							showToast(response.message, 'error');
+							$('#editStudentModal').modal('hide');
+						}
 					}
 				},
 				error: function(xhr) {
-					let errorResponse;
-					try {
-						errorResponse = JSON.parse(xhr.responseText);
+					var errorMessage = (xhr.responseJSON && xhr.responseJSON.message)
+						? xhr.responseJSON.message
+						: 'Hubo un error al editar el estudiante.';
+					var errorField = xhr.responseJSON && xhr.responseJSON.field
+						? xhr.responseJSON.field
+						: null;
+
+					if (errorField) {
+						setFieldError(errorField, errorMessage);
+						$('#editStudentForm').data("submitted", false);
+					} else {
 						console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-						switch (xhr.status) {
-							case 403:
-								showToast('No tienes permisos para actualizar libros.', 'warning');
-								break;
-							case 400:
-								showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
-								break;
-							case 500:
-								showToast('Error interno del servidor. Intenta más tarde.', 'error');
-								break;
-							default:
-								showToast(errorResponse.message || 'Hubo un error al actualizar el libro.', 'error');
-								break;
-						}
-					} catch (e) {
-						console.error("Unexpected error:", xhr.status, xhr.responseText);
-						showToast('Hubo un error inesperado.', 'error');
+						showToast(errorMessage, 'error');
+						$('#editStudentModal').modal('hide');
 					}
-					
-					$('#editBookModal').modal('hide');
 				},
 				complete: function() {
-					$("#editBookSpinnerBtn").addClass("d-none");
-					$("#editBookIcon").removeClass("d-none");
+					$("#editStudentSpinnerBtn").addClass("d-none");
+					$("#editStudentIcon").removeClass("d-none");
 					submitButton.prop('disabled', false);
 				}
 			});
+			function setFieldError(fieldId, message) {
+				var field = $('#' + fieldId);
+				field.addClass('is-invalid');
+				field.siblings('.invalid-feedback').html(message).show();
+			}
 		} else {
 			$(this).data("submitted", false);
 		}
@@ -598,39 +611,65 @@ function validateEditField(field) {
 	} else {
 		field.removeClass('is-invalid');
 	}
-
-	// Title validation
-	if (field.is('#editBookTitle')) {
-		const title = field.val().trim();
-
-		if (title.length < 3) {
-			errorMessage = 'El título debe tener al menos 3 caracteres.';
+	
+	// Name validation
+	if (field.is('#editStudentFirstName')) {
+		const firstName = field.val();
+	
+		if (firstName.length < 3) {
+			errorMessage = 'El nombre debe tener al menos 3 caracteres.';
+			isValid = false;
+		}
+	}
+	
+	// Last name validation
+	if (field.is('#editStudentLastName')) {
+		const lastName = field.val();
+	
+		if (lastName.length < 3) {
+			errorMessage = 'El apellido debe tener al menos 3 caracteres.';
 			isValid = false;
 		}
 	}
 
-	// Total copies validation
-	if (field.is('#editBookTotalCopies')) {
-		const copies = parseInt(field.val(), 10);
-		const minCopies = parseInt(field.attr('min'), 10);
-		const maxCopies = 1000;
-
-		if (copies < minCopies) {
-			errorMessage = `La cantidad mínima de ejemplares para este libro es ${minCopies}.`;
+	// Address validation
+	if (field.is('#editStudentAddress')) {
+		const address = field.val();
+		if (address.length < 5) {
+			errorMessage = 'La dirección debe tener al menos 5 caracteres.';
 			isValid = false;
-		} else if (copies > maxCopies) {
-			errorMessage = `El número máximo de ejemplares es ${maxCopies}.`;
+		} else if (!/^[A-Za-zÑñ0-9\s,.\-#]+$/.test(address)) {
+			errorMessage = 'La dirección solo puede contener letras, números y los caracteres especiales: ,.-#';
 			isValid = false;
 		}
 	}
 
-	// Release date validation
-	if (field.is('#editReleaseDate')) {
-		const releaseDate = new Date(field.val());
+	// Phone validation
+	if (field.is('#editStudentPhone')) {
+		const phone = field.val();
+		if (!/^[9]\d{8}$/.test(phone)) {
+			errorMessage = 'El número de teléfono debe comenzar con 9 y tener exactamente 9 dígitos.';
+			isValid = false;
+		}
+	}
+
+	// Email validation
+	if (field.is('#editStudentEmail')) {
+		const email = field.val();
+		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+		if (!emailRegex.test(email)) {
+			errorMessage = 'Por favor ingrese un correo electrónico válido.';
+			isValid = false;
+		}
+	}
+
+	// Birthdate validation
+	if (field.is('#editStudentBirthDate')) {
+		const birthDate = new Date(field.val());
 		const today = new Date();
-
-		if (releaseDate > today) {
-			errorMessage = 'La fecha de lanzamiento no puede ser en el futuro.';
+		if (birthDate > today) {
+			errorMessage = 'La fecha de nacimiento no puede ser en el futuro.';
 			isValid = false;
 		}
 	}
@@ -659,24 +698,23 @@ function validateEditField(field) {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addBookModal"]', function() {
-		populateSelect('#addBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
-		$('#addBookAuthor').selectpicker();
+	$(document).on('click', '[data-bs-target="#addStudentModal"]', function() {
+		$('#addStudentGender').selectpicker('destroy').empty().append(
+			$('<option>', {
+				value: 'Masculino',
+				text: 'Masculino'
+			}),
+			$('<option>', {
+				value: 'Femenino',
+				text: 'Femenino'
+			})
+		);
+		$('#addStudentGender').selectpicker();
 
-		populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
-		$('#addBookPublisher').selectpicker();
+		populateSelect('#addStudentFaculty', facultyList, 'facultyId', 'facultyName');
+		$('#addStudentFaculty').selectpicker();
 
-		populateSelect('#addBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
-		$('#addBookCourse').selectpicker();
-		
-		const today = new Date();
-		const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
-		$('#addReleaseDate').attr('max', peruDateStr);
-
-		populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
-		$('#addBookGenre').selectpicker();
-
-		$('#addBookStatus').selectpicker('destroy').empty().append(
+		$('#addStudentStatus').selectpicker('destroy').empty().append(
 			$('<option>', {
 				value: 'activo',
 				text: 'Activo'
@@ -686,115 +724,110 @@ function loadModalData() {
 				text: 'Inactivo'
 			})
 		);
-		$('#addBookStatus').selectpicker();
+		$('#addStudentStatus').selectpicker();
 
-		$('#addBookForm')[0].reset();
-		$('#addBookForm .is-invalid').removeClass('is-invalid');
+		$('#addStudentForm')[0].reset();
+		$('#addStudentForm .is-invalid').removeClass('is-invalid');
+		
+		const peruToday = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00').toISOString().split('T')[0];
+		$('#addStudentBirthDate').attr('max', peruToday);
 
 		placeholderColorDateInput();
 	});
 
 	// Details Modal
-	$(document).on('click', '[data-bs-target="#detailsBookModal"]', function() {
-		var bookId = $(this).data('id');
-		$('#detailsBookModalID').text($(this).data('formatted-id'));
-
-		$('#detailsBookSpinner').removeClass('d-none');
-		$('#detailsBookContent').addClass('d-none');
+	$(document).on('click', '[data-bs-target="#detailsStudentModal"]', function() {
+		var studentId = $(this).data('id');
+		$('#detailsStudentModalID').text($(this).data('formatted-id'));
 		
+		$('#detailsStudentSpinner').removeClass('d-none');
+		$('#detailsStudentContent').addClass('d-none');
+
 		$.ajax({
-			url: 'BookServlet',
+			url: 'StudentServlet',
 			type: 'GET',
-			data: { type: 'details', bookId: bookId },
+			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
-			success: function(data) {				
-				$('#detailsBookID').text(data.formattedBookId);
-				$('#detailsBookTitle').text(data.title);
-				$('#detailsBookAvaibleCopies').text(data.availableCopies);
-				$('#detailsBookLoanedCopies').text(data.loanedCopies);
-				
-				$('#detailsBookAuthor').html(`
-					${data.authorName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedAuthorId}</span>
-				`);
-				$('#detailsBookPublisher').html(`
-					${data.publisherName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedPublisherId}</span>
-				`);
-				$('#detailsBookCourse').html(`
-					${data.courseName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedCourseId}</span>
-				`);
-				
-				$('#detailsReleaseDate').text(moment(data.releaseDate).format('DD MMM YYYY'));
-				$('#detailsBookGenre').text(data.genreName);
-				$('#detailsBookStatus').html(
+			success: function(data) {
+				$('#detailsStudentID').text(data.formattedStudentId);
+				$('#detailsStudentDNI').text(data.dni);
+				$('#detailsStudentFirstName').text(data.firstName);
+				$('#detailsStudentLastName').text(data.lastName);
+				$('#detailsStudentAddress').text(data.address);
+				$('#detailsStudentPhone').text(data.phone);
+				$('#detailsStudentEmail').text(data.email);
+				$('#detailsStudentBirthDate').text(moment(data.birthDate).format('DD MMM YYYY'));
+				$('#detailsStudentGender').text(data.gender);
+				$('#detailsStudentFaculty').text(data.facultyName);
+				$('#detailsStudentStatus').html(
 					data.status === 'activo'
 						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
 				
-				$('#detailsBookSpinner').addClass('d-none');
-				$('#detailsBookContent').removeClass('d-none');
+				$('#detailsStudentSpinner').addClass('d-none');
+				$('#detailsStudentContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Error loading book details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al cargar los detalles del libro.', 'error');
+					console.error(`Error loading student details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del estudiante.', 'error');
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				$('#detailsBookModal').modal('hide');
+				$('#detailsStudentModal').modal('hide');
 			}
 		});
 	});
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editBookModal"]', function() {
-		var bookId = $(this).data('id');
-		$('#editBookModalID').text($(this).data('formatted-id'));
+	$(document).on('click', '[data-bs-target="#editStudentModal"]', function() {
+		var studentId = $(this).data('id');
+		$('#editStudentModalID').text($(this).data('formatted-id'));
 		
-		$('#editBookSpinner').removeClass('d-none');
-		$('#editBookForm').addClass('d-none');
-		$('#editBookBtn').prop('disabled', true);
-		
+		$('#editStudentSpinner').removeClass('d-none');
+		$('#editStudentForm').addClass('d-none');
+		$('#editStudentBtn').prop('disabled', true);
+
 		$.ajax({
-			url: 'BookServlet',
+			url: 'StudentServlet',
 			type: 'GET',
-			data: { type: 'details', bookId: bookId },
+			data: { type: 'details', studentId: studentId },
 			dataType: 'json',
 			success: function(data) {
-				$('#editBookForm').data('bookId', data.bookId);
-				$('#editBookTitle').val(data.title);
-				$('#editBookTotalCopies').val(data.totalCopies);
-				$('#editBookTotalCopies').attr('min', Math.max(1, data.loanedCopies));
+				$('#editStudentForm').data('studentId', data.studentId);
+				$('#editStudentDNI').val(data.dni);
+				$('#editStudentFirstName').val(data.firstName);
+				$('#editStudentLastName').val(data.lastName);
+				$('#editStudentAddress').val(data.address);
+				$('#editStudentPhone').val(data.phone);
+				$('#editStudentEmail').val(data.email);
+				$('#editStudentBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
 				
-				populateSelect('#editBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
-				$('#editBookAuthor').val(data.authorId);
-				$('#editBookAuthor').selectpicker();
-
-				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
-				$('#editBookPublisher').val(data.publisherId);
-				$('#editBookPublisher').selectpicker();
-
-				populateSelect('#editBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
-				$('#editBookCourse').val(data.courseId);
-				$('#editBookCourse').selectpicker();
-
-				populateSelect('#editBookGenre', genreList, 'genreId', 'genreName');
-				$('#editBookGenre').val(data.genreId);
-				$('#editBookGenre').selectpicker();
-
-				$('#editReleaseDate').val(moment(data.releaseDate).format('YYYY-MM-DD'));
+				const peruToday = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00').toISOString().split('T')[0];
+				$('#editStudentBirthDate').attr('max', peruToday);
 				
-				const today = new Date();
-				const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
-				$('#editReleaseDate').attr('max', peruDateStr);
-				
-				$('#editBookStatus').selectpicker('destroy').empty().append(
+				$('#editStudentGender').selectpicker('destroy').empty().append(
+					$('<option>', {
+						value: 'Masculino',
+						text: 'Masculino'
+					}),
+					$('<option>', {
+						value: 'Femenino',
+						text: 'Femenino'
+					})
+				);
+				$('#editStudentGender').val(data.gender);
+				$('#editStudentGender').selectpicker();
+
+				populateSelect('#editStudentFaculty', facultyList, 'facultyId', 'facultyName');
+				$('#editStudentFaculty').val(data.facultyId);
+				$('#editStudentFaculty').selectpicker();
+
+				$('#editStudentStatus').selectpicker('destroy').empty().append(
 					$('<option>', {
 						value: 'activo',
 						text: 'Activo'
@@ -804,33 +837,33 @@ function loadModalData() {
 						text: 'Inactivo'
 					})
 				);
-				$('#editBookStatus').val(data.status);
-				$('#editBookStatus').selectpicker();
+				$('#editStudentStatus').val(data.status);
+				$('#editStudentStatus').selectpicker();
 
-				$('#editBookForm .is-invalid').removeClass('is-invalid');
+				$('#editStudentForm .is-invalid').removeClass('is-invalid');
 
 				placeholderColorEditSelect();
 				placeholderColorDateInput();
 
-				$('#editBookForm').find('select').each(function() {
+				$('#editStudentForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
 				
-				$('#editBookSpinner').addClass('d-none');
-				$('#editBookForm').removeClass('d-none');
-				$('#editBookBtn').prop('disabled', false);
+				$('#editStudentSpinner').addClass('d-none');
+				$('#editStudentForm').removeClass('d-none');
+				$('#editStudentBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Error loading book details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al cargar los datos del libro.', 'error');
+					console.error(`Error loading student details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del estudiante.', 'error');
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				$('#editBookModal').modal('hide');
+				$('#editStudentModal').modal('hide');
 			}
 		});
 	});
@@ -884,34 +917,12 @@ function initializeTooltips(container) {
 	});
 }
 
-function formatStrings(str) {
-  const parts = str?.split(/\s+|\n/).filter(Boolean) || [];
-  return parts.length > 1
-    ? parts.slice(0, -1).join(' ') + ' - ' + parts.at(-1)
-    : parts[0] || '';
-}
-
-function applyTextColorByColumnPDF(data) {
-	const col = data.column.index;
-	const value = data.cell.raw;
-
-	const colorMap = {
-		2: [0, 128, 0],
-		3: [255, 0, 0],
-		6: value === "Activo" ? [0, 128, 0] : [255, 0, 0]
-	};
-
-	if (colorMap.hasOwnProperty(col)) {
-		data.cell.styles.textColor = colorMap[col];
-	}
-}
-
 function generatePDF(dataTable) {
 	const pdfBtn = $('#generatePDF');
 	toggleButtonLoading(pdfBtn, true);
 	
 	let hasWarnings = false;
-	
+
 	try {
 		const { jsPDF } = window.jspdf;
 		const doc = new jsPDF("l", "mm", "a4");
@@ -932,7 +943,7 @@ function generatePDF(dataTable) {
 		const pageWidth = doc.internal.pageSize.getWidth();
 		const margin = 10;
 		const topMargin = 5;
-	
+		
 		try {
 			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 		} catch (imgError) {
@@ -940,10 +951,10 @@ function generatePDF(dataTable) {
 			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
 			hasWarnings = true;
 		}
-	
+		
 		doc.setFont("helvetica", "bold");
 		doc.setFontSize(14);
-		doc.text("Lista de libros", pageWidth / 2, topMargin + 13, { align: "center" });
+		doc.text("Lista de estudiantes", pageWidth / 2, topMargin + 13, { align: "center" });
 	
 		doc.setFont("helvetica", "normal");
 		doc.setFontSize(8);
@@ -959,8 +970,8 @@ function generatePDF(dataTable) {
 				row.cells[1].innerText.trim(),
 				row.cells[2].innerText.trim(),
 				row.cells[3].innerText.trim(),
-				formatStrings(row.cells[4].innerText.trim()),
-				formatStrings(row.cells[5].innerText.trim()),
+				row.cells[4].innerText.trim(),
+				row.cells[5].innerText.trim(),
 				estado
 			];
 		});
@@ -968,7 +979,7 @@ function generatePDF(dataTable) {
 		doc.autoTable({
 			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['Código', 'Título', 'Ej. disp.', 'Ej. prest.', 'Autor - Código', 'Editorial - Código', 'Estado']],
+			head: [['Código', 'DNI', 'Nombres', 'Apellidos', 'Teléfono', 'Correo electrónico', 'Estado']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
@@ -984,13 +995,15 @@ function generatePDF(dataTable) {
 				halign: 'left'
 			},
 			didParseCell: function(data) {
-				if (data.section === 'body') {
-					applyTextColorByColumnPDF(data);
+				if (data.section === 'body' && data.column.index === 6) {
+					data.cell.styles.textColor = data.cell.raw === "Activo"
+						? [0, 128, 0]
+						: [255, 0, 0];
 				}
 			}
 		});
 	
-		const filename = `Lista_de_libros_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+		const filename = `Lista_de_estudiantes_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
 	
 		const pdfBlob = doc.output('blob');
 		const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1018,7 +1031,7 @@ function generateExcel(dataTable) {
 	
 	try {
 		const workbook = new ExcelJS.Workbook();
-		const worksheet = workbook.addWorksheet('Libros');
+		const worksheet = workbook.addWorksheet('Estudiantes');
 	
 		const currentDate = new Date();
 		const dateStr = currentDate.toLocaleDateString('es-ES', {
@@ -1034,7 +1047,7 @@ function generateExcel(dataTable) {
 	
 		worksheet.mergeCells('A1:G1');
 		const titleCell = worksheet.getCell('A1');
-		titleCell.value = 'Lista de libros - BookStudio';
+		titleCell.value = 'Lista de estudiantes - BookStudio';
 		titleCell.font = { name: 'Arial', size: 14, bold: true };
 		titleCell.alignment = { horizontal: 'center' };
 	
@@ -1045,16 +1058,16 @@ function generateExcel(dataTable) {
 	
 		worksheet.columns = [
 			{ key: 'id', width: 10 },
-			{ key: 'titulo', width: 40 },
-			{ key: 'disponibles', width: 10 },
-			{ key: 'prestados', width: 10 },
-			{ key: 'autor', width: 50 },
-			{ key: 'editorial', width: 50 },
+			{ key: 'dni', width: 15 },
+			{ key: 'nombres', width: 30 },
+			{ key: 'apellidos', width: 30 },
+			{ key: 'telefono', width: 20 },
+			{ key: 'correo', width: 30 },
 			{ key: 'estado', width: 15 }
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['Código', 'Título', 'Ej. disp.', 'Ej. prest.', 'Autor - Código', 'Editorial - Código', 'Estado'];
+		headerRow.values = ['Código', 'DNI', 'Nombres', 'Apellidos', 'Teléfono', 'Correo electrónico', 'Estado'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1073,42 +1086,28 @@ function generateExcel(dataTable) {
 	
 			return {
 				id: row.cells[0].innerText.trim(),
-				titulo: row.cells[1].innerText.trim(),
-				disponibles: row.cells[2].innerText.trim(),
-				prestados: row.cells[3].innerText.trim(),
-				autor: formatStrings(row.cells[4].innerText.trim()),
-				editorial: formatStrings(row.cells[5].innerText.trim()),
+				dni: row.cells[1].innerText.trim(),
+				nombres: row.cells[2].innerText.trim(),
+				apellidos: row.cells[3].innerText.trim(),
+				telefono: row.cells[4].innerText.trim(),
+				correo: row.cells[5].innerText.trim(),
 				estado: estado
 			};
 		});
-		
-		function applyCellStyle(cell, colorHex, backgroundHex) {
-			cell.font = { color: { argb: colorHex } };
-			cell.fill = {
-				type: 'pattern',
-				pattern: 'solid',
-				fgColor: { argb: backgroundHex }
-			};
-		}
 	
 		data.forEach((item) => {
 			const row = worksheet.addRow(item);
-	
 			const estadoCell = row.getCell(7);
 			if (estadoCell.value === "Activo") {
-				applyCellStyle(estadoCell, '008000', 'E6F2E6');
+				estadoCell.font = { color: { argb: '008000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };
 			} else {
-				applyCellStyle(estadoCell, 'FF0000', 'FFE6E6');
+				estadoCell.font = { color: { argb: 'FF0000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6' } };
 			}
-			
-			const disponiblesCell = row.getCell(3);
-			applyCellStyle(disponiblesCell, '008000', 'E6F2E6');
-			
-			const prestadosCell = row.getCell(4);
-			applyCellStyle(prestadosCell, 'FF0000', 'FFE6E6');
 		});
 	
-		const filename = `Lista_de_libros_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+		const filename = `Lista_de_estudiantes_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
 	
 		workbook.xlsx.writeBuffer().then(buffer => {
 			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -1136,9 +1135,9 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function() {
-	loadBooks();
-	handleAddBookForm();
-	handleEditBookForm();
+	loadStudents();
+	handleAddStudentForm();
+	handleEditStudentForm();
 	loadModalData();
 	populateSelectOptions();
 	$('.selectpicker').selectpicker();

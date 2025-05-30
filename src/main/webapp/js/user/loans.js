@@ -14,7 +14,7 @@
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
 
-import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+import { showToast, toggleButtonLoading } from '../../utils/ui/index.js';
 
 // Global list of books and students for the selectpickers
 var bookList = [];

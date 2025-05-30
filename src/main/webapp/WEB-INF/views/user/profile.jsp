@@ -283,6 +283,6 @@
 	<script src="utils/header.js" defer></script>
 	<script src="utils/sidebar.js" defer></script>
 	<script src="utils/password.js" defer></script>
-	<script type="module" src="js/profile.js" defer></script>
+	<script type="module" src="js/user/profile.js" defer></script>
 </body>
 </html>

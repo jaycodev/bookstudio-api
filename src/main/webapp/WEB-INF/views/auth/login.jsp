@@ -25,7 +25,7 @@
 			<section class="card border">
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
-					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="/images/logo-light.png">
+					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="./images/logo-light.png">
 					<h3 class="fw-bold mb-0 text-body-emphasis">Iniciar sesión</h3>
 					<p class="text-muted mb-0">Empieza a gestionar tus préstamos.</p>
 				</header>
@@ -99,7 +99,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
 	<!-- Custom Scripts -->
-	<script type="module" src="js/login.js" defer></script>
+	<script type="module" src="js/auth/login.js" defer></script>
 	<script src="utils/password.js" defer></script>
 </body>
 </html>

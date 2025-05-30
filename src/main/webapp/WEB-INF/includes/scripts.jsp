@@ -26,4 +26,4 @@
 <script src="utils/datatables-setup.js" defer></script>
 
 <!-- Page-Specific Script -->
-<script type="module" src="js/<%= currentPage %>" defer></script>
+<script type="module" src="js/user/<%= currentPage %>" defer></script>

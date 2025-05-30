@@ -11,7 +11,7 @@
  * @author [Jason]
  */
 
-import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+import { showToast, toggleButtonLoading } from '../../utils/ui/index.js';
 
 function placeholderColorSelect() {
 	$('select.selectpicker').on('change', function() {

@@ -1,23 +1,84 @@
 /**
- * users.js
+ * publishers.js
  * 
- * Manages the initialization, data loading, and configuration of the users table,  
- * as well as handling modals for creating, viewing, editing, and deleting user details.  
- * Utilizes AJAX for CRUD operations on user data.  
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.  
+ * Manages the initialization, data loading, and configuration of the publishers table,  
+ * as well as handling modals for creating, viewing, editing publisher details, 
+ * and performing logical delete (status change) operations on publishers.
+ * Utilizes AJAX for CRUD operations on publisher data.
+ * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
  * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
  * 
  * @author [Jason]
  */
 
-import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+import { showToast, toggleButtonLoading } from '../../utils/ui/index.js';
 
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
 
-// Global variable to handle profile photo deletion in edit modal
+// Global list of nationalities and literary genres for the selectpickers
+var nationalityList = [];
+var literaryGenreList = [];
+
+// Global variable to handle photo deletion in edit modal
 let deletePhotoFlag = false;
+
+function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
+	const select = $(selector).selectpicker('destroy').empty();
+
+	dataList.forEach(item => {
+		if (item[valueKey]) {
+			let content = item[textKey];
+
+			if (badgeValueKey && item[badgeValueKey] !== undefined) {
+				const badgeValue = item[badgeValueKey];
+				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
+			}
+
+			select.append(
+				$('<option>', {
+					value: item[valueKey]
+				}).attr('data-content', content)
+			);
+		}
+	});
+}
+
+function populateSelectOptions() {
+	$.ajax({
+		url: 'PublisherServlet',
+		type: 'GET',
+		data: { type: 'populateSelects' },
+		dataType: 'json',
+		success: function(data, xhr) {
+			if (xhr.status === 204) {
+				console.warn("No data found for select options.");
+				return;
+			}
+			
+			if (data) {
+				nationalityList = data.nationalities;
+				literaryGenreList = data.literaryGenres;
+
+				populateSelect('#addPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
+				populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
+
+				populateSelect('#editPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
+				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
+			}
+		},
+		error: function(xhr) {
+			let errorResponse;
+			try {
+				errorResponse = JSON.parse(xhr.responseText);
+				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+			} catch (e) {
+				console.error("Unexpected error:", xhr.status, xhr.responseText);
+			}
+		}
+	});
+}
 
 function placeholderColorSelect() {
 	$('select.selectpicker').on('change', function() {
@@ -50,56 +111,55 @@ function placeholderColorEditSelect() {
  * TABLE HANDLING
  *****************************************/
 
-function generateRow(user) {
+function generateRow(publisher) {
+	const userRole = sessionStorage.getItem('userRole');
+
 	return `
 		<tr>
 			<td class="align-middle text-start">
-				<span class="badge bg-body-tertiary text-body-emphasis border">${user.formattedUserId}</span>
+				<span class="badge bg-body-tertiary text-body-emphasis border">${publisher.formattedPublisherId}</span>
 			</td>
-			<td class="align-middle text-start">${user.username}</td>
-			<td class="align-middle text-start">${user.email}</td>
-			<td class="align-middle text-start">${user.firstName}</td>
-			<td class="align-middle text-start">${user.lastName}</td>
+			<td class="align-middle text-start">${publisher.name}</td>
 			<td class="align-middle text-start">
-			  <span class="badge bg-body-secondary text-body-emphasis border">
-			    ${
-			      user.role === 'administrador'
-			        ? '<i class="bi bi-shield-lock me-1"></i> Administrador'
-			        : '<i class="bi bi-person-workspace me-1"></i> Bibliotecario'
-			    }
-			  </span>
+				<span class="badge bg-body-secondary text-body-emphasis border">${publisher.nationalityName}</span>
+			</td>
+			<td class="align-middle text-start">
+				<span class="badge bg-body-secondary text-body-emphasis border">${publisher.literaryGenreName}</span>
 			</td>
 			<td class="align-middle text-center">
-				${user.profilePhotoBase64 ?
-					`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
+				${publisher.status === 'activo'
+					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
+			</td>
+			<td class="align-middle text-center">
+				${publisher.photoBase64 ?
+					`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
 					`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
 					</svg>`}
 			</td>
-			<td class="align-middle text-center">
+            <td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
+						data-bs-toggle="modal" data-bs-target="#detailsPublisherModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
 						<i class="bi bi-eye"></i>
 					</button>
-					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-						data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
-						<i class="bi bi-pencil"></i>
-					</button>
-					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Eliminar"
-						data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
-						<i class="bi bi-trash"></i>
-					</button>
+					${userRole === 'administrador' ?
+						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
+							data-bs-toggle="modal" data-bs-target="#editPublisherModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
+							<i class="bi bi-pencil"></i>
+						</button>`
+					: ''}
 				</div>
 			</td>
 		</tr>
 	`;
 }
 
-function addRowToTable(user) {
-	var table = $('#userTable').DataTable();
-	var rowHtml = generateRow(user);
+function addRowToTable(publisher) {
+	var table = $('#publisherTable').DataTable();
+	var rowHtml = generateRow(publisher);
 	var $row = $(rowHtml);
 
 	table.row.add($row).draw(false);
@@ -107,7 +167,7 @@ function addRowToTable(user) {
 	initializeTooltips($row);
 }
 
-function loadUsers() {
+function loadPublishers() {
 	toggleButtonAndSpinner('loading');
 
 	let safetyTimer = setTimeout(function() {
@@ -117,30 +177,30 @@ function loadUsers() {
 	}, 8000);
 
 	$.ajax({
-		url: 'UserServlet',
+		url: 'PublisherServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
 			clearTimeout(safetyTimer);
 
-			var tableBody = $('#bodyUsers');
+			var tableBody = $('#bodyPublishers');
 			tableBody.empty();
 
 			if (data && data.length > 0) {
-				data.forEach(function(user) {
-					var row = generateRow(user);
+				data.forEach(function(publisher) {
+					var row = generateRow(publisher);
 					tableBody.append(row);
 				});
 
 				initializeTooltips(tableBody);
 			}
 
-			if ($.fn.DataTable.isDataTable('#bookTable')) {
-				$('#userTable').DataTable().destroy();
+			if ($.fn.DataTable.isDataTable('#publisherTable')) {
+				$('#publisherTable').DataTable().destroy();
 			}
 
-			let dataTable = setupDataTable('#userTable');
+			let dataTable = setupDataTable('#publisherTable');
 
 			if (data && data.length > 0) {
 				$("#generatePDF, #generateExcel").prop("disabled", false);
@@ -166,21 +226,8 @@ function loadUsers() {
 			let errorResponse;
 			try {
 				errorResponse = JSON.parse(xhr.responseText);
-				console.error(`Error listing user data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-				switch (xhr.status) {
-		            case 403:
-		                showToast('No tienes permisos para listar los usuarios.', 'warning');
-		                break;
-		            case 400:
-		                showToast('Solicitud inválida. Verifica la petición.', 'error');
-		                break;
-		            case 500:
-		                showToast('Error interno del servidor. Intenta más tarde.', 'error');
-		                break;
-		            default:
-		                showToast('Hubo un error al listar los datos de los usuarios.', 'error');
-		                break;
-		        }
+				console.error(`Error listing publisher data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				showToast('Hubo un error al listar los datos de las editoriales.', 'error');
 			} catch (e) {
 				console.error("Unexpected error:", xhr.status, xhr.responseText);
 				showToast('Hubo un error inesperado.', 'error');
@@ -188,36 +235,37 @@ function loadUsers() {
 			
 			clearTimeout(safetyTimer);
 
-			var tableBody = $('#bodyUsers');
+			var tableBody = $('#bodyPublishers');
 			tableBody.empty();
 
-			if ($.fn.DataTable.isDataTable('#userTable')) {
-				$('#userTable').DataTable().destroy();
+			if ($.fn.DataTable.isDataTable('#publisherTable')) {
+				$('#publisherTable').DataTable().destroy();
 			}
 
-			setupDataTable('#userTable');
+			setupDataTable('#publisherTable');
 		}
 	});
 }
 
-function updateRowInTable(user) {
-	var table = $('#userTable').DataTable();
+function updateRowInTable(publisher) {
+	var table = $('#publisherTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text().trim() === user.formattedUserId.toString();
+		return $(this).find('td').eq(0).text().trim() === publisher.formattedPublisherId.toString();
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(3).text(user.firstName);
-		row.find('td').eq(4).text(user.lastName);
-		row.find('td').eq(5).find('span').html(user.role === 'administrador'
-			? '<i class="bi bi-shield-lock me-1"></i> Administrador'
-			: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario');
+		row.find('td').eq(1).text(publisher.name);
+		row.find('td').eq(2).find('span').text(publisher.nationalityName);
+		row.find('td').eq(3).find('span').text(publisher.literaryGenreName);
+		row.find('td').eq(4).html(publisher.status === 'activo'
+			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
-		if (user.profilePhotoBase64 && user.profilePhotoBase64.trim() !== "") {
-			row.find('td').eq(6).html(`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
+		if (publisher.photoBase64 && publisher.photoBase64.trim() !== "") {
+			row.find('td').eq(5).html(`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
 		} else {
-			row.find('td').eq(6).html(`
+			row.find('td').eq(5).html(`
 				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -235,21 +283,21 @@ function updateRowInTable(user) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddUserForm() {
+function handleAddPublisherForm() {
 	let isFirstSubmit = true;
 
-	$('#addUserModal').on('hidden.bs.modal', function() {
+	$('#addPublisherModal').on('hidden.bs.modal', function() {
 		isFirstSubmit = true;
-		$('#addUserForm').data("submitted", false);
+		$('#addPublisherForm').data("submitted", false);
 	});
 
-	$('#addUserForm').on('input change', 'input, select', function() {
+	$('#addPublisherForm').on('input change', 'input, select', function() {
 		if (!isFirstSubmit) {
 			validateAddField($(this));
 		}
 	});
 
-	$('#addUserForm').on('submit', function(event) {
+	$('#addPublisherForm').on('submit', function(event) {
 		event.preventDefault();
 
 		if ($(this).data("submitted") === true) {
@@ -277,15 +325,15 @@ function handleAddUserForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addUserSpinnerBtn").removeClass("d-none");
-			$("#addUserIcon").addClass("d-none");
+			$("#addPublisherSpinnerBtn").removeClass("d-none");
+			$("#addPublisherIcon").addClass("d-none");
 
 			if (cropper) {
 				cropper.getCroppedCanvas({
 					width: 460,
 					height: 460
 				}).toBlob(function(blob) {
-					formData.set('addUserProfilePhoto', blob, 'photo.jpg');
+					formData.set('addPublisherPhoto', blob, 'photo.jpg');
 					sendAddForm(formData);
 				}, 'image/jpeg', 0.7);
 			} else {
@@ -296,7 +344,7 @@ function handleAddUserForm() {
 				formData.append('type', 'create');
 
 				$.ajax({
-					url: 'UserServlet',
+					url: 'PublisherServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -306,61 +354,46 @@ function handleAddUserForm() {
 						if (response && response.success) {
 							addRowToTable(response.data);
 							
-							$('#addUserModal').modal('hide');
-							showToast('Usuario agregado exitosamente.', 'success');
+							$('#addPublisherModal').modal('hide');
+							showToast('Editorial agregada exitosamente.', 'success');
 						} else {
-							if (response.field) {
-								setFieldError(response.field, response.message);
-								$('#addUserForm').data("submitted", false);
-							}
-							else {
-								console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-								showToast(response.message, 'error');
-								$('#addUserModal').modal('hide');
-							}
+							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+							$('#addPublisherModal').modal('hide');
+							showToast('Hubo un error al agregar la editorial.', 'error');
 						}
 					},
 					error: function(xhr) {
-						var errorMessage = (xhr.responseJSON && xhr.responseJSON.message)
-							? xhr.responseJSON.message
-							: 'Hubo un error al agregar el usuario.';
-						var errorField = xhr.responseJSON && xhr.responseJSON.field
-							? xhr.responseJSON.field
-							: null;
-
-						if (errorField) {
-							setFieldError(errorField, errorMessage);
-							$('#addUserForm').data("submitted", false);
-						} else {
-							console.error(`Server error (${xhr.responseJSON ? xhr.responseJSON.errorType : 'unknown'} - ${xhr.status}):`, errorMessage);
+						let errorResponse;
+						try {
+							errorResponse = JSON.parse(xhr.responseText);
+							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
 							switch (xhr.status) {
-					            case 403:
-					                showToast('No tienes permisos para agregar usuarios.', 'warning');
-					                break;
-					            case 400:
-					                showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
-					                break;
-					            case 500:
-					                showToast('Error interno del servidor. Intenta más tarde.', 'error');
-					                break;
-					            default:
-					                showToast(errorMessage || 'Hubo un error al agregar el usuario.', 'error');
-					                break;
-					        }
-							$('#addUserModal').modal('hide');
+								case 403:
+									showToast('No tienes permisos para agregar editoriales.', 'warning');
+									break;
+								case 400:
+									showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+									break;
+								case 500:
+									showToast('Error interno del servidor. Intenta más tarde.', 'error');
+									break;
+								default:
+									showToast(errorResponse.message || 'Hubo un error al agregar la editorial.', 'error');
+									break;
+							}
+						} catch (e) {
+							console.error("Unexpected error:", xhr.status, xhr.responseText);
+							showToast('Hubo un error inesperado.', 'error');
 						}
+						
+						$('#addPublisherModal').modal('hide');
 					},
 					complete: function() {
-						$("#addUserSpinnerBtn").addClass("d-none");
-						$("#addUserIcon").removeClass("d-none");
+						$("#addPublisherSpinnerBtn").addClass("d-none");
+						$("#addPublisherIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
 				});
-			}
-			function setFieldError(fieldId, message) {
-				var field = $('#' + fieldId);
-				field.addClass('is-invalid');
-				field.siblings('.invalid-feedback').html(message).show();
 			}
 		} else {
 			$(this).data("submitted", false);
@@ -368,7 +401,7 @@ function handleAddUserForm() {
 	});
 
 	function validateAddField(field) {
-		if (field.attr('type') === 'search') {
+		if (field.attr('type') === 'search' || field.is('#addPublisherWebsite') || field.is('#addPublisherAddress')) {
 			return true;
 		}
 
@@ -384,33 +417,8 @@ function handleAddUserForm() {
 			field.removeClass('is-invalid');
 		}
 
-		// Email validation
-		if (field.is('#addUserEmail')) {
-			const email = field.val();
-			const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-
-			if (!emailRegex.test(email)) {
-				errorMessage = 'Por favor ingrese un correo electrónico válido.';
-				isValid = false;
-			}
-		}
-
-		// Username validation
-		if (field.is('#addUserUsername')) {
-			const username = field.val();
-			const usernameRegex = /^[a-zA-Z0-9_À-ÿ]+$/;
-
-			if (username.length < 3) {
-				errorMessage = 'El nombre de usuario debe tener al menos 3 caracteres.';
-				isValid = false;
-			} else if (!usernameRegex.test(username)) {
-				errorMessage = 'El nombre de usuario solo puede contener letras, números y guiones bajos y caracteres acentuados.';
-				isValid = false;
-			}
-		}
-
-		// First name validation
-		if (field.is('#addUserFirstName')) {
+		// Name validation
+		if (field.is('#addPublisherName')) {
 			const firstName = field.val();
 
 			if (firstName.length < 3) {
@@ -419,40 +427,19 @@ function handleAddUserForm() {
 			}
 		}
 
-		// Last name validation
-		if (field.is('#addUserLastName')) {
-			const lastName = field.val();
+		// Foundation year validation
+		if (field.is('#addFoundationYear')) {
+			const year = parseInt(field.val(), 10);
+			const currentYear = new Date().getFullYear();
 
-			if (lastName.length < 3) {
-				errorMessage = 'El apellido debe tener al menos 3 caracteres.';
+			if (isNaN(year) || year < 1000 || year > currentYear) {
+				errorMessage = `El año debe estar entre 1000 y ${currentYear}.`;
 				isValid = false;
 			}
 		}
 
-		// Password validation
-		if (field.is('#addUserPassword')) {
-			const password = field.val();
-			const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-
-			if (!passwordRegex.test(password)) {
-				errorMessage = 'La contraseña debe tener 8 caracteres, una mayúscula, un número y un símbolo.';
-				isValid = false;
-			}
-		}
-
-		// Confirm password validation
-		if (field.is('#addUserConfirmPassword')) {
-			const password = $('#addUserPassword').val();
-			const confirmPassword = field.val();
-
-			if (confirmPassword !== password) {
-				errorMessage = 'Las contraseñas no coinciden.';
-				isValid = false;
-			}
-		}
-
-		// Profile photo validation
-		if (field.is('#addUserProfilePhoto')) {
+		// Photo validation
+		if (field.is('#addPublisherPhoto')) {
 			var file = field[0].files[0];
 
 			if (!file) {
@@ -487,7 +474,7 @@ function handleAddUserForm() {
 	}
 }
 
-$('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
+$('#addPublisherPhoto, #editPublisherPhoto').on('change', function() {
 	var fileInput = $(this);
 	var file = fileInput[0].files[0];
 
@@ -504,21 +491,21 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 	}
 });
 
-function handleEditUserForm() {
+function handleEditPublisherForm() {
 	let isFirstSubmit = true;
 
-	$('#editUserModal').on('hidden.bs.modal', function() {
+	$('#editPublisherModal').on('hidden.bs.modal', function() {
 		isFirstSubmit = true;
-		$('#editUserForm').data("submitted", false);
+		$('#editPublisherForm').data("submitted", false);
 	});
 
-	$('#editUserForm').on('input change', 'input, select', function() {
+	$('#editPublisherForm').on('input change', 'input, select', function() {
 		if (!isFirstSubmit) {
 			validateEditField($(this));
 		}
 	});
 
-	$('#editUserForm').on('submit', function(event) {
+	$('#editPublisherForm').on('submit', function(event) {
 		event.preventDefault();
 
 		if ($(this).data("submitted") === true) {
@@ -544,24 +531,24 @@ function handleEditUserForm() {
 		if (isValid) {
 			var formData = new FormData(this);
 
-			var userId = $(this).data('userId');
-			if (userId) {
-				formData.append('userId', userId);
+			var publisherId = $(this).data('publisherId');
+			if (publisherId) {
+				formData.append('publisherId', publisherId);
 			}
 			
-			formData.append('deleteProfilePhoto', deletePhotoFlag);
+			formData.append('deletePhoto', deletePhotoFlag);
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editUserSpinnerBtn").removeClass("d-none");
-			$("#editUserIcon").addClass("d-none");
+			$("#editPublisherSpinnerBtn").removeClass("d-none");
+			$("#editPublisherIcon").addClass("d-none");
 
 			if (cropper) {
 				cropper.getCroppedCanvas({
 					width: 460,
 					height: 460
 				}).toBlob(function(blob) {
-					formData.set('editUserProfilePhoto', blob, 'photo.png');
+					formData.set('editPublisherPhoto', blob, 'photo.png');
 					sendEditForm(formData);
 				}, 'image/png');
 			} else {
@@ -572,7 +559,7 @@ function handleEditUserForm() {
 				formData.append('type', 'update');
 
 				$.ajax({
-					url: 'UserServlet',
+					url: 'PublisherServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -582,12 +569,12 @@ function handleEditUserForm() {
 						if (response && response.success) {
 							updateRowInTable(response.data);
 							
-							$('#editUserModal').modal('hide');
-							showToast('Usuario actualizado exitosamente.', 'success');
+							$('#editPublisherModal').modal('hide');
+							showToast('Editorial actualizada exitosamente.', 'success');
 						} else {
 							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-							$('#editUserModal').modal('hide');
-							showToast('Hubo un error al actualizar el usuario.', 'error');
+							$('#editPublisherModal').modal('hide');
+							showToast('Hubo un error al actualizar la editorial.', 'error');
 						}
 					},
 					error: function(xhr) {
@@ -597,7 +584,7 @@ function handleEditUserForm() {
 							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
 							switch (xhr.status) {
 								case 403:
-									showToast('No tienes permisos para actualizar usuarios.', 'warning');
+									showToast('No tienes permisos para actualizar editoriales.', 'warning');
 									break;
 								case 400:
 									showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
@@ -606,7 +593,7 @@ function handleEditUserForm() {
 									showToast('Error interno del servidor. Intenta más tarde.', 'error');
 									break;
 								default:
-									showToast(errorResponse.message || 'Hubo un error al actualizar el usuario.', 'error');
+									showToast(errorResponse.message || 'Hubo un error al actualizar la editorial.', 'error');
 									break;
 							}
 						} catch (e) {
@@ -614,11 +601,11 @@ function handleEditUserForm() {
 							showToast('Hubo un error inesperado.', 'error');
 						}
 						
-						$('#editUserModal').modal('hide');
+						$('#editPublisherModal').modal('hide');
 					},
 					complete: function() {
-						$("#editUserSpinnerBtn").addClass("d-none");
-						$("#editUserIcon").removeClass("d-none");
+						$("#editPublisherSpinnerBtn").addClass("d-none");
+						$("#editPublisherIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
 				});
@@ -630,7 +617,7 @@ function handleEditUserForm() {
 }
 
 function validateEditField(field) {
-	if (field.attr('type') === 'search') {
+	if (field.attr('type') === 'search' || field.is('#editPublisherWebsite') || field.is('#editPublisherAddress')) {
 		return true;
 	}
 
@@ -646,8 +633,8 @@ function validateEditField(field) {
 		field.removeClass('is-invalid');
 	}
 
-	// First name validation
-	if (field.is('#editUserFirstName')) {
+	// Name validation
+	if (field.is('#editPublisherName')) {
 		const firstName = field.val();
 
 		if (firstName.length < 3) {
@@ -656,18 +643,19 @@ function validateEditField(field) {
 		}
 	}
 
-	// Last name validation
-	if (field.is('#editUserLastName')) {
-		const lastName = field.val();
+	// Foundation year validation
+	if (field.is('#editFoundationYear')) {
+		const year = parseInt(field.val(), 10);
+		const currentYear = new Date().getFullYear();
 
-		if (lastName.length < 3) {
-			errorMessage = 'El apellido debe tener al menos 3 caracteres.';
+		if (isNaN(year) || year < 1000 || year > currentYear) {
+			errorMessage = `El año debe estar entre 1000 y ${currentYear}.`;
 			isValid = false;
 		}
 	}
 
-	// Profile photo validation
-	if (field.is('#editUserProfilePhoto')) {
+	// Photo validation
+	if (field.is('#editPublisherPhoto')) {
 		var file = field[0].files[0];
 
 		if (!file) {
@@ -701,108 +689,36 @@ function validateEditField(field) {
 	return isValid;
 }
 
-function handleDeleteUser() {
-	var isSubmitted = false;
-
-	$('#confirmDeleteUser').off('click').on('click', function() {
-		if (isSubmitted) return;
-		isSubmitted = true;
-
-		$('#confirmDeleteUserIcon').addClass('d-none');
-		$('#confirmDeleteUserSpinner').removeClass('d-none');
-		$('#confirmDeleteUser').prop('disabled', true);
-
-		var userId = $(this).data('userId');
-		var formattedUserId = $(this).data('formattedUserId');
-
-		$.ajax({
-			url: 'UserServlet',
-			type: 'POST',
-			data: {
-				type: 'delete',
-				userId: userId
-			},
-			dataType: 'json',
-			success: function(response) {
-				if (response && response.success) {
-					var table = $('#userTable').DataTable();
-
-					table.rows().every(function() {
-						var data = this.data();
-						var spanText = $('<div>').html(data[0]).text().trim();
-						if (spanText == formattedUserId) {
-							this.remove();
-						}
-					});
-
-					table.draw(false);
-
-					$('#deleteUserModal').modal('hide');
-					showToast("Usuario eliminado exitosamente.", 'success');
-				} else {
-					console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-					$('#deleteUserModal').modal('hide');
-					showToast("Hubo un error al eliminar el usuario.", 'error');
-				}
-			},
-			error: function(xhr) {
-				let errorResponse;
-				try {
-					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					switch (xhr.status) {
-						case 403:
-							showToast('No tienes permisos para eliminar usuarios.', 'warning');
-							break;
-						case 400:
-							showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
-							break;
-						case 500:
-							showToast('Error interno del servidor. Intenta más tarde.', 'error');
-							break;
-						default:
-							showToast(errorResponse.message || 'Hubo un error al eliminar el usuario.', 'error');
-							break;
-					}
-				} catch (e) {
-					console.error("Unexpected error:", xhr.status, xhr.responseText);
-					showToast('Hubo un error inesperado.', 'error');
-				}
-				$('#deleteUserModal').modal('hide');
-			},
-			complete: function() {
-				$('#confirmDeleteUserSpinner').addClass('d-none');
-				$('#confirmDeleteUserIcon').removeClass('d-none');
-				$('#confirmDeleteUser').prop('disabled', false);
-			}
-		});
-	});
-}
-
 /*****************************************
  * MODAL MANAGEMENT
  *****************************************/
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addUserModal"]', function() {
-		$('#addUserRole').selectpicker('destroy').empty().append(
+	$(document).on('click', '[data-bs-target="#addPublisherModal"]', function() {
+		populateSelect('#addPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
+		$('#addPublisherNationality').selectpicker();
+		
+		populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
+		$('#addLiteraryGenre').selectpicker();
+
+		$('#addPublisherStatus').selectpicker('destroy').empty().append(
 			$('<option>', {
-				value: 'administrador',
-				text: 'Administrador'
+				value: 'activo',
+				text: 'Activo'
 			}),
 			$('<option>', {
-				value: 'bibliotecario',
-				text: 'Bibliotecario'
+				value: 'inactivo',
+				text: 'Inactivo'
 			})
 		);
-		$('#addUserRole').selectpicker();
+		$('#addPublisherStatus').selectpicker();
 		
 		$('#defaultAddPhotoContainer').removeClass('d-none');
 		$('#deleteAddPhotoBtn').addClass('d-none');
 
-		$('#addUserForm')[0].reset();
-		$('#addUserForm .is-invalid').removeClass('is-invalid');
+		$('#addPublisherForm')[0].reset();
+		$('#addPublisherForm .is-invalid').removeClass('is-invalid');
 
 		$('#cropperContainerAdd').addClass('d-none');
 
@@ -810,124 +726,130 @@ function loadModalData() {
 			cropper.destroy();
 			cropper = null;
 		}
-
-		$('#addUserForm .password-field').attr('type', 'password');
-		$('#addUserForm .input-group-text').find('i').removeClass('bi-eye-slash').addClass('bi-eye');
-
-		preventSpacesInPasswordField("#addUserPassword, #addUserConfirmPassword");
 	});
 
 	// Details Modal
-	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function() {
-		var userId = $(this).data('id');
-		$('#detailsUserModalID').text($(this).data('formatted-id'));
+	$(document).on('click', '[data-bs-target="#detailsPublisherModal"]', function() {
+		var publisherId = $(this).data('id');
+		$('#detailsPublisherModalID').text($(this).data('formatted-id'));
 		
-		$('#detailsUserSpinner').removeClass('d-none');
-		$('#detailsUserContent').addClass('d-none');
+		$('#detailsPublisherSpinner').removeClass('d-none');
+		$('#detailsPublisherContent').addClass('d-none');
 
 		$.ajax({
-			url: 'UserServlet',
+			url: 'PublisherServlet',
 			type: 'GET',
-			data: { type: 'details', userId: userId },
+			data: { type: 'details', publisherId: publisherId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsUserID').text(data.formattedUserId);
-				$('#detailsUserUsername').text(data.username);
-				$('#detailsUserEmail').text(data.email);
-				$('#detailsUserFirstName').text(data.firstName);
-				$('#detailsUserLastName').text(data.lastName);
-				$('#detailsUserRole').html(
-					data.role === 'administrador'
-						? '<i class="bi bi-shield-lock me-1"></i> Administrador'
-						: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario'
+				$('#detailsPublisherID').text(data.formattedPublisherId);
+				$('#detailsPublisherName').text(data.name);
+				$('#detailsPublisherNationality').text(data.nationalityName);
+				$('#detailsPublisherGenre').text(data.literaryGenreName);
+				$('#detailsPublisherYear').text(data.foundationYear);
+				$('#detailsPublisherWebsite a').attr('href', data.website).text(data.website);
+				$('#detailsPublisherAddress').text(data.address);
+				$('#detailsPublisherStatus').html(
+					data.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
 				);
-				if (data.profilePhotoBase64) {
-					$('#detailsUserImg').attr('src', data.profilePhotoBase64).removeClass('d-none');
-					$('#detailsUserSvg').addClass('d-none');
+				if (data.photoBase64) {
+					$('#detailsPublisherImg').attr('src', data.photoBase64).removeClass('d-none');
+					$('#detailsPublisherSvg').addClass('d-none');
 				} else {
-					$('#detailsUserImg').addClass('d-none');
-					$('#detailsUserSvg').removeClass('d-none');
+					$('#detailsPublisherImg').addClass('d-none');
+					$('#detailsPublisherSvg').removeClass('d-none');
 				}
 				
-				$('#detailsUserSpinner').addClass('d-none');
-				$('#detailsUserContent').removeClass('d-none');
+				$('#detailsPublisherSpinner').addClass('d-none');
+				$('#detailsPublisherContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Error loading user details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al cargar los detalles del usuario.', 'error');
+					console.error(`Error loading publisher details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles de la editorial.', 'error');
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				$('#detailsUserModal').modal('hide');
+				$('#detailsPublisherModal').modal('hide');
 			}
 		});
 	});
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editUserModal"]', function() {
-		var userId = $(this).data('id');
-		$('#editUserModalID').text($(this).data('formatted-id'));
+	$(document).on('click', '[data-bs-target="#editPublisherModal"]', function() {
+		var publisherId = $(this).data('id');
+		$('#editPublisherModalID').text($(this).data('formatted-id'));
 		
-		$('#editUserSpinner').removeClass('d-none');
-		$('#editUserForm').addClass('d-none');
-		$('#editUserBtn').prop('disabled', true);
+		$('#editPublisherSpinner').removeClass('d-none');
+		$('#editPublisherForm').addClass('d-none');
+		$('#editPublisherBtn').prop('disabled', true);
 
 		$.ajax({
-			url: 'UserServlet',
+			url: 'PublisherServlet',
 			type: 'GET',
-			data: { type: 'details', userId: userId },
+			data: { type: 'details', publisherId: publisherId },
 			dataType: 'json',
 			success: function(data) {
-				$('#editUserForm').data('userId', data.userId);
-				$('#editUserUsername').val(data.username);
-				$('#editUserEmail').val(data.email);
-				$('#editUserFirstName').val(data.firstName);
-				$('#editUserLastName').val(data.lastName);
+				$('#editPublisherForm').data('publisherId', data.publisherId);
+				$('#editPublisherName').val(data.name);
+				
+				populateSelect('#editPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
+				$('#editPublisherNationality').val(data.nationalityId);
+				$('#editPublisherNationality').selectpicker();
 
-				$('#editUserRole').selectpicker('destroy').empty().append(
+				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
+				$('#editLiteraryGenre').val(data.literaryGenreId);
+				$('#editLiteraryGenre').selectpicker();
+
+				$('#editFoundationYear').val(data.foundationYear);
+				$('#editPublisherWebsite').val(data.website);
+				$('#editPublisherAddress').val(data.address);
+
+				$('#editPublisherStatus').selectpicker('destroy').empty().append(
 					$('<option>', {
-						value: 'administrador',
-						text: 'Administrador'
+						value: 'activo',
+						text: 'Activo'
 					}),
 					$('<option>', {
-						value: 'bibliotecario',
-						text: 'Bibliotecario'
+						value: 'inactivo',
+						text: 'Inactivo'
 					})
 				);
-				$('#editUserRole').val(data.role);
-				$('#editUserRole').selectpicker();
+				$('#editPublisherStatus').val(data.status);
+				$('#editPublisherStatus').selectpicker();
 				
-				updateEditImageContainer(data.profilePhotoBase64);
+				updateEditImageContainer(data.photoBase64);
 
-				$('#editUserForm .is-invalid').removeClass('is-invalid');
+				$('#editPublisherForm .is-invalid').removeClass('is-invalid');
 
 				placeholderColorEditSelect();
 
-				$('#editUserForm').find('select').each(function() {
+				$('#editPublisherForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
 
-				$('#editUserProfilePhoto').val('');
+				$('#editPublisherPhoto').val('');
 				
-				$('#editUserSpinner').addClass('d-none');
-				$('#editUserForm').removeClass('d-none');
-				$('#editUserBtn').prop('disabled', false);
+				$('#editPublisherSpinner').addClass('d-none');
+				$('#editPublisherForm').removeClass('d-none');
+				$('#editPublisherBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Error loading user details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al cargar los datos del usuario.', 'error');
+					console.error(`Error loading publisher details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos de la editorial.', 'error');
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				$('#editUserModal').modal('hide');
+				$('#editPublisherModal').modal('hide');
 			}
 		});
 
@@ -938,43 +860,17 @@ function loadModalData() {
 			cropper = null;
 		}
 	});
-
-	// Delete Modal
-	$('#deleteUserModal').on('show.bs.modal', function(event) {
-		var button = $(event.relatedTarget);
-		var userId = button.data('id');
-		var formattedUserId = button.data('formatted-id');
-		
-		$('#deleteUserModalID').text(formattedUserId);
-		$('#confirmDeleteUser').data('userId', userId);
-		$('#confirmDeleteUser').data('formattedUserId', formattedUserId);
-	});
 }
 
-function preventSpacesInPasswordField(selector) {
-	$(selector).off('input').on("input", function() {
-		const inputElement = this;
-		const cursorPosition = inputElement.selectionStart;
-		const originalValue = $(this).val();
-		const newValue = originalValue.replace(/\s/g, '');
-
-		if (originalValue !== newValue) {
-			$(this).val(newValue);
-			const spacesRemoved = (originalValue.slice(0, cursorPosition).match(/\s/g) || []).length;
-			inputElement.setSelectionRange(cursorPosition - spacesRemoved, cursorPosition - spacesRemoved);
-		}
-	});
-}
-
-function updateEditImageContainer(profilePhotoBase64) {
+function updateEditImageContainer(photoBase64) {
 	const $editImageContainer = $('#currentEditPhotoContainer');
 	const $deleteEditPhotoBtn = $('#deleteEditPhotoBtn');
 
 	$editImageContainer.empty();
 
-	if (profilePhotoBase64) {
+	if (photoBase64) {
 		$editImageContainer.html(
-			`<img src="${profilePhotoBase64}" class="img-fluid rounded-circle" alt="Foto del Usuario">`
+			`<img src="${photoBase64}" class="img-fluid rounded-circle" alt="Foto de la Editorial">`
 		);
 		$deleteEditPhotoBtn.removeClass('d-none');
 	} else {
@@ -997,7 +893,7 @@ $('#deleteAddPhotoBtn').on('click', function() {
 		cropper = null;
 	}
 	$('#cropperContainerAdd').addClass('d-none');
-	$('#addUserProfilePhoto').val('');
+	$('#addPublisherPhoto').val('');
 	$('#defaultAddPhotoContainer').removeClass('d-none');
 });
 
@@ -1012,7 +908,7 @@ $('#deleteEditPhotoBtn').on('click', function() {
 		cropper = null;
 	}
 	$('#cropperContainerEdit').addClass('d-none');
-	$('#editUserProfilePhoto').val('');
+	$('#editPublisherPhoto').val('');
 });
 
 let cropper;
@@ -1048,10 +944,10 @@ function initializeCropper(file, $cropperContainer, $imageToCrop) {
 	reader.readAsDataURL(file);
 }
 
-$('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
+$('#addPublisherPhoto, #editPublisherPhoto').on('change', function() {
 	const file = this.files[0];
 	deletePhotoFlag = false;
-
+	
 	$('#deleteAddPhotoBtn').addClass('d-none');
 	$('#deleteEditPhotoBtn').addClass('d-none');
 
@@ -1063,7 +959,7 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 		$('#deleteEditPhotoBtn').removeClass('d-none');
 
 		let $container, $image;
-		if ($(this).is('#addUserProfilePhoto')) {
+		if ($(this).is('#addPublisherPhoto')) {
 			$container = $cropperContainerAdd;
 			$image = $imageToCropAdd;
 		} else {
@@ -1072,7 +968,7 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 		}
 		initializeCropper(file, $container, $image);
 	} else {
-		if ($(this).is('#addUserProfilePhoto')) {
+		if ($(this).is('#addPublisherPhoto')) {
 			$cropperContainerAdd.addClass('d-none');
 			if (cropper) {
 				cropper.destroy();
@@ -1142,15 +1038,15 @@ function initializeTooltips(container) {
 	});
 }
 
-function generatePDF(dataTable) {
+function generatePDF(publisherTable) {
 	const pdfBtn = $('#generatePDF');
 	toggleButtonLoading(pdfBtn, true);
 	
 	let hasWarnings = false;
-
+	
 	try {
 		const { jsPDF } = window.jspdf;
-		const doc = new jsPDF("l", "mm", "a4");
+		const doc = new jsPDF("p", "mm", "a4");
 		const logoUrl = '/images/bookstudio-logo-no-bg.png';
 	
 		const currentDate = new Date();
@@ -1166,64 +1062,72 @@ function generatePDF(dataTable) {
 		});
 	
 		const pageWidth = doc.internal.pageSize.getWidth();
-		const margin = 10;
+		const margin = 15;
 		const topMargin = 5;
 		
 		try {
-			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
+			doc.addImage(logoUrl, 'PNG', margin, topMargin, 30, 30);
 		} catch (imgError) {
 			console.warn("Logo not available:", imgError);
 			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
 			hasWarnings = true;
 		}
-		
+	
 		doc.setFont("helvetica", "bold");
-		doc.setFontSize(14);
-		doc.text("Lista de usuarios", pageWidth / 2, topMargin + 13, { align: "center" });
+		doc.setFontSize(18);
+		doc.setTextColor(40);
+		doc.text("Lista de editoriales", pageWidth / 2, topMargin + 18, { align: "center" });
 	
 		doc.setFont("helvetica", "normal");
-		doc.setFontSize(8);
-		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
-		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
+		doc.setFontSize(10);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 15, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 20, { align: "right" });
 	
-		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+		const data = publisherTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[4].innerText.trim();
+			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
 	
 			return [
 				row.cells[0].innerText.trim(),
 				row.cells[1].innerText.trim(),
 				row.cells[2].innerText.trim(),
 				row.cells[3].innerText.trim(),
-				row.cells[4].innerText.trim(),
-				row.cells[5].innerText.trim()
+				estado
 			];
 		});
 	
 		doc.autoTable({
-			startY: topMargin + 25,
+			startY: topMargin + 35,
 			margin: { left: margin, right: margin },
-			head: [['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
+			head: [['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
 				fillColor: [0, 0, 0],
 				textColor: 255,
 				fontStyle: 'bold',
-				fontSize: 8,
 				halign: 'left'
 			},
 			bodyStyles: {
 				font: "helvetica",
-				fontSize: 7,
+				fontSize: 10,
 				halign: 'left'
 			},
+			columnStyles: {
+				0: { cellWidth: 20 },
+				1: { cellWidth: 50 },
+				2: { cellWidth: 30 },
+				3: { cellWidth: 50 },
+				4: { cellWidth: 30 }
+			},
 			didParseCell: function(data) {
-				if (data.section === 'body' && data.column.index === 6) {
-					data.cell.styles.textColor = [0, 0, 0];
+				if (data.section === 'body' && data.column.index === 4) {
+					data.cell.styles.textColor = data.cell.raw === "Activo" ? [0, 128, 0] : [255, 0, 0];
 				}
 			}
 		});
 	
-		const filename = `Lista_de_usuarios_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+		const filename = `Lista_de_editoriales_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
 	
 		const pdfBlob = doc.output('blob');
 		const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1233,7 +1137,7 @@ function generatePDF(dataTable) {
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
-
+		
 		if (!hasWarnings) {
 			showToast("PDF generado exitosamente.", "success");
 		}
@@ -1245,13 +1149,13 @@ function generatePDF(dataTable) {
 	}
 }
 
-function generateExcel(dataTable) {
+function generateExcel(publisherTable) {
 	const excelBtn = $('#generateExcel');
 	toggleButtonLoading(excelBtn, true);
 	
 	try {
 		const workbook = new ExcelJS.Workbook();
-		const worksheet = workbook.addWorksheet('Usuarios');
+		const worksheet = workbook.addWorksheet('Editoriales');
 	
 		const currentDate = new Date();
 		const dateStr = currentDate.toLocaleDateString('es-ES', {
@@ -1265,28 +1169,27 @@ function generateExcel(dataTable) {
 			hour12: true
 		});
 	
-		worksheet.mergeCells('A1:F1');
+		worksheet.mergeCells('A1:E1');
 		const titleCell = worksheet.getCell('A1');
-		titleCell.value = 'Lista de usuarios - BookStudio';
+		titleCell.value = 'Lista de editoriales - BookStudio';
 		titleCell.font = { name: 'Arial', size: 14, bold: true };
 		titleCell.alignment = { horizontal: 'center' };
 	
-		worksheet.mergeCells('A2:F2');
+		worksheet.mergeCells('A2:E2');
 		const dateTimeCell = worksheet.getCell('A2');
 		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
 		dateTimeCell.alignment = { horizontal: 'center' };
 	
 		worksheet.columns = [
 			{ key: 'id', width: 10 },
-			{ key: 'usuario', width: 20 },
-			{ key: 'correo', width: 30 },
-			{ key: 'nombres', width: 30 },
-			{ key: 'apellidos', width: 30 },
-			{ key: 'rol', width: 20 }
+			{ key: 'nombre', width: 30 },
+			{ key: 'nacionalidad', width: 25 },
+			{ key: 'genero', width: 30 },
+			{ key: 'estado', width: 15 }
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
+		headerRow.values = ['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1299,20 +1202,32 @@ function generateExcel(dataTable) {
 			};
 		});
 	
-		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+		const data = publisherTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
+			let estado = row.cells[4].innerText.trim();
+			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
+	
 			return {
 				id: row.cells[0].innerText.trim(),
-				usuario: row.cells[1].innerText.trim(),
-				correo: row.cells[2].innerText.trim(),
-				nombres: row.cells[3].innerText.trim(),
-				apellidos: row.cells[4].innerText.trim(),
-				rol: row.cells[5].innerText.trim()
+				nombre: row.cells[1].innerText.trim(),
+				nacionalidad: row.cells[2].innerText.trim(),
+				genero: row.cells[3].innerText.trim(),
+				estado: estado
 			};
 		});
 	
-		data.forEach(item => worksheet.addRow(item));
+		data.forEach((item) => {
+			const row = worksheet.addRow(item);
+			const estadoCell = row.getCell(5);
+			if (estadoCell.value === "Activo") {
+				estadoCell.font = { color: { argb: '008000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };
+			} else {
+				estadoCell.font = { color: { argb: 'FF0000' } };
+				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE6E6' } };
+			}
+		});
 	
-		const filename = `Lista_de_usuarios_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+		const filename = `Lista_de_editoriales_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
 	
 		workbook.xlsx.writeBuffer().then(buffer => {
 			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -1340,11 +1255,11 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function() {
-	loadUsers();
-	handleAddUserForm();
-	handleEditUserForm();
-	handleDeleteUser();
+	loadPublishers();
+	handleAddPublisherForm();
+	handleEditPublisherForm();
 	loadModalData();
+	populateSelectOptions();
 	$('.selectpicker').selectpicker();
 	setupBootstrapSelectDropdownStyles();
 	placeholderColorSelect();

@@ -1,84 +1,23 @@
 /**
- * authors.js
+ * users.js
  * 
- * Manages the initialization, data loading, and configuration of the authors table,  
- * as well as handling modals for creating, viewing, editing author details, 
- * and performing logical delete (status change) operations on authors.
- * Utilizes AJAX for CRUD operations on author data.
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
+ * Manages the initialization, data loading, and configuration of the users table,  
+ * as well as handling modals for creating, viewing, editing, and deleting user details.  
+ * Utilizes AJAX for CRUD operations on user data.  
+ * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.  
  * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
  * 
  * @author [Jason]
  */
 
-import { showToast, toggleButtonLoading } from '../utils/ui/index.js';
+import { showToast, toggleButtonLoading } from '../../utils/ui/index.js';
 
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
 
-// Global list of nationalities and literary genres for the selectpickers
-var nationalityList = [];
-var literaryGenreList = [];
-
-// Global variable to handle photo deletion in edit modal
+// Global variable to handle profile photo deletion in edit modal
 let deletePhotoFlag = false;
-
-function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
-	const select = $(selector).selectpicker('destroy').empty();
-
-	dataList.forEach(item => {
-		if (item[valueKey]) {
-			let content = item[textKey];
-
-			if (badgeValueKey && item[badgeValueKey] !== undefined) {
-				const badgeValue = item[badgeValueKey];
-				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
-			}
-
-			select.append(
-				$('<option>', {
-					value: item[valueKey]
-				}).attr('data-content', content)
-			);
-		}
-	});
-}
-
-function populateSelectOptions() {
-	$.ajax({
-		url: 'AuthorServlet',
-		type: 'GET',
-		data: { type: 'populateSelects' },
-		dataType: 'json',
-		success: function(data, xhr) {
-			if (xhr.status === 204) {
-				console.warn("No data found for select options.");
-				return;
-			}
-			
-			if (data) {
-				nationalityList = data.nationalities;
-				literaryGenreList = data.literaryGenres;
-
-				populateSelect('#addAuthorNationality', nationalityList, 'nationalityId', 'nationalityName');
-				populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
-
-				populateSelect('#editAuthorNationality', nationalityList, 'nationalityId', 'nationalityName');
-				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
-			}
-		},
-		error: function(xhr) {
-			let errorResponse;
-			try {
-				errorResponse = JSON.parse(xhr.responseText);
-				console.error(`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-			} catch (e) {
-				console.error("Unexpected error:", xhr.status, xhr.responseText);
-			}
-		}
-	});
-}
 
 function placeholderColorSelect() {
 	$('select.selectpicker').on('change', function() {
@@ -107,55 +46,32 @@ function placeholderColorEditSelect() {
 	});
 }
 
-function placeholderColorDateInput() {
-	$('input[type="date"]').each(function() {
-		var $input = $(this);
-
-		if (!$input.val()) {
-			$input.css('color', 'var(--placeholder-color)');
-		} else {
-			$input.css('color', '');
-		}
-	});
-
-	$('input[type="date"]').on('change input', function() {
-		var $input = $(this);
-
-		if (!$input.val()) {
-			$input.css('color', 'var(--placeholder-color)');
-		} else {
-			$input.css('color', '');
-		}
-	});
-}
-
 /*****************************************
  * TABLE HANDLING
  *****************************************/
 
-function generateRow(author) {
-	const userRole = sessionStorage.getItem('userRole');
-
+function generateRow(user) {
 	return `
 		<tr>
 			<td class="align-middle text-start">
-				<span class="badge bg-body-tertiary text-body-emphasis border">${author.formattedAuthorId}</span>
+				<span class="badge bg-body-tertiary text-body-emphasis border">${user.formattedUserId}</span>
 			</td>
-			<td class="align-middle text-start">${author.name}</td>
+			<td class="align-middle text-start">${user.username}</td>
+			<td class="align-middle text-start">${user.email}</td>
+			<td class="align-middle text-start">${user.firstName}</td>
+			<td class="align-middle text-start">${user.lastName}</td>
 			<td class="align-middle text-start">
-				<span class="badge bg-body-secondary text-body-emphasis border">${author.nationalityName}</span>
-			</td>
-			<td class="align-middle text-start">
-				<span class="badge bg-body-secondary text-body-emphasis border">${author.literaryGenreName}</span>
+			  <span class="badge bg-body-secondary text-body-emphasis border">
+			    ${
+			      user.role === 'administrador'
+			        ? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+			        : '<i class="bi bi-person-workspace me-1"></i> Bibliotecario'
+			    }
+			  </span>
 			</td>
 			<td class="align-middle text-center">
-				${author.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'}
-			</td>
-			<td class="align-middle text-center">
-				${author.photoBase64 ?
-					`<img src="${author.photoBase64}" alt="Foto del Autor" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
+				${user.profilePhotoBase64 ?
+					`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">` :
 					`<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -164,24 +80,26 @@ function generateRow(author) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsAuthorModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
+						data-bs-toggle="modal" data-bs-target="#detailsUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-eye"></i>
 					</button>
-					${userRole === 'administrador' ?
-						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editAuthorModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
-							<i class="bi bi-pencil"></i>
-						</button>`
-					: ''}
+					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
+						data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
+						<i class="bi bi-pencil"></i>
+					</button>
+					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Eliminar"
+						data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
+						<i class="bi bi-trash"></i>
+					</button>
 				</div>
 			</td>
 		</tr>
 	`;
 }
 
-function addRowToTable(author) {
-	var table = $('#authorTable').DataTable();
-	var rowHtml = generateRow(author);
+function addRowToTable(user) {
+	var table = $('#userTable').DataTable();
+	var rowHtml = generateRow(user);
 	var $row = $(rowHtml);
 
 	table.row.add($row).draw(false);
@@ -189,7 +107,7 @@ function addRowToTable(author) {
 	initializeTooltips($row);
 }
 
-function loadAuthors() {
+function loadUsers() {
 	toggleButtonAndSpinner('loading');
 
 	let safetyTimer = setTimeout(function() {
@@ -199,30 +117,30 @@ function loadAuthors() {
 	}, 8000);
 
 	$.ajax({
-		url: 'AuthorServlet',
+		url: 'UserServlet',
 		type: 'GET',
 		data: { type: 'list' },
 		dataType: 'json',
 		success: function(data) {
 			clearTimeout(safetyTimer);
 
-			var tableBody = $('#bodyAuthors');
+			var tableBody = $('#bodyUsers');
 			tableBody.empty();
 
 			if (data && data.length > 0) {
-				data.forEach(function(author) {
-					var row = generateRow(author);
+				data.forEach(function(user) {
+					var row = generateRow(user);
 					tableBody.append(row);
 				});
 
 				initializeTooltips(tableBody);
 			}
 
-			if ($.fn.DataTable.isDataTable('#authorTable')) {
-				$('#authorTable').DataTable().destroy();
+			if ($.fn.DataTable.isDataTable('#bookTable')) {
+				$('#userTable').DataTable().destroy();
 			}
 
-			let dataTable = setupDataTable('#authorTable');
+			let dataTable = setupDataTable('#userTable');
 
 			if (data && data.length > 0) {
 				$("#generatePDF, #generateExcel").prop("disabled", false);
@@ -248,8 +166,21 @@ function loadAuthors() {
 			let errorResponse;
 			try {
 				errorResponse = JSON.parse(xhr.responseText);
-				console.error(`Error listing author data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-				showToast('Hubo un error al listar los datos de los autores.', 'error');
+				console.error(`Error listing user data (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+				switch (xhr.status) {
+		            case 403:
+		                showToast('No tienes permisos para listar los usuarios.', 'warning');
+		                break;
+		            case 400:
+		                showToast('Solicitud inválida. Verifica la petición.', 'error');
+		                break;
+		            case 500:
+		                showToast('Error interno del servidor. Intenta más tarde.', 'error');
+		                break;
+		            default:
+		                showToast('Hubo un error al listar los datos de los usuarios.', 'error');
+		                break;
+		        }
 			} catch (e) {
 				console.error("Unexpected error:", xhr.status, xhr.responseText);
 				showToast('Hubo un error inesperado.', 'error');
@@ -257,37 +188,36 @@ function loadAuthors() {
 			
 			clearTimeout(safetyTimer);
 
-			var tableBody = $('#bodyAuthors');
+			var tableBody = $('#bodyUsers');
 			tableBody.empty();
 
-			if ($.fn.DataTable.isDataTable('#authorTable')) {
-				$('#authorTable').DataTable().destroy();
+			if ($.fn.DataTable.isDataTable('#userTable')) {
+				$('#userTable').DataTable().destroy();
 			}
 
-			setupDataTable('#authorTable');
+			setupDataTable('#userTable');
 		}
 	});
 }
 
-function updateRowInTable(author) {
-	var table = $('#authorTable').DataTable();
+function updateRowInTable(user) {
+	var table = $('#userTable').DataTable();
 
 	var row = table.rows().nodes().to$().filter(function() {
-		return $(this).find('td').eq(0).text().trim() === author.formattedAuthorId.toString();
+		return $(this).find('td').eq(0).text().trim() === user.formattedUserId.toString();
 	});
 
 	if (row.length > 0) {
-		row.find('td').eq(1).text(author.name);
-		row.find('td').eq(2).find('span').text(author.nationalityName);
-		row.find('td').eq(3).find('span').text(author.literaryGenreName);
-		row.find('td').eq(4).html(author.status === 'activo'
-			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
+		row.find('td').eq(3).text(user.firstName);
+		row.find('td').eq(4).text(user.lastName);
+		row.find('td').eq(5).find('span').html(user.role === 'administrador'
+			? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+			: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario');
 
-		if (author.photoBase64 && author.photoBase64.trim() !== "") {
-			row.find('td').eq(5).html(`<img src="${author.photoBase64}" alt="Foto del Autor" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
+		if (user.profilePhotoBase64 && user.profilePhotoBase64.trim() !== "") {
+			row.find('td').eq(6).html(`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
 		} else {
-			row.find('td').eq(5).html(`
+			row.find('td').eq(6).html(`
 				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -305,21 +235,21 @@ function updateRowInTable(author) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddAuthorForm() {
+function handleAddUserForm() {
 	let isFirstSubmit = true;
 
-	$('#addAuthorModal').on('hidden.bs.modal', function() {
+	$('#addUserModal').on('hidden.bs.modal', function() {
 		isFirstSubmit = true;
-		$('#addAuthorForm').data("submitted", false);
+		$('#addUserForm').data("submitted", false);
 	});
 
-	$('#addAuthorForm').on('input change', 'input, select', function() {
+	$('#addUserForm').on('input change', 'input, select', function() {
 		if (!isFirstSubmit) {
 			validateAddField($(this));
 		}
 	});
 
-	$('#addAuthorForm').on('submit', function(event) {
+	$('#addUserForm').on('submit', function(event) {
 		event.preventDefault();
 
 		if ($(this).data("submitted") === true) {
@@ -347,15 +277,15 @@ function handleAddAuthorForm() {
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#addAuthorSpinnerBtn").removeClass("d-none");
-			$("#addAuthorIcon").addClass("d-none");
+			$("#addUserSpinnerBtn").removeClass("d-none");
+			$("#addUserIcon").addClass("d-none");
 
 			if (cropper) {
 				cropper.getCroppedCanvas({
 					width: 460,
 					height: 460
 				}).toBlob(function(blob) {
-					formData.set('addAuthorPhoto', blob, 'photo.jpg');
+					formData.set('addUserProfilePhoto', blob, 'photo.jpg');
 					sendAddForm(formData);
 				}, 'image/jpeg', 0.7);
 			} else {
@@ -366,7 +296,7 @@ function handleAddAuthorForm() {
 				formData.append('type', 'create');
 
 				$.ajax({
-					url: 'AuthorServlet',
+					url: 'UserServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -375,46 +305,62 @@ function handleAddAuthorForm() {
 					success: function(response) {
 						if (response && response.success) {
 							addRowToTable(response.data);
-							$('#addAuthorModal').modal('hide');
-							showToast('Autor agregado exitosamente.', 'success');
+							
+							$('#addUserModal').modal('hide');
+							showToast('Usuario agregado exitosamente.', 'success');
 						} else {
-							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-							$('#addAuthorModal').modal('hide');
-							showToast('Hubo un error al agregar el autor.', 'error');
+							if (response.field) {
+								setFieldError(response.field, response.message);
+								$('#addUserForm').data("submitted", false);
+							}
+							else {
+								console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+								showToast(response.message, 'error');
+								$('#addUserModal').modal('hide');
+							}
 						}
 					},
 					error: function(xhr) {
-						let errorResponse;
-						try {
-							errorResponse = JSON.parse(xhr.responseText);
-							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+						var errorMessage = (xhr.responseJSON && xhr.responseJSON.message)
+							? xhr.responseJSON.message
+							: 'Hubo un error al agregar el usuario.';
+						var errorField = xhr.responseJSON && xhr.responseJSON.field
+							? xhr.responseJSON.field
+							: null;
+
+						if (errorField) {
+							setFieldError(errorField, errorMessage);
+							$('#addUserForm').data("submitted", false);
+						} else {
+							console.error(`Server error (${xhr.responseJSON ? xhr.responseJSON.errorType : 'unknown'} - ${xhr.status}):`, errorMessage);
 							switch (xhr.status) {
-								case 403:
-									showToast('No tienes permisos para agregar autores.', 'warning');
-									break;
-								case 400:
-									showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
-									break;
-								case 500:
-									showToast('Error interno del servidor. Intenta más tarde.', 'error');
-									break;
-								default:
-									showToast(errorResponse.message || 'Hubo un error al agregar el autor.', 'error');
-									break;
-							}
-						} catch (e) {
-							console.error("Unexpected error:", xhr.status, xhr.responseText);
-							showToast('Hubo un error inesperado.', 'error');
+					            case 403:
+					                showToast('No tienes permisos para agregar usuarios.', 'warning');
+					                break;
+					            case 400:
+					                showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+					                break;
+					            case 500:
+					                showToast('Error interno del servidor. Intenta más tarde.', 'error');
+					                break;
+					            default:
+					                showToast(errorMessage || 'Hubo un error al agregar el usuario.', 'error');
+					                break;
+					        }
+							$('#addUserModal').modal('hide');
 						}
-						
-						$('#addAuthorModal').modal('hide');
 					},
 					complete: function() {
-						$("#addAuthorSpinnerBtn").addClass("d-none");
-						$("#addAuthorIcon").removeClass("d-none");
+						$("#addUserSpinnerBtn").addClass("d-none");
+						$("#addUserIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
 				});
+			}
+			function setFieldError(fieldId, message) {
+				var field = $('#' + fieldId);
+				field.addClass('is-invalid');
+				field.siblings('.invalid-feedback').html(message).show();
 			}
 		} else {
 			$(this).data("submitted", false);
@@ -438,8 +384,33 @@ function handleAddAuthorForm() {
 			field.removeClass('is-invalid');
 		}
 
-		// Name validation
-		if (field.is('#addAuthorName')) {
+		// Email validation
+		if (field.is('#addUserEmail')) {
+			const email = field.val();
+			const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+			if (!emailRegex.test(email)) {
+				errorMessage = 'Por favor ingrese un correo electrónico válido.';
+				isValid = false;
+			}
+		}
+
+		// Username validation
+		if (field.is('#addUserUsername')) {
+			const username = field.val();
+			const usernameRegex = /^[a-zA-Z0-9_À-ÿ]+$/;
+
+			if (username.length < 3) {
+				errorMessage = 'El nombre de usuario debe tener al menos 3 caracteres.';
+				isValid = false;
+			} else if (!usernameRegex.test(username)) {
+				errorMessage = 'El nombre de usuario solo puede contener letras, números y guiones bajos y caracteres acentuados.';
+				isValid = false;
+			}
+		}
+
+		// First name validation
+		if (field.is('#addUserFirstName')) {
 			const firstName = field.val();
 
 			if (firstName.length < 3) {
@@ -448,24 +419,40 @@ function handleAddAuthorForm() {
 			}
 		}
 
-		// Birth date validation
-		if (field.is('#addAuthorBirthDate')) {
-			const birthDate = new Date(field.val());
-			const today = new Date();
-			const minAge = 10;
-			const minDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+		// Last name validation
+		if (field.is('#addUserLastName')) {
+			const lastName = field.val();
 
-			if (birthDate > today) {
-				errorMessage = 'La fecha de nacimiento no puede ser en el futuro.';
-				isValid = false;
-			} else if (birthDate > minDate) {
-				errorMessage = `El autor debe tener al menos ${minAge} años.`;
+			if (lastName.length < 3) {
+				errorMessage = 'El apellido debe tener al menos 3 caracteres.';
 				isValid = false;
 			}
 		}
 
-		// Photo validation
-		if (field.is('#addAuthorPhoto')) {
+		// Password validation
+		if (field.is('#addUserPassword')) {
+			const password = field.val();
+			const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
+			if (!passwordRegex.test(password)) {
+				errorMessage = 'La contraseña debe tener 8 caracteres, una mayúscula, un número y un símbolo.';
+				isValid = false;
+			}
+		}
+
+		// Confirm password validation
+		if (field.is('#addUserConfirmPassword')) {
+			const password = $('#addUserPassword').val();
+			const confirmPassword = field.val();
+
+			if (confirmPassword !== password) {
+				errorMessage = 'Las contraseñas no coinciden.';
+				isValid = false;
+			}
+		}
+
+		// Profile photo validation
+		if (field.is('#addUserProfilePhoto')) {
 			var file = field[0].files[0];
 
 			if (!file) {
@@ -500,7 +487,7 @@ function handleAddAuthorForm() {
 	}
 }
 
-$('#addAuthorPhoto, #editAuthorPhoto').on('change', function() {
+$('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 	var fileInput = $(this);
 	var file = fileInput[0].files[0];
 
@@ -517,21 +504,21 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function() {
 	}
 });
 
-function handleEditAuthorForm() {
+function handleEditUserForm() {
 	let isFirstSubmit = true;
 
-	$('#editAuthorModal').on('hidden.bs.modal', function() {
+	$('#editUserModal').on('hidden.bs.modal', function() {
 		isFirstSubmit = true;
-		$('#editAuthorForm').data("submitted", false);
+		$('#editUserForm').data("submitted", false);
 	});
 
-	$('#editAuthorForm').on('input change', 'input, select', function() {
+	$('#editUserForm').on('input change', 'input, select', function() {
 		if (!isFirstSubmit) {
 			validateEditField($(this));
 		}
 	});
 
-	$('#editAuthorForm').on('submit', function(event) {
+	$('#editUserForm').on('submit', function(event) {
 		event.preventDefault();
 
 		if ($(this).data("submitted") === true) {
@@ -557,24 +544,24 @@ function handleEditAuthorForm() {
 		if (isValid) {
 			var formData = new FormData(this);
 
-			var authorId = $(this).data('authorId');
-			if (authorId) {
-				formData.append('authorId', authorId);
+			var userId = $(this).data('userId');
+			if (userId) {
+				formData.append('userId', userId);
 			}
 			
-			formData.append('deletePhoto', deletePhotoFlag);
+			formData.append('deleteProfilePhoto', deletePhotoFlag);
 
 			var submitButton = $(this).find('[type="submit"]');
 			submitButton.prop('disabled', true);
-			$("#editAuthorSpinnerBtn").removeClass("d-none");
-			$("#editAuthorIcon").addClass("d-none");
+			$("#editUserSpinnerBtn").removeClass("d-none");
+			$("#editUserIcon").addClass("d-none");
 
 			if (cropper) {
 				cropper.getCroppedCanvas({
 					width: 460,
 					height: 460
 				}).toBlob(function(blob) {
-					formData.set('editAuthorPhoto', blob, 'photo.png');
+					formData.set('editUserProfilePhoto', blob, 'photo.png');
 					sendEditForm(formData);
 				}, 'image/png');
 			} else {
@@ -585,7 +572,7 @@ function handleEditAuthorForm() {
 				formData.append('type', 'update');
 
 				$.ajax({
-					url: 'AuthorServlet',
+					url: 'UserServlet',
 					type: 'POST',
 					data: formData,
 					dataType: 'json',
@@ -594,12 +581,13 @@ function handleEditAuthorForm() {
 					success: function(response) {
 						if (response && response.success) {
 							updateRowInTable(response.data);
-							$('#editAuthorModal').modal('hide');
-							showToast('Autor actualizado exitosamente.', 'success');
+							
+							$('#editUserModal').modal('hide');
+							showToast('Usuario actualizado exitosamente.', 'success');
 						} else {
 							console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
-							$('#editAuthorModal').modal('hide');
-							showToast('Hubo un error al actualizar el autor.', 'error');
+							$('#editUserModal').modal('hide');
+							showToast('Hubo un error al actualizar el usuario.', 'error');
 						}
 					},
 					error: function(xhr) {
@@ -609,7 +597,7 @@ function handleEditAuthorForm() {
 							console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
 							switch (xhr.status) {
 								case 403:
-									showToast('No tienes permisos para actualizar autores.', 'warning');
+									showToast('No tienes permisos para actualizar usuarios.', 'warning');
 									break;
 								case 400:
 									showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
@@ -618,7 +606,7 @@ function handleEditAuthorForm() {
 									showToast('Error interno del servidor. Intenta más tarde.', 'error');
 									break;
 								default:
-									showToast(errorResponse.message || 'Hubo un error al actualizar el autor.', 'error');
+									showToast(errorResponse.message || 'Hubo un error al actualizar el usuario.', 'error');
 									break;
 							}
 						} catch (e) {
@@ -626,11 +614,11 @@ function handleEditAuthorForm() {
 							showToast('Hubo un error inesperado.', 'error');
 						}
 						
-						$('#editAuthorModal').modal('hide');
+						$('#editUserModal').modal('hide');
 					},
 					complete: function() {
-						$("#editAuthorSpinnerBtn").addClass("d-none");
-						$("#editAuthorIcon").removeClass("d-none");
+						$("#editUserSpinnerBtn").addClass("d-none");
+						$("#editUserIcon").removeClass("d-none");
 						submitButton.prop('disabled', false);
 					}
 				});
@@ -658,8 +646,8 @@ function validateEditField(field) {
 		field.removeClass('is-invalid');
 	}
 
-	// Name validation
-	if (field.is('#editAuthorName')) {
+	// First name validation
+	if (field.is('#editUserFirstName')) {
 		const firstName = field.val();
 
 		if (firstName.length < 3) {
@@ -668,24 +656,18 @@ function validateEditField(field) {
 		}
 	}
 
-	// Birth date validation
-	if (field.is('#editAuthorBirthDate')) {
-		const birthDate = new Date(field.val());
-		const today = new Date();
-		const minAge = 10;
-		const minDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
+	// Last name validation
+	if (field.is('#editUserLastName')) {
+		const lastName = field.val();
 
-		if (birthDate > today) {
-			errorMessage = 'La fecha de nacimiento no puede ser en el futuro.';
-			isValid = false;
-		} else if (birthDate > minDate) {
-			errorMessage = `El autor debe tener al menos ${minAge} años.`;
+		if (lastName.length < 3) {
+			errorMessage = 'El apellido debe tener al menos 3 caracteres.';
 			isValid = false;
 		}
 	}
 
-	// Photo validation
-	if (field.is('#editAuthorPhoto')) {
+	// Profile photo validation
+	if (field.is('#editUserProfilePhoto')) {
 		var file = field[0].files[0];
 
 		if (!file) {
@@ -719,176 +701,233 @@ function validateEditField(field) {
 	return isValid;
 }
 
+function handleDeleteUser() {
+	var isSubmitted = false;
+
+	$('#confirmDeleteUser').off('click').on('click', function() {
+		if (isSubmitted) return;
+		isSubmitted = true;
+
+		$('#confirmDeleteUserIcon').addClass('d-none');
+		$('#confirmDeleteUserSpinner').removeClass('d-none');
+		$('#confirmDeleteUser').prop('disabled', true);
+
+		var userId = $(this).data('userId');
+		var formattedUserId = $(this).data('formattedUserId');
+
+		$.ajax({
+			url: 'UserServlet',
+			type: 'POST',
+			data: {
+				type: 'delete',
+				userId: userId
+			},
+			dataType: 'json',
+			success: function(response) {
+				if (response && response.success) {
+					var table = $('#userTable').DataTable();
+
+					table.rows().every(function() {
+						var data = this.data();
+						var spanText = $('<div>').html(data[0]).text().trim();
+						if (spanText == formattedUserId) {
+							this.remove();
+						}
+					});
+
+					table.draw(false);
+
+					$('#deleteUserModal').modal('hide');
+					showToast("Usuario eliminado exitosamente.", 'success');
+				} else {
+					console.error(`Backend error (${response.errorType} - ${response.statusCode}):`, response.message);
+					$('#deleteUserModal').modal('hide');
+					showToast("Hubo un error al eliminar el usuario.", 'error');
+				}
+			},
+			error: function(xhr) {
+				let errorResponse;
+				try {
+					errorResponse = JSON.parse(xhr.responseText);
+					console.error(`Server error (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					switch (xhr.status) {
+						case 403:
+							showToast('No tienes permisos para eliminar usuarios.', 'warning');
+							break;
+						case 400:
+							showToast('Solicitud inválida. Verifica los datos del formulario.', 'error');
+							break;
+						case 500:
+							showToast('Error interno del servidor. Intenta más tarde.', 'error');
+							break;
+						default:
+							showToast(errorResponse.message || 'Hubo un error al eliminar el usuario.', 'error');
+							break;
+					}
+				} catch (e) {
+					console.error("Unexpected error:", xhr.status, xhr.responseText);
+					showToast('Hubo un error inesperado.', 'error');
+				}
+				$('#deleteUserModal').modal('hide');
+			},
+			complete: function() {
+				$('#confirmDeleteUserSpinner').addClass('d-none');
+				$('#confirmDeleteUserIcon').removeClass('d-none');
+				$('#confirmDeleteUser').prop('disabled', false);
+			}
+		});
+	});
+}
+
 /*****************************************
  * MODAL MANAGEMENT
  *****************************************/
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addAuthorModal"]', function() {
-		populateSelect('#addAuthorNationality', nationalityList, 'nationalityId', 'nationalityName');
-		$('#addAuthorNationality').selectpicker();
-		
-		populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
-		$('#addLiteraryGenre').selectpicker();
-
-		$('#addAuthorStatus').selectpicker('destroy').empty().append(
+	$(document).on('click', '[data-bs-target="#addUserModal"]', function() {
+		$('#addUserRole').selectpicker('destroy').empty().append(
 			$('<option>', {
-				value: 'activo',
-				text: 'Activo'
+				value: 'administrador',
+				text: 'Administrador'
 			}),
 			$('<option>', {
-				value: 'inactivo',
-				text: 'Inactivo'
+				value: 'bibliotecario',
+				text: 'Bibliotecario'
 			})
 		);
-		$('#addAuthorStatus').selectpicker();
-
+		$('#addUserRole').selectpicker();
+		
 		$('#defaultAddPhotoContainer').removeClass('d-none');
 		$('#deleteAddPhotoBtn').addClass('d-none');
 
-		$('#addAuthorForm')[0].reset();
-		$('#addAuthorForm .is-invalid').removeClass('is-invalid');
-		
-		const d = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00');
-		const maxDateStr = new Date(d.getFullYear() - 10, d.getMonth(), d.getDate()).toISOString().split('T')[0];
-		$('#addAuthorBirthDate').attr('max', maxDateStr);
-
-		placeholderColorDateInput();
+		$('#addUserForm')[0].reset();
+		$('#addUserForm .is-invalid').removeClass('is-invalid');
 
 		$('#cropperContainerAdd').addClass('d-none');
+
 		if (cropper) {
 			cropper.destroy();
 			cropper = null;
 		}
+
+		$('#addUserForm .password-field').attr('type', 'password');
+		$('#addUserForm .input-group-text').find('i').removeClass('bi-eye-slash').addClass('bi-eye');
+
+		preventSpacesInPasswordField("#addUserPassword, #addUserConfirmPassword");
 	});
 
 	// Details Modal
-	$(document).on('click', '[data-bs-target="#detailsAuthorModal"]', function() {
-		var authorId = $(this).data('id');
-		$('#detailsAuthorModalID').text($(this).data('formatted-id'));
+	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function() {
+		var userId = $(this).data('id');
+		$('#detailsUserModalID').text($(this).data('formatted-id'));
 		
-		$('#detailsAuthorSpinner').removeClass('d-none');
-		$('#detailsAuthorContent').addClass('d-none');
+		$('#detailsUserSpinner').removeClass('d-none');
+		$('#detailsUserContent').addClass('d-none');
 
 		$.ajax({
-			url: 'AuthorServlet',
+			url: 'UserServlet',
 			type: 'GET',
-			data: { type: 'details', authorId: authorId },
+			data: { type: 'details', userId: userId },
 			dataType: 'json',
 			success: function(data) {
-				$('#detailsAuthorID').text(data.formattedAuthorId);
-				$('#detailsAuthorName').text(data.name);
-				$('#detailsAuthorNationality').text(data.nationalityName);
-				$('#detailsAuthorGenre').text(data.literaryGenreName);
-				$('#detailsAuthorBirthDate').text(moment(data.birthDate).format('DD MMM YYYY'));
-				$('#detailsAuthorBiography').text(data.biography);
-				$('#detailsAuthorStatus').html(
-					data.status === 'activo'
-						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>'
+				$('#detailsUserID').text(data.formattedUserId);
+				$('#detailsUserUsername').text(data.username);
+				$('#detailsUserEmail').text(data.email);
+				$('#detailsUserFirstName').text(data.firstName);
+				$('#detailsUserLastName').text(data.lastName);
+				$('#detailsUserRole').html(
+					data.role === 'administrador'
+						? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+						: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario'
 				);
-				if (data.photoBase64) {
-					$('#detailsAuthorImg').attr('src', data.photoBase64).removeClass('d-none');
-					$('#detailsAuthorSvg').addClass('d-none');
+				if (data.profilePhotoBase64) {
+					$('#detailsUserImg').attr('src', data.profilePhotoBase64).removeClass('d-none');
+					$('#detailsUserSvg').addClass('d-none');
 				} else {
-					$('#detailsAuthorImg').addClass('d-none');
-					$('#detailsAuthorSvg').removeClass('d-none');
+					$('#detailsUserImg').addClass('d-none');
+					$('#detailsUserSvg').removeClass('d-none');
 				}
 				
-				$('#detailsAuthorSpinner').addClass('d-none');
-				$('#detailsAuthorContent').removeClass('d-none');
+				$('#detailsUserSpinner').addClass('d-none');
+				$('#detailsUserContent').removeClass('d-none');
 			},
 			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Error loading author details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al cargar los detalles del autor.', 'error');
+					console.error(`Error loading user details (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los detalles del usuario.', 'error');
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				$('#detailsAuthorModal').modal('hide');
+				$('#detailsUserModal').modal('hide');
 			}
 		});
 	});
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editAuthorModal"]', function() {
-		var authorId = $(this).data('id');
-		$('#editAuthorModalID').text($(this).data('formatted-id'));
+	$(document).on('click', '[data-bs-target="#editUserModal"]', function() {
+		var userId = $(this).data('id');
+		$('#editUserModalID').text($(this).data('formatted-id'));
 		
-		$('#editAuthorSpinner').removeClass('d-none');
-		$('#editAuthorForm').addClass('d-none');
-		$('#editAuthorBtn').prop('disabled', true);
+		$('#editUserSpinner').removeClass('d-none');
+		$('#editUserForm').addClass('d-none');
+		$('#editUserBtn').prop('disabled', true);
 
 		$.ajax({
-			url: 'AuthorServlet',
+			url: 'UserServlet',
 			type: 'GET',
-			data: { type: 'details', authorId: authorId },
+			data: { type: 'details', userId: userId },
 			dataType: 'json',
 			success: function(data) {
-				$('#editAuthorForm').data('authorId', data.authorId);
+				$('#editUserForm').data('userId', data.userId);
+				$('#editUserUsername').val(data.username);
+				$('#editUserEmail').val(data.email);
+				$('#editUserFirstName').val(data.firstName);
+				$('#editUserLastName').val(data.lastName);
 
-				$('#editAuthorName').val(data.name);
-				
-				populateSelect('#editAuthorNationality', nationalityList, 'nationalityId', 'nationalityName');
-				$('#editAuthorNationality').val(data.nationalityId);
-				$('#editAuthorNationality').selectpicker();
-
-				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
-				$('#editLiteraryGenre').val(data.literaryGenreId);
-				$('#editLiteraryGenre').selectpicker();
-
-				$('#editAuthorBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
-				const d = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00');
-				const maxDateStr = new Date(d.getFullYear() - 10, d.getMonth(), d.getDate()).toISOString().split('T')[0];
-				$('#editAuthorBirthDate').attr('max', maxDateStr);
-				
-				$('#editAuthorBiography').val(data.biography);
-
-				$('#editAuthorStatus').selectpicker('destroy').empty().append(
+				$('#editUserRole').selectpicker('destroy').empty().append(
 					$('<option>', {
-						value: 'activo',
-						text: 'Activo'
+						value: 'administrador',
+						text: 'Administrador'
 					}),
 					$('<option>', {
-						value: 'inactivo',
-						text: 'Inactivo'
+						value: 'bibliotecario',
+						text: 'Bibliotecario'
 					})
 				);
-				$('#editAuthorStatus').val(data.status);
-				$('#editAuthorStatus').selectpicker();
+				$('#editUserRole').val(data.role);
+				$('#editUserRole').selectpicker();
+				
+				updateEditImageContainer(data.profilePhotoBase64);
 
-				updateEditImageContainer(data.photoBase64);
-
-				$('#editAuthorForm .is-invalid').removeClass('is-invalid');
+				$('#editUserForm .is-invalid').removeClass('is-invalid');
 
 				placeholderColorEditSelect();
-				placeholderColorDateInput();
 
-				$('#editAuthorForm').find('select').each(function() {
+				$('#editUserForm').find('select').each(function() {
 					validateEditField($(this), true);
 				});
 
-				$('#editAuthorPhoto').val('');
+				$('#editUserProfilePhoto').val('');
 				
-				$('#editAuthorSpinner').addClass('d-none');
-				$('#editAuthorForm').removeClass('d-none');
-				$('#editAuthorBtn').prop('disabled', false);
+				$('#editUserSpinner').addClass('d-none');
+				$('#editUserForm').removeClass('d-none');
+				$('#editUserBtn').prop('disabled', false);
 			},
 			error: function(xhr) {
 				let errorResponse;
 				try {
 					errorResponse = JSON.parse(xhr.responseText);
-					console.error(`Error loading author details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
-					showToast('Hubo un error al cargar los datos del autor.', 'error');
+					console.error(`Error loading user details for editing (${errorResponse.errorType} - ${xhr.status}):`, errorResponse.message);
+					showToast('Hubo un error al cargar los datos del usuario.', 'error');
 				} catch (e) {
 					console.error("Unexpected error:", xhr.status, xhr.responseText);
 					showToast('Hubo un error inesperado.', 'error');
 				}
-				$('#editAuthorModal').modal('hide');
+				$('#editUserModal').modal('hide');
 			}
 		});
 
@@ -899,17 +938,43 @@ function loadModalData() {
 			cropper = null;
 		}
 	});
+
+	// Delete Modal
+	$('#deleteUserModal').on('show.bs.modal', function(event) {
+		var button = $(event.relatedTarget);
+		var userId = button.data('id');
+		var formattedUserId = button.data('formatted-id');
+		
+		$('#deleteUserModalID').text(formattedUserId);
+		$('#confirmDeleteUser').data('userId', userId);
+		$('#confirmDeleteUser').data('formattedUserId', formattedUserId);
+	});
 }
 
-function updateEditImageContainer(photoBase64) {
+function preventSpacesInPasswordField(selector) {
+	$(selector).off('input').on("input", function() {
+		const inputElement = this;
+		const cursorPosition = inputElement.selectionStart;
+		const originalValue = $(this).val();
+		const newValue = originalValue.replace(/\s/g, '');
+
+		if (originalValue !== newValue) {
+			$(this).val(newValue);
+			const spacesRemoved = (originalValue.slice(0, cursorPosition).match(/\s/g) || []).length;
+			inputElement.setSelectionRange(cursorPosition - spacesRemoved, cursorPosition - spacesRemoved);
+		}
+	});
+}
+
+function updateEditImageContainer(profilePhotoBase64) {
 	const $editImageContainer = $('#currentEditPhotoContainer');
 	const $deleteEditPhotoBtn = $('#deleteEditPhotoBtn');
 
 	$editImageContainer.empty();
 
-	if (photoBase64) {
+	if (profilePhotoBase64) {
 		$editImageContainer.html(
-			`<img src="${photoBase64}" class="img-fluid rounded-circle" alt="Foto del Autor">`
+			`<img src="${profilePhotoBase64}" class="img-fluid rounded-circle" alt="Foto del Usuario">`
 		);
 		$deleteEditPhotoBtn.removeClass('d-none');
 	} else {
@@ -932,7 +997,7 @@ $('#deleteAddPhotoBtn').on('click', function() {
 		cropper = null;
 	}
 	$('#cropperContainerAdd').addClass('d-none');
-	$('#addAuthorPhoto').val('');
+	$('#addUserProfilePhoto').val('');
 	$('#defaultAddPhotoContainer').removeClass('d-none');
 });
 
@@ -947,7 +1012,7 @@ $('#deleteEditPhotoBtn').on('click', function() {
 		cropper = null;
 	}
 	$('#cropperContainerEdit').addClass('d-none');
-	$('#editAuthorPhoto').val('');
+	$('#editUserProfilePhoto').val('');
 });
 
 let cropper;
@@ -983,10 +1048,10 @@ function initializeCropper(file, $cropperContainer, $imageToCrop) {
 	reader.readAsDataURL(file);
 }
 
-$('#addAuthorPhoto, #editAuthorPhoto').on('change', function() {
+$('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function() {
 	const file = this.files[0];
 	deletePhotoFlag = false;
-	
+
 	$('#deleteAddPhotoBtn').addClass('d-none');
 	$('#deleteEditPhotoBtn').addClass('d-none');
 
@@ -998,7 +1063,7 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function() {
 		$('#deleteEditPhotoBtn').removeClass('d-none');
 
 		let $container, $image;
-		if ($(this).is('#addAuthorPhoto')) {
+		if ($(this).is('#addUserProfilePhoto')) {
 			$container = $cropperContainerAdd;
 			$image = $imageToCropAdd;
 		} else {
@@ -1007,7 +1072,7 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function() {
 		}
 		initializeCropper(file, $container, $image);
 	} else {
-		if ($(this).is('#addAuthorPhoto')) {
+		if ($(this).is('#addUserProfilePhoto')) {
 			$cropperContainerAdd.addClass('d-none');
 			if (cropper) {
 				cropper.destroy();
@@ -1022,7 +1087,7 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function() {
 			}
 			$('#currentEditPhotoContainer').removeClass('d-none');
 		}
-		
+
 		if ($('#currentEditPhotoContainer').find('img').length > 0) {
 			$('#deleteEditPhotoBtn').removeClass('d-none');
 		}
@@ -1085,7 +1150,7 @@ function generatePDF(dataTable) {
 
 	try {
 		const { jsPDF } = window.jspdf;
-		const doc = new jsPDF("p", "mm", "a4");
+		const doc = new jsPDF("l", "mm", "a4");
 		const logoUrl = '/images/bookstudio-logo-no-bg.png';
 	
 		const currentDate = new Date();
@@ -1101,72 +1166,64 @@ function generatePDF(dataTable) {
 		});
 	
 		const pageWidth = doc.internal.pageSize.getWidth();
-		const margin = 15;
+		const margin = 10;
 		const topMargin = 5;
-	
+		
 		try {
-			doc.addImage(logoUrl, 'PNG', margin, topMargin, 30, 30);
+			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 		} catch (imgError) {
 			console.warn("Logo not available:", imgError);
 			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
 			hasWarnings = true;
 		}
-	
+		
 		doc.setFont("helvetica", "bold");
-		doc.setFontSize(18);
-		doc.setTextColor(40);
-		doc.text("Lista de autores", pageWidth / 2, topMargin + 18, { align: "center" });
+		doc.setFontSize(14);
+		doc.text("Lista de usuarios", pageWidth / 2, topMargin + 13, { align: "center" });
 	
 		doc.setFont("helvetica", "normal");
-		doc.setFontSize(10);
-		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 15, { align: "right" });
-		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 20, { align: "right" });
+		doc.setFontSize(8);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
 	
 		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-			let estado = row.cells[4].innerText.trim();
-			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
 	
 			return [
 				row.cells[0].innerText.trim(),
 				row.cells[1].innerText.trim(),
 				row.cells[2].innerText.trim(),
 				row.cells[3].innerText.trim(),
-				estado
+				row.cells[4].innerText.trim(),
+				row.cells[5].innerText.trim()
 			];
 		});
 	
 		doc.autoTable({
-			startY: topMargin + 35,
+			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
+			head: [['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
 				fillColor: [0, 0, 0],
 				textColor: 255,
 				fontStyle: 'bold',
+				fontSize: 8,
 				halign: 'left'
 			},
 			bodyStyles: {
 				font: "helvetica",
-				fontSize: 10,
+				fontSize: 7,
 				halign: 'left'
 			},
-			columnStyles: {
-				0: { cellWidth: 20 },
-				1: { cellWidth: 50 },
-				2: { cellWidth: 30 },
-				3: { cellWidth: 50 },
-				4: { cellWidth: 30 }
-			},
 			didParseCell: function(data) {
-				if (data.section === 'body' && data.column.index === 4) {
-					data.cell.styles.textColor = data.cell.raw === "Activo" ? [0, 128, 0] : [255, 0, 0];
+				if (data.section === 'body' && data.column.index === 6) {
+					data.cell.styles.textColor = [0, 0, 0];
 				}
 			}
 		});
 	
-		const filename = `Lista_de_autores_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
+		const filename = `Lista_de_usuarios_bookstudio_${fecha.replace(/\s+/g, '_')}.pdf`;
 	
 		const pdfBlob = doc.output('blob');
 		const blobUrl = URL.createObjectURL(pdfBlob);
@@ -1176,7 +1233,7 @@ function generatePDF(dataTable) {
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
-		
+
 		if (!hasWarnings) {
 			showToast("PDF generado exitosamente.", "success");
 		}
@@ -1194,7 +1251,7 @@ function generateExcel(dataTable) {
 	
 	try {
 		const workbook = new ExcelJS.Workbook();
-		const worksheet = workbook.addWorksheet('Autores');
+		const worksheet = workbook.addWorksheet('Usuarios');
 	
 		const currentDate = new Date();
 		const dateStr = currentDate.toLocaleDateString('es-ES', {
@@ -1208,31 +1265,28 @@ function generateExcel(dataTable) {
 			hour12: true
 		});
 	
-		worksheet.mergeCells('A1:E1');
+		worksheet.mergeCells('A1:F1');
 		const titleCell = worksheet.getCell('A1');
-		titleCell.value = 'Lista de autores - BookStudio';
-		titleCell.font = {
-			name: 'Arial',
-			size: 16,
-			bold: true
-		};
+		titleCell.value = 'Lista de usuarios - BookStudio';
+		titleCell.font = { name: 'Arial', size: 14, bold: true };
 		titleCell.alignment = { horizontal: 'center' };
 	
-		worksheet.mergeCells('A2:E2');
+		worksheet.mergeCells('A2:F2');
 		const dateTimeCell = worksheet.getCell('A2');
 		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
 		dateTimeCell.alignment = { horizontal: 'center' };
 	
 		worksheet.columns = [
 			{ key: 'id', width: 10 },
-			{ key: 'nombre', width: 30 },
-			{ key: 'nacionalidad', width: 20 },
-			{ key: 'genero', width: 25 },
-			{ key: 'estado', width: 15 }
+			{ key: 'usuario', width: 20 },
+			{ key: 'correo', width: 30 },
+			{ key: 'nombres', width: 30 },
+			{ key: 'apellidos', width: 30 },
+			{ key: 'rol', width: 20 }
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
+		headerRow.values = ['Código', 'Nombre de usuario', 'Correo electrónico', 'Nombres', 'Apellidos', 'Rol'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1246,40 +1300,19 @@ function generateExcel(dataTable) {
 		});
 	
 		const data = dataTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-			let estado = row.cells[4].innerText.trim();
-			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
-	
 			return {
 				id: row.cells[0].innerText.trim(),
-				nombre: row.cells[1].innerText.trim(),
-				nacionalidad: row.cells[2].innerText.trim(),
-				genero: row.cells[3].innerText.trim(),
-				estado: estado
+				usuario: row.cells[1].innerText.trim(),
+				correo: row.cells[2].innerText.trim(),
+				nombres: row.cells[3].innerText.trim(),
+				apellidos: row.cells[4].innerText.trim(),
+				rol: row.cells[5].innerText.trim()
 			};
 		});
 	
-		data.forEach((item) => {
-			const row = worksheet.addRow(item);
+		data.forEach(item => worksheet.addRow(item));
 	
-			const estadoCell = row.getCell(5);
-			if (estadoCell.value === "Activo") {
-				estadoCell.font = { color: { argb: '008000' } };
-				estadoCell.fill = {
-					type: 'pattern',
-					pattern: 'solid',
-					fgColor: { argb: 'E6F2E6' }
-				};
-			} else {
-				estadoCell.font = { color: { argb: 'FF0000' } };
-				estadoCell.fill = {
-					type: 'pattern',
-					pattern: 'solid',
-					fgColor: { argb: 'FFE6E6' }
-				};
-			}
-		});
-	
-		const filename = `Lista_de_autores_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
+		const filename = `Lista_de_usuarios_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
 	
 		workbook.xlsx.writeBuffer().then(buffer => {
 			const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -1307,11 +1340,11 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function() {
-	loadAuthors();
-	handleAddAuthorForm();
-	handleEditAuthorForm();
+	loadUsers();
+	handleAddUserForm();
+	handleEditUserForm();
+	handleDeleteUser();
 	loadModalData();
-	populateSelectOptions();
 	$('.selectpicker').selectpicker();
 	setupBootstrapSelectDropdownStyles();
 	placeholderColorSelect();
