@@ -25,7 +25,7 @@
 			<section class="card border">
 				<!-- Card header -->
 				<header class="card-header text-center bg-body-secondary">
-					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="${pageContext.request.contextPath}/images/logo-light.png">
+					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="/images/logo-light.png">
 					<h3 class="fw-bold mb-0 text-body-emphasis">Iniciar sesión</h3>
 					<p class="text-muted mb-0">Empieza a gestionar tus préstamos.</p>
 				</header>
@@ -41,11 +41,12 @@
 	                            name="txtUsername" 
 	                            type="text" 
 	                            class="form-control" 
-	                            placeholder="Ingrese su nombre de usuario" 
+	                            placeholder="Nombre de usuario" 
 	                            pattern="[A-Za-zÀ-ÿ0-9_]+" 
 								oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ0-9_]/g, '');" 
 	                            aria-describedby="usernameHelp" 
 	                            autocomplete="username">
+							<div class="invalid-feedback">Por favor introduce tu nombre de usuario.</div>
 						</div>
 						
 						<!-- Password field -->
@@ -61,12 +62,13 @@
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="1" 
-	                                placeholder="Ingrese su contraseña" 
+	                                placeholder="Contraseña" 
 	                                aria-describedby="passwordHelp" 
 	                                autocomplete="current-password">
 	                            <span class="input-group-text cursor-pointer" data-toggle-id="1">
 	                                <i class="bi bi-eye"></i>
 	                            </span>
+	                            <div class="invalid-feedback">Por favor introduce tu contraseña.</div>
 							</div>
 						</div>
 						

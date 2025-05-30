@@ -388,9 +388,8 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 }
 
 /* Dropdown danger */
-.dropdown-danger.active, .dropdown-danger:active {
-	background-color: #dc3545 !important;
-	color: var(--bs-dropdown-link-active-color) !important;
+.dropdown-danger:hover, .dropdown-danger:active {
+	background-color: var(--bs-danger-bg-subtle) !important;
 }
 
 /* Card Header */

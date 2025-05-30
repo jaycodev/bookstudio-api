@@ -27,7 +27,7 @@ $(document).ready(function() {
 
 	function validatePassword() {
 		const password = $("#txtPassword").val().trim();
-		if (password === "" || password.length < 6) {
+		if (password === "" || password.length < 8) {
 			if (formSubmitted) $("#txtPassword").addClass("is-invalid");
 			return false;
 		} else {

@@ -400,8 +400,8 @@ function handleAddUserForm() {
 			const username = field.val();
 			const usernameRegex = /^[a-zA-Z0-9_À-ÿ]+$/;
 
-			if (username.length < 5) {
-				errorMessage = 'El nombre de usuario debe tener al menos 5 caracteres.';
+			if (username.length < 3) {
+				errorMessage = 'El nombre de usuario debe tener al menos 3 caracteres.';
 				isValid = false;
 			} else if (!usernameRegex.test(username)) {
 				errorMessage = 'El nombre de usuario solo puede contener letras, números y guiones bajos y caracteres acentuados.';
