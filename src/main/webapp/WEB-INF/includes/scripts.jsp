@@ -21,9 +21,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js" defer></script>
 
 <!-- Custom Scripts -->
-<script src="utils/header.js" defer></script>
-<script src="utils/sidebar.js" defer></script>
-<script src="utils/datatables-setup.js" defer></script>
+<script src="js/utils/header.js" defer></script>
+<script src="js/utils/sidebar.js" defer></script>
+<script src="js/utils/datatables-setup.js" defer></script>
 
 <!-- Page-Specific Script -->
 <script type="module" src="js/user/<%= currentPage %>" defer></script>

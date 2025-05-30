@@ -11,7 +11,7 @@
  * @author [Jason]
  */
 
-import { showToast, toggleButtonLoading } from '../../utils/ui/index.js';
+import { showToast, toggleButtonLoading } from '../../js/utils/ui/index.js';
 
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
