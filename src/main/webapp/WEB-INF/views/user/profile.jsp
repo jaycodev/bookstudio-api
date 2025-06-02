@@ -133,6 +133,7 @@
 		                                pattern="[A-Za-zÀ-ÿ\s]+" 
 		                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
 		                            >
+		                            <div class="invalid-feedback"></div>
 		                        </div>
 		                        <div class="col-12 col-md-6 mb-3">
 		                            <label for="editProfileLastName" class="form-label">Apellidos</label>
@@ -147,6 +148,7 @@
 		                                pattern="[A-Za-zÀ-ÿ\s]+" 
 		                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');"
 		                            >
+		                            <div class="invalid-feedback"></div>
 		                        </div>
 		                        
 		                        <!-- Password Section -->

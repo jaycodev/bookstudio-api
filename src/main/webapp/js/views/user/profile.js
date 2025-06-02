@@ -9,6 +9,8 @@
 
 import { showToast } from '../../utils/ui/index.js';
 
+import { isValidText, isValidPassword } from '../../utils/validators/index.js';
+
 $(document).ready(function() {
 	/************** Logic for Profile Photo **************/
 	var croppedImageBlob = null;
@@ -179,29 +181,60 @@ $(document).ready(function() {
 	});
 
 	/************** Profile update logic **************/
-	// Validate new password
-	function validateNewPassword() {
-		var newPassword = $('#editProfilePassword').val().trim();
-		var passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-		if (newPassword && !passwordRegex.test(newPassword)) {
-			$('#editProfilePassword').addClass("is-invalid");
-			$('#editProfilePassword').siblings('.invalid-feedback')
-				.text('La contraseña debe tener 8 caracteres, una mayúscula, un número y un símbolo.');
+	function validateProfileFirstName() {
+		const result = isValidText($('#editProfileFirstName').val(), 'nombre');
+		if (!result.valid) {
+			$('#editProfileFirstName').addClass('is-invalid');
+			$('#editProfileFirstName').siblings('.invalid-feedback').text(result.message);
 			return false;
 		} else {
-			$('#editProfilePassword').removeClass("is-invalid");
+			$('#editProfileFirstName').removeClass('is-invalid');
+			$('#editProfileFirstName').siblings('.invalid-feedback').text('');
+			return true;
+		}
+	}
+
+	function validateProfileLastName() {
+		const result = isValidText($('#editProfileLastName').val(), 'apellido');
+		if (!result.valid) {
+			$('#editProfileLastName').addClass('is-invalid');
+			$('#editProfileLastName').siblings('.invalid-feedback').text(result.message);
+			return false;
+		} else {
+			$('#editProfileLastName').removeClass('is-invalid');
+			$('#editProfileLastName').siblings('.invalid-feedback').text('');
+			return true;
+		}
+	}
+
+	function validateNewPassword() {
+		const newPassword = $('#editProfilePassword').val().trim();
+		const result = isValidPassword(newPassword);
+
+		if (!result.valid) {
+			$('#editProfilePassword').addClass('is-invalid');
+			$('#editProfilePassword').siblings('.invalid-feedback').text(result.message);
+			return false;
+		} else {
+			$('#editProfilePassword').removeClass('is-invalid');
 			$('#editProfilePassword').siblings('.invalid-feedback').text('');
 			return true;
 		}
 	}
 
-	// Real-time validation for "Current Password"
+	$("#editProfileFirstName").on("input", function () {
+		validateProfileFirstName();
+	});
+
+	$("#editProfileLastName").on("input", function () {
+		validateProfileLastName();
+	});
+	
 	$("#currentProfilePassword").on("input", function() {
 		$(this).removeClass("is-invalid");
 		$(this).siblings('.invalid-feedback').text('');
 	});
 
-	// Real-time validation for "New Password"
 	$("#editProfilePassword").on("input", function() {
 		validateNewPassword();
 	});
@@ -209,6 +242,13 @@ $(document).ready(function() {
 	// Handle profile update form submission
 	$('#editProfileForm').on('submit', function(event) {
 		event.preventDefault();
+		
+		const firstNameValid = validateProfileFirstName();
+		const lastNameValid = validateProfileLastName();
+
+		if (!firstNameValid || !lastNameValid) {
+			return;
+		}
 
 		var currentPassword = $('#currentProfilePassword').val().trim();
 		var newPassword = $('#editProfilePassword').val().trim();
