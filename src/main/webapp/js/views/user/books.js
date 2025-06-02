@@ -786,7 +786,7 @@ function applyTextColorByColumnPDF(data) {
 
 	const colorMap = {
 		2: [0, 128, 0],
-		3: [255, 0, 0],
+		3: [255, 193, 7],
 		6: value === "Activo" ? [0, 128, 0] : [255, 0, 0]
 	};
 
@@ -994,7 +994,7 @@ function generateExcel(dataTable) {
 			applyCellStyle(disponiblesCell, '008000', 'E6F2E6');
 			
 			const prestadosCell = row.getCell(4);
-			applyCellStyle(prestadosCell, 'FF0000', 'FFE6E6');
+			applyCellStyle(prestadosCell, 'FFFFC107', 'FFFFF8E1');
 		});
 	
 		const filename = `Lista_de_libros_bookstudio_${dateStr.replace(/\s+/g, '_')}.xlsx`;
