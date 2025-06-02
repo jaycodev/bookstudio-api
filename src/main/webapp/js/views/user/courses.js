@@ -54,7 +54,7 @@ function generateRow(course) {
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
 						data-bs-toggle="modal" data-bs-target="#detailsCourseModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
-						<i class="bi bi-eye"></i>
+						<i class="bi bi-info-circle"></i>
 					</button>
 					${userRole === 'administrador' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"

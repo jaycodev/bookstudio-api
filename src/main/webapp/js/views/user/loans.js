@@ -140,7 +140,7 @@ function generateRow(loan) {
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
 						data-bs-toggle="modal" data-bs-target="#detailsLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
-						<i class="bi bi-eye"></i>
+						<i class="bi bi-info-circle"></i>
 					</button>
 					${loan.status === 'prestado' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Devolver" 

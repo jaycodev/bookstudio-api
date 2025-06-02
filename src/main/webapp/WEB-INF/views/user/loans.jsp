@@ -56,7 +56,7 @@
 				<button class="btn btn-custom-primary d-flex align-items-center"
 					data-bs-toggle="modal" data-bs-target="#addLoanModal"
 					aria-label="Prestar libro" disabled>
-					<i class="bi bi-plus-lg me-2"></i>
+					<i class="bi bi-plus-circle me-2"></i>
 					Prestar
 				</button>
 			</header>
@@ -101,7 +101,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addLoanModalLabel">Agregar un préstamo</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addLoanModalLabel">
+	                	<i class="bi bi-plus-circle me-1"></i> 
+	                	Agregar un préstamo
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -211,7 +214,7 @@
 	                
 	                <!-- Loan Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addLoanForm" id="addLoanBtn">
-	                    <span id="addLoanIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+	                    <span id="addLoanIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
 	                    <span id="addLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Prestar
 	                </button>
@@ -227,6 +230,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">
+	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del préstamo 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsLoanModalID"></span>
 	                </h5>
@@ -342,6 +346,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">
+	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar préstamo 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editLoanModalID"></span>
 	                </h5>

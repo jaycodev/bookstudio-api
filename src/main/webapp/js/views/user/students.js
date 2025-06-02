@@ -101,7 +101,7 @@ function generateRow(student) {
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
 						data-bs-toggle="modal" data-bs-target="#detailsStudentModal" data-id="${student.studentId}" data-formatted-id="${student.formattedStudentId}">
-						<i class="bi bi-eye"></i>
+						<i class="bi bi-info-circle"></i>
 					</button>
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
 						data-bs-toggle="modal" data-bs-target="#editStudentModal" data-id="${student.studentId}" data-formatted-id="${student.formattedStudentId}">

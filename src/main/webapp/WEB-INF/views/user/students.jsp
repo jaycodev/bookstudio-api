@@ -56,7 +56,7 @@
 				<button class="btn btn-custom-primary d-flex align-items-center"
 					data-bs-toggle="modal" data-bs-target="#addStudentModal"
 					aria-label="Agregar estudiante" disabled>
-					<i class="bi bi-plus-lg me-2"></i>
+					<i class="bi bi-plus-circle me-2"></i>
 					Agregar
 				</button>
 			</header>
@@ -101,7 +101,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addStudentModalLabel">Agregar un estudiante</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addStudentModalLabel">
+	                	<i class="bi bi-plus-circle me-1"></i> 
+	                	Agregar un estudiante
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -286,7 +289,7 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addStudentForm" id="addStudentBtn">
-	                    <span id="addStudentIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+	                    <span id="addStudentIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
 	                    <span id="addStudentSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
@@ -302,6 +305,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">
+	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del estudiante 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsStudentModalID"></span>
 	                </h5>
@@ -408,6 +412,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">
+	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar estudiante 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editStudentModalID"></span>
 	                </h5>

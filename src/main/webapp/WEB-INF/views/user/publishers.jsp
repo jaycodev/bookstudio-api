@@ -59,7 +59,7 @@
 					<button class="btn btn-custom-primary d-flex align-items-center"
 						data-bs-toggle="modal" data-bs-target="#addPublisherModal"
 						aria-label="Agregar editorial" disabled>
-						<i class="bi bi-plus-lg me-2"></i> Agregar
+						<i class="bi bi-plus-circle me-2"></i> Agregar
 					</button>
 				</c:if>
 			</header>
@@ -103,7 +103,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addPublisherModalLabel">Agregar una editorial</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addPublisherModalLabel">
+	                	<i class="bi bi-plus-circle me-1"></i> 
+	                	Agregar una editorial
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -274,7 +277,7 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addPublisherForm" id="addPublisherBtn">
-	                    <span id="addPublisherIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+	                    <span id="addPublisherIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
 	                    <span id="addPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
@@ -290,6 +293,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="detailsPublisherModalLabel">
+	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles de la editorial 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsPublisherModalID"></span>
 	                </h5>
@@ -387,6 +391,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="editPublisherModalLabel">
+	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar editorial 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editPublisherModalID"></span>
 	                </h5>

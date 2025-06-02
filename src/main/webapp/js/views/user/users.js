@@ -74,7 +74,7 @@ function generateRow(user) {
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
 						data-bs-toggle="modal" data-bs-target="#detailsUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
-						<i class="bi bi-eye"></i>
+						<i class="bi bi-info-circle"></i>
 					</button>
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
 						data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">

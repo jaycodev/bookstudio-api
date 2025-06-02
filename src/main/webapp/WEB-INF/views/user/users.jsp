@@ -55,7 +55,7 @@
 				<button class="btn btn-custom-primary d-flex align-items-center"
 					data-bs-toggle="modal" data-bs-target="#addUserModal"
 					aria-label="Agregar usuario" disabled>
-					<i class="bi bi-plus-lg me-2"></i>
+					<i class="bi bi-plus-circle me-2"></i>
 					Agregar
 				</button>
 			</header>
@@ -100,7 +100,10 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addUserModalLabel">Agregar usuario</h5>
+	                <h5 class="modal-title text-body-emphasis" id="addUserModalLabel">
+	                	<i class="bi bi-plus-circle me-1"></i> 
+	                	Agregar usuario
+	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
@@ -288,7 +291,7 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addUserForm" id="addUserBtn">
-	                    <span id="addUserIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+	                    <span id="addUserIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
 	                    <span id="addUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
@@ -303,7 +306,9 @@
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">Detalles del usuario 
+	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">
+	                	<i class="bi bi-info-circle me-1"></i> 
+	                	Detalles del usuario 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsUserModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -387,6 +392,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">
+	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar usuario 
 						<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editUserModalID"></span>
 	                </h5>
