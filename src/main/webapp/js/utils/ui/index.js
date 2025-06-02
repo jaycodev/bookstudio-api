@@ -206,8 +206,8 @@ export function initializeTooltips(container) {
 }
 
 export const togglePasswordVisibility = () => {
-	$('.input-group-text').each(function () {
-		$(this).on('click', function () {
+	$('.input-group-text').each(function() {
+		$(this).on('click', function() {
 			const toggleId = $(this).data('toggle-id');
 			const $input = $(`.password-field[data-toggle-id="${toggleId}"]`);
 			const $icon = $(this).find('i');
@@ -222,3 +222,14 @@ export const togglePasswordVisibility = () => {
 		});
 	});
 };
+
+export function getCurrentPeruDate() {
+	const peruDateStr = new Date().toLocaleString('en-US', {
+		timeZone: 'America/Lima',
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit'
+	});
+	const [month, day, year] = peruDateStr.split('/');
+	return new Date(`${year}-${month}-${day}`);
+}

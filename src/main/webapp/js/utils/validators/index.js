@@ -1,20 +1,12 @@
+import { getCurrentPeruDate } from '../ui/index.js';
+
+// Basic generic text and format validations
 export function isValidText(value, label = 'Texto', minLength = 3) {
 	const clean = value?.trim() || '';
 	if (clean.length < minLength) {
 		return {
 			valid: false,
 			message: `El ${label.toLowerCase()} debe tener al menos ${minLength} caracteres.`,
-		};
-	}
-	return { valid: true };
-}
-
-export function isValidDNI(dni) {
-	const dniPattern = /^\d{8}$/;
-	if (!dniPattern.test(dni)) {
-		return {
-			valid: false,
-			message: 'El DNI debe contener exactamente 8 dígitos numéricos.',
 		};
 	}
 	return { valid: true };
@@ -63,16 +55,12 @@ export function doPasswordsMatch(password, confirmPassword) {
 	return { valid: true };
 }
 
-export function isValidAddress(address, minLength = 5) {
-	if (address.length < minLength) {
+export function isValidEmail(email) {
+	const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+	if (!emailRegex.test(email)) {
 		return {
 			valid: false,
-			message: `La dirección debe tener al menos ${minLength} caracteres.`,
-		};
-	} else if (!/^[A-Za-zÑñ0-9\s,.\-#]+$/.test(address)) {
-		return {
-			valid: false,
-			message: 'La dirección solo puede contener letras, números y los caracteres especiales: ,.-#',
+			message: 'Por favor ingrese un correo electrónico válido.',
 		};
 	}
 	return { valid: true };
@@ -88,12 +76,13 @@ export function isValidPhone(phone) {
 	return { valid: true };
 }
 
-export function isValidEmail(email) {
-	const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-	if (!emailRegex.test(email)) {
+// Personal data validations
+export function isValidDNI(dni) {
+	const dniPattern = /^\d{8}$/;
+	if (!dniPattern.test(dni)) {
 		return {
 			valid: false,
-			message: 'Por favor ingrese un correo electrónico válido.',
+			message: 'El DNI debe contener exactamente 8 dígitos numéricos.',
 		};
 	}
 	return { valid: true };
@@ -101,7 +90,7 @@ export function isValidEmail(email) {
 
 export function isValidBirthDate(dateStr, minAge = 10) {
 	const birthDate = new Date(dateStr);
-	const today = new Date();
+	const today = getCurrentPeruDate();
 	const minDate = new Date(today.getFullYear() - minAge, today.getMonth(), today.getDate());
 
 	if (birthDate > today) {
@@ -113,6 +102,55 @@ export function isValidBirthDate(dateStr, minAge = 10) {
 	return { valid: true };
 }
 
+// Address and file validations
+export function isValidAddress(address, minLength = 5) {
+	if (address.length < minLength) {
+		return {
+			valid: false,
+			message: `La dirección debe tener al menos ${minLength} caracteres.`,
+		};
+	} else if (!/^[A-Za-zÑñ0-9\s,.\-#]+$/.test(address)) {
+		return {
+			valid: false,
+			message: 'La dirección solo puede contener letras, números y los caracteres especiales: ,.-#',
+		};
+	}
+	return { valid: true };
+}
+
+export function isValidImageFile(file) {
+	if (!file) {
+		return { valid: true };
+	}
+
+	const validExtensions = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+	if (!validExtensions.includes(file.type)) {
+		return {
+			valid: false,
+			message: 'Solo se permiten imágenes en formato JPG, PNG, GIF o WEBP.'
+		};
+	}
+
+	return { valid: true };
+}
+
+export function validateImageFileUI(input) {
+	const file = input[0].files[0];
+	const result = isValidImageFile(file);
+
+	if (!result.valid) {
+		input.addClass('is-invalid');
+		input.siblings('.invalid-feedback').html(result.message);
+		return false;
+	} else {
+		input.removeClass('is-invalid');
+		input.siblings('.invalid-feedback').hide();
+		return true;
+	}
+}
+
+// Business-specific validations (books and loans)
 export function isValidTotalCopies(copies, maxCopies = 1000) {
 	if (copies > maxCopies) {
 		return {
@@ -141,7 +179,7 @@ export function isValidTotalCopiesInRange(copies, min, max) {
 
 export function isValidReleaseDate(dateStr) {
 	const releaseDate = new Date(dateStr);
-	const today = new Date();
+	const today = getCurrentPeruDate();
 
 	if (releaseDate > today) {
 		return {
@@ -186,7 +224,7 @@ export function isValidLoanQuantity(quantity, maxQuantity) {
 
 export function isValidFoundationYear(year, minYear = 1000) {
 	const parsedYear = parseInt(year, 10);
-	const currentYear = new Date().getFullYear();
+	const currentYear = getCurrentPeruDate().getFullYear();
 
 	if (isNaN(parsedYear) || parsedYear < minYear || parsedYear > currentYear) {
 		return {
@@ -196,36 +234,4 @@ export function isValidFoundationYear(year, minYear = 1000) {
 	}
 
 	return { valid: true };
-}
-
-export function isValidImageFile(file) {
-	if (!file) {
-		return { valid: true };
-	}
-
-	const validExtensions = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-
-	if (!validExtensions.includes(file.type)) {
-		return {
-			valid: false,
-			message: 'Solo se permiten imágenes en formato JPG, PNG, GIF o WEBP.'
-		};
-	}
-
-	return { valid: true };
-}
-
-export function validateImageFileUI(input) {
-	const file = input[0].files[0];
-	const result = isValidImageFile(file);
-
-	if (!result.valid) {
-		input.addClass('is-invalid');
-		input.siblings('.invalid-feedback').html(result.message);
-		return false;
-	} else {
-		input.removeClass('is-invalid');
-		input.siblings('.invalid-feedback').hide();
-		return true;
-	}
 }

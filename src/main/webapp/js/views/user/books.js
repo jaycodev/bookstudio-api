@@ -19,7 +19,8 @@ import {
   placeholderColorEditSelect,
   placeholderColorDateInput,
   setupBootstrapSelectDropdownStyles,
-  initializeTooltips
+  initializeTooltips,
+  getCurrentPeruDate
 } from '../../utils/ui/index.js';
 
 import { toggleTableLoadingState, setupDataTable } from '../../utils/tables/index.js';
@@ -605,8 +606,8 @@ function loadModalData() {
 		populateSelect('#addBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
 		$('#addBookCourse').selectpicker();
 		
-		const today = new Date();
-		const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+		const today = getCurrentPeruDate();
+		const peruDateStr = today.toISOString().split('T')[0];
 		$('#addReleaseDate').attr('max', peruDateStr);
 
 		populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
@@ -726,8 +727,8 @@ function loadModalData() {
 
 				$('#editReleaseDate').val(moment(data.releaseDate).format('YYYY-MM-DD'));
 				
-				const today = new Date();
-				const peruDateStr = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
+				const today = getCurrentPeruDate();
+				const peruDateStr = today.toISOString().split('T')[0];
 				$('#editReleaseDate').attr('max', peruDateStr);
 				
 				$('#editBookStatus').selectpicker('destroy').empty().append(

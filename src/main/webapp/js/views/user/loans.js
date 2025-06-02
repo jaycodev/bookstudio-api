@@ -21,7 +21,8 @@ import {
   placeholderColorEditSelect,
   placeholderColorDateInput,
   setupBootstrapSelectDropdownStyles,
-  initializeTooltips
+  initializeTooltips,
+  getCurrentPeruDate
 } from '../../utils/ui/index.js';
 
 import { toggleTableLoadingState, setupDataTable } from '../../utils/tables/index.js';
@@ -644,20 +645,21 @@ function loadModalData() {
 		$('#addLoanForm')[0].reset();
 		$('#addLoanForm .is-invalid').removeClass('is-invalid');
 
-		var today = new Date();
-		var peruDate = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
-		$('#addLoanDate').val(peruDate);
+		const today = getCurrentPeruDate();
+		const peruDateStr = today.toISOString().split('T')[0];
 
-		var baseDate = new Date(peruDate + "T00:00:00");
+		$('#addLoanDate').val(peruDateStr);
 
-		var minReturnDate = new Date(baseDate);
+		const baseDate = new Date(peruDateStr + "T00:00:00");
+
+		const minReturnDate = new Date(baseDate);
 		minReturnDate.setDate(minReturnDate.getDate() + 1);
 
-		var maxReturnDate = new Date(baseDate);
+		const maxReturnDate = new Date(baseDate);
 		maxReturnDate.setDate(maxReturnDate.getDate() + 14);
 
-		var minDateStr = minReturnDate.toISOString().split('T')[0];
-		var maxDateStr = maxReturnDate.toISOString().split('T')[0];
+		const minDateStr = minReturnDate.toISOString().split('T')[0];
+		const maxDateStr = maxReturnDate.toISOString().split('T')[0];
 
 		$('#addReturnDate').attr('min', minDateStr);
 		$('#addReturnDate').attr('max', maxDateStr);

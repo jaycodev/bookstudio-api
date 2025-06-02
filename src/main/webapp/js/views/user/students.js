@@ -19,7 +19,8 @@ import {
   placeholderColorEditSelect,
   placeholderColorDateInput,
   setupBootstrapSelectDropdownStyles,
-  initializeTooltips
+  initializeTooltips,
+  getCurrentPeruDate
 } from '../../utils/ui/index.js';
 
 import { toggleTableLoadingState, setupDataTable } from '../../utils/tables/index.js';
@@ -662,8 +663,9 @@ function loadModalData() {
 		$('#addStudentForm')[0].reset();
 		$('#addStudentForm .is-invalid').removeClass('is-invalid');
 		
-		const peruToday = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00').toISOString().split('T')[0];
-		$('#addStudentBirthDate').attr('max', peruToday);
+		const todayPeru = getCurrentPeruDate();
+		const maxDateStr = todayPeru.toISOString().split('T')[0];
+		$('#addStudentBirthDate').attr('max', maxDateStr);
 
 		placeholderColorDateInput();
 	});
@@ -740,8 +742,9 @@ function loadModalData() {
 				$('#editStudentEmail').val(data.email);
 				$('#editStudentBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'));
 				
-				const peruToday = new Date(new Date().toLocaleDateString('en-CA', { timeZone: 'America/Lima' }) + 'T00:00:00').toISOString().split('T')[0];
-				$('#editStudentBirthDate').attr('max', peruToday);
+				const todayPeru = getCurrentPeruDate();
+				const maxDateStr = todayPeru.toISOString().split('T')[0];
+				$('#editStudentBirthDate').attr('max', maxDateStr);
 				
 				$('#editStudentGender').selectpicker('destroy').empty().append(
 					$('<option>', {
