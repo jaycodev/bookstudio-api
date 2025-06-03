@@ -18,13 +18,18 @@ export function setupDataTable(tableId) {
 		lengthChange: true,
 		paging: true,
 		ordering: true,
+		pageLength: 15,
+		lengthMenu: [
+			[10, 15, 25, -1],
+			[10, 15, 25, "Todo"]
+		],
 		"columnDefs": [
 			{ "orderable": false, "targets": -1 }
 		],
 		language: {
 			search: "",
 			searchPlaceholder: "Buscar...",
-			lengthMenu: "Mostrar _MENU_ registros",
+			lengthMenu: "Mostrar _MENU_ ",
 			info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
 			infoEmpty: "Mostrando 0 a 0 de 0 registros",
 			infoFiltered: "(filtrado de _MAX_ registros totales)",
