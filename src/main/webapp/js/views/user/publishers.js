@@ -96,6 +96,9 @@ function generateRow(publisher) {
 			<td class="align-middle text-start">
 				<span class="badge bg-body-secondary text-body-emphasis border">${publisher.literaryGenreName}</span>
 			</td>
+			<td class="align-middle text-start">
+				<a href="${publisher.website}" target="_blank">${publisher.website}</a>
+			</td>
 			<td class="align-middle text-center">
 				${publisher.status === 'activo'
 					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
@@ -228,14 +231,15 @@ function updateRowInTable(publisher) {
 		row.find('td').eq(1).text(publisher.name);
 		row.find('td').eq(2).find('span').text(publisher.nationalityName);
 		row.find('td').eq(3).find('span').text(publisher.literaryGenreName);
-		row.find('td').eq(4).html(publisher.status === 'activo'
+		row.find('td').eq(4).find('a').attr('href', publisher.website).text(publisher.website);
+		row.find('td').eq(5).html(publisher.status === 'activo'
 			? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 			: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>');
 
 		if (publisher.photoBase64 && publisher.photoBase64.trim() !== "") {
-			row.find('td').eq(5).html(`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
+			row.find('td').eq(6).html(`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`);
 		} else {
-			row.find('td').eq(5).html(`
+			row.find('td').eq(6).html(`
 				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -932,29 +936,28 @@ function generatePDF(publisherTable) {
 		});
 	
 		const pageWidth = doc.internal.pageSize.getWidth();
-		const margin = 15;
+		const margin = 10;
 		const topMargin = 5;
-		
+
 		try {
-			doc.addImage(logoUrl, 'PNG', margin, topMargin, 30, 30);
+			doc.addImage(logoUrl, 'PNG', margin, topMargin - 5, 30, 30);
 		} catch (imgError) {
 			console.warn("Logo not available:", imgError);
 			showToast("No se pudo cargar el logo. Se continuará sin él.", "warning");
 			hasWarnings = true;
 		}
-	
+		
 		doc.setFont("helvetica", "bold");
-		doc.setFontSize(18);
-		doc.setTextColor(40);
-		doc.text("Lista de editoriales", pageWidth / 2, topMargin + 18, { align: "center" });
-	
+		doc.setFontSize(14);
+		doc.text("Lista de editoriales", pageWidth / 2, topMargin + 13, { align: "center" });
+
 		doc.setFont("helvetica", "normal");
-		doc.setFontSize(10);
-		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 15, { align: "right" });
-		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 20, { align: "right" });
+		doc.setFontSize(8);
+		doc.text(`Fecha: ${fecha}`, pageWidth - margin, topMargin + 10, { align: "right" });
+		doc.text(`Hora: ${hora}`, pageWidth - margin, topMargin + 15, { align: "right" });
 	
 		const data = publisherTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-			let estado = row.cells[4].innerText.trim();
+			let estado = row.cells[5].innerText.trim();
 			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
 	
 			return [
@@ -962,37 +965,44 @@ function generatePDF(publisherTable) {
 				row.cells[1].innerText.trim(),
 				row.cells[2].innerText.trim(),
 				row.cells[3].innerText.trim(),
+				row.cells[4].innerText.trim(),
 				estado
 			];
 		});
 	
 		doc.autoTable({
-			startY: topMargin + 35,
+			startY: topMargin + 25,
 			margin: { left: margin, right: margin },
-			head: [['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado']],
+			head: [['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Página web', 'Estado']],
 			body: data,
 			theme: 'grid',
 			headStyles: {
 				fillColor: [0, 0, 0],
 				textColor: 255,
 				fontStyle: 'bold',
+				fontSize: 8,
 				halign: 'left'
 			},
 			bodyStyles: {
 				font: "helvetica",
-				fontSize: 10,
+				fontSize: 7,
 				halign: 'left'
-			},
-			columnStyles: {
-				0: { cellWidth: 20 },
-				1: { cellWidth: 50 },
-				2: { cellWidth: 30 },
-				3: { cellWidth: 50 },
-				4: { cellWidth: 30 }
 			},
 			didParseCell: function(data) {
 				if (data.section === 'body' && data.column.index === 4) {
+					data.cell.styles.textColor = [0, 0, 255];
+				}
+				if (data.section === 'body' && data.column.index === 5) {
 					data.cell.styles.textColor = data.cell.raw === "Activo" ? [0, 128, 0] : [255, 0, 0];
+				}
+			},
+			didDrawCell: function(data) {
+				if (data.section === 'body' && data.column.index === 4) {
+					const url = data.cell.raw;
+					const pos = data.cell.textPos;
+					if (url && url.trim() !== "" && pos) {
+						doc.textWithLink('', pos.x, pos.y, { url });
+					}
 				}
 			}
 		});
@@ -1039,13 +1049,13 @@ function generateExcel(publisherTable) {
 			hour12: true
 		});
 	
-		worksheet.mergeCells('A1:E1');
+		worksheet.mergeCells('A1:F1');
 		const titleCell = worksheet.getCell('A1');
 		titleCell.value = 'Lista de editoriales - BookStudio';
 		titleCell.font = { name: 'Arial', size: 14, bold: true };
 		titleCell.alignment = { horizontal: 'center' };
 	
-		worksheet.mergeCells('A2:E2');
+		worksheet.mergeCells('A2:F2');
 		const dateTimeCell = worksheet.getCell('A2');
 		dateTimeCell.value = `Fecha: ${dateStr}  Hora: ${timeStr}`;
 		dateTimeCell.alignment = { horizontal: 'center' };
@@ -1055,11 +1065,12 @@ function generateExcel(publisherTable) {
 			{ key: 'nombre', width: 30 },
 			{ key: 'nacionalidad', width: 25 },
 			{ key: 'genero', width: 30 },
+			{ key: 'pagina', width: 50 },
 			{ key: 'estado', width: 15 }
 		];
 	
 		const headerRow = worksheet.getRow(4);
-		headerRow.values = ['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Estado'];
+		headerRow.values = ['Código', 'Nombre', 'Nacionalidad', 'Género literario', 'Página web', 'Estado'];
 		headerRow.eachCell((cell) => {
 			cell.font = { bold: true, color: { argb: 'FFFFFF' } };
 			cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '000000' } };
@@ -1073,7 +1084,7 @@ function generateExcel(publisherTable) {
 		});
 	
 		const data = publisherTable.rows({ search: 'applied' }).nodes().toArray().map(row => {
-			let estado = row.cells[4].innerText.trim();
+			let estado = row.cells[5].innerText.trim();
 			estado = estado.includes("Activo") ? "Activo" : "Inactivo";
 	
 			return {
@@ -1081,13 +1092,26 @@ function generateExcel(publisherTable) {
 				nombre: row.cells[1].innerText.trim(),
 				nacionalidad: row.cells[2].innerText.trim(),
 				genero: row.cells[3].innerText.trim(),
+				pagina: row.cells[4].innerText.trim(),
 				estado: estado
 			};
 		});
 	
 		data.forEach((item) => {
 			const row = worksheet.addRow(item);
-			const estadoCell = row.getCell(5);
+			
+			const paginaCell = row.getCell(5);
+			if (item.pagina && item.pagina.trim() !== "") {
+				paginaCell.value = {
+					text: item.pagina,
+					hyperlink: item.pagina
+				};
+				paginaCell.font = { color: { argb: '0000FF' }, underline: true };
+			} else {
+				paginaCell.value = "";
+			}
+			
+			const estadoCell = row.getCell(6);
 			if (estadoCell.value === "Activo") {
 				estadoCell.font = { color: { argb: '008000' } };
 				estadoCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'E6F2E6' } };

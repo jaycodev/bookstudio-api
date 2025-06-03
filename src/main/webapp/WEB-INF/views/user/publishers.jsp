@@ -83,6 +83,7 @@
 								<th scope="col" class="text-start">Nombre</th>
 								<th scope="col" class="text-start">Nacionalidad</th>
 								<th scope="col" class="text-start">Género literario</th>
+								<th scope="col" class="text-start">Página web</th>
 								<th scope="col" class="text-center">Estado</th>
 								<th scope="col" class="text-center">Foto</th>
 								<th scope="col" class="text-center"></th>
