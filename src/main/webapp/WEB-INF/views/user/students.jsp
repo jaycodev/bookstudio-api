@@ -377,12 +377,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Género</h6>
-		                        <p class="fw-bold" id="detailsStudentGender"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentGender"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Facultad</h6>
-		                        <p class="fw-bold" id="detailsStudentFaculty"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentFaculty"></p>
 		                    </div>
 		                </div>
 		                
