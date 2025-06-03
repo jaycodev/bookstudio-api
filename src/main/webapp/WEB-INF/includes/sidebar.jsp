@@ -1,4 +1,4 @@
-<%@page import="com.bookstudio.utils.LoginConstants"%>
+<%@ page import="com.bookstudio.utils.LoginConstants" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%
@@ -6,6 +6,22 @@
 	String role = (String) session.getAttribute(LoginConstants.ROLE);
 	
 	out.println("<script>sessionStorage.setItem('userRole', '" + role + "');</script>");
+%>
+
+<%
+    java.util.Calendar calendar = java.util.Calendar.getInstance(java.util.TimeZone.getTimeZone("America/Lima"));
+    int hour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
+    String greeting;
+
+    if (hour >= 5 && hour < 12) {
+        greeting = "Buenos días";
+    } else if (hour >= 12 && hour < 18) {
+        greeting = "Buenas tardes";
+    } else {
+        greeting = "Buenas noches";
+    }
+
+    request.setAttribute("greetingMessage", greeting);
 %>
 
 <!-- Sidebar (Visible on Medium and Large Screens) -->
@@ -139,7 +155,7 @@
 
         <!-- User Information Footer -->
         <footer class="p-4 mt-auto">
-            <p class="text-muted mb-0">Sesión iniciada como: <span class="text-body-emphasis">${sessionScope.username}</span></p>
+            <p class="text-muted mb-0">${greetingMessage}, <span class="text-body-emphasis">${sessionScope.username}</span></p>
         </footer>
     </nav>
 </aside>
