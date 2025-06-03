@@ -4,7 +4,7 @@
 <html lang="es" data-bs-theme="auto">
 <head>
 	<meta charset="UTF-8">
-	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
+	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <jsp:include page="/WEB-INF/includes/styles.jsp"></jsp:include>
@@ -59,7 +59,7 @@
 					<button class="btn btn-custom-primary d-flex align-items-center"
 						data-bs-toggle="modal" data-bs-target="#addAuthorModal"
 						aria-label="Agregar autor" disabled>
-						<i class="bi bi-plus-lg me-2"></i>
+						<i class="bi bi-plus-circle me-2"></i>
 						Agregar
 					</button>
 				</c:if>
@@ -84,6 +84,7 @@
 								<th scope="col" class="text-start">Nombre</th>
 								<th scope="col" class="text-start">Nacionalidad</th>
 								<th scope="col" class="text-start">Género literario</th>
+								<th scope="col" class="text-center">Fecha nacimiento</th>
 								<th scope="col" class="text-center">Estado</th>
 								<th scope="col" class="text-center">Foto</th>
 								<th scope="col" class="text-center"></th>
@@ -104,7 +105,10 @@
             <div class="modal-content">
             	<!-- Modal Header -->
                 <header class="modal-header">
-                    <h5 class="modal-title text-body-emphasis" id="addAuthorModalLabel">Agregar un autor</h5>
+                    <h5 class="modal-title text-body-emphasis" id="addAuthorModalLabel">
+                    	<i class="bi bi-plus-circle me-1"></i> 
+                    	Agregar un autor
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </header>
                 
@@ -262,7 +266,7 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addAuthorForm" id="addAuthorBtn">
-	                    <span id="addAuthorIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+	                    <span id="addAuthorIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
 	                    <span id="addAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
@@ -278,6 +282,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">
+	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del autor 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsAuthorModalID"></span>
 	                </h5>
@@ -367,6 +372,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">
+	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar autor 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editAuthorModalID"></span>
 					</h5>

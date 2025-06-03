@@ -13,33 +13,25 @@
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
  *****************************************/
+import {
+  showToast,
+  toggleButtonLoading,
+  populateSelect,
+  placeholderColorSelect,
+  placeholderColorEditSelect,
+  placeholderColorDateInput,
+  setupBootstrapSelectDropdownStyles,
+  initializeTooltips,
+  getCurrentPeruDate
+} from '../../utils/ui/index.js';
 
-import { showToast, toggleButtonLoading } from '../../js/utils/ui/index.js';
+import { toggleTableLoadingState, setupDataTable } from '../../utils/tables/index.js';
+
+import { isValidReturnDate, isValidLoanQuantity } from '../../utils/validators/index.js';
 
 // Global list of books and students for the selectpickers
 var bookList = [];
 var studentList = [];
-
-function populateSelect(selector, dataList, valueKey, textKey, badgeValueKey) {
-	const select = $(selector).selectpicker('destroy').empty();
-
-	dataList.forEach(item => {
-		if (item[valueKey]) {
-			let content = item[textKey];
-
-			if (badgeValueKey && item[badgeValueKey] !== undefined) {
-				const badgeValue = item[badgeValueKey];
-				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`;
-			}
-
-			select.append(
-				$('<option>', {
-					value: item[valueKey]
-				}).attr('data-content', content)
-			);
-		}
-	});
-}
 
 function populateSelectOptions() {
 	$.ajax({
@@ -81,55 +73,6 @@ function populateSelectOptions() {
 			} catch (e) {
 				console.error("Unexpected error:", xhr.status, xhr.responseText);
 			}
-		}
-	});
-}
-
-function placeholderColorSelect() {
-	$('select.selectpicker').on('change', function() {
-		var $select = $(this);
-		var $dropdown = $select.closest('.bootstrap-select');
-		var $filterOption = $dropdown.find('.filter-option-inner-inner');
-
-		if ($select.val() !== "" && $select.val() !== null) {
-			$dropdown.removeClass('placeholder-color');
-			$filterOption.css('color', 'var(--bs-body-color)');
-		}
-	});
-}
-
-function placeholderColorEditSelect() {
-	$('select[id^="edit"]').each(function() {
-		var $select = $(this);
-		var $dropdown = $select.closest('.bootstrap-select');
-		var $filterOption = $dropdown.find('.filter-option-inner-inner');
-
-		if ($filterOption.text().trim() === "No hay selección") {
-			$filterOption.css('color', 'var(--placeholder-color)');
-		} else {
-			$filterOption.css('color', 'var(--bs-body-color)');
-		}
-	});
-}
-
-function placeholderColorDateInput() {
-	$('input[type="date"]').each(function() {
-		var $input = $(this);
-
-		if (!$input.val()) {
-			$input.css('color', 'var(--placeholder-color)');
-		} else {
-			$input.css('color', '');
-		}
-	});
-
-	$('input[type="date"]').on('change input', function() {
-		var $input = $(this);
-
-		if (!$input.val()) {
-			$input.css('color', 'var(--placeholder-color)');
-		} else {
-			$input.css('color', '');
 		}
 	});
 }
@@ -197,7 +140,7 @@ function generateRow(loan) {
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
 						data-bs-toggle="modal" data-bs-target="#detailsLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
-						<i class="bi bi-eye"></i>
+						<i class="bi bi-info-circle"></i>
 					</button>
 					${loan.status === 'prestado' ?
 						`<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Devolver" 
@@ -227,10 +170,10 @@ function addRowToTable(loan) {
 }
 
 function loadLoans() {
-	toggleButtonAndSpinner('loading');
+	toggleTableLoadingState('loading');
 
 	let safetyTimer = setTimeout(function() {
-		toggleButtonAndSpinner('loaded');
+		toggleTableLoadingState('loaded');
 		$('#tableContainer').removeClass('d-none');
 		$('#cardContainer').removeClass('h-100');
 	}, 8000);
@@ -436,20 +379,10 @@ function handleAddLoanForm() {
 
 		// Return date validation
 		if (field.is('#addReturnDate') && $('#addLoanDate').val()) {
-			var loanDate = new Date($('#addLoanDate').val());
-			var returnDate = new Date(field.val());
-
-			var maxReturnDate = new Date(loanDate);
-			maxReturnDate.setDate(loanDate.getDate() + 14);
-
-			if (returnDate <= loanDate) {
+			const result = isValidReturnDate($('#addLoanDate').val(), field.val());
+			if (!result.valid) {
 				field.addClass('is-invalid');
-				errorMessage = 'La fecha de devolución debe ser posterior de la de préstamo.';
-				field.siblings('.invalid-feedback').html(errorMessage);
-				isValid = false;
-			} else if (returnDate > maxReturnDate) {
-				field.addClass('is-invalid');
-				errorMessage = 'La fecha de devolución no puede superar los 14 días.';
+				errorMessage = result.message;
 				field.siblings('.invalid-feedback').html(errorMessage);
 				isValid = false;
 			}
@@ -457,16 +390,10 @@ function handleAddLoanForm() {
 
 		// Quantity validation
 		if (field.is('#addLoanQuantity')) {
-			let quantity = parseInt(field.val(), 10);
-			let maxQuantity = parseInt(field.attr('max'), 10);
-
-			if (quantity > maxQuantity) {
-				if (maxQuantity === 1) {
-					errorMessage = `Solo hay ${maxQuantity} ejemplar disponible para este libro.`;
-				} else {
-					errorMessage = `Solo hay ${maxQuantity} ejemplares disponibles para este libro.`;
-				}
+			const result = isValidLoanQuantity(parseInt(field.val(), 10), parseInt(field.attr('max'), 10));
+			if (!result.valid) {
 				field.addClass('is-invalid');
+				errorMessage = result.message;
 				field.siblings('.invalid-feedback').html(errorMessage);
 				isValid = false;
 			}
@@ -675,20 +602,10 @@ function validateEditField(field) {
 
 	// Return date validation
 	if (field.is('#editReturnDate') && $('#editLoanDate').val()) {
-		var loanDate = new Date($('#editLoanDate').val());
-		var returnDate = new Date(field.val());
-
-		var maxReturnDate = new Date(loanDate);
-		maxReturnDate.setDate(loanDate.getDate() + 14);
-
-		if (returnDate <= loanDate) {
+		const result = isValidReturnDate($('#editLoanDate').val(), field.val());
+		if (!result.valid) {
 			field.addClass('is-invalid');
-			errorMessage = 'La fecha de devolución debe ser posterior de la de préstamo.';
-			field.siblings('.invalid-feedback').html(errorMessage);
-			isValid = false;
-		} else if (returnDate > maxReturnDate) {
-			field.addClass('is-invalid');
-			errorMessage = 'La fecha de devolución no puede superar los 14 días.';
+			errorMessage = result.message;
 			field.siblings('.invalid-feedback').html(errorMessage);
 			isValid = false;
 		}
@@ -728,20 +645,21 @@ function loadModalData() {
 		$('#addLoanForm')[0].reset();
 		$('#addLoanForm .is-invalid').removeClass('is-invalid');
 
-		var today = new Date();
-		var peruDate = today.toLocaleDateString('en-CA', { timeZone: 'America/Lima' });
-		$('#addLoanDate').val(peruDate);
+		const today = getCurrentPeruDate();
+		const peruDateStr = today.toISOString().split('T')[0];
 
-		var baseDate = new Date(peruDate + "T00:00:00");
+		$('#addLoanDate').val(peruDateStr);
 
-		var minReturnDate = new Date(baseDate);
+		const baseDate = new Date(peruDateStr + "T00:00:00");
+
+		const minReturnDate = new Date(baseDate);
 		minReturnDate.setDate(minReturnDate.getDate() + 1);
 
-		var maxReturnDate = new Date(baseDate);
+		const maxReturnDate = new Date(baseDate);
 		maxReturnDate.setDate(maxReturnDate.getDate() + 14);
 
-		var minDateStr = minReturnDate.toISOString().split('T')[0];
-		var maxDateStr = maxReturnDate.toISOString().split('T')[0];
+		const minDateStr = minReturnDate.toISOString().split('T')[0];
+		const maxDateStr = maxReturnDate.toISOString().split('T')[0];
 
 		$('#addReturnDate').attr('min', minDateStr);
 		$('#addReturnDate').attr('max', maxDateStr);
@@ -890,54 +808,6 @@ function loadModalData() {
 				$('#editLoanModal').modal('hide');
 			}
 		});
-	});
-}
-
-function setupBootstrapSelectDropdownStyles() {
-	const observer = new MutationObserver((mutationsList) => {
-		mutationsList.forEach((mutation) => {
-			mutation.addedNodes.forEach((node) => {
-				if (node.nodeType === 1 && node.classList.contains('dropdown-menu')) {
-					const $dropdown = $(node);
-					$dropdown.addClass('gap-1 px-2 rounded-3 mx-0 shadow');
-					$dropdown.find('.dropdown-item').addClass('rounded-2 d-flex align-items-center justify-content-between');
-
-					$dropdown.find('li:not(:first-child)').addClass('mt-1');
-
-					updateDropdownIcons($dropdown);
-				}
-			});
-		});
-	});
-
-	observer.observe(document.body, { childList: true, subtree: true });
-
-	$(document).on('click', '.bootstrap-select .dropdown-item', function() {
-		const $dropdown = $(this).closest('.dropdown-menu');
-		updateDropdownIcons($dropdown);
-	});
-}
-
-function updateDropdownIcons($dropdown) {
-	$dropdown.find('.dropdown-item').each(function() {
-		const $item = $(this);
-		let $icon = $item.find('i.bi-check2');
-
-		if ($item.hasClass('active') && $item.hasClass('selected')) {
-			if ($icon.length === 0) {
-				$('<i class="bi bi-check2 ms-auto"></i>').appendTo($item);
-			}
-		} else {
-			$icon.remove();
-		}
-	});
-}
-
-function initializeTooltips(container) {
-	$(container).find('[data-tooltip="tooltip"]').tooltip({
-		trigger: 'hover'
-	}).on('click', function() {
-		$(this).tooltip('hide');
 	});
 }
 

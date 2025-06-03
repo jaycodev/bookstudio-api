@@ -4,7 +4,7 @@
 <html lang="es" data-bs-theme="auto">
 <head>
 	<meta charset="UTF-8">
-	<meta name="description" content="BookStudio es un sistema de librería para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
+	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<jsp:include page="/WEB-INF/includes/styles.jsp"></jsp:include>
@@ -59,7 +59,7 @@
 					<button class="btn btn-custom-primary d-flex align-items-center"
 						data-bs-toggle="modal" data-bs-target="#addCourseModal"
 						aria-label="Agregar curso" disabled>
-						<i class="bi bi-plus-lg me-2"></i>
+						<i class="bi bi-plus-circle me-2"></i>
 						Agregar
 					</button>
 				</c:if>
@@ -103,7 +103,10 @@
 		    <div class="modal-content">
 		        <!-- Modal Header -->
 		        <header class="modal-header">
-		            <h5 class="modal-title text-body-emphasis" id="addCourseModalLabel">Agregar un curso</h5>
+		            <h5 class="modal-title text-body-emphasis" id="addCourseModalLabel">
+		            	<i class="bi bi-plus-circle me-1"></i> 
+		            	Agregar un curso
+		            </h5>
 		            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 		        </header>
 		        
@@ -179,7 +182,7 @@
 		            
 		            <!-- Add Button -->
 		            <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addCourseForm" id="addCourseBtn">
-		                <span id="addCourseIcon" class="me-2"><i class="bi bi-plus-lg"></i></span>
+		                <span id="addCourseIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
 		                <span id="addCourseSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 		                Agregar
 		            </button>
@@ -195,6 +198,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">
+	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del curso 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsCourseModalID"></span>
 	                </h5>
@@ -262,6 +266,7 @@
 	            <!-- Modal Header -->
 	            <header class="modal-header">
 	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">
+	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar curso 
 	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editCourseModalID"></span>
 	                </h5>

@@ -1,4 +1,4 @@
-function toggleButtonAndSpinner(action) {
+export function toggleTableLoadingState(action) { 
 	const buttons = $('#buttonGroupHeader button');
 	const spinner = $('#spinnerLoad');
 
@@ -11,20 +11,25 @@ function toggleButtonAndSpinner(action) {
 	}
 }
 
-function setupDataTable(tableId) {
+export function setupDataTable(tableId) {
 	let table = $(tableId).DataTable({
 		responsive: true,
 		searching: true,
 		lengthChange: true,
 		paging: true,
 		ordering: true,
+		pageLength: 15,
+		lengthMenu: [
+			[10, 15, 25, -1],
+			[10, 15, 25, "Todo"]
+		],
 		"columnDefs": [
 			{ "orderable": false, "targets": -1 }
 		],
 		language: {
 			search: "",
 			searchPlaceholder: "Buscar...",
-			lengthMenu: "Mostrar _MENU_ registros",
+			lengthMenu: "Mostrar _MENU_ ",
 			info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
 			infoEmpty: "Mostrando 0 a 0 de 0 registros",
 			infoFiltered: "(filtrado de _MAX_ registros totales)",
@@ -32,7 +37,7 @@ function setupDataTable(tableId) {
 			emptyTable: "No hay datos disponibles en la tabla"
 		},
 		initComplete: function() {
-			toggleButtonAndSpinner('loaded');
+			toggleTableLoadingState('loaded');
 			$('#tableContainer').removeClass('d-none');
 			
 			let $dtSearch = $('.dt-search');
@@ -45,7 +50,7 @@ function setupDataTable(tableId) {
 
 	setTimeout(function() {
 		if ($('#spinnerLoad').is(':visible')) {
-			toggleButtonAndSpinner('loaded');
+			toggleTableLoadingState('loaded');
 			$('#tableContainer').removeClass('d-none');
 		}
 	}, 3000);
