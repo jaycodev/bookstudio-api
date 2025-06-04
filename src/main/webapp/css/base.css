@@ -68,6 +68,10 @@ html, body {
 	font-weight: 600;
 }
 
+.error-code {
+	font-size: 6rem;
+}
+
 [data-bs-theme="light"] .logo {
 	filter: brightness(0) invert(0);
 }
