@@ -11,7 +11,7 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-	<link rel="stylesheet" href="css/index-styles.css">
+	<link rel="stylesheet" href="css/views/user.css">
 	<title>BookStudio</title>
 	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
 	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">

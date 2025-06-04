@@ -1,0 +1,26 @@
+@import '../base.css';
+@import '../components.css';
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.card-header p {
+    font-size: 0.85rem;
+}
+
+.toast-container {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1060;
+}
+
+.toast:not(:last-child) {
+	margin-bottom: 10px;
+}

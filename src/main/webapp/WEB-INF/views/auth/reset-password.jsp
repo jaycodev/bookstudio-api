@@ -9,7 +9,7 @@
 	<script src="js/setup/color-modes.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-	<link rel="stylesheet" href="css/auth-forms-styles.css">
+	<link rel="stylesheet" href="css/views/auth.css">
 	<title>BookStudio</title>
 	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
 	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
@@ -24,8 +24,8 @@
 			<!-- Card -->
 			<section class="card border">
 				<!-- Card header -->
-				<header class="card-header text-center bg-body-secondary">
-					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png">
+				<header class="card-header text-center">
+					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="images/logo-light.png" width="40">
 					<h3 class="fw-bold mb-0 text-body-emphasis">Crear nueva contraseña</h3>
 					<p class="text-muted mb-0">Ingresa la nueva contraseña para tu cuenta de Bookstudio a continuación.</p>
 				</header>

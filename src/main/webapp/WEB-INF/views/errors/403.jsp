@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<script src="${pageContext.request.contextPath}/js/setup/color-modes.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth-forms-styles.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/views/auth.css">
 	<title>BookStudio</title>
 	<link href="${pageContext.request.contextPath}/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
 	<link href="${pageContext.request.contextPath}/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
