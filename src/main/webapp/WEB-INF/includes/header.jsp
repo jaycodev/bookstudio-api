@@ -58,7 +58,7 @@
                     <li><hr class="dropdown-divider"></li>
                     <li>
                     	<!-- Logout Button -->
-                    	<button class="dropdown-item rounded-2 dropdown-danger text-danger-emphasis d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                    	<button class="dropdown-item rounded-2 dropdown-danger text-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     		<i class="bi bi-box-arrow-right me-2"></i>
                     		Cerrar sesión
                     	</button>

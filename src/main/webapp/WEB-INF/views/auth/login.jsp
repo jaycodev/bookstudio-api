@@ -34,7 +34,7 @@
 				<div class="card-body">
 					<form id="loginForm" novalidate>
 						<!-- Username field -->
-						<div class="mb-4">
+						<div class="mb-3">
 							<label for="txtUsername" class="form-label">Nombre de usuario</label>
 							<input
 	                            id="txtUsername" 
@@ -50,11 +50,8 @@
 						</div>
 						
 						<!-- Password field -->
-						<div class="mb-4">
-							<div class="d-flex justify-content-between align-items-center">
-								<label for="txtPassword" class="form-label">Contraseña</label>
-								<a href="forgot-password" class="text-body-emphasis"><small>¿Olvidaste tu contraseña?</small></a>
-							</div>
+						<div class="mb-3">
+							<label for="txtPassword" class="form-label">Contraseña</label>								
 							<div class="input-group">
 								<input
 	                                id="txtPassword" 
@@ -73,10 +70,15 @@
 						</div>
 						
 						<!-- Login Button -->
-						<button type="submit" class="btn btn-custom-primary w-100" id="loginBtn">
+						<button type="submit" class="btn btn-custom-primary w-100 mb-3" id="loginBtn">
 		                    <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
 		                    <span id="loginText">Iniciar sesión</span>
 		                </button>
+		                
+						<!-- Forgot password -->
+						<div class="text-center">
+							<a href="forgot-password" class="text-body-emphasis link-underline-hover"><small>¿Olvidaste tu contraseña?</small></a>
+						</div>
 					</form>
 				</div>
 			</section>

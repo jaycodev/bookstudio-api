@@ -160,10 +160,15 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 	font-size: 20px;
 	bottom: 25px;
 	right: 5px;
-	background-color: var(--bs-tertiary-bg) !important;
+	background-color: var(--bg-secondary-color) !important;
 	cursor: pointer;
 	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 	z-index: 10 !important;
+	transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out !important;
+}
+
+.pencil-icon:hover {
+	background-color: var(--bg-tertiary-color) !important;
 }
 
 .bi-person-circle {
@@ -200,8 +205,9 @@ body[data-bs-theme="dark"] .bootstrap-select .dropdown-toggle:hover {
 }
 
 /* Dropdown danger */
-.dropdown-danger:hover, .dropdown-danger:active {
-	background-color: var(--bs-danger-bg-subtle) !important;
+.dropdown-danger:hover, .dropdown-danger:active, .dropdown-danger:focus {
+	background-color: #dc3545 !important;
+	color: #fff !important;
 }
 
 /* Hover Effects */

@@ -43,6 +43,18 @@
 	animation: slideUp 0.3s ease-in;
 }
 
+.toast-container {
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 1060;
+}
+
+.toast:not(:last-child) {
+	margin-bottom: 10px;
+}
+
 .cursor-pointer {
 	cursor: pointer;
 }
@@ -81,6 +93,10 @@
 	border-color: var(--bs-border-color) !important;
 }
 
+.dropdown-item {
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out !important;
+}
+
 .dropdown-item.active, .dropdown-item:active {
 	color: var(--bs-dropdown-link-color);
 }
@@ -108,8 +124,20 @@
 	opacity: 1;
 }
 
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .invalid-feedback {
 	font-size: 0.75rem;
+  	animation: fadeSlideIn 0.3s ease-out;
 }
 
 .input-group>.input-group-text {
@@ -118,6 +146,12 @@
 	border-right: 1px solid var(--bs-border-color) !important;
 	border-top: 1px solid var(--bs-border-color) !important;
 	border-bottom: 1px solid var(--bs-border-color) !important;
+	background-color: var(--bg-secondary-color) !important;
+	transition: background-color .15s ease-in-out;
+}
+
+.input-group>.input-group-text:hover {
+	background-color: var(--bg-tertiary-color) !important;
 }
 
 /* Checkbox styles */
@@ -158,4 +192,17 @@
 .nav-link:focus-visible,
 .btn:focus-visible {
 	box-shadow: none !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.dropdown-menu.show {
+  animation: fadeIn 0.15s ease-out forwards;
 }

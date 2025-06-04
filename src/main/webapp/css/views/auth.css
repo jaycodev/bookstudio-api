@@ -5,22 +5,19 @@ a {
 	text-decoration: none;
 }
 
-a:hover {
-	text-decoration: underline;
+.link-underline-hover {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 2px);
+  transition: background-size 0.3s ease;
+}
+
+.link-underline-hover:hover {
+  background-size: 100% 1px;
 }
 
 .card-header p {
     font-size: 0.85rem;
-}
-
-.toast-container {
-	position: absolute;
-	top: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 1060;
-}
-
-.toast:not(:last-child) {
-	margin-bottom: 10px;
 }

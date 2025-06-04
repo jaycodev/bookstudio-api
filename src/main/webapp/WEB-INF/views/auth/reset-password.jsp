@@ -34,7 +34,7 @@
 				<div class="card-body">
 					<form id="resetPasswordForm" accept-charset="UTF-8" novalidate>
 						<!-- New Password field -->
-						<div class="mb-4">
+						<div class="mb-3">
 							<label for="newPassword" class="form-label">Nueva contraseña</label>
 							<div class="input-group">
 								<input
@@ -52,7 +52,7 @@
 						</div>
 						
 						<!-- Confirm New Password field -->
-						<div class="mb-4">
+						<div class="mb-3">
 							<label for="confirmNewPassword" class="form-label">Confirmar contraseña nueva</label>
 							<div class="input-group">
 								<input

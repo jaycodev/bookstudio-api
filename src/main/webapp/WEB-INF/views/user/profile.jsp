@@ -61,7 +61,7 @@
 				        <form id="editProfilePhotoForm" enctype="multipart/form-data">     
 				            <!-- Pencil Icon for Edit -->
 				            <label id="photoLabel" for="editProfilePhoto" 
-				                   class="position-absolute rounded-circle d-flex align-items-center justify-content-center pencil-icon"
+				                   class="position-absolute rounded-circle d-flex align-items-center justify-content-center pencil-icon border"
 				                   data-bs-toggle="dropdown" 
 				                   aria-expanded="false">
 				              <i class="bi bi-pencil"></i>
@@ -72,14 +72,14 @@
 				                <li>
 				                    <!-- Option to Upload New Profile Image -->
 				                    <label for="editProfilePhoto" class="dropdown-item rounded-2 d-flex align-items-center cursor-pointer">
-				                        <i class="bi bi-upload me-2"></i> Subir imagen
+				                        <i class="bi bi-upload me-2"></i> Subir
 				                    </label>
 				                </li>
 				                <!-- Option to Delete Image (if exists) -->
 				                <c:if test="${not empty sessionScope.user_profile_image}">
 				                    <li class="mt-1">
-				                        <button type="button" class="dropdown-item rounded-2 d-flex align-items-center dropdown-danger" data-bs-toggle="modal" data-bs-target="#deletePhotoModal">
-				                            <i class="bi bi-trash me-2"></i> Eliminar imagen
+				                        <button type="button" class="dropdown-item rounded-2 d-flex align-items-center dropdown-danger text-danger" data-bs-toggle="modal" data-bs-target="#deletePhotoModal">
+				                            <i class="bi bi-trash me-2"></i> Eliminar
 				                        </button>
 				                    </li>
 				                </c:if>
