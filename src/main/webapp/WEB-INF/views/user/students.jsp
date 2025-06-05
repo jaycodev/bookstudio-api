@@ -7,7 +7,7 @@
 	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<jsp:include page="/WEB-INF/includes/styles.jsp"></jsp:include>
+	<%@ include file="/WEB-INF/includes/styles.jspf" %>
 	<title>BookStudio</title>
 	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
 	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
