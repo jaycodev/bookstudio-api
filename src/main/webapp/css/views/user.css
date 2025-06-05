@@ -2,6 +2,13 @@
 @import '../layout.css';
 @import '../components.css';
 
+html, body {
+	height: 100%;
+	overflow-y: auto;
+	font-family: 'Poppins', sans-serif;
+	background-color: var(--bg-primary-color);
+}
+
 .hovered:hover {
 	background-color: var(--bs-tertiary-bg) !important;
 }

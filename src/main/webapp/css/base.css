@@ -57,19 +57,12 @@
 	background-color: var(--bg-tertiary-color) !important;
 }
 
-html, body {
-	height: 100%;
-	overflow-y: auto;
-	font-family: 'Poppins', sans-serif;
-	background-color: var(--bg-primary-color);
-}
-
 .text-logo {
 	font-weight: 600;
 }
 
 .error-code {
-	font-size: 6rem;
+	font-size: 6.5rem;
 }
 
 [data-bs-theme="light"] .logo {

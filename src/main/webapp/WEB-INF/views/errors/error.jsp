@@ -58,7 +58,7 @@
 	<link href="${pageContext.request.contextPath}/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-	<main class="bg-body-secondary">
+	<main class="bg-body-primary">
 		<section class="d-flex align-items-center justify-content-center min-vh-100 px-2">
 			<div class="text-center" role="alert" aria-live="assertive">
 				<header>
