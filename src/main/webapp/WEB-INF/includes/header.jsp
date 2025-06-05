@@ -14,7 +14,7 @@
 
         <!-- Logo -->
 		<a href="./" class="text-center text-decoration-none text-body-emphasis d-flex align-items-center">
-		    <img class="logo me-2" alt="Logo de Bookstudio" src="images/logo-light.png" width="25">
+		    <img class="logo me-2" alt="Logo de Bookstudio" src="./images/logo-light.png" width="25">
 		    <span class="fs-5 text-logo">BookStudio</span>
 		</a>
 

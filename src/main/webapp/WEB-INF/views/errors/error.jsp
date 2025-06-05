@@ -79,7 +79,7 @@
 				<div class="position-absolute bottom-0 start-50 translate-middle-x mb-2 d-flex flex-sm-nowrap flex-wrap align-items-center justify-content-center text-center mb-4">
 					<span class="text-muted small me-2 text-nowrap">Desarrollado por</span>
 					<span class="d-inline-flex align-items-center text-nowrap">
-						<img class="logo me-1" alt="Logo de Bookstudio" src="images/logo-light.png" width="18">
+						<img class="logo me-1" alt="Logo de Bookstudio" src="${pageContext.request.contextPath}/images/logo-light.png" width="18">
 						<span class="fs-6 text-logo align-middle text-body-emphasis">BookStudio</span>
 					</span>
 				</div>
