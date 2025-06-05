@@ -7,7 +7,6 @@ $(document).ready(function() {
 
 		if ($link.attr('href') === currentPage) {
 			$link.addClass('active-effect');
-
 			if ($icon.length) {
 				const iconClass = $icon.attr('class').split(' ').pop();
 				if (!iconClass.endsWith('-fill')) {
@@ -18,15 +17,14 @@ $(document).ready(function() {
 			$link.removeClass('active-effect');
 		}
 	});
-	
+
 	function initNavTooltips() {
 		$('#sidebar .nav-link').each(function() {
-			if (bootstrap.Tooltip.getInstance(this)) {
-				bootstrap.Tooltip.getInstance(this).dispose();
-			}
+			const instance = bootstrap.Tooltip.getInstance(this);
+			if (instance) instance.dispose();
 		});
 		$('#sidebar .nav-link').each(function() {
-			var tooltipText = $(this).find('.sidebar-link').text().trim();
+			const tooltipText = $(this).find('.sidebar-link').text().trim();
 			if (tooltipText !== "") {
 				if (!$(this).attr('title')) {
 					$(this).attr('title', tooltipText);
@@ -41,32 +39,30 @@ $(document).ready(function() {
 
 	function disposeNavTooltips() {
 		$('#sidebar .nav-link').each(function() {
-			if (bootstrap.Tooltip.getInstance(this)) {
-				bootstrap.Tooltip.getInstance(this).dispose();
-			}
+			const instance = bootstrap.Tooltip.getInstance(this);
+			if (instance) instance.dispose();
 		});
 	}
 
 	function initButtonTooltip() {
-		if (bootstrap.Tooltip.getInstance($('#toggleSidebar')[0])) {
-			bootstrap.Tooltip.getInstance($('#toggleSidebar')[0]).dispose();
-		}
+		const btn = $('#toggleSidebar')[0];
+		const instance = bootstrap.Tooltip.getInstance(btn);
+		if (instance) instance.dispose();
 		$('#toggleSidebar').attr('title', 'Abrir barra lateral');
-		new bootstrap.Tooltip($('#toggleSidebar')[0], {
+		new bootstrap.Tooltip(btn, {
 			trigger: 'hover',
 			placement: 'right'
 		});
 	}
 
 	function disposeButtonTooltip() {
-		if (bootstrap.Tooltip.getInstance($('#toggleSidebar')[0])) {
-			bootstrap.Tooltip.getInstance($('#toggleSidebar')[0]).dispose();
-		}
+		const btn = $('#toggleSidebar')[0];
+		const instance = bootstrap.Tooltip.getInstance(btn);
+		if (instance) instance.dispose();
 		$('#toggleSidebar').removeAttr('title');
 	}
 
-	if (localStorage.getItem('sidebarCollapsed') === 'true') {
-		$('#sidebar, main').addClass('collapsed');
+	if ($('html').hasClass('collapsed')) {
 		$('#sidebarArrow').removeClass('bi-arrow-bar-left').addClass('bi-arrow-bar-right');
 		$('#toggleSidebar').attr('aria-label', 'Abrir barra lateral');
 		initNavTooltips();
@@ -76,15 +72,15 @@ $(document).ready(function() {
 	}
 
 	$('#toggleSidebar').click(function() {
-		$('#sidebar, main').toggleClass('collapsed');
-		$('#sidebarArrow').toggleClass('bi-arrow-bar-left bi-arrow-bar-right');
+		$('html').toggleClass('collapsed');
 
-		if ($('#sidebar').hasClass('collapsed')) {
-			localStorage.setItem('sidebarCollapsed', 'true');
+		const isCollapsed = $('html').hasClass('collapsed');
+		localStorage.setItem('sidebarCollapsed', isCollapsed ? 'true' : 'false');
+
+		if (isCollapsed) {
 			initNavTooltips();
 			initButtonTooltip();
 		} else {
-			localStorage.setItem('sidebarCollapsed', 'false');
 			disposeNavTooltips();
 			disposeButtonTooltip();
 		}

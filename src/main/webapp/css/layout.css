@@ -16,15 +16,15 @@ aside.position-fixed {
 	z-index: 1025;
 }
 
-aside.position-fixed.collapsed {
+html.collapsed aside.position-fixed {
 	width: 80px;
 }
 
-aside.position-fixed.collapsed .sidebar-link {
+html.collapsed aside.position-fixed .sidebar-link {
 	display: none;
 }
 
-aside.position-fixed.collapsed ul.nav li {
+html.collapsed aside.position-fixed ul.nav li {
 	width: 100%;
 	box-sizing: border-box;
 }
@@ -40,7 +40,7 @@ main {
 	overflow: hidden;
 }
 
-main.collapsed {
+html.collapsed main {
 	left: 80px;
 }
 
