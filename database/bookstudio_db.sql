@@ -353,5 +353,5 @@ INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Ob
 
 -- Users
 INSERT INTO Users (Username, Email, FirstName, LastName, Password, Role, ProfilePhoto) VALUES
-('Admin', 'admin@example.com', 'Admin', 'Admin', 'Admin123@', 'administrador', NULL),
-('Biblio', 'biblio@example.com', 'Biblio', 'Biblio', 'Biblio123@', 'bibliotecario', NULL);
+('Admin', 'admin@example.com', 'Admin', 'Admin', '$2a$12$iWnPrDNZRwAOP3RCTJSypu9IicnZZ6D68JppSHH64dtiQdHPtMWDO', 'administrador', NULL),
+('Biblio', 'biblio@example.com', 'Biblio', 'Biblio', '$2a$12$F7oIqfODvMk9AkPCIGWM8OXI8OcHxpNGzmBeGTCoXsOjZdeWfWU2C', 'bibliotecario', NULL);
