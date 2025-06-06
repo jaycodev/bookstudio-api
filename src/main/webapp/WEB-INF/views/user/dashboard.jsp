@@ -171,8 +171,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 	<!-- Custom Scripts -->
-	<script src="js/views/user/dashboard.js" defer></script>
 	<script src="js/layout/header.js" defer></script>
 	<script src="js/layout/sidebar.js" defer></script>
+	<script src="js/setup/theme-toggle.js" defer></script>
+	
+	<!-- Page-Specific Script -->
+	<script src="js/views/user/dashboard.js" defer></script>
 </body>
 </html>
