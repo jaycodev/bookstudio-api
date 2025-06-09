@@ -1,17 +1,18 @@
 @import '../shared/base.css';
 @import '../shared/components.css';
 
-html, body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	font-family: 'Poppins', sans-serif;
-	background-color: var(--bg-primary-color);
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-primary-color);
 }
 
 a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 .link-underline-hover {
@@ -28,5 +29,5 @@ a {
 }
 
 .card-header p {
-    font-size: 0.85rem;
+  font-size: 0.85rem;
 }

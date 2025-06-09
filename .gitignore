@@ -5,6 +5,7 @@ target/
 .project
 /.metadata
 /.idea
+/node_modules/
 *.class
 *.log
 Thumbs.db

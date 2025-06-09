@@ -1,0 +1,9 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["javascript"],
+  "eslint.run": "onSave",
+  "files.exclude": {
+    "**/node_modules": true
+  }
+}

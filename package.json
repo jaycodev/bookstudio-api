@@ -1,0 +1,30 @@
+{
+  "name": "bookstudio-v1",
+  "version": "1.0.0",
+  "description": "BookStudio - Library Management System",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/main/webapp/js/**/*.js",
+    "lint:fix": "eslint src/main/webapp/js/**/*.js --fix",
+    "format": "prettier --write src/main/webapp/**/*.{js,css,html}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jason-vila/bookstudio-v1.git"
+  },
+  "keywords": [],
+  "author": "Jason Vila <jasonvilac@gmail.com>",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/jason-vila/bookstudio-v1/issues"
+  },
+  "homepage": "https://github.com/jason-vila/bookstudio-v1#readme",
+  "devDependencies": {
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "prettier": "^3.5.3"
+  }
+}
