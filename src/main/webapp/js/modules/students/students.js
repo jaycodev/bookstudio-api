@@ -68,7 +68,7 @@ function populateSelectOptions() {
 					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
 					errorResponse.message,
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 			}
 		},
@@ -202,7 +202,7 @@ function loadStudents() {
 					'Hubo un error al listar los datos de los estudiantes.',
 					'error',
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -783,7 +783,7 @@ function loadModalData() {
 							'Hubo un error al cargar los detalles del estudiante.',
 							'error',
 						)
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -891,7 +891,7 @@ function loadModalData() {
 						'Hubo un error al cargar los datos del estudiante.',
 						'error',
 					)
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}

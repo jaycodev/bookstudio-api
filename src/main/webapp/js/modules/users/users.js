@@ -193,7 +193,7 @@ function loadUsers() {
 						)
 						break
 				}
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -663,7 +663,7 @@ function handleEditUserForm() {
 									)
 									break
 							}
-						} catch (e) {
+						} catch {
 							console.error('Unexpected error:', xhr.status, xhr.responseText)
 							showToast('Hubo un error inesperado.', 'error')
 						}
@@ -836,7 +836,7 @@ function handleDeleteUser() {
 								)
 								break
 						}
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -944,7 +944,7 @@ function loadModalData() {
 						'Hubo un error al cargar los detalles del usuario.',
 						'error',
 					)
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}
@@ -1017,7 +1017,7 @@ function loadModalData() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al cargar los datos del usuario.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}

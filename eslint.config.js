@@ -3,7 +3,6 @@ import pluginPrettier from 'eslint-plugin-prettier'
 export default [
 	{
 		files: ['src/main/webapp/**/*.js'],
-
 		ignores: [
 			'node_modules/**',
 			'target/**',
@@ -11,6 +10,9 @@ export default [
 			'**/*.jspf',
 			'**/*.java',
 		],
+		plugins: {
+			prettier: pluginPrettier,
+		},
 		languageOptions: {
 			parserOptions: {
 				ecmaVersion: 2021,
@@ -20,20 +22,20 @@ export default [
 				window: 'readonly',
 				document: 'readonly',
 				console: 'readonly',
+				$: 'readonly',
+				jQuery: 'readonly',
+				URLSearchParams: 'readonly',
+				location: 'readonly',
 			},
 		},
 		rules: {
 			'no-var': 'error',
 			'prefer-const': 'error',
-			'prettier/prettier': 'error',
 			'no-console': ['error', { allow: ['warn', 'error'] }],
 			'no-unused-vars': ['warn'],
-			'no-undef': 'error',
 			'no-multiple-empty-lines': ['error', { max: 1 }],
 			'no-trailing-spaces': 'error',
-			quotes: ['error', 'single'],
-			'space-before-function-paren': ['error', 'never'],
-			semi: ['error', 'never'],
+			'prettier/prettier': 'error',
 		},
 	},
 ]

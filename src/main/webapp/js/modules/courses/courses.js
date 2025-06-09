@@ -159,7 +159,7 @@ function loadCourses() {
 					errorResponse.message,
 				)
 				showToast('Hubo un error al listar los datos de los cursos.', 'error')
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -323,7 +323,7 @@ function handleAddCourseForm() {
 								)
 								break
 						}
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -494,7 +494,7 @@ function handleEditCourseForm() {
 								)
 								break
 						}
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -652,7 +652,7 @@ function loadModalData() {
 							'Hubo un error al cargar los detalles del curso.',
 							'error',
 						)
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -740,7 +740,7 @@ function loadModalData() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al cargar los datos del curso.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}

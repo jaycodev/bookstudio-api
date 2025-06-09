@@ -72,7 +72,7 @@ function populateSelectOptions() {
 					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
 					errorResponse.message,
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 			}
 		},
@@ -215,7 +215,7 @@ function loadBooks() {
 					errorResponse.message,
 				)
 				showToast('Hubo un error al listar los datos de los libros.', 'error')
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -381,7 +381,7 @@ function handleAddBookForm() {
 								)
 								break
 						}
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -570,7 +570,7 @@ function handleEditBookForm() {
 								)
 								break
 						}
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -771,7 +771,7 @@ function loadModalData() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al cargar los detalles del libro.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}
@@ -880,7 +880,7 @@ function loadModalData() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al cargar los datos del libro.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}

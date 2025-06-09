@@ -72,7 +72,7 @@ function populateSelectOptions() {
 					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
 					errorResponse.message,
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 			}
 		},
@@ -218,7 +218,7 @@ function loadAuthors() {
 					errorResponse.message,
 				)
 				showToast('Hubo un error al listar los datos de los autores.', 'error')
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -416,7 +416,7 @@ function handleAddAuthorForm() {
 									)
 									break
 							}
-						} catch (e) {
+						} catch {
 							console.error('Unexpected error:', xhr.status, xhr.responseText)
 							showToast('Hubo un error inesperado.', 'error')
 						}
@@ -635,7 +635,7 @@ function handleEditAuthorForm() {
 									)
 									break
 							}
-						} catch (e) {
+						} catch {
 							console.error('Unexpected error:', xhr.status, xhr.responseText)
 							showToast('Hubo un error inesperado.', 'error')
 						}
@@ -841,7 +841,7 @@ function loadModalData() {
 							'Hubo un error al cargar los detalles del autor.',
 							'error',
 						)
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -946,7 +946,7 @@ function loadModalData() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al cargar los datos del autor.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}

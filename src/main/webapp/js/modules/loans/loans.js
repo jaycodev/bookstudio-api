@@ -76,7 +76,7 @@ function populateSelectOptions() {
 					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
 					errorResponse.message,
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 			}
 		},
@@ -116,7 +116,7 @@ function updateBookList() {
 					`Error fetching select book options (${errorResponse.errorType} - ${xhr.status}):`,
 					errorResponse.message,
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 			}
 		},
@@ -263,7 +263,7 @@ function loadLoans() {
 					'Hubo un error al listar los datos de los préstamos.',
 					'error',
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -391,7 +391,7 @@ function handleAddLoanForm() {
 							errorResponse.message,
 						)
 						showToast('Hubo un error al agregar el préstamo.', 'error')
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -541,7 +541,7 @@ function handleReturnLoan() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al devolver el préstamo.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}
@@ -645,7 +645,7 @@ function handleEditLoanForm() {
 							errorResponse.message,
 						)
 						showToast('Hubo un error al actualizar el préstamo.', 'error')
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -814,7 +814,7 @@ function loadModalData() {
 						'Hubo un error al cargar los detalles del préstamo.',
 						'error',
 					)
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}
@@ -917,7 +917,7 @@ function loadModalData() {
 						errorResponse.message,
 					)
 					showToast('Hubo un error al cargar los datos del préstamo.', 'error')
-				} catch (e) {
+				} catch {
 					console.error('Unexpected error:', xhr.status, xhr.responseText)
 					showToast('Hubo un error inesperado.', 'error')
 				}

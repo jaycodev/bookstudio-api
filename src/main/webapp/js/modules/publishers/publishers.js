@@ -70,7 +70,7 @@ function populateSelectOptions() {
 					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
 					errorResponse.message,
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 			}
 		},
@@ -221,7 +221,7 @@ function loadPublishers() {
 					'Hubo un error al listar los datos de las editoriales.',
 					'error',
 				)
-			} catch (e) {
+			} catch {
 				console.error('Unexpected error:', xhr.status, xhr.responseText)
 				showToast('Hubo un error inesperado.', 'error')
 			}
@@ -425,7 +425,7 @@ function handleAddPublisherForm() {
 									)
 									break
 							}
-						} catch (e) {
+						} catch {
 							console.error('Unexpected error:', xhr.status, xhr.responseText)
 							showToast('Hubo un error inesperado.', 'error')
 						}
@@ -649,7 +649,7 @@ function handleEditPublisherForm() {
 									)
 									break
 							}
-						} catch (e) {
+						} catch {
 							console.error('Unexpected error:', xhr.status, xhr.responseText)
 							showToast('Hubo un error inesperado.', 'error')
 						}
@@ -850,7 +850,7 @@ function loadModalData() {
 							'Hubo un error al cargar los detalles de la editorial.',
 							'error',
 						)
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
@@ -949,7 +949,7 @@ function loadModalData() {
 							'Hubo un error al cargar los datos de la editorial.',
 							'error',
 						)
-					} catch (e) {
+					} catch {
 						console.error('Unexpected error:', xhr.status, xhr.responseText)
 						showToast('Hubo un error inesperado.', 'error')
 					}
