@@ -1,6 +1,6 @@
-@import '../base.css';
-@import '../layout.css';
-@import '../components.css';
+@import '../shared/base.css';
+@import '../shared/layout.css';
+@import '../shared/components.css';
 
 html, body {
 	height: 100%;

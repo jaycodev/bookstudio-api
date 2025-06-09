@@ -36,15 +36,15 @@ public class FrontendServlet extends HttpServlet {
             case "/login" -> "/WEB-INF/views/auth/login.jsp";
             case "/forgot-password" -> "/WEB-INF/views/auth/forgot-password.jsp";
             case "/reset-password" -> "/WEB-INF/views/auth/reset-password.jsp";
-            case "" -> "/WEB-INF/views/user/dashboard.jsp";
-            case "/authors" -> "/WEB-INF/views/user/authors.jsp";
-            case "/books" -> "/WEB-INF/views/user/books.jsp";
-            case "/courses" -> "/WEB-INF/views/user/courses.jsp";
-            case "/loans" -> "/WEB-INF/views/user/loans.jsp";
-            case "/profile" -> "/WEB-INF/views/user/profile.jsp";
-            case "/publishers" -> "/WEB-INF/views/user/publishers.jsp";
-            case "/students" -> "/WEB-INF/views/user/students.jsp";
-            case "/users" -> "/WEB-INF/views/user/users.jsp";
+            case "" -> "/WEB-INF/views/dashboard/dashboard.jsp";
+            case "/authors" -> "/WEB-INF/views/authors/authors.jsp";
+            case "/books" -> "/WEB-INF/views/books/books.jsp";
+            case "/courses" -> "/WEB-INF/views/courses/courses.jsp";
+            case "/loans" -> "/WEB-INF/views/loans/loans.jsp";
+            case "/profile" -> "/WEB-INF/views/profile/profile.jsp";
+            case "/publishers" -> "/WEB-INF/views/publishers/publishers.jsp";
+            case "/students" -> "/WEB-INF/views/students/students.jsp";
+            case "/users" -> "/WEB-INF/views/users/users.jsp";
             default -> null;
         };
     }

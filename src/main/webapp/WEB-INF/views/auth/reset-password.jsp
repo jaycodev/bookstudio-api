@@ -6,7 +6,7 @@
 	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="js/setup/color-modes.js"></script>
+	<script src="js/shared/setup/color-modes.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="css/views/auth.css">
@@ -94,10 +94,10 @@
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 	
 	<!-- Custom Scripts -->
-	<script src="js/setup/theme-toggle.js" defer></script>
-	<script src="js/utils/ui/password.js" defer></script>
+	<script src="js/shared/setup/theme-toggle.js" defer></script>
+	<script src="js/shared/utils/ui/password.js" defer></script>
 	
 	<!-- Page-Specific Script -->
-	<script type="module" src="js/views/auth/reset-password.js" defer></script>
+	<script type="module" src="js/modules/auth/reset-password.js" defer></script>
 </body>
 </html>

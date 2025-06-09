@@ -21,9 +21,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js" defer></script>
 
 <!-- Custom Scripts -->
-<script src="js/layout/header.js" defer></script>
-<script src="js/layout/sidebar.js" defer></script>
-<script src="js/setup/theme-toggle.js" defer></script>
+<script src="js/shared/layout/header.js" defer></script>
+<script src="js/shared/layout/sidebar.js" defer></script>
+<script src="js/shared/setup/theme-toggle.js" defer></script>
 
 <!-- Page-Specific Script -->
-<script type="module" src="js/views/user/<%= currentPage %>" defer></script>
+<script type="module" src="js/modules/<%= currentPage %>/<%= currentPage %>.js" defer></script>
