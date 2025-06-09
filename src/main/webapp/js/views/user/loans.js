@@ -49,11 +49,6 @@ function populateSelectOptions() {
 				bookList = data.books;
 				studentList = data.students;
 
-				populateSelect('#addLoanBook', bookList, 'bookId', 'title', 'formattedBookId');
-				populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName', 'formattedStudentId');
-
-				populateSelect('#editLoanStudent', studentList, 'studentId', 'firstName', 'formattedStudentId');
-
 				$('#addLoanBook').on('change', function() {
 					var selectedBookId = $(this).val();
 					var selectedBook = bookList.find(book => book.bookId == selectedBookId);

@@ -57,12 +57,6 @@ function populateSelectOptions() {
 			if (data) {
 				nationalityList = data.nationalities;
 				literaryGenreList = data.literaryGenres;
-
-				populateSelect('#addPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
-				populateSelect('#addLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
-
-				populateSelect('#editPublisherNationality', nationalityList, 'nationalityId', 'nationalityName');
-				populateSelect('#editLiteraryGenre', literaryGenreList, 'literaryGenreId', 'genreName');
 			}
 		},
 		error: function(xhr) {

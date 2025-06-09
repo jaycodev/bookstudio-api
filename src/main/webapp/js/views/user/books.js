@@ -59,16 +59,6 @@ function populateSelectOptions() {
 				publisherList = data.publishers;
 				courseList = data.courses;
 				genreList = data.genres;
-
-				populateSelect('#addBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
-				populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
-				populateSelect('#addBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
-				populateSelect('#addBookGenre', genreList, 'genreId', 'genreName');
-
-				populateSelect('#editBookAuthor', authorList, 'authorId', 'name', 'formattedAuthorId');
-				populateSelect('#editBookPublisher', publisherList, 'publisherId', 'name', 'formattedPublisherId');
-				populateSelect('#editBookCourse', courseList, 'courseId', 'name', 'formattedCourseId');
-				populateSelect('#editBookGenre', genreList, 'genreId', 'genreName');
 			}
 		},
 		error: function(xhr) {

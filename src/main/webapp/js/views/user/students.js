@@ -55,10 +55,6 @@ function populateSelectOptions() {
 			
 			if (data) {
 				facultyList = data.faculties;
-
-				populateSelect('#addStudentFaculty', facultyList, 'facultyId', 'facultyName');
-
-				populateSelect('#editStudentFaculty', facultyList, 'facultyId', 'facultyName');
 			}
 		},
 		error: function(xhr) {

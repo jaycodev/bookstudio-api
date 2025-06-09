@@ -1,4 +1,4 @@
-<%@ page import="com.bookstudio.utils.LoginConstants" %>
+<%@ page import="com.bookstudio.auth.util.LoginConstants" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%
