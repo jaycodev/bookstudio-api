@@ -99,13 +99,7 @@ function updateBookList() {
 
 			if (data) {
 				bookList = data.books
-				populateSelect(
-					'#addLoanBook',
-					bookList,
-					'bookId',
-					'title',
-					'formattedBookId',
-				)
+				populateSelect('#addLoanBook', bookList, 'bookId', 'title')
 			}
 		},
 		error: function (xhr) {
@@ -719,22 +713,10 @@ function validateEditField(field) {
 function loadModalData() {
 	// Add Modal
 	$(document).on('click', '[data-bs-target="#addLoanModal"]', function () {
-		populateSelect(
-			'#addLoanBook',
-			bookList,
-			'bookId',
-			'title',
-			'formattedBookId',
-		)
+		populateSelect('#addLoanBook', bookList, 'bookId', 'title')
 		$('#addLoanBook').selectpicker()
 
-		populateSelect(
-			'#addLoanStudent',
-			studentList,
-			'studentId',
-			'firstName',
-			'formattedStudentId',
-		)
+		populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName')
 		$('#addLoanStudent').selectpicker()
 
 		$('#addLoanForm')[0].reset()
@@ -870,7 +852,6 @@ function loadModalData() {
 					studentList,
 					'studentId',
 					'firstName',
-					'formattedStudentId',
 				)
 				$('#editLoanStudent').val(data.studentId)
 				$('#editLoanStudent').selectpicker()

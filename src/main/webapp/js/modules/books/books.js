@@ -668,31 +668,13 @@ function validateEditField(field) {
 function loadModalData() {
 	// Add Modal
 	$(document).on('click', '[data-bs-target="#addBookModal"]', function () {
-		populateSelect(
-			'#addBookAuthor',
-			authorList,
-			'authorId',
-			'name',
-			'formattedAuthorId',
-		)
+		populateSelect('#addBookAuthor', authorList, 'authorId', 'name')
 		$('#addBookAuthor').selectpicker()
 
-		populateSelect(
-			'#addBookPublisher',
-			publisherList,
-			'publisherId',
-			'name',
-			'formattedPublisherId',
-		)
+		populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name')
 		$('#addBookPublisher').selectpicker()
 
-		populateSelect(
-			'#addBookCourse',
-			courseList,
-			'courseId',
-			'name',
-			'formattedCourseId',
-		)
+		populateSelect('#addBookCourse', courseList, 'courseId', 'name')
 		$('#addBookCourse').selectpicker()
 
 		const today = getCurrentPeruDate()
@@ -810,13 +792,7 @@ function loadModalData() {
 				$('#editBookTotalCopies').val(data.totalCopies)
 				$('#editBookTotalCopies').attr('min', Math.max(1, data.loanedCopies))
 
-				populateSelect(
-					'#editBookAuthor',
-					authorList,
-					'authorId',
-					'name',
-					'formattedAuthorId',
-				)
+				populateSelect('#editBookAuthor', authorList, 'authorId', 'name')
 				$('#editBookAuthor').val(data.authorId)
 				$('#editBookAuthor').selectpicker()
 
@@ -825,18 +801,11 @@ function loadModalData() {
 					publisherList,
 					'publisherId',
 					'name',
-					'formattedPublisherId',
 				)
 				$('#editBookPublisher').val(data.publisherId)
 				$('#editBookPublisher').selectpicker()
 
-				populateSelect(
-					'#editBookCourse',
-					courseList,
-					'courseId',
-					'name',
-					'formattedCourseId',
-				)
+				populateSelect('#editBookCourse', courseList, 'courseId', 'name')
 				$('#editBookCourse').val(data.courseId)
 				$('#editBookCourse').selectpicker()
 

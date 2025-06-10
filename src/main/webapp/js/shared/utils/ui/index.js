@@ -91,8 +91,16 @@ export function populateSelect(
 	dataList,
 	valueKey,
 	textKey,
-	badgeValueKey,
+	badgeValueKey = null,
 ) {
+	if (!badgeValueKey && dataList.length > 0) {
+		const inferredKey =
+			'formatted' + valueKey.charAt(0).toUpperCase() + valueKey.slice(1)
+		if (inferredKey in dataList[0]) {
+			badgeValueKey = inferredKey
+		}
+	}
+
 	const select = $(selector).selectpicker('destroy').empty()
 
 	dataList.forEach((item) => {
