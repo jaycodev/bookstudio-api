@@ -67,8 +67,7 @@ public class PublisherService {
 		return createdPublisher;
 	}
 
-	public Publisher updatePublisher(HttpServletRequest request) throws Exception {
-		String publisherId = getUtf8Parameter(request, "publisherId");
+	public Publisher updatePublisher(String publisherId, HttpServletRequest request) throws Exception {
 		String name = getUtf8Parameter(request, "editPublisherName");
 		String nationalityId = getUtf8Parameter(request, "editPublisherNationality");
 		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");

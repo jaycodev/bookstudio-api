@@ -67,8 +67,7 @@ public class AuthorService {
 		return createdAuthor;
 	}
 
-	public Author updateAuthor(HttpServletRequest request) throws Exception {
-		String authorId = request.getParameter("authorId");
+	public Author updateAuthor(String authorId, HttpServletRequest request) throws Exception {
 		String name = getUtf8Parameter(request, "editAuthorName");
 		String nationalityId = getUtf8Parameter(request, "editAuthorNationality");
 		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");

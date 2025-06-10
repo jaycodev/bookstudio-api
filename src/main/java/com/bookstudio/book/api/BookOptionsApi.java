@@ -15,12 +15,12 @@ import com.bookstudio.shared.util.SelectOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@WebServlet(name = "SelectOptionsApi", urlPatterns = { "/api/books/select-options" })
-public class SelectOptionsApi extends HttpServlet {
+@WebServlet(name = "BookOptionsApi", urlPatterns = { "/api/books/select-options" })
+public class BookOptionsApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private BookService bookService = new BookService();
-	private Gson gson = new GsonBuilder().create();
+	private Gson gson;
 
 	@Override
 	public void init() throws ServletException {
@@ -30,16 +30,15 @@ public class SelectOptionsApi extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("application/json; charset=UTF-8");
 
 		try {
-			SelectOptions selectOptions = bookService.populateSelects();
+			SelectOptions options = bookService.populateSelects();
 
-			if (selectOptions != null && (selectOptions.getAuthors() != null || selectOptions.getPublishers() != null
-					|| selectOptions.getCourses() != null || selectOptions.getGenres() != null)) {
-				String json = gson.toJson(selectOptions);
+			if (options != null && (options.getAuthors() != null || options.getPublishers() != null
+					|| options.getCourses() != null || options.getGenres() != null)) {
+				String json = gson.toJson(options);
 				response.setStatus(HttpServletResponse.SC_OK);
 				response.getWriter().write(json);
 			} else {

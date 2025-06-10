@@ -79,8 +79,7 @@ public class UserService {
 		return createdUser;
 	}
 
-	public User updateUser(HttpServletRequest request) throws Exception {
-		String userId = request.getParameter("userId");
+	public User updateUser(String userId, HttpServletRequest request) throws Exception {
 		String firstName = getUtf8Parameter(request, "editUserFirstName");
 		String lastName = getUtf8Parameter(request, "editUserLastName");
 		String role = getUtf8Parameter(request, "editUserRole");

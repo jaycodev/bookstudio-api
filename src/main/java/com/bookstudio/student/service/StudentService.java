@@ -51,8 +51,7 @@ public class StudentService {
 		return studentDao.create(student);
 	}
 
-	public Student updateStudent(HttpServletRequest request) throws Exception {
-		String studentId = request.getParameter("studentId");
+	public Student updateStudent(String studentId, HttpServletRequest request) throws Exception {
 		String firstName = request.getParameter("editStudentFirstName");
 		String lastName = request.getParameter("editStudentLastName");
 		String address = request.getParameter("editStudentAddress");

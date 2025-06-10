@@ -34,8 +34,7 @@ public class CourseService {
 		return courseDao.create(course);
 	}
 
-	public Course updateCourse(HttpServletRequest request) throws Exception {
-		String courseId = request.getParameter("courseId");
+	public Course updateCourse(String courseId, HttpServletRequest request) throws Exception {
 		String name = request.getParameter("editCourseName");
 		String level = request.getParameter("editCourseLevel");
 		String description = request.getParameter("editCourseDescription");

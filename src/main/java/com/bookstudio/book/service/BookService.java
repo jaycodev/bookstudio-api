@@ -55,8 +55,7 @@ public class BookService {
 		return bookDao.create(book);
 	}
 
-	public Book updateBook(HttpServletRequest request) throws Exception {
-		String bookId = request.getParameter("bookId");
+	public Book updateBook(String bookId, HttpServletRequest request) throws Exception {
 		String title = request.getParameter("editBookTitle");
 		int totalCopies = Integer.parseInt(request.getParameter("editBookTotalCopies"));
 		String authorId = request.getParameter("editBookAuthor");

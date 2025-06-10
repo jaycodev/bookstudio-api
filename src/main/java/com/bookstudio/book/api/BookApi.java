@@ -32,7 +32,7 @@ public class BookApi extends BaseApiServlet {
 			throws ServletException, IOException {
 		String pathInfo = request.getPathInfo();
 		if (pathInfo == null || pathInfo.equals("/")) {
-			listBooks(request, response);
+			listBooks(response);
 		} else if (pathInfo.startsWith("/")) {
 			String bookId = pathInfo.substring(1);
 			getBook(bookId, response);
@@ -47,18 +47,24 @@ public class BookApi extends BaseApiServlet {
 	    String overrideMethod = request.getParameter("_method");
 
 	    if ("PUT".equalsIgnoreCase(overrideMethod)) {
-	        handleUpdate(request, response);
+	        String pathInfo = request.getPathInfo();
+	        if (pathInfo != null && pathInfo.startsWith("/")) {
+	            String bookId = pathInfo.substring(1);
+	            updateBook(bookId, request, response);
+	        } else {
+	            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Book ID is required for update.");
+	        }
 	    } else {
-	        handleCreate(request, response);
+	        createBook(request, response);
 	    }
 	}
 
-	private void listBooks(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void listBooks(HttpServletResponse response) throws IOException {
 		try {
-			List<Book> bookData = bookService.listBooks();
+			List<Book> books = bookService.listBooks();
 
-			if (bookData != null && !bookData.isEmpty()) {
-				String json = gson.toJson(bookData);
+			if (books != null && !books.isEmpty()) {
+				String json = gson.toJson(books);
 				response.setStatus(HttpServletResponse.SC_OK);
 				response.getWriter().write(json);
 			} else {
@@ -96,7 +102,7 @@ public class BookApi extends BaseApiServlet {
 		}
 	}
 
-	private void handleCreate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void createBook(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (!isAuthorized(request, response))
 			return;
 		try {
@@ -115,11 +121,17 @@ public class BookApi extends BaseApiServlet {
 		}
 	}
 
-	private void handleUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	private void updateBook(String bookId, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (!isAuthorized(request, response))
 			return;
 		try {
-			Book updatedBook = bookService.updateBook(request);
+	        if (bookId == null || bookId.trim().isEmpty()) {
+	            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	            response.getWriter().write("{\"success\": false, \"message\": \"Book ID is required.\", \"statusCode\": 400}");
+	            return;
+	        }
+			
+			Book updatedBook = bookService.updateBook(bookId, request);
 			if (updatedBook != null) {
 				String json = gson.toJson(updatedBook);
 				response.setStatus(HttpServletResponse.SC_OK);

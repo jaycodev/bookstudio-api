@@ -47,8 +47,7 @@ public class LoanService {
 		return loanDao.create(loan);
 	}
 
-	public Loan updateLoan(HttpServletRequest request) throws Exception {
-		String loanId = request.getParameter("loanId");
+	public Loan updateLoan(String loanId, HttpServletRequest request) throws Exception {
 		String bookId = request.getParameter("editLoanBook");
 		String studentId = request.getParameter("editLoanStudent");
 		LocalDate returnDate = LocalDate.parse(request.getParameter("editReturnDate"));
