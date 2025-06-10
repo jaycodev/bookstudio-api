@@ -67,6 +67,25 @@ export function toggleButtonLoading(button, loading = true) {
 	}
 }
 
+export function toggleModalLoading(triggerElement, loading = true) {
+	const modalSelector = $(triggerElement).data('bs-target')
+	const $modal = $(modalSelector)
+
+	const $spinner = $modal.find('[id$="Spinner"]')
+	const $content = $modal.find('[id$="Form"], [id$="Content"]')
+	const $button = $modal.find('button[id$="Btn"]')
+
+	if (loading) {
+		$spinner.removeClass('d-none')
+		$content.addClass('d-none')
+		if ($button.length) $button.prop('disabled', true)
+	} else {
+		$spinner.addClass('d-none')
+		$content.removeClass('d-none')
+		if ($button.length) $button.prop('disabled', false)
+	}
+}
+
 export function populateSelect(
 	selector,
 	dataList,

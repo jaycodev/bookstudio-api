@@ -10,7 +10,7 @@ public class Publisher {
 	private String nationalityName;
 	private String literaryGenreId;
 	private String literaryGenreName;
-	private int foundationYear;
+	private Integer foundationYear;
 	private String website;
 	private String address;
 	private String status;

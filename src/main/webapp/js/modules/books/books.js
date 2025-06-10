@@ -14,6 +14,7 @@
 import {
 	showToast,
 	toggleButtonLoading,
+	toggleModalLoading,
 	populateSelect,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
@@ -45,38 +46,45 @@ let publisherList = []
 let courseList = []
 let genreList = []
 
-function populateSelectOptions() {
-	$.ajax({
-		url: 'BookServlet',
-		type: 'GET',
-		data: { type: 'populateSelects' },
-		dataType: 'json',
-		success: function (data, xhr) {
-			if (xhr.status === 204) {
-				console.warn('No data found for select options.')
-				return
-			}
+async function populateSelectOptions() {
+	try {
+		const response = await fetch('./api/books/select-options', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			if (data) {
-				authorList = data.authors
-				publisherList = data.publishers
-				courseList = data.courses
-				genreList = data.genres
-			}
-		},
-		error: function (xhr) {
-			let errorResponse
+		if (response.status === 204) {
+			console.warn('No data found for select options.')
+			return
+		}
+
+		if (!response.ok) {
+			throw response
+		}
+
+		const data = await response.json()
+
+		authorList = data.authors
+		publisherList = data.publishers
+		courseList = data.courses
+		genreList = data.genres
+	} catch (error) {
+		if (error instanceof Response) {
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				const errData = await error.json()
 				console.error(
-					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
-					errorResponse.message,
+					`Error fetching select options (${errData.errorType} - ${error.status}):`,
+					errData.message,
 				)
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error('Unexpected error:', error.status, await error.text())
 			}
-		},
-	})
+		} else {
+			console.error('Unexpected error:', error)
+		}
+	}
 }
 
 /*****************************************
@@ -143,95 +151,98 @@ function addRowToTable(book) {
 	initializeTooltips($row)
 }
 
-function loadBooks() {
+async function loadBooks() {
 	toggleTableLoadingState('loading')
 
-	const safetyTimer = setTimeout(function () {
+	const safetyTimer = setTimeout(() => {
 		toggleTableLoadingState('loaded')
 		$('#tableContainer').removeClass('d-none')
-		$('#cardContainer').removeClass('h-100')
 	}, 8000)
 
-	$.ajax({
-		url: 'BookServlet',
-		type: 'GET',
-		data: { type: 'list' },
-		dataType: 'json',
-		success: function (data) {
-			clearTimeout(safetyTimer)
+	try {
+		const response = await fetch('./api/books', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			const tableBody = $('#bodyBooks')
-			tableBody.empty()
+		clearTimeout(safetyTimer)
 
-			if (data && data.length > 0) {
-				data.forEach(function (book) {
+		const tableBody = $('#bodyBooks')
+		tableBody.empty()
+
+		if (response.status === 200) {
+			const data = await response.json()
+
+			if (data.length > 0) {
+				data.forEach((book) => {
 					const row = generateRow(book)
 					tableBody.append(row)
 				})
-
 				initializeTooltips(tableBody)
 			}
 
-			if ($.fn.DataTable.isDataTable('#bookTable')) {
-				$('#bookTable').DataTable().destroy()
-			}
-
-			const dataTable = setupDataTable('#bookTable')
-
-			if (data && data.length > 0) {
-				$('#generatePDF, #generateExcel').prop('disabled', false)
-			} else {
-				$('#generatePDF, #generateExcel').prop('disabled', true)
-			}
-
-			dataTable.on('draw', function () {
-				const filteredCount = dataTable.rows({ search: 'applied' }).count()
-				const noDataMessage =
-					$('#authorTable').find('td.dataTables_empty').length > 0
-				$('#generatePDF, #generateExcel').prop(
-					'disabled',
-					filteredCount === 0 || noDataMessage,
-				)
-			})
-
-			$('#generatePDF')
-				.off('click')
-				.on('click', function () {
-					generatePDF(dataTable)
-				})
-
-			$('#generateExcel')
-				.off('click')
-				.on('click', function () {
-					generateExcel(dataTable)
-				})
-		},
-		error: function (xhr) {
+			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
+		} else if (response.status === 204) {
+			$('#generatePDF, #generateExcel').prop('disabled', true)
+		} else {
 			let errorResponse
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				errorResponse = await response.json()
 				console.error(
-					`Error listing book data (${errorResponse.errorType} - ${xhr.status}):`,
+					`Error listing book data (${errorResponse.errorType} - ${response.status}):`,
 					errorResponse.message,
 				)
 				showToast('Hubo un error al listar los datos de los libros.', 'error')
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error(
+					'Unexpected error:',
+					response.status,
+					await response.text(),
+				)
 				showToast('Hubo un error inesperado.', 'error')
 			}
+		}
 
-			clearTimeout(safetyTimer)
+		if ($.fn.DataTable.isDataTable('#bookTable')) {
+			$('#bookTable').DataTable().destroy()
+		}
 
-			const tableBody = $('#bodyBooks')
-			tableBody.empty()
+		const dataTable = setupDataTable('#bookTable')
 
-			if ($.fn.DataTable.isDataTable('#bookTable')) {
-				$('#bookTable').DataTable().destroy()
-			}
+		dataTable.on('draw', function () {
+			const filteredCount = dataTable.rows({ search: 'applied' }).count()
+			const noDataMessage =
+				$('#bookTable').find('td.dataTables_empty').length > 0
+			$('#generatePDF, #generateExcel').prop(
+				'disabled',
+				filteredCount === 0 || noDataMessage,
+			)
+		})
 
-			setupDataTable('#bookTable')
-		},
-	})
+		$('#generatePDF')
+			.off('click')
+			.on('click', () => generatePDF(dataTable))
+
+		$('#generateExcel')
+			.off('click')
+			.on('click', () => generateExcel(dataTable))
+	} catch (err) {
+		clearTimeout(safetyTimer)
+
+		console.error('Unexpected error:', err)
+		showToast('Hubo un error inesperado.', 'error')
+
+		const tableBody = $('#bodyBooks')
+		tableBody.empty()
+
+		if ($.fn.DataTable.isDataTable('#bookTable')) {
+			$('#bookTable').DataTable().destroy()
+		}
+
+		setupDataTable('#bookTable')
+	}
 }
 
 function updateRowInTable(book) {
@@ -297,7 +308,7 @@ function handleAddBookForm() {
 		}
 	})
 
-	$('#addBookForm').on('submit', function (event) {
+	$('#addBookForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) {
@@ -324,41 +335,45 @@ function handleAddBookForm() {
 			})
 
 		if (isValid) {
-			const data = $('#addBookForm').serialize() + '&type=create'
+			const data = $('#addBookForm').serialize()
 
 			const submitButton = $(this).find('[type="submit"]')
 			submitButton.prop('disabled', true)
-			$('#addBookSpinnerBtn').removeClass('d-none')
-			$('#addBookIcon').addClass('d-none')
+			toggleButtonLoading(submitButton, true)
 
-			$.ajax({
-				url: 'BookServlet',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						addRowToTable(response.data)
-						$('#addBookModal').modal('hide')
-						showToast('Libro agregado exitosamente.', 'success')
-					} else {
-						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
-						)
-						$('#addBookModal').modal('hide')
-						showToast('Hubo un error al agregar el libro.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
+			try {
+				const response = await fetch('./api/books', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						Accept: 'application/json',
+					},
+					body: data,
+				})
+
+				const json = await response.json()
+
+				if (response.ok && json.success) {
+					addRowToTable(json.data)
+					$('#addBookModal').modal('hide')
+					showToast('Libro agregado exitosamente.', 'success')
+				} else {
+					console.error(
+						`Backend error (${json.errorType} - ${json.statusCode}):`,
+						json.message,
+					)
+					$('#addBookModal').modal('hide')
+					showToast('Hubo un error al agregar el libro.', 'error')
+				}
+			} catch (error) {
+				if (error instanceof Response) {
 					try {
-						errorResponse = JSON.parse(xhr.responseText)
+						const errData = await error.json()
 						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
+							`Server error (${errData.errorType} - ${error.status}):`,
+							errData.message,
 						)
-						switch (xhr.status) {
+						switch (error.status) {
 							case 403:
 								showToast('No tienes permisos para agregar libros.', 'warning')
 								break
@@ -376,90 +391,89 @@ function handleAddBookForm() {
 								break
 							default:
 								showToast(
-									errorResponse.message || 'Hubo un error al agregar el libro.',
+									errData.message || 'Hubo un error al agregar el libro.',
 									'error',
 								)
 								break
 						}
 					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
+						console.error('Unexpected error:', error.status, await error.text())
 						showToast('Hubo un error inesperado.', 'error')
 					}
-
-					$('#addBookModal').modal('hide')
-				},
-				complete: function () {
-					$('#addBookSpinnerBtn').addClass('d-none')
-					$('#addBookIcon').removeClass('d-none')
-					submitButton.prop('disabled', false)
-				},
-			})
+				} else {
+					console.error('Unexpected error:', error)
+					showToast('Hubo un error inesperado.', 'error')
+				}
+				$('#addBookModal').modal('hide')
+			} finally {
+				toggleButtonLoading(submitButton, false)
+			}
 		} else {
 			$(this).data('submitted', false)
 		}
 	})
+}
 
-	function validateAddField(field) {
-		if (field.attr('type') === 'search') {
-			return true
-		}
-
-		let errorMessage = 'Este campo es obligatorio.'
-		let isValid = true
-
-		// Default validation
-		if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage)
-			isValid = false
-		} else {
-			field.removeClass('is-invalid')
-		}
-
-		// Title validation
-		if (field.is('#addBookTitle')) {
-			const result = isValidText(field.val(), 'título')
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Total copies validation
-		if (field.is('#addBookTotalCopies')) {
-			const result = isValidTotalCopies(parseInt(field.val(), 10))
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Release date validation
-		if (field.is('#addReleaseDate')) {
-			const result = isValidReleaseDate(field.val())
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Select validation
-		if (field.is('select')) {
-			const container = field.closest('.bootstrap-select')
-			container.toggleClass('is-invalid', field.hasClass('is-invalid'))
-			container.siblings('.invalid-feedback').html(errorMessage)
-		}
-
-		if (!isValid) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage).show()
-		} else {
-			field.removeClass('is-invalid')
-			field.siblings('.invalid-feedback').hide()
-		}
-
-		return isValid
+function validateAddField(field) {
+	if (field.attr('type') === 'search') {
+		return true
 	}
+
+	let errorMessage = 'Este campo es obligatorio.'
+	let isValid = true
+
+	// Default validation
+	if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage)
+		isValid = false
+	} else {
+		field.removeClass('is-invalid')
+	}
+
+	// Title validation
+	if (field.is('#addBookTitle')) {
+		const result = isValidText(field.val(), 'título')
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Total copies validation
+	if (field.is('#addBookTotalCopies')) {
+		const result = isValidTotalCopies(parseInt(field.val(), 10))
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Release date validation
+	if (field.is('#addReleaseDate')) {
+		const result = isValidReleaseDate(field.val())
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Select validation
+	if (field.is('select')) {
+		const container = field.closest('.bootstrap-select')
+		container.toggleClass('is-invalid', field.hasClass('is-invalid'))
+		container.siblings('.invalid-feedback').html(errorMessage)
+	}
+
+	if (!isValid) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage).show()
+	} else {
+		field.removeClass('is-invalid')
+		field.siblings('.invalid-feedback').hide()
+	}
+
+	return isValid
 }
 
 function handleEditBookForm() {
@@ -503,47 +517,41 @@ function handleEditBookForm() {
 			})
 
 		if (isValid) {
-			let data = $(this).serialize() + '&type=update'
-
+			const formData = $(this).serialize()
 			const bookId = $(this).data('bookId')
-			if (bookId) {
-				data += '&bookId=' + encodeURIComponent(bookId)
-			}
+			const data = formData + '&bookId=' + encodeURIComponent(bookId)
+			const url = `./api/books/${encodeURIComponent(bookId)}`
 
 			const submitButton = $(this).find('[type="submit"]')
 			submitButton.prop('disabled', true)
-			$('#editBookSpinnerBtn').removeClass('d-none')
-			$('#editBookIcon').addClass('d-none')
+			toggleButtonLoading(submitButton, true)
 
-			$.ajax({
-				url: 'BookServlet',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						updateRowInTable(response.data)
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+				},
+				body: data + '&_method=PUT',
+			})
+				.then(async (res) => {
+					let json
+					try {
+						json = await res.json()
+					} catch {
+						throw new Error('Invalid JSON response')
+					}
 
+					if (res.ok && json.success) {
+						updateRowInTable(json.data)
 						$('#editBookModal').modal('hide')
 						showToast('Libro actualizado exitosamente.', 'success')
 					} else {
 						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
+							`Backend error (${json.errorType} - ${json.statusCode}):`,
+							json.message,
 						)
-						$('#editBookModal').modal('hide')
-						showToast('Hubo un error al actualizar el libro.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						switch (xhr.status) {
+
+						switch (res.status) {
 							case 403:
 								showToast(
 									'No tienes permisos para actualizar libros.',
@@ -564,25 +572,23 @@ function handleEditBookForm() {
 								break
 							default:
 								showToast(
-									errorResponse.message ||
-										'Hubo un error al actualizar el libro.',
+									json.message || 'Hubo un error al actualizar el libro.',
 									'error',
 								)
 								break
 						}
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
 
+						$('#editBookModal').modal('hide')
+					}
+				})
+				.catch((err) => {
+					console.error('Unexpected error:', err)
+					showToast('Hubo un error inesperado.', 'error')
 					$('#editBookModal').modal('hide')
-				},
-				complete: function () {
-					$('#editBookSpinnerBtn').addClass('d-none')
-					$('#editBookIcon').removeClass('d-none')
-					submitButton.prop('disabled', false)
-				},
-			})
+				})
+				.finally(() => {
+					toggleButtonLoading(submitButton, false)
+				})
 		} else {
 			$(this).data('submitted', false)
 		}
@@ -722,32 +728,39 @@ function loadModalData() {
 		const bookId = $(this).data('id')
 		$('#detailsBookModalID').text($(this).data('formatted-id'))
 
-		$('#detailsBookSpinner').removeClass('d-none')
-		$('#detailsBookContent').addClass('d-none')
+		toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'BookServlet',
-			type: 'GET',
-			data: { type: 'details', bookId: bookId },
-			dataType: 'json',
-			success: function (data) {
+		fetch(`./api/books/${encodeURIComponent(bookId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
 				$('#detailsBookID').text(data.formattedBookId)
 				$('#detailsBookTitle').text(data.title)
 				$('#detailsBookAvaibleCopies').text(data.availableCopies)
 				$('#detailsBookLoanedCopies').text(data.loanedCopies)
 
 				$('#detailsBookAuthor').html(`
-					${data.authorName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedAuthorId}</span>
-				`)
+				${data.authorName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedAuthorId}</span>
+			`)
 				$('#detailsBookPublisher').html(`
-					${data.publisherName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedPublisherId}</span>
-				`)
+				${data.publisherName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedPublisherId}</span>
+			`)
 				$('#detailsBookCourse').html(`
-					${data.courseName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedCourseId}</span>
-				`)
+				${data.courseName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedCourseId}</span>
+			`)
 
 				$('#detailsReleaseDate').text(
 					moment(data.releaseDate).format('DD MMM YYYY'),
@@ -759,25 +772,16 @@ function loadModalData() {
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
 				)
 
-				$('#detailsBookSpinner').addClass('d-none')
-				$('#detailsBookContent').removeClass('d-none')
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading book details (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast('Hubo un error al cargar los detalles del libro.', 'error')
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading book details (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los detalles del libro.', 'error')
 				$('#detailsBookModal').modal('hide')
-			},
-		})
+			})
 	})
 
 	// Edit Modal
@@ -785,16 +789,22 @@ function loadModalData() {
 		const bookId = $(this).data('id')
 		$('#editBookModalID').text($(this).data('formatted-id'))
 
-		$('#editBookSpinner').removeClass('d-none')
-		$('#editBookForm').addClass('d-none')
-		$('#editBookBtn').prop('disabled', true)
+		toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'BookServlet',
-			type: 'GET',
-			data: { type: 'details', bookId: bookId },
-			dataType: 'json',
-			success: function (data) {
+		fetch(`./api/books/${encodeURIComponent(bookId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
 				$('#editBookForm').data('bookId', data.bookId)
 				$('#editBookTitle').val(data.title)
 				$('#editBookTotalCopies').val(data.totalCopies)
@@ -844,20 +854,13 @@ function loadModalData() {
 					.selectpicker('destroy')
 					.empty()
 					.append(
-						$('<option>', {
-							value: 'activo',
-							text: 'Activo',
-						}),
-						$('<option>', {
-							value: 'inactivo',
-							text: 'Inactivo',
-						}),
+						$('<option>', { value: 'activo', text: 'Activo' }),
+						$('<option>', { value: 'inactivo', text: 'Inactivo' }),
 					)
 				$('#editBookStatus').val(data.status)
 				$('#editBookStatus').selectpicker()
 
 				$('#editBookForm .is-invalid').removeClass('is-invalid')
-
 				placeholderColorEditSelect()
 				placeholderColorDateInput()
 
@@ -867,26 +870,16 @@ function loadModalData() {
 						validateEditField($(this), true)
 					})
 
-				$('#editBookSpinner').addClass('d-none')
-				$('#editBookForm').removeClass('d-none')
-				$('#editBookBtn').prop('disabled', false)
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading book details for editing (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast('Hubo un error al cargar los datos del libro.', 'error')
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading book details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los datos del libro.', 'error')
 				$('#editBookModal').modal('hide')
-			},
-		})
+			})
 	})
 }
 

@@ -1,4 +1,4 @@
-package com.bookstudio.shared.controller;
+package com.bookstudio.shared.api;
 
 import java.io.IOException;
 
