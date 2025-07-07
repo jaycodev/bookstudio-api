@@ -335,10 +335,9 @@ function handleAddBookForm() {
 			})
 
 		if (isValid) {
-			const data = $('#addBookForm').serialize()
+			const data = $(this).serialize()
 
 			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
 			toggleButtonLoading(submitButton, true)
 
 			try {
@@ -515,15 +514,12 @@ function handleEditBookForm() {
 					isValid = false
 				}
 			})
-
 		if (isValid) {
-			const formData = $(this).serialize()
+			const data = $(this).serialize()
 			const bookId = $(this).data('bookId')
-			const data = formData + '&bookId=' + encodeURIComponent(bookId)
 			const url = `./api/books/${encodeURIComponent(bookId)}`
 
 			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
 			toggleButtonLoading(submitButton, true)
 
 			fetch(url, {
