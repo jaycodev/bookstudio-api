@@ -1,82 +1,43 @@
 package com.bookstudio.profile.service;
 
-import javax.servlet.http.Part;
-
-import com.bookstudio.auth.util.LoginConstants;
 import com.bookstudio.auth.util.PasswordUtils;
-import com.bookstudio.profile.dao.ProfileDao;
-import com.bookstudio.profile.dao.ProfileDaoImpl;
-import com.bookstudio.user.dao.UserDao;
-import com.bookstudio.user.dao.UserDaoImpl;
 import com.bookstudio.user.model.User;
+import com.bookstudio.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
+@Service
+@RequiredArgsConstructor
 public class ProfileService {
-	private ProfileDao profileDao = new ProfileDaoImpl();
-	private UserDao userDao = new UserDaoImpl();
 
-	public User updateProfile(HttpServletRequest request) throws Exception {
-		String userId = (String) request.getSession().getAttribute(LoginConstants.ID);
-		String firstName = request.getParameter("editProfileFirstName");
-		String lastName = request.getParameter("editProfileLastName");
-		String password = request.getParameter("editProfilePassword");
+	private final UserRepository userRepository;
 
-		User user = new User();
-		user.setUserId(userId);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		
-	    if (password != null && !password.isEmpty()) {
-	        user.setPassword(PasswordUtils.hashPassword(password));
-	    } else {
-	        user.setPassword(null);
-	    }
-
-		return profileDao.updateProfile(user);
-	}
-
-	public User updateProfilePhoto(HttpServletRequest request) throws Exception {
-		String userId = (String) request.getSession().getAttribute(LoginConstants.ID);
-		byte[] profilePhoto = null;
-		String deletePhoto = request.getParameter("deletePhoto");
-
-		if ("true".equals(deletePhoto)) {
-			profilePhoto = null;
-		} else {
-			Part photoPart = request.getPart("editProfilePhoto");
-			if (photoPart != null && photoPart.getSize() > 0) {
-				profilePhoto = new byte[(int) photoPart.getSize()];
-				photoPart.getInputStream().read(profilePhoto);
-			} else {
-				User currentUser = userDao.getById(userId);
-				if (currentUser != null) {
-					profilePhoto = currentUser.getProfilePhoto();
-				}
+	@Transactional
+	public Optional<User> updateProfile(Long userId, String firstName, String lastName, String rawPassword) {
+		return userRepository.findById(userId).map(user -> {
+			user.setFirstName(firstName);
+			user.setLastName(lastName);
+			if (rawPassword != null && !rawPassword.trim().isEmpty()) {
+				user.setPassword(PasswordUtils.hashPassword(rawPassword));
 			}
-		}
-
-		User user = new User();
-		user.setUserId(userId);
-		user.setProfilePhoto(profilePhoto);
-
-		return profileDao.updateProfilePhoto(user);
+			return userRepository.save(user);
+		});
 	}
 
-	public boolean validatePassword(HttpServletRequest request) {
-		String confirmCurrentPassword = request.getParameter("confirmCurrentPassword").trim();
-		String userId = (String) request.getSession().getAttribute(LoginConstants.ID);
-		
-	    if (userId == null || confirmCurrentPassword.isEmpty()) {
-	        return false;
-	    }
-	    
-	    String hashedPassword = profileDao.getPasswordByUserId(userId);
+	@Transactional
+	public Optional<User> updateProfilePhoto(Long userId, byte[] newPhoto, boolean deletePhoto) {
+		return userRepository.findById(userId).map(user -> {
+			user.setProfilePhoto(deletePhoto ? null : newPhoto);
+			return userRepository.save(user);
+		});
+	}
 
-	    if (hashedPassword == null) {
-	        return false;
-	    }
-	    
-	    return PasswordUtils.checkPassword(confirmCurrentPassword, hashedPassword);
+	public boolean validatePassword(Long userId, String rawPassword) {
+		return userRepository.findById(userId)
+				.map(user -> PasswordUtils.checkPassword(rawPassword, user.getPassword()))
+				.orElse(false);
 	}
 }

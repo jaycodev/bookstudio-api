@@ -1,95 +1,71 @@
 package com.bookstudio.book.service;
 
-import java.time.LocalDate;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-import com.bookstudio.author.dao.AuthorDao;
-import com.bookstudio.author.dao.AuthorDaoImpl;
-import com.bookstudio.book.dao.BookDao;
-import com.bookstudio.book.dao.BookDaoImpl;
+import com.bookstudio.author.service.AuthorService;
 import com.bookstudio.book.model.Book;
-import com.bookstudio.course.dao.CourseDao;
-import com.bookstudio.course.dao.CourseDaoImpl;
-import com.bookstudio.publisher.dao.PublisherDao;
-import com.bookstudio.publisher.dao.PublisherDaoImpl;
-import com.bookstudio.shared.dao.GenreDao;
-import com.bookstudio.shared.dao.GenreDaoImpl;
+import com.bookstudio.book.repository.BookRepository;
+import com.bookstudio.course.service.CourseService;
+import com.bookstudio.publisher.service.PublisherService;
+import com.bookstudio.shared.enums.Status;
+import com.bookstudio.shared.service.GenreService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class BookService {
-	private BookDao bookDao = new BookDaoImpl();
-	private AuthorDao authorDao = new AuthorDaoImpl();
-	private PublisherDao publisherDao = new PublisherDaoImpl();
-	private CourseDao courseDao = new CourseDaoImpl();
-	private GenreDao genreDao = new GenreDaoImpl();
 
-	public List<Book> listBooks() throws Exception {
-		return bookDao.listAll();
+	private final BookRepository bookRepository;
+
+	private final AuthorService authorService;
+	private final PublisherService publisherService;
+	private final CourseService courseService;
+	private final GenreService genreService;
+
+	public List<Book> listBooks() {
+		return bookRepository.findAll();
 	}
 
-	public Book getBook(String bookId) throws Exception {
-		return bookDao.getById(bookId);
+	public Optional<Book> getBook(Long bookId) {
+		return bookRepository.findById(bookId);
 	}
 
-	public Book createBook(HttpServletRequest request) throws Exception {
-		String title = request.getParameter("addBookTitle");
-		int totalCopies = Integer.parseInt(request.getParameter("addBookTotalCopies"));
-		String authorId = request.getParameter("addBookAuthor");
-		String publisherId = request.getParameter("addBookPublisher");
-		String courseId = request.getParameter("addBookCourse");
-		LocalDate releaseDate = LocalDate.parse(request.getParameter("addReleaseDate"));
-		String genreId = request.getParameter("addBookGenre");
-		String status = request.getParameter("addBookStatus");
-
-		Book book = new Book();
-		book.setTitle(title);
-		book.setTotalCopies(totalCopies);
-		book.setAuthorId(authorId);
-		book.setPublisherId(publisherId);
-		book.setCourseId(courseId);
-		book.setReleaseDate(releaseDate);
-		book.setGenreId(genreId);
-		book.setStatus(status);
-
-		return bookDao.create(book);
+	@Transactional
+	public Book createBook(Book book) {
+		book.setLoanedCopies(0);
+		return bookRepository.save(book);
 	}
 
-	public Book updateBook(String bookId, HttpServletRequest request) throws Exception {
-		String title = request.getParameter("editBookTitle");
-		int totalCopies = Integer.parseInt(request.getParameter("editBookTotalCopies"));
-		String authorId = request.getParameter("editBookAuthor");
-		String publisherId = request.getParameter("editBookPublisher");
-		String courseId = request.getParameter("editBookCourse");
-		LocalDate releaseDate = LocalDate.parse(request.getParameter("editReleaseDate"));
-		String genreId = request.getParameter("editBookGenre");
-		String status = request.getParameter("editBookStatus");
-
-		Book book = new Book();
-		book.setBookId(bookId);
-		book.setTitle(title);
-		book.setTotalCopies(totalCopies);
-		book.setAuthorId(authorId);
-		book.setPublisherId(publisherId);
-		book.setCourseId(courseId);
-		book.setReleaseDate(releaseDate);
-		book.setGenreId(genreId);
-		book.setStatus(status);
-
-		return bookDao.update(book);
+	@Transactional
+	public Book updateBook(Long bookId, Book updatedData) {
+		return bookRepository.findById(bookId).map(book -> {
+			book.setTitle(updatedData.getTitle());
+			book.setTotalCopies(updatedData.getTotalCopies());
+			book.setAuthor(updatedData.getAuthor());
+			book.setPublisher(updatedData.getPublisher());
+			book.setCourse(updatedData.getCourse());
+			book.setReleaseDate(updatedData.getReleaseDate());
+			book.setGenre(updatedData.getGenre());
+			book.setStatus(updatedData.getStatus());
+			return bookRepository.save(book);
+		}).orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + bookId));
 	}
 
-	public SelectOptions populateSelects() throws Exception {
-		SelectOptions selectOptions = new SelectOptions();
+	public List<Book> getBooksForSelect() {
+		return bookRepository.findAvailableBooksByStatus(Status.activo);
+	}
 
-		selectOptions.setAuthors(authorDao.populateAuthorSelect());
-
-		selectOptions.setPublishers(publisherDao.populatePublisherSelect());
-
-		selectOptions.setCourses(courseDao.populateCourseSelect());
-
-		selectOptions.setGenres(genreDao.populateGenreSelect());
-
-		return selectOptions;
+	public SelectOptions populateSelects() {
+		return SelectOptions.builder()
+				.authors(authorService.getAuthorsForSelect())
+				.publishers(publisherService.getPublishersForSelect())
+				.courses(courseService.getCoursesForSelect())
+				.genres(genreService.getGenresForSelect())
+				.build();
 	}
 }

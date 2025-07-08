@@ -1,22 +1,21 @@
 package com.bookstudio.shared.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "Nationalities")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Nationality {
-	private String nationalityId;
-	private String nationalityName;
 
-	public String getNationalityId() {
-		return nationalityId;
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "NationalityID")
+	private Long id;
 
-	public void setNationalityId(String nationalityId) {
-		this.nationalityId = nationalityId;
-	}
-
-	public String getNationalityName() {
-		return nationalityName;
-	}
-
-	public void setNationalityName(String nationalityName) {
-		this.nationalityName = nationalityName;
-	}
+	@Column(name = "NationalityName", nullable = false, unique = true, length = 100)
+	private String name;
 }

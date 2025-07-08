@@ -1,116 +1,52 @@
 package com.bookstudio.loan.model;
 
+import com.bookstudio.book.model.Book;
+import com.bookstudio.shared.enums.LoanStatus;
+import com.bookstudio.shared.util.IdFormatter;
+import com.bookstudio.student.model.Student;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
-import com.bookstudio.shared.util.IdFormatter;
-
+@Entity
+@Table(name = "Loans")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Loan {
-	private String loanId;
-	private String formattedLoanId;
-	private String bookId;
-	private String formattedBookId;
-	private String bookTitle;
-	private String studentId;
-	private String formattedStudentId;
-	private String studentFullName;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "LoanID")
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "BookID", nullable = false)
+	private Book book;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "StudentID", nullable = false)
+	private Student student;
+
+	@Column(name = "LoanDate", nullable = false)
 	private LocalDate loanDate;
+
+	@Column(name = "ReturnDate", nullable = false)
 	private LocalDate returnDate;
+
+	@Column(name = "Quantity", nullable = false)
 	private int quantity;
-	private String status;
+
+	@Column(name = "Status", columnDefinition = "ENUM('prestado','devuelto')")
+	private LoanStatus status;
+
+	@Column(name = "Observation", columnDefinition = "TEXT")
 	private String observation;
 
-	public String getLoanId() {
-		return loanId;
-	}
-	
-	public void setLoanId(String loanId) {
-		this.loanId = loanId;
-        this.formattedLoanId = IdFormatter.formatId(loanId, "P");
-	}
-	
-	public String getFormattedLoanId() {
-		return formattedLoanId;
-	}
-
-	public String getBookId() {
-		return bookId;
-	}
-
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
-        this.formattedBookId = IdFormatter.formatId(bookId, "L");
-	}
-	
-	public String getFormattedBookId() {
-		return formattedBookId;
-	}
-
-	public String getBookTitle() {
-		return bookTitle;
-	}
-
-	public void setBookTitle(String bookTitle) {
-		this.bookTitle = bookTitle;
-	}
-
-	public String getStudentId() {
-		return studentId;
-	}
-
-	public void setStudentId(String studentId) {
-		this.studentId = studentId;
-        this.formattedStudentId = IdFormatter.formatId(studentId, "ES");
-	}
-	
-	public String getFormattedStudentId() {
-		return formattedStudentId;
-	}
-
-	public String getStudentFullName() {
-		return studentFullName;
-	}
-
-	public void setStudentFullName(String studentFullName) {
-		this.studentFullName = studentFullName;
-	}
-
-	public LocalDate getLoanDate() {
-		return loanDate;
-	}
-
-	public void setLoanDate(LocalDate loanDate) {
-		this.loanDate = loanDate;
-	}
-
-	public LocalDate getReturnDate() {
-		return returnDate;
-	}
-
-	public void setReturnDate(LocalDate returnDate) {
-		this.returnDate = returnDate;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getObservation() {
-		return observation;
-	}
-
-	public void setObservation(String observation) {
-		this.observation = observation;
+	@Transient
+	public String getFormattedId() {
+		return IdFormatter.formatId(String.valueOf(id), "P");
 	}
 }

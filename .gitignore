@@ -1,15 +1,62 @@
-/build/
-target/
+# ─── Build output ─────────────────────────────
+/target/
+build/
+
+# ─── Spring Boot local config ──────
+/src/main/resources/application-local.properties
+
+# ─── Logs ─────────────────────────────────────
+*.log
+
+# ─── Class files ──────────────────────────────
+*.class
+
+# ─── OS generated files ───────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Swap files ───────────────────────────────
+*.swp
+*.swo
+
+# ─── Node/npm ─────────────────────────────────
+/node_modules/
+
+# ─── Maven wrapper ────────────────────────────
+.mvn/wrapper/maven-wrapper.jar
+
+# ─── IDEs ─────────────────────────────────────
+
+## IntelliJ
+.idea/
+*.iml
+*.iws
+*.ipr
+
+## Eclipse
 .settings/
 .classpath
 .project
-/.metadata
-/.idea
-/node_modules/
-*.class
-*.log
-Thumbs.db
-.DS_Store
-*.swp
-*.swo
-.env
+
+## STS (Spring Tool Suite)
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+## NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+## VS Code
+.vscode/
+
+# ─── Others ───────────────────────────────────
+/.metadata/
+/HELP.md
+
+# ─── Dotenv files ─────────────────────────────
+.en

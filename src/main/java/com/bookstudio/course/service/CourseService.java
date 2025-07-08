@@ -1,52 +1,47 @@
 package com.bookstudio.course.service;
 
-import java.sql.SQLException;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-import com.bookstudio.course.dao.CourseDao;
-import com.bookstudio.course.dao.CourseDaoImpl;
 import com.bookstudio.course.model.Course;
+import com.bookstudio.course.repository.CourseRepository;
+import com.bookstudio.shared.enums.Status;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class CourseService {
-	private CourseDao courseDao = new CourseDaoImpl();
 
-	public List<Course> listCourses() throws SQLException {
-		return courseDao.listAll();
+	private final CourseRepository courseRepository;
+
+	public List<Course> listCourses() {
+		return courseRepository.findAll();
 	}
 
-	public Course getCourse(String courseId) throws SQLException {
-		return courseDao.getById(courseId);
+	public Optional<Course> getCourse(Long courseId) {
+		return courseRepository.findById(courseId);
 	}
 
-	public Course createCourse(HttpServletRequest request) throws Exception {
-		String name = request.getParameter("addCourseName");
-		String level = request.getParameter("addCourseLevel");
-		String description = request.getParameter("addCourseDescription");
-		String status = request.getParameter("addCourseStatus");
-
-		Course course = new Course();
-		course.setName(name);
-		course.setLevel(level);
-		course.setDescription(description);
-		course.setStatus(status);
-
-		return courseDao.create(course);
+	@Transactional
+	public Course createCourse(Course course) {
+		return courseRepository.save(course);
 	}
 
-	public Course updateCourse(String courseId, HttpServletRequest request) throws Exception {
-		String name = request.getParameter("editCourseName");
-		String level = request.getParameter("editCourseLevel");
-		String description = request.getParameter("editCourseDescription");
-		String status = request.getParameter("editCourseStatus");
+	@Transactional
+	public Course updateCourse(Long courseId, Course updatedData) {
+		return courseRepository.findById(courseId).map(course -> {
+			course.setName(updatedData.getName());
+			course.setLevel(updatedData.getLevel());
+			course.setDescription(updatedData.getDescription());
+			course.setStatus(updatedData.getStatus());
+			return courseRepository.save(course);
+		}).orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
+	}
 
-		Course course = new Course();
-		course.setCourseId(courseId);
-		course.setName(name);
-		course.setLevel(level);
-		course.setDescription(description);
-		course.setStatus(status);
-
-		return courseDao.update(course);
+	public List<Course> getCoursesForSelect() {
+		return courseRepository.findByStatus(Status.activo);
 	}
 }

@@ -1,122 +1,64 @@
 package com.bookstudio.student.model;
 
+import com.bookstudio.shared.enums.Status;
+import com.bookstudio.shared.model.Faculty;
+import com.bookstudio.shared.util.IdFormatter;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
-import com.bookstudio.shared.util.IdFormatter;
-
+@Entity
+@Table(name = "Students")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Student {
-	private String studentId;
-	private String formattedStudentId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "StudentID")
+	private Long id;
+
+	@Column(name = "DNI", nullable = false, unique = true, length = 8)
 	private String dni;
+
+	@Column(name = "FirstName", nullable = false)
 	private String firstName;
+
+	@Column(name = "LastName", nullable = false)
 	private String lastName;
+
+	@Column(name = "Address", nullable = false)
 	private String address;
+
+	@Column(name = "Phone", nullable = false, length = 9)
 	private String phone;
+
+	@Column(name = "Email", nullable = false, unique = true, length = 100)
 	private String email;
+
+	@Column(name = "BirthDate", nullable = false)
 	private LocalDate birthDate;
+
+	@Column(name = "Gender", nullable = false, length = 10)
 	private String gender;
-	private String facultyId;
-	private String facultyName;
-	private String status;
 
-	public String getStudentId() {
-		return studentId;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "FacultyID", nullable = false)
+	private Faculty faculty;
+
+	@Column(name = "Status", columnDefinition = "ENUM('activo', 'inactivo')")
+	private Status status;
+
+	@Transient
+	public String getFormattedId() {
+		return IdFormatter.formatId(String.valueOf(id), "ES");
 	}
 
-	public void setStudentId(String studentId) {
-		this.studentId = studentId;
-        this.formattedStudentId = IdFormatter.formatId(studentId, "ES");
-	}
-	
-	public String getFormattedStudentId() {
-		return formattedStudentId;
-	}
-
-	public String getDni() {
-		return dni;
-	}
-
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
-
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public LocalDate getBirthDate() {
-		return birthDate;
-	}
-
-	public void setBirthDate(LocalDate birthDate) {
-		this.birthDate = birthDate;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public String getFacultyId() {
-		return facultyId;
-	}
-
-	public void setFacultyId(String facultyId) {
-		this.facultyId = facultyId;
-	}
-
-	public String getFacultyName() {
-		return facultyName;
-	}
-
-	public void setFacultyName(String facultyName) {
-		this.facultyName = facultyName;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	@Transient
+	public String getFullName() {
+		return firstName + " " + lastName;
 	}
 }

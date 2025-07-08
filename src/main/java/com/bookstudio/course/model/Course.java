@@ -1,57 +1,37 @@
 package com.bookstudio.course.model;
 
+import com.bookstudio.shared.enums.Status;
 import com.bookstudio.shared.util.IdFormatter;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Entity
+@Table(name = "Courses")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Course {
-	private String courseId;
-	private String formattedCourseId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "CourseID")
+	private Long id;
+
+	@Column(name = "Name", nullable = false)
 	private String name;
+
+	@Column(name = "Level", nullable = false)
 	private String level;
+
+	@Column(name = "Description", columnDefinition = "TEXT")
 	private String description;
-	private String status;
 
-	public String getCourseId() {
-		return courseId;
-	}
+	@Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
+	private Status status;
 
-	public void setCourseId(String courseId) {
-		this.courseId = courseId;
-        this.formattedCourseId = IdFormatter.formatId(courseId, "C");
-	}
-
-	public String getFormattedCourseId() {
-		return formattedCourseId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLevel() {
-		return level;
-	}
-
-	public void setLevel(String level) {
-		this.level = level;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+	@Transient
+	public String getFormattedId() {
+		return IdFormatter.formatId(String.valueOf(id), "C");
 	}
 }

@@ -1,5 +1,15 @@
-node_modules
-target
+# Ignore compiled folders
+node_modules/
+target/
+
+# Ignore server-side files
+**/*.java
 **/*.jsp
 **/*.jspf
-**/*.java
+
+# Ignore backend resources
+src/main/resources/
+
+# Optional: ignore minified or vendor JS
+**/*.min.js
+vendor/

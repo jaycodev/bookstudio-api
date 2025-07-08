@@ -1,87 +1,85 @@
 package com.bookstudio.student.service;
 
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-import com.bookstudio.shared.dao.FacultyDao;
-import com.bookstudio.shared.dao.FacultyDaoImpl;
+import com.bookstudio.shared.enums.Status;
+import com.bookstudio.shared.model.Faculty;
+import com.bookstudio.shared.repository.FacultyRepository;
+import com.bookstudio.shared.service.FacultyService;
 import com.bookstudio.shared.util.SelectOptions;
-import com.bookstudio.student.dao.StudentDao;
-import com.bookstudio.student.dao.StudentDaoImpl;
 import com.bookstudio.student.model.Student;
+import com.bookstudio.student.repository.StudentRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class StudentService {
-	private StudentDao studentDao = new StudentDaoImpl();
-	private FacultyDao facultyDao = new FacultyDaoImpl();
 
-	public List<Student> listStudents() throws SQLException {
-		return studentDao.listAll();
+	private final StudentRepository studentRepository;
+	private final FacultyRepository facultyRepository;
+
+	private final FacultyService facultyService;
+
+	public List<Student> listStudents() {
+		return studentRepository.findAll();
 	}
 
-	public Student getStudent(String studentId) throws SQLException {
-		return studentDao.getById(studentId);
+	public Optional<Student> getStudent(Long id) {
+		return studentRepository.findById(id);
 	}
 
-	public Student createStudent(HttpServletRequest request) throws Exception {
-		String dni = request.getParameter("addStudentDNI");
-		String firstName = request.getParameter("addStudentFirstName");
-		String lastName = request.getParameter("addStudentLastName");
-		String address = request.getParameter("addStudentAddress");
-		String phone = request.getParameter("addStudentPhone");
-		String email = request.getParameter("addStudentEmail");
-		LocalDate birthDate = LocalDate.parse(request.getParameter("addStudentBirthDate"));
-		String gender = request.getParameter("addStudentGender");
-		String facultyId = request.getParameter("addStudentFaculty");
-		String status = request.getParameter("addStudentStatus");
+	@Transactional
+	public Student createStudent(Student student) {
+		if (studentRepository.findByDni(student.getDni()).isPresent()) {
+			throw new RuntimeException("El DNI ingresado ya ha sido registrado.");
+		}
 
-		Student student = new Student();
-		student.setDni(dni);
-		student.setFirstName(firstName);
-		student.setLastName(lastName);
-		student.setAddress(address);
-		student.setPhone(phone);
-		student.setEmail(email);
-		student.setBirthDate(birthDate);
-		student.setGender(gender);
-		student.setFacultyId(facultyId);
-		student.setStatus(status);
+		if (studentRepository.findByEmail(student.getEmail()).isPresent()) {
+			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
+		}
 
-		return studentDao.create(student);
+		Faculty faculty = facultyRepository.findById(student.getFaculty().getId())
+				.orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
+		student.setFaculty(faculty);
+
+		return studentRepository.save(student);
 	}
 
-	public Student updateStudent(String studentId, HttpServletRequest request) throws Exception {
-		String firstName = request.getParameter("editStudentFirstName");
-		String lastName = request.getParameter("editStudentLastName");
-		String address = request.getParameter("editStudentAddress");
-		String phone = request.getParameter("editStudentPhone");
-		String email = request.getParameter("editStudentEmail");
-		LocalDate birthDate = LocalDate.parse(request.getParameter("editStudentBirthDate"));
-		String gender = request.getParameter("editStudentGender");
-		String facultyId = request.getParameter("editStudentFaculty");
-		String status = request.getParameter("editStudentStatus");
+	@Transactional
+	public Student updateStudent(Long id, Student updatedData) {
+		Student student = studentRepository.findById(id)
+				.orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
 
-		Student student = new Student();
-		student.setStudentId(studentId);
-		student.setFirstName(firstName);
-		student.setLastName(lastName);
-		student.setAddress(address);
-		student.setPhone(phone);
-		student.setEmail(email);
-		student.setBirthDate(birthDate);
-		student.setGender(gender);
-		student.setFacultyId(facultyId);
-		student.setStatus(status);
+		if (studentRepository.findByEmailAndIdNot(updatedData.getEmail(), id).isPresent()) {
+			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
+		}
 
-		return studentDao.update(student);
+		Faculty faculty = facultyRepository.findById(updatedData.getFaculty().getId())
+				.orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
+
+		student.setFirstName(updatedData.getFirstName());
+		student.setLastName(updatedData.getLastName());
+		student.setAddress(updatedData.getAddress());
+		student.setPhone(updatedData.getPhone());
+		student.setBirthDate(updatedData.getBirthDate());
+		student.setEmail(updatedData.getEmail());
+		student.setGender(updatedData.getGender());
+		student.setStatus(updatedData.getStatus());
+		student.setFaculty(faculty);
+
+		return studentRepository.save(student);
 	}
 
-	public SelectOptions populateSelects() throws SQLException {
-		SelectOptions selectOptions = new SelectOptions();
+	public List<Student> getStudentsForSelect() {
+		return studentRepository.findByStatus(Status.activo);
+	}
 
-		selectOptions.setFaculties(facultyDao.populateFacultySelect());
-
-		return selectOptions;
+	public SelectOptions populateSelects() {
+		return SelectOptions.builder()
+				.faculties(facultyService.getFacultiesForSelect())
+				.build();
 	}
 }

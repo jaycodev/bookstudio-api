@@ -1,22 +1,21 @@
 package com.bookstudio.shared.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "Genres")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Genre {
-	private String genreId;
-	private String genreName;
 
-	public String getGenreId() {
-		return genreId;
-	}
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "GenreID")
+	private Long id;
 
-	public void setGenreId(String genreId) {
-		this.genreId = genreId;
-	}
-
-	public String getGenreName() {
-		return genreName;
-	}
-
-	public void setGenreName(String genreName) {
-		this.genreName = genreName;
-	}
+	@Column(name = "GenreName", nullable = false, unique = true, length = 255)
+	private String name;
 }
