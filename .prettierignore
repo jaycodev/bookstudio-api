@@ -10,6 +10,9 @@ target/
 # Ignore backend resources
 src/main/resources/
 
+!src/main/resources/static/**/*.js
+!src/main/resources/static/**/*.css
+
 # Optional: ignore minified or vendor JS
 **/*.min.js
 vendor/
