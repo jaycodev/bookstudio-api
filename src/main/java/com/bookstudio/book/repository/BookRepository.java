@@ -15,18 +15,18 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
         SELECT
-            b.id as bookId,
-            b.title as title,
-            (b.totalCopies - b.loanedCopies) as availableCopies,
-            b.loanedCopies as loanedCopies,
+            b.id AS bookId,
+            b.title AS title,
+            (b.totalCopies - b.loanedCopies) AS availableCopies,
+            b.loanedCopies AS loanedCopies,
 
-            a.id as authorId,
-            a.name as authorName,
+            a.id AS authorId,
+            a.name AS authorName,
             
-            p.id as publisherId,
-            p.name as publisherName,
+            p.id AS publisherId,
+            p.name AS publisherName,
             
-            b.status as status
+            b.status AS status
         FROM Book b
         JOIN b.author a
         JOIN b.publisher p
@@ -63,6 +63,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     """)
     Optional<BookDetailProjection> findDetailById(@Param("id") Long id);
 
-    @Query("SELECT b.id as bookId, b.title as title FROM Book b WHERE b.status = 'activo' AND b.totalCopies > b.loanedCopies")
+    @Query("SELECT b.id AS bookId, b.title AS title FROM Book b WHERE b.status = 'activo' AND b.totalCopies > b.loanedCopies")
     List<BookSelectProjection> findForSelect();
 }

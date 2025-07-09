@@ -42,5 +42,7 @@
 		"**/mvnw": true,
 		"**/mvnw.cmd": true,
 		"**/src/test": true
-	}
+	},
+	
+	"java.compile.nullAnalysis.mode": "automatic"
 }

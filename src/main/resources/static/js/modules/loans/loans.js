@@ -716,7 +716,7 @@ function loadModalData() {
 		populateSelect('#addLoanBook', bookList, 'bookId', 'title')
 		$('#addLoanBook').selectpicker()
 
-		populateSelect('#addLoanStudent', studentList, 'studentId', 'firstName')
+		populateSelect('#addLoanStudent', studentList, 'studentId', 'fullName')
 		$('#addLoanStudent').selectpicker()
 
 		$('#addLoanForm')[0].reset()
@@ -847,12 +847,7 @@ function loadModalData() {
 					`${data.bookTitle} <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>`,
 				)
 
-				populateSelect(
-					'#editLoanStudent',
-					studentList,
-					'studentId',
-					'firstName',
-				)
+				populateSelect('#editLoanStudent', studentList, 'studentId', 'fullName')
 				$('#editLoanStudent').val(data.studentId)
 				$('#editLoanStudent').selectpicker()
 
