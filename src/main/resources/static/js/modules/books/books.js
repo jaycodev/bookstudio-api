@@ -311,14 +311,10 @@ function handleAddBookForm() {
 	$('#addBookForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -327,88 +323,97 @@ function handleAddBookForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateAddField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateAddField($(this))) isValid = false
 			})
 
-		if (isValid) {
-			const data = $(this).serialize()
+		if (!isValid) {
+			$(this).data('submitted', false)
+			return
+		}
 
-			const submitButton = $(this).find('[type="submit"]')
-			toggleButtonLoading(submitButton, true)
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
 
-			try {
-				const response = await fetch('./api/books', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-						Accept: 'application/json',
-					},
-					body: data,
-				})
+		const book = {
+			title: raw.addBookTitle,
+			totalCopies: parseInt(raw.addBookTotalCopies),
+			authorId: parseInt(raw.addBookAuthor),
+			publisherId: parseInt(raw.addBookPublisher),
+			courseId: parseInt(raw.addBookCourse),
+			releaseDate: raw.addReleaseDate,
+			genreId: parseInt(raw.addBookGenre),
+			status: raw.addBookStatus,
+		}
 
-				const json = await response.json()
+		const submitButton = $(this).find('[type="submit"]')
+		toggleButtonLoading(submitButton, true)
 
-				if (response.ok && json.success) {
-					addRowToTable(json.data)
-					$('#addBookModal').modal('hide')
-					showToast('Libro agregado exitosamente.', 'success')
-				} else {
+		try {
+			const response = await fetch('./api/books', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(book),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				addRowToTable(json.data)
+				$('#addBookModal').modal('hide')
+				showToast('Libro agregado exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				$('#addBookModal').modal('hide')
+				showToast('Hubo un error al agregar el libro.', 'error')
+			}
+		} catch (error) {
+			if (error instanceof Response) {
+				try {
+					const errData = await error.json()
 					console.error(
-						`Backend error (${json.errorType} - ${json.statusCode}):`,
-						json.message,
+						`Server error (${errData.errorType} - ${error.status}):`,
+						errData.message,
 					)
-					$('#addBookModal').modal('hide')
-					showToast('Hubo un error al agregar el libro.', 'error')
-				}
-			} catch (error) {
-				if (error instanceof Response) {
-					try {
-						const errData = await error.json()
-						console.error(
-							`Server error (${errData.errorType} - ${error.status}):`,
-							errData.message,
-						)
-						switch (error.status) {
-							case 403:
-								showToast('No tienes permisos para agregar libros.', 'warning')
-								break
-							case 400:
-								showToast(
-									'Solicitud inválida. Verifica los datos del formulario.',
-									'error',
-								)
-								break
-							case 500:
-								showToast(
-									'Error interno del servidor. Intenta más tarde.',
-									'error',
-								)
-								break
-							default:
-								showToast(
-									errData.message || 'Hubo un error al agregar el libro.',
-									'error',
-								)
-								break
-						}
-					} catch {
-						console.error('Unexpected error:', error.status, await error.text())
-						showToast('Hubo un error inesperado.', 'error')
+					switch (error.status) {
+						case 403:
+							showToast('No tienes permisos para agregar libros.', 'warning')
+							break
+						case 400:
+							showToast(
+								'Solicitud inválida. Verifica los datos del formulario.',
+								'error',
+							)
+							break
+						case 500:
+							showToast(
+								'Error interno del servidor. Intenta más tarde.',
+								'error',
+							)
+							break
+						default:
+							showToast(
+								errData.message || 'Hubo un error al agregar el libro.',
+								'error',
+							)
+							break
 					}
-				} else {
-					console.error('Unexpected error:', error)
+				} catch {
+					console.error('Unexpected error:', error.status, await error.text())
 					showToast('Hubo un error inesperado.', 'error')
 				}
-				$('#addBookModal').modal('hide')
-			} finally {
-				toggleButtonLoading(submitButton, false)
+			} else {
+				console.error('Unexpected error:', error)
+				showToast('Hubo un error inesperado.', 'error')
 			}
-		} else {
-			$(this).data('submitted', false)
+			$('#addBookModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
 }
@@ -489,17 +494,13 @@ function handleEditBookForm() {
 		}
 	})
 
-	$('#editBookForm').on('submit', function (event) {
+	$('#editBookForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -508,85 +509,67 @@ function handleEditBookForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateEditField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateEditField($(this))) isValid = false
 			})
-		if (isValid) {
-			const data = $(this).serialize()
-			const bookId = $(this).data('bookId')
-			const url = `./api/books/${encodeURIComponent(bookId)}`
 
-			const submitButton = $(this).find('[type="submit"]')
-			toggleButtonLoading(submitButton, true)
-
-			fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-				},
-				body: data + '&_method=PUT',
-			})
-				.then(async (res) => {
-					let json
-					try {
-						json = await res.json()
-					} catch {
-						throw new Error('Invalid JSON response')
-					}
-
-					if (res.ok && json.success) {
-						updateRowInTable(json.data)
-						$('#editBookModal').modal('hide')
-						showToast('Libro actualizado exitosamente.', 'success')
-					} else {
-						console.error(
-							`Backend error (${json.errorType} - ${json.statusCode}):`,
-							json.message,
-						)
-
-						switch (res.status) {
-							case 403:
-								showToast(
-									'No tienes permisos para actualizar libros.',
-									'warning',
-								)
-								break
-							case 400:
-								showToast(
-									'Solicitud inválida. Verifica los datos del formulario.',
-									'error',
-								)
-								break
-							case 500:
-								showToast(
-									'Error interno del servidor. Intenta más tarde.',
-									'error',
-								)
-								break
-							default:
-								showToast(
-									json.message || 'Hubo un error al actualizar el libro.',
-									'error',
-								)
-								break
-						}
-
-						$('#editBookModal').modal('hide')
-					}
-				})
-				.catch((err) => {
-					console.error('Unexpected error:', err)
-					showToast('Hubo un error inesperado.', 'error')
-					$('#editBookModal').modal('hide')
-				})
-				.finally(() => {
-					toggleButtonLoading(submitButton, false)
-				})
-		} else {
+		if (!isValid) {
 			$(this).data('submitted', false)
+			return
+		}
+
+		const bookId = $('#editBookForm').data('bookId')
+
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const book = {
+			bookId: parseInt(bookId),
+			title: raw.editBookTitle,
+			totalCopies: parseInt(raw.editBookTotalCopies),
+			authorId: parseInt(raw.editBookAuthor),
+			publisherId: parseInt(raw.editBookPublisher),
+			courseId: parseInt(raw.editBookCourse),
+			releaseDate: raw.editReleaseDate,
+			genreId: parseInt(raw.editBookGenre),
+			status: raw.editBookStatus,
+		}
+
+		const submitButton = $(this).find('[type="submit"]')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			const response = await fetch('./api/books', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(book),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				updateRowInTable(json.data)
+				$('#editBookModal').modal('hide')
+				showToast('Libro actualizado exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				showToast(
+					json.message || 'Hubo un error al actualizar el libro.',
+					'error',
+				)
+				$('#editBookModal').modal('hide')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#editBookModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
 }
@@ -677,7 +660,7 @@ function loadModalData() {
 		const peruDateStr = today.toISOString().split('T')[0]
 		$('#addReleaseDate').attr('max', peruDateStr)
 
-		populateSelect('#addBookGenre', genreList, 'genreId', 'genreName')
+		populateSelect('#addBookGenre', genreList, 'genreId', 'name')
 		$('#addBookGenre').selectpicker()
 
 		$('#addBookStatus')
@@ -805,7 +788,7 @@ function loadModalData() {
 				$('#editBookCourse').val(data.courseId)
 				$('#editBookCourse').selectpicker()
 
-				populateSelect('#editBookGenre', genreList, 'genreId', 'genreName')
+				populateSelect('#editBookGenre', genreList, 'genreId', 'name')
 				$('#editBookGenre').val(data.genreId)
 				$('#editBookGenre').selectpicker()
 

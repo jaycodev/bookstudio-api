@@ -49,6 +49,7 @@ public class Student {
 	@JoinColumn(name = "FacultyID", nullable = false)
 	private Faculty faculty;
 
+    @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('activo', 'inactivo')")
 	private Status status;
 

@@ -11,11 +11,11 @@ import lombok.*;
 @Builder
 public class Genre {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "GenreID")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "GenreID")
+    private Long genreId;
 
-	@Column(name = "GenreName", nullable = false, unique = true, length = 255)
-	private String name;
+    @Column(name = "Name", nullable = false, unique = true, length = 255)
+    private String name;
 }

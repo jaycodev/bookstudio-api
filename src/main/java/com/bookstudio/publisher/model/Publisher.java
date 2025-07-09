@@ -40,6 +40,7 @@ public class Publisher {
 	@Column(name = "Address")
 	private String address;
 
+    @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
 	private Status status;
 

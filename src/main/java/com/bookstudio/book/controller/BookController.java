@@ -1,6 +1,10 @@
 package com.bookstudio.book.controller;
 
-import com.bookstudio.book.model.Book;
+import com.bookstudio.book.dto.BookResponseDto;
+import com.bookstudio.book.dto.CreateBookDto;
+import com.bookstudio.book.dto.UpdateBookDto;
+import com.bookstudio.book.projection.BookDetailProjection;
+import com.bookstudio.book.projection.BookListProjection;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
@@ -22,7 +26,7 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<?> listBooks() {
-        List<Book> books = bookService.listBooks();
+        List<BookListProjection> books = bookService.listBooks();
         if (books.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No books found.", "no_content", 204));
@@ -32,7 +36,7 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getBook(@PathVariable Long id) {
-        Book book = bookService.getBook(id).orElse(null);
+        BookDetailProjection book = bookService.getBook(id).orElse(null);
         if (book == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Book not found.", "not_found", 404));
@@ -41,21 +45,21 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBook(@RequestBody Book book) {
+    public ResponseEntity<?> createBook(@RequestBody CreateBookDto dto) {
         try {
-			Book created = bookService.createBook(book);
-			return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ApiError(false, e.getMessage(), "creation_failed", 400));
-		}
+            BookResponseDto created = bookService.createBook(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiError(false, e.getMessage(), "creation_failed", 400));
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestBody Book updatedBook) {
+    @PutMapping
+    public ResponseEntity<?> updateBook(@RequestBody UpdateBookDto dto) {
         try {
-            Book result = bookService.updateBook(id, updatedBook);
-            return ResponseEntity.ok(new ApiResponse(true, result));
+            BookResponseDto updated = bookService.updateBook(dto);
+            return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));

@@ -11,11 +11,11 @@ import lombok.*;
 @Builder
 public class Faculty {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "FacultyID")
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "FacultyID")
+    private Long facultyId;
 
-	@Column(name = "FacultyName", nullable = false, unique = true)
-	private String name;
+    @Column(name = "Name", nullable = false, unique = true)
+    private String name;
 }

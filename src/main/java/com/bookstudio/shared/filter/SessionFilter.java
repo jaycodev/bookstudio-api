@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,18 +16,25 @@ import java.io.IOException;
 public class SessionFilter extends OncePerRequestFilter {
 
 	private static final String LOGIN_PAGE = "/login";
-	private static final String LOGIN_SERVLET = "/LoginServlet";
 	private static final String DASHBOARD_PAGE = "/";
 	private static final String RESET_PASSWORD_PAGE = "/reset-password";
 	private static final String FORGOT_PASSWORD_PAGE = "/forgot-password";
-	private static final String RESET_PASSWORD_SERVLET = "/ResetPasswordServlet";
-	private static final String FORGOT_PASSWORD_SERVLET = "/ForgotPasswordServlet";
-	private static final String VALIDATE_TOKEN_SERVLET = "/ValidateTokenServlet";
+
+	private static final String LOGIN_API = "/api/auth/login";
+	private static final String LOGOUT_API = "/api/auth/logout";
+	private static final String RESET_PASSWORD_API = "/api/auth/reset-password";
+	private static final String FORGOT_PASSWORD_API = "/api/auth/forgot-password";
+	private static final String VALIDATE_TOKEN_API = "/api/auth/validate-token";
+
 	private static final String[] PUBLIC_PATHS = {
-			LOGIN_PAGE, LOGIN_SERVLET,
-			RESET_PASSWORD_PAGE, FORGOT_PASSWORD_PAGE,
-			RESET_PASSWORD_SERVLET, FORGOT_PASSWORD_SERVLET,
-			VALIDATE_TOKEN_SERVLET
+			LOGIN_PAGE,
+			RESET_PASSWORD_PAGE,
+			FORGOT_PASSWORD_PAGE,
+			LOGIN_API,
+			LOGOUT_API,
+			RESET_PASSWORD_API,
+			FORGOT_PASSWORD_API,
+			VALIDATE_TOKEN_API
 	};
 	private static final String[] STATIC_PATHS = { "/css/", "/js/", "/images/", "/utils/" };
 
@@ -37,13 +43,7 @@ public class SessionFilter extends OncePerRequestFilter {
 			@NonNull HttpServletRequest request,
 			@NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain)
-			throws ServletException, IOException {
-
-		String type = request.getParameter("type");
-		if ("logout".equals(type)) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+				throws ServletException, IOException {
 
 		String contextPath = request.getContextPath();
 		String requestURI = request.getRequestURI();
@@ -53,8 +53,7 @@ public class SessionFilter extends OncePerRequestFilter {
 		boolean loggedIn = session != null && session.getAttribute("user") != null;
 
 		if (loggedIn) {
-			if (isIn(relativePath, LOGIN_PAGE, LOGIN_SERVLET, RESET_PASSWORD_PAGE, FORGOT_PASSWORD_PAGE,
-					RESET_PASSWORD_SERVLET, FORGOT_PASSWORD_SERVLET)) {
+			if (isIn(relativePath, LOGIN_PAGE, RESET_PASSWORD_PAGE, FORGOT_PASSWORD_PAGE)) {
 				response.sendRedirect(contextPath + DASHBOARD_PAGE);
 				return;
 			}

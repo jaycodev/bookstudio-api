@@ -1,11 +1,11 @@
 package com.bookstudio.student.service;
 
-import com.bookstudio.shared.enums.Status;
 import com.bookstudio.shared.model.Faculty;
 import com.bookstudio.shared.repository.FacultyRepository;
 import com.bookstudio.shared.service.FacultyService;
 import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.student.model.Student;
+import com.bookstudio.student.projection.StudentSelectProjection;
 import com.bookstudio.student.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class StudentService {
 			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
 		}
 
-		Faculty faculty = facultyRepository.findById(student.getFaculty().getId())
+		Faculty faculty = facultyRepository.findById(student.getFaculty().getFacultyId())
 				.orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
 		student.setFaculty(faculty);
 
@@ -57,7 +57,7 @@ public class StudentService {
 			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
 		}
 
-		Faculty faculty = facultyRepository.findById(updatedData.getFaculty().getId())
+		Faculty faculty = facultyRepository.findById(updatedData.getFaculty().getFacultyId())
 				.orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
 
 		student.setFirstName(updatedData.getFirstName());
@@ -73,8 +73,8 @@ public class StudentService {
 		return studentRepository.save(student);
 	}
 
-	public List<Student> getStudentsForSelect() {
-		return studentRepository.findByStatus(Status.activo);
+	public List<StudentSelectProjection> getStudentsForSelect() {
+		return studentRepository.findForSelect();
 	}
 
 	public SelectOptions populateSelects() {

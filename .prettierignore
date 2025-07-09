@@ -7,11 +7,9 @@ target/
 **/*.jsp
 **/*.jspf
 
-# Ignore backend resources
-src/main/resources/
-
-!src/main/resources/static/**/*.js
-!src/main/resources/static/**/*.css
+# Ignore backend resources except static/
+src/main/resources/*
+!src/main/resources/static/
 
 # Optional: ignore minified or vendor JS
 **/*.min.js

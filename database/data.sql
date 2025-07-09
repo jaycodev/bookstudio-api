@@ -1,20 +1,20 @@
 USE bookstudio_db;
 
-INSERT INTO Faculties (FacultyName) VALUES
+INSERT INTO Faculties (Name) VALUES
 ('Ingeniería'), ('Ciencias Sociales'), ('Medicina'), ('Derecho'), ('Arquitectura'),
 ('Economía'), ('Psicología'), ('Ciencias de la Computación'), ('Biología'), ('Filosofía'),
 ('Educación'), ('Artes Visuales'), ('Música'), ('Física'), ('Química'), ('Comunicación'),
 ('Historia'), ('Geografía'), ('Matemáticas'), ('Idiomas Extranjeros'), ('Ciencias Políticas'),
 ('Enfermería'), ('Odontología'), ('Veterinaria'), ('Nutrición');
 
-INSERT INTO LiteraryGenres (GenreName) VALUES
+INSERT INTO LiteraryGenres (Name) VALUES
 ('Realismo mágico'), ('Fantasía'), ('Ciencia Ficción'), ('Poesía'), ('Drama'),
 ('Ensayo'), ('Biografía'), ('Misterio'), ('Aventura'), ('Crónica'),
 ('Novela histórica'), ('Terror'), ('Romance'), ('Filosofía'), ('Autoayuda'),
 ('Periodismo'), ('Narrativa'), ('Comedia'), ('Tragedia'), ('Lírica'),
 ('Cuento'), ('Teatro'), ('Crítica literaria'), ('Literatura infantil'), ('Satírico');
 
-INSERT INTO Genres (GenreName) VALUES
+INSERT INTO Genres (Name) VALUES
 ('Fantasía'), ('Ciencia Ficción'), ('Misterio'), ('Aventura'), ('Novela negra'),
 ('Novela histórica'), ('Terror'), ('Romance'), ('Distopía'), ('Thriller'),
 ('Cómic'), ('Manga'), ('Literatura infantil'), ('Juvenil'), ('Educativo'),
@@ -25,7 +25,7 @@ INSERT INTO Genres (GenreName) VALUES
 ('Música'), ('Cine'), ('Fotografía'), ('Arquitectura'), ('Deportes'),
 ('Gastronomía'), ('Viajes'), ('Religión'), ('Mitología'), ('Astrología'), ('Poesía');
 
-INSERT INTO Nationalities (NationalityName) VALUES
+INSERT INTO Nationalities (Name) VALUES
 ('Afgano'), ('Albanés'), ('Alemán'), ('Argelino'), ('Argentino'),
 ('Australiano'), ('Bangladesí'), ('Belga'), ('Boliviano'), ('Brasileño'),
 ('Búlgaro'), ('Británico'), ('Camboyano'), ('Canadiense'), ('Ceilandés'),

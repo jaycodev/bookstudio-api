@@ -16,7 +16,7 @@ $(document).ready(function () {
 	// Validation functions
 	function validateUsername() {
 		const username = $('#txtUsername').val().trim()
-		if (username === '' || username.length < 3) {
+		if (username === '') {
 			if (formSubmitted) $('#txtUsername').addClass('is-invalid')
 			return false
 		} else {
@@ -27,7 +27,7 @@ $(document).ready(function () {
 
 	function validatePassword() {
 		const password = $('#txtPassword').val().trim()
-		if (password === '' || password.length < 8) {
+		if (password === '') {
 			if (formSubmitted) $('#txtPassword').addClass('is-invalid')
 			return false
 		} else {
@@ -64,7 +64,7 @@ $(document).ready(function () {
 	})
 
 	// Form submission handling
-	$('#loginForm').on('submit', function (event) {
+	$('#loginForm').on('submit', async function (event) {
 		event.preventDefault()
 		formSubmitted = true
 
@@ -77,36 +77,37 @@ $(document).ready(function () {
 		$('#spinner').removeClass('d-none')
 		$('#loginText').addClass('d-none')
 
-		const formData = {
-			type: 'login',
-			txtUsername: $('#txtUsername').val().trim(),
-			txtPassword: $('#txtPassword').val().trim(),
-		}
+		const formData = new URLSearchParams()
+		formData.append('txtUsername', $('#txtUsername').val().trim())
+		formData.append('txtPassword', $('#txtPassword').val().trim())
 
-		$.ajax({
-			type: 'POST',
-			url: 'LoginServlet',
-			data: formData,
-			dataType: 'json',
-			success: function (response) {
-				if (response && response.success) {
-					window.location.href = './'
-				} else {
-					showToast(response.message, 'error')
-					$('#txtUsername').removeClass('is-invalid')
-					$('#txtPassword').removeClass('is-invalid')
-				}
-			},
-			error: function () {
-				showToast('Se produjo un error inesperado.', 'error')
+		try {
+			const res = await fetch('/api/auth/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: formData.toString(),
+			})
+
+			const data = await res.json()
+
+			if (data.success) {
+				window.location.href = './'
+			} else {
+				showToast(data.message || 'Error de autenticación.', 'error')
 				$('#txtUsername').removeClass('is-invalid')
 				$('#txtPassword').removeClass('is-invalid')
-			},
-			complete: function () {
-				$('#loginBtn').prop('disabled', false)
-				$('#spinner').addClass('d-none')
-				$('#loginText').removeClass('d-none')
-			},
-		})
+			}
+		} catch (err) {
+			console.error(err)
+			showToast('Se produjo un error inesperado.', 'error')
+			$('#txtUsername').removeClass('is-invalid')
+			$('#txtPassword').removeClass('is-invalid')
+		} finally {
+			$('#loginBtn').prop('disabled', false)
+			$('#spinner').addClass('d-none')
+			$('#loginText').removeClass('d-none')
+		}
 	})
 })

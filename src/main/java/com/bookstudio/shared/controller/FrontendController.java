@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class FrontendController {
 
-    @GetMapping({"/login", "/forgot-password", "/reset-password",
-                 "/", "/authors", "/books", "/courses",
-                 "/loans", "/profile", "/publishers", "/students", "/users"})
+    @GetMapping({ "/login", "/forgot-password", "/reset-password",
+            "/", "/authors", "/books", "/courses",
+            "/loans", "/profile", "/publishers", "/students", "/users" })
     public String handleFrontendRoutes() {
         return switch (getCurrentPath()) {
             case "/login" -> "auth/login";
@@ -23,7 +23,7 @@ public class FrontendController {
             case "/publishers" -> "publishers/publishers";
             case "/students" -> "students/students";
             case "/users" -> "users/users";
-            default -> "error/404";
+            default -> null;
         };
     }
 

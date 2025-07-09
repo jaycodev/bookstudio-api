@@ -1,8 +1,8 @@
 package com.bookstudio.course.service;
 
 import com.bookstudio.course.model.Course;
+import com.bookstudio.course.projection.CourseSelectProjection;
 import com.bookstudio.course.repository.CourseRepository;
-import com.bookstudio.shared.enums.Status;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class CourseService {
 		}).orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
 	}
 
-	public List<Course> getCoursesForSelect() {
-		return courseRepository.findByStatus(Status.activo);
+	public List<CourseSelectProjection> getCoursesForSelect() {
+		return courseRepository.findForSelect();
 	}
 }

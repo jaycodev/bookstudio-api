@@ -39,6 +39,7 @@ public class Author {
 	@Column(name = "Biography", columnDefinition = "TEXT")
 	private String biography;
 
+    @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
 	private Status status;
 

@@ -89,12 +89,15 @@ $(document).ready(function () {
 		},
 	})
 
-	$.ajax({
-		url: 'DashboardServlet',
-		type: 'GET',
-		data: { type: 'getDashboardData' },
-		dataType: 'json',
-		success: function (data) {
+	const currentYear = new Date().getFullYear()
+	const lastYear = currentYear - 1
+
+	fetch(`/api/dashboard?year1=${currentYear}&year2=${lastYear}`)
+		.then((response) => {
+			if (!response.ok) throw new Error('Error al obtener datos del dashboard')
+			return response.json()
+		})
+		.then((data) => {
 			const loansData = []
 			const returnsData = []
 			const avgDurationData = []
@@ -115,17 +118,13 @@ $(document).ready(function () {
 			avgLoanTimeChart.update()
 
 			const comparison = data.monthlyLoanComparison
-			comparison.sort(function (a, b) {
-				return a.month - b.month
-			})
+			comparison.sort((a, b) => a.month - b.month)
 
 			const year1Data = []
 			const year2Data = []
 
 			for (let i = 1; i <= 6; i++) {
-				const comp = comparison.find(function (item) {
-					return item.month === i
-				})
+				const comp = comparison.find((item) => item.month === i)
 				if (comp) {
 					year1Data.push(comp.loansYear1)
 					year2Data.push(comp.loansYear2)
@@ -149,9 +148,8 @@ $(document).ready(function () {
 				data.totalActiveStudents + ' Estudiantes activos',
 			)
 			$('#totalLoans').text(data.totalActiveLoans + ' Préstamos activos')
-		},
-		error: function (error) {
-			console.error('Error fetching dashboard data from backend:', error)
-		},
-	})
+		})
+		.catch((error) => {
+			console.error('Error al obtener datos del dashboard:', error)
+		})
 })

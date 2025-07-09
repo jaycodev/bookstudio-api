@@ -79,7 +79,7 @@ public class AuthController {
             session.setAttribute(LoginConstants.FIRSTNAME, user.getFirstName());
             session.setAttribute(LoginConstants.LASTNAME, user.getLastName());
             session.setAttribute(LoginConstants.EMAIL, user.getEmail());
-            session.setAttribute(LoginConstants.ROLE, user.getRole());
+            session.setAttribute(LoginConstants.ROLE, user.getRole().name());
 
             byte[] photoBytes = user.getProfilePhoto();
             if (photoBytes != null) {

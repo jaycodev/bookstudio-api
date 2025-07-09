@@ -36,6 +36,7 @@ public class Book {
 	@Column(name = "ReleaseDate", nullable = false)
 	private LocalDate releaseDate;
 
+    @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('activo', 'inactivo')")
 	private Status status;
 

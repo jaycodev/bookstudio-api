@@ -27,6 +27,7 @@ public class Course {
 	@Column(name = "Description", columnDefinition = "TEXT")
 	private String description;
 
+    @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
 	private Status status;
 

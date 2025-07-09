@@ -39,6 +39,7 @@ public class Loan {
 	@Column(name = "Quantity", nullable = false)
 	private int quantity;
 
+    @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('prestado','devuelto')")
 	private LoanStatus status;
 

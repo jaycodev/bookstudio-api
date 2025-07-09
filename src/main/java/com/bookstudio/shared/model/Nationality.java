@@ -14,8 +14,8 @@ public class Nationality {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "NationalityID")
-	private Long id;
+	private Long nationalityId;
 
-	@Column(name = "NationalityName", nullable = false, unique = true, length = 100)
+	@Column(name = "Name", nullable = false, unique = true, length = 100)
 	private String name;
 }
