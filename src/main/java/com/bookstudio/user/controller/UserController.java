@@ -4,16 +4,17 @@ import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
 import com.bookstudio.shared.util.ValidationErrorResponse;
 import com.bookstudio.shared.util.FieldErrorDetail;
-import com.bookstudio.user.model.User;
+import com.bookstudio.user.dto.CreateUserDto;
+import com.bookstudio.user.dto.UpdateUserDto;
+import com.bookstudio.user.dto.UserResponseDto;
+import com.bookstudio.user.projection.UserViewProjection;
 import com.bookstudio.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,10 +24,10 @@ public class UserController {
 	private final UserService userService;
 
 	@GetMapping
-	public ResponseEntity<?> listUsers(@RequestParam(required = false) Long excludeId) {
-		List<User> users = (excludeId != null)
-				? userService.listUsersExcept(excludeId)
-				: userService.listUsersExcept(-1L);
+	public ResponseEntity<?> list(@RequestParam(required = false) Long excludeId) {
+		List<UserViewProjection> users = (excludeId != null)
+				? userService.getList(excludeId)
+				: userService.getList(-1L);
 
 		if (users.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -35,29 +36,20 @@ public class UserController {
 		return ResponseEntity.ok(users);
 	}
 
-	@GetMapping("/{id}")
-	public ResponseEntity<?> getUser(@PathVariable Long id) {
-		Optional<User> optionalUser = userService.getUser(id);
-
-		if (optionalUser.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ApiError(false, "User not found.", "not_found", 404));
-		}
-
-		User user = optionalUser.get();
-		if (user.getProfilePhoto() != null) {
-			user.setProfilePhotoBase64("data:image/jpeg;base64," +
-					Base64.getEncoder().encodeToString(user.getProfilePhoto()));
-			user.setProfilePhoto(null);
-		}
-		return ResponseEntity.ok(user);
-	}
-
+    @GetMapping("/{id}")
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        UserViewProjection user = userService.getInfoById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiError(false, "User not found.", "not_found", 404));
+        }
+        return ResponseEntity.ok(user);
+    }
 
 	@PostMapping
-	public ResponseEntity<?> createUser(@ModelAttribute User user) {
+	public ResponseEntity<?> create(@RequestBody CreateUserDto dto) {
 		try {
-			User created = userService.createUser(user);
+			UserResponseDto created = userService.create(dto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
 		} catch (RuntimeException e) {
 			return handleFieldError(e.getMessage(), "addUserEmail", "addUserUsername");
@@ -68,14 +60,9 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable Long id, @ModelAttribute User updatedData) {
+	public ResponseEntity<?> update(@RequestBody UpdateUserDto dto) {
 		try {
-			User updated = userService.updateUser(id, updatedData);
-			if (updated.getProfilePhoto() != null) {
-				updated.setProfilePhotoBase64("data:image/jpeg;base64," +
-						Base64.getEncoder().encodeToString(updated.getProfilePhoto()));
-				updated.setProfilePhoto(null);
-			}
+			UserResponseDto updated = userService.update(dto);
 			return ResponseEntity.ok(new ApiResponse(true, updated));
 		} catch (RuntimeException e) {
 			return handleFieldError(e.getMessage(), "editUserEmail", "editUserUsername");
@@ -86,8 +73,8 @@ public class UserController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-		boolean deleted = userService.deleteUser(id);
+	public ResponseEntity<?> delete(@PathVariable Long id) {
+		boolean deleted = userService.delete(id);
 		if (deleted) {
 			return ResponseEntity.ok(new ApiResponse(true));
 		} else {

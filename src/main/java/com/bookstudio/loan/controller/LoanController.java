@@ -1,6 +1,10 @@
 package com.bookstudio.loan.controller;
 
-import com.bookstudio.loan.model.Loan;
+import com.bookstudio.loan.dto.CreateLoanDto;
+import com.bookstudio.loan.dto.LoanResponseDto;
+import com.bookstudio.loan.dto.UpdateLoanDto;
+import com.bookstudio.loan.projection.LoanInfoProjection;
+import com.bookstudio.loan.projection.LoanListProjection;
 import com.bookstudio.loan.service.LoanService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
@@ -20,8 +24,8 @@ public class LoanController {
 	private final LoanService loanService;
 
 	@GetMapping
-	public ResponseEntity<?> listLoans() {
-		List<Loan> loans = loanService.listLoans();
+	public ResponseEntity<?> list() {
+		List<LoanListProjection> loans = loanService.getList();
 		if (loans.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT)
 					.body(new ApiError(false, "No loans found.", "no_content", 204));
@@ -30,8 +34,8 @@ public class LoanController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getLoan(@PathVariable Long id) {
-		Loan loan = loanService.getLoan(id).orElse(null);
+	public ResponseEntity<?> get(@PathVariable Long id) {
+		LoanInfoProjection loan = loanService.getInfoById(id).orElse(null);
 		if (loan == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new ApiError(false, "Loan not found.", "not_found", 404));
@@ -40,9 +44,9 @@ public class LoanController {
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createLoan(@RequestBody Loan loan) {
+	public ResponseEntity<?> create(@RequestBody CreateLoanDto dto) {
 		try {
-			Loan created = loanService.createLoan(loan);
+			LoanResponseDto created = loanService.create(dto);
 			return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -51,9 +55,9 @@ public class LoanController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateLoan(@PathVariable Long id, @RequestBody Loan updatedLoan) {
+	public ResponseEntity<?> update(@RequestBody UpdateLoanDto dto) {
 		try {
-			Loan result = loanService.updateLoan(id, updatedLoan);
+			LoanResponseDto result = loanService.update(dto);
 			return ResponseEntity.ok(new ApiResponse(true, result));
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -62,9 +66,9 @@ public class LoanController {
 	}
 
 	@PatchMapping("/{id}/return")
-	public ResponseEntity<?> confirmReturn(@PathVariable Long id) {
+	public ResponseEntity<?> markAsReturned(@PathVariable Long id) {
 		try {
-			int result = loanService.confirmReturn(id);
+			int result = loanService.markAsReturned(id);
 			if (result == 0) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 						.body(new ApiError(false, "Loan already returned or not found.", "invalid_operation", 400));
@@ -77,9 +81,9 @@ public class LoanController {
 	}
 
 	@GetMapping("/select-options")
-	public ResponseEntity<?> getSelectOptions() {
+	public ResponseEntity<?> selectOptions() {
 		try {
-			SelectOptions options = loanService.populateSelects();
+			SelectOptions options = loanService.getSelectOptions();
 			if (options == null || (options.getBooks() == null && options.getStudents() == null)) {
 				return ResponseEntity.status(HttpStatus.NO_CONTENT)
 						.body(new ApiError(false, "No select options found.", "no_content", 204));

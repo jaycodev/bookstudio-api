@@ -5,7 +5,11 @@ import com.bookstudio.shared.util.ApiResponse;
 import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.shared.util.ValidationErrorResponse;
 import com.bookstudio.shared.util.FieldErrorDetail;
-import com.bookstudio.student.model.Student;
+import com.bookstudio.student.dto.CreateStudentDto;
+import com.bookstudio.student.dto.StudentResponseDto;
+import com.bookstudio.student.dto.UpdateStudentDto;
+import com.bookstudio.student.projection.StudentInfoProjection;
+import com.bookstudio.student.projection.StudentListProjection;
 import com.bookstudio.student.service.StudentService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,8 +27,8 @@ public class StudentController {
     private final StudentService studentService;
 
     @GetMapping
-    public ResponseEntity<?> listStudents() {
-        List<Student> students = studentService.listStudents();
+    public ResponseEntity<?> list() {
+        List<StudentListProjection> students = studentService.getList();
         if (students.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No students found.", "no_content", 204));
@@ -33,8 +37,8 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudent(@PathVariable Long id) {
-        Student student = studentService.getStudent(id).orElse(null);
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        StudentInfoProjection student = studentService.getInfoById(id).orElse(null);
         if (student == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Student not found.", "not_found", 404));
@@ -43,9 +47,9 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createStudent(@ModelAttribute Student student) {
+    public ResponseEntity<?> create(@RequestBody CreateStudentDto dto) {
         try {
-            Student created = studentService.createStudent(student);
+            StudentResponseDto created = studentService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (RuntimeException e) {
             return handleFieldError(e.getMessage(), "addStudentEmail", "addStudentDNI");
@@ -56,9 +60,9 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable Long id, @ModelAttribute Student student) {
+    public ResponseEntity<?> update(@RequestBody UpdateStudentDto dto) {
         try {
-            Student updated = studentService.updateStudent(id, student);
+            StudentResponseDto updated = studentService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return handleFieldError(e.getMessage(), "editStudentEmail", null);
@@ -69,9 +73,9 @@ public class StudentController {
     }
 
     @GetMapping("/options")
-    public ResponseEntity<?> getSelectOptions() {
+    public ResponseEntity<?> selectOptions() {
         try {
-            SelectOptions options = studentService.populateSelects();
+            SelectOptions options = studentService.getSelectOptions();
             if (options.getFaculties() != null && !options.getFaculties().isEmpty()) {
                 return ResponseEntity.ok(options);
             } else {

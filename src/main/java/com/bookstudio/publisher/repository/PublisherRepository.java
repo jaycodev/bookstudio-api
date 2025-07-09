@@ -1,7 +1,7 @@
 package com.bookstudio.publisher.repository;
 
 import com.bookstudio.publisher.model.Publisher;
-import com.bookstudio.publisher.projection.PublisherDetailProjection;
+import com.bookstudio.publisher.projection.PublisherInfoProjection;
 import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.projection.PublisherSelectProjection;
 
@@ -49,7 +49,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
         JOIN p.literaryGenre lg
         WHERE p.id = :id
     """)
-    Optional<PublisherDetailProjection> findDetailById(@Param("id") Long id);
+    Optional<PublisherInfoProjection> findInfoById(@Param("id") Long id);
 
     @Query("SELECT p.id as publisherId, p.name as name FROM Publisher p WHERE p.status = 'activo'")
     List<PublisherSelectProjection> findForSelect();

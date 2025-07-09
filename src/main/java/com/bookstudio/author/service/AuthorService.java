@@ -1,6 +1,11 @@
 package com.bookstudio.author.service;
 
+import com.bookstudio.author.dto.AuthorResponseDto;
+import com.bookstudio.author.dto.CreateAuthorDto;
+import com.bookstudio.author.dto.UpdateAuthorDto;
 import com.bookstudio.author.model.Author;
+import com.bookstudio.author.projection.AuthorInfoProjection;
+import com.bookstudio.author.projection.AuthorListProjection;
 import com.bookstudio.author.projection.AuthorSelectProjection;
 import com.bookstudio.author.repository.AuthorRepository;
 import com.bookstudio.shared.service.LiteraryGenreService;
@@ -23,41 +28,83 @@ public class AuthorService {
     private final NationalityService nationalityService;
     private final LiteraryGenreService literaryGenreService;
 
-    public List<Author> listAuthors() {
-        return authorRepository.findAll();
+    public List<AuthorListProjection> getList() {
+        return authorRepository.findList();
     }
 
-    public Optional<Author> getAuthor(Long authorId) {
+    public Optional<Author> findById(Long authorId) {
         return authorRepository.findById(authorId);
     }
 
-    @Transactional
-    public Author createAuthor(Author author) {
-        return authorRepository.save(author);
+    public Optional<AuthorInfoProjection> getInfoById(Long authorId) {
+        return authorRepository.findInfoById(authorId);
     }
 
     @Transactional
-    public Author updateAuthor(Long authorId, Author updatedData) {
-        return authorRepository.findById(authorId).map(author -> {
-            author.setName(updatedData.getName());
-            author.setNationality(updatedData.getNationality());
-            author.setLiteraryGenre(updatedData.getLiteraryGenre());
-            author.setBirthDate(updatedData.getBirthDate());
-            author.setPhoto(updatedData.getPhoto());
-            author.setBiography(updatedData.getBiography());
-            author.setStatus(updatedData.getStatus());
-            return authorRepository.save(author);
-        }).orElseThrow(() -> new RuntimeException("Autor no encontrado con ID: " + authorId));
+    public AuthorResponseDto create(CreateAuthorDto dto) {
+        Author author = new Author();
+        author.setName(dto.getName());
+        author.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
+        author.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Género literario no encontrado")));
+        author.setBirthDate(dto.getBirthDate());
+        author.setBiography(dto.getBiography());
+        author.setStatus(dto.getStatus());
+        author.setPhoto(dto.getPhoto());
+
+        Author saved = authorRepository.save(author);
+
+        return new AuthorResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getBirthDate(),
+                saved.getStatus().name(),
+                saved.getPhoto());
     }
 
-    public List<AuthorSelectProjection> getAuthorsForSelect() {
+    @Transactional
+    public AuthorResponseDto update(UpdateAuthorDto dto) {
+        Author author = authorRepository.findById(dto.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("Autor no encontrado con ID: " + dto.getAuthorId()));
+
+        author.setName(dto.getName());
+        author.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
+        author.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Género literario no encontrado")));
+        author.setBirthDate(dto.getBirthDate());
+        author.setBiography(dto.getBiography());
+        author.setStatus(dto.getStatus());
+
+        if (Boolean.TRUE.equals(dto.getDeletePhoto())) {
+            author.setPhoto(null);
+        } else if (dto.getPhoto() != null) {
+            author.setPhoto(dto.getPhoto());
+        }
+
+        Author saved = authorRepository.save(author);
+
+        return new AuthorResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getBirthDate(),
+                saved.getStatus().name(),
+                saved.getPhoto());
+    }
+
+    public List<AuthorSelectProjection> getForSelect() {
         return authorRepository.findForSelect();
     }
 
-    public SelectOptions populateSelects() {
+    public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .nationalities(nationalityService.getNationalitiesForSelect())
-                .literaryGenres(literaryGenreService.getLiteraryGenresForSelect())
+                .nationalities(nationalityService.getForSelect())
+                .literaryGenres(literaryGenreService.getForSelect())
                 .build();
     }
 }

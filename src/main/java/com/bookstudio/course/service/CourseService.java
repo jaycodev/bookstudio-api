@@ -17,21 +17,21 @@ public class CourseService {
 
 	private final CourseRepository courseRepository;
 
-	public List<Course> listCourses() {
+	public List<Course> list() {
 		return courseRepository.findAll();
 	}
 
-	public Optional<Course> getCourse(Long courseId) {
+	public Optional<Course> findById(Long courseId) {
 		return courseRepository.findById(courseId);
 	}
 
 	@Transactional
-	public Course createCourse(Course course) {
+	public Course create(Course course) {
 		return courseRepository.save(course);
 	}
 
 	@Transactional
-	public Course updateCourse(Long courseId, Course updatedData) {
+	public Course update(Long courseId, Course updatedData) {
 		return courseRepository.findById(courseId).map(course -> {
 			course.setName(updatedData.getName());
 			course.setLevel(updatedData.getLevel());
@@ -41,7 +41,7 @@ public class CourseService {
 		}).orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
 	}
 
-	public List<CourseSelectProjection> getCoursesForSelect() {
+	public List<CourseSelectProjection> getForSelect() {
 		return courseRepository.findForSelect();
 	}
 }

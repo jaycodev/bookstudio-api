@@ -1,6 +1,10 @@
 package com.bookstudio.author.controller;
 
-import com.bookstudio.author.model.Author;
+import com.bookstudio.author.dto.AuthorResponseDto;
+import com.bookstudio.author.dto.CreateAuthorDto;
+import com.bookstudio.author.dto.UpdateAuthorDto;
+import com.bookstudio.author.projection.AuthorInfoProjection;
+import com.bookstudio.author.projection.AuthorListProjection;
 import com.bookstudio.author.service.AuthorService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
@@ -10,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -21,8 +24,8 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @GetMapping
-    public ResponseEntity<?> listAuthors() {
-        List<Author> authors = authorService.listAuthors();
+    public ResponseEntity<?> list() {
+        List<AuthorListProjection> authors = authorService.getList();
         if (authors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No authors found.", "no_content", 204));
@@ -31,8 +34,8 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAuthor(@PathVariable Long id) {
-        Author author = authorService.getAuthor(id).orElse(null);
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        AuthorInfoProjection author = authorService.getInfoById(id).orElse(null);
         if (author == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Author not found.", "not_found", 404));
@@ -41,12 +44,9 @@ public class AuthorController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAuthor(@ModelAttribute Author author) {
+    public ResponseEntity<?> create(@RequestBody CreateAuthorDto dto) {
         try {
-            Author created = authorService.createAuthor(author);
-            if (created.getPhoto() != null) {
-                created.setPhotoBase64("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(created.getPhoto()));
-            }
+            AuthorResponseDto created = authorService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -55,13 +55,9 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAuthor(@PathVariable Long id, @ModelAttribute Author updatedData) {
+    public ResponseEntity<?> update(@RequestBody UpdateAuthorDto dto) {
         try {
-            Author updated = authorService.updateAuthor(id, updatedData);
-            if (updated.getPhoto() != null) {
-                updated.setPhotoBase64("data:image/jpeg;base64," + Base64.getEncoder().encodeToString(updated.getPhoto()));
-                updated.setPhoto(null);
-            }
+            AuthorResponseDto updated = authorService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -70,9 +66,9 @@ public class AuthorController {
     }
 
     @GetMapping("/select-options")
-    public ResponseEntity<?> getSelectOptions() {
+    public ResponseEntity<?> selectOptions() {
         try {
-            SelectOptions options = authorService.populateSelects();
+            SelectOptions options = authorService.getSelectOptions();
             if ((options.getNationalities() != null && !options.getNationalities().isEmpty()) ||
                 (options.getLiteraryGenres() != null && !options.getLiteraryGenres().isEmpty())) {
                 return ResponseEntity.ok(options);

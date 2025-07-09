@@ -1,7 +1,7 @@
 package com.bookstudio.loan.repository;
 
 import com.bookstudio.loan.model.Loan;
-import com.bookstudio.loan.projection.LoanDetailProjection;
+import com.bookstudio.loan.projection.LoanInfoProjection;
 import com.bookstudio.loan.projection.LoanListProjection;
 
 import java.util.List;
@@ -52,5 +52,5 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
         JOIN l.student s
         WHERE l.id = :id
     """)
-    Optional<LoanDetailProjection> findDetailById(@Param("id") Long id);
+    Optional<LoanInfoProjection> findInfoById(@Param("id") Long id);
 }

@@ -14,11 +14,11 @@ public class GenreService {
 
     private final GenreRepository genreRepository;
 
-    public List<Genre> getGenresForSelect() {
+    public List<Genre> getForSelect() {
         return genreRepository.findAll();
     }
 
-    public Optional<Genre> getGenre(Long genreId) {
+    public Optional<Genre> findById(Long genreId) {
         return genreRepository.findById(genreId);
     }
 }

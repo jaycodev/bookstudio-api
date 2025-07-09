@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.bookstudio.shared.util.IdFormatter;
 
-public interface StudentDetailProjection {
+public interface StudentInfoProjection {
     Long getStudentId();
     String getDni();
     String getFirstName();

@@ -5,7 +5,7 @@ import com.bookstudio.book.dto.BookResponseDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
 import com.bookstudio.book.model.Book;
-import com.bookstudio.book.projection.BookDetailProjection;
+import com.bookstudio.book.projection.BookInfoProjection;
 import com.bookstudio.book.projection.BookListProjection;
 import com.bookstudio.book.projection.BookSelectProjection;
 import com.bookstudio.book.repository.BookRepository;
@@ -32,16 +32,20 @@ public class BookService {
     private final CourseService courseService;
     private final GenreService genreService;
 
-    public List<BookListProjection> listBooks() {
+    public List<BookListProjection> getList() {
         return bookRepository.findList();
     }
 
-    public Optional<BookDetailProjection> getBook(Long bookId) {
-        return bookRepository.findDetailById(bookId);
+    public Optional<Book> findById(Long bookId) {
+        return bookRepository.findById(bookId);
+    }
+
+    public Optional<BookInfoProjection> getInfoById(Long bookId) {
+        return bookRepository.findInfoById(bookId);
     }
 
     @Transactional
-    public BookResponseDto createBook(CreateBookDto dto) {
+    public BookResponseDto create(CreateBookDto dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
         book.setTotalCopies(dto.getTotalCopies());
@@ -49,13 +53,13 @@ public class BookService {
         book.setStatus(dto.getStatus());
         book.setLoanedCopies(0);
 
-        book.setAuthor(authorService.getAuthor(dto.getAuthorId())
+        book.setAuthor(authorService.findById(dto.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("Author not found")));
-        book.setPublisher(publisherService.getPublisher(dto.getPublisherId())
+        book.setPublisher(publisherService.findById(dto.getPublisherId())
                 .orElseThrow(() -> new RuntimeException("Publisher not found")));
-        book.setCourse(courseService.getCourse(dto.getCourseId())
+        book.setCourse(courseService.findById(dto.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found")));
-        book.setGenre(genreService.getGenre(dto.getGenreId())
+        book.setGenre(genreService.findById(dto.getGenreId())
                 .orElseThrow(() -> new RuntimeException("Genre not found")));
 
         Book saved = bookRepository.save(book);
@@ -73,7 +77,7 @@ public class BookService {
     }
 
     @Transactional
-    public BookResponseDto updateBook(UpdateBookDto dto) {
+    public BookResponseDto update(UpdateBookDto dto) {
         Book book = bookRepository.findById(dto.getBookId())
                 .orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + dto.getBookId()));
 
@@ -82,13 +86,13 @@ public class BookService {
         book.setReleaseDate(dto.getReleaseDate());
         book.setStatus(dto.getStatus());
 
-        book.setAuthor(authorService.getAuthor(dto.getAuthorId())
+        book.setAuthor(authorService.findById(dto.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("Author not found")));
-        book.setPublisher(publisherService.getPublisher(dto.getPublisherId())
+        book.setPublisher(publisherService.findById(dto.getPublisherId())
                 .orElseThrow(() -> new RuntimeException("Publisher not found")));
-        book.setCourse(courseService.getCourse(dto.getCourseId())
+        book.setCourse(courseService.findById(dto.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found")));
-        book.setGenre(genreService.getGenre(dto.getGenreId())
+        book.setGenre(genreService.findById(dto.getGenreId())
                 .orElseThrow(() -> new RuntimeException("Genre not found")));
 
         Book saved = bookRepository.save(book);
@@ -105,16 +109,16 @@ public class BookService {
                 saved.getStatus().name());
     }
 
-    public List<BookSelectProjection> getBooksForSelect() {
+    public List<BookSelectProjection> getForSelect() {
         return bookRepository.findForSelect();
     }
 
-    public SelectOptions populateSelects() {
+    public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .authors(authorService.getAuthorsForSelect())
-                .publishers(publisherService.getPublishersForSelect())
-                .courses(courseService.getCoursesForSelect())
-                .genres(genreService.getGenresForSelect())
+                .authors(authorService.getForSelect())
+                .publishers(publisherService.getForSelect())
+                .courses(courseService.getForSelect())
+                .genres(genreService.getForSelect())
                 .build();
     }
 }

@@ -1,6 +1,11 @@
 package com.bookstudio.publisher.service;
 
+import com.bookstudio.publisher.dto.CreatePublisherDto;
+import com.bookstudio.publisher.dto.PublisherResponseDto;
+import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.model.Publisher;
+import com.bookstudio.publisher.projection.PublisherInfoProjection;
+import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.projection.PublisherSelectProjection;
 import com.bookstudio.publisher.repository.PublisherRepository;
 import com.bookstudio.shared.service.LiteraryGenreService;
@@ -23,42 +28,87 @@ public class PublisherService {
     private final NationalityService nationalityService;
     private final LiteraryGenreService literaryGenreService;
 
-    public List<Publisher> listPublishers() {
-        return publisherRepository.findAll();
+    public List<PublisherListProjection> getList() {
+        return publisherRepository.findList();
     }
 
-    public Optional<Publisher> getPublisher(Long id) {
-        return publisherRepository.findById(id);
+    public Optional<Publisher> findById(Long publisherId) {
+        return publisherRepository.findById(publisherId);
+    }
+
+    public Optional<PublisherInfoProjection> getInfoById(Long publisherId) {
+        return publisherRepository.findInfoById(publisherId);
     }
 
     @Transactional
-    public Publisher createPublisher(Publisher publisher) {
-        return publisherRepository.save(publisher);
+    public PublisherResponseDto create(CreatePublisherDto dto) {
+        Publisher publisher = new Publisher();
+        publisher.setName(dto.getName());
+        publisher.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nationality not found")));
+        publisher.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Literary genre not found")));
+        publisher.setFoundationYear(dto.getFoundationYear());
+        publisher.setWebsite(dto.getWebsite());
+        publisher.setAddress(dto.getAddress());
+        publisher.setStatus(dto.getStatus());
+        publisher.setPhoto(dto.getPhoto());
+
+        Publisher saved = publisherRepository.save(publisher);
+
+        return new PublisherResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getWebsite(),
+                saved.getStatus().name(),
+                saved.getPhoto()
+        );
     }
 
     @Transactional
-    public Publisher updatePublisher(Long id, Publisher updatedData) {
-        return publisherRepository.findById(id).map(publisher -> {
-            publisher.setName(updatedData.getName());
-            publisher.setNationality(updatedData.getNationality());
-            publisher.setLiteraryGenre(updatedData.getLiteraryGenre());
-            publisher.setPhoto(updatedData.getPhoto());
-            publisher.setFoundationYear(updatedData.getFoundationYear());
-            publisher.setWebsite(updatedData.getWebsite());
-            publisher.setAddress(updatedData.getAddress());
-            publisher.setStatus(updatedData.getStatus());
-            return publisherRepository.save(publisher);
-        }).orElseThrow(() -> new RuntimeException("Editorial no encontrada con ID: " + id));
+    public PublisherResponseDto update(UpdatePublisherDto dto) {
+        Publisher publisher = publisherRepository.findById(dto.getPublisherId())
+                .orElseThrow(() -> new RuntimeException("Editorial no encontrada con ID: " + dto.getPublisherId()));
+
+        publisher.setName(dto.getName());
+        publisher.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nationality not found")));
+        publisher.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Literary genre not found")));
+        publisher.setFoundationYear(dto.getFoundationYear());
+        publisher.setWebsite(dto.getWebsite());
+        publisher.setAddress(dto.getAddress());
+        publisher.setStatus(dto.getStatus());
+
+        if (dto.isDeletePhoto()) {
+            publisher.setPhoto(null);
+        } else if (dto.getPhoto() != null) {
+            publisher.setPhoto(dto.getPhoto());
+        }
+
+        Publisher saved = publisherRepository.save(publisher);
+
+        return new PublisherResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getWebsite(),
+                saved.getStatus().name(),
+                saved.getPhoto()
+        );
     }
 
-    public List<PublisherSelectProjection> getPublishersForSelect() {
+    public List<PublisherSelectProjection> getForSelect() {
         return publisherRepository.findForSelect();
     }
 
-    public SelectOptions populateSelects() {
+    public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .nationalities(nationalityService.getNationalitiesForSelect())
-                .literaryGenres(literaryGenreService.getLiteraryGenresForSelect())
+                .nationalities(nationalityService.getForSelect())
+                .literaryGenres(literaryGenreService.getForSelect())
                 .build();
     }
 }

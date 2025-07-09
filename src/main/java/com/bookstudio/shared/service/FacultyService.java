@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +14,11 @@ public class FacultyService {
 
     private final FacultyRepository facultyRepository;
 
-    public List<Faculty> getFacultiesForSelect() {
+    public List<Faculty> getForSelect() {
         return facultyRepository.findAll();
+    }
+
+    public Optional<Faculty> findById(Long facultyId) {
+        return facultyRepository.findById(facultyId);
     }
 }

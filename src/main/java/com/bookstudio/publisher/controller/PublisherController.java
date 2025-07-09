@@ -1,6 +1,10 @@
 package com.bookstudio.publisher.controller;
 
-import com.bookstudio.publisher.model.Publisher;
+import com.bookstudio.publisher.dto.CreatePublisherDto;
+import com.bookstudio.publisher.dto.PublisherResponseDto;
+import com.bookstudio.publisher.dto.UpdatePublisherDto;
+import com.bookstudio.publisher.projection.PublisherInfoProjection;
+import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.service.PublisherService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
@@ -10,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -21,8 +24,8 @@ public class PublisherController {
 	private final PublisherService publisherService;
 
 	@GetMapping
-	public ResponseEntity<?> listPublishers() {
-		List<Publisher> publishers = publisherService.listPublishers();
+	public ResponseEntity<?> list() {
+		List<PublisherListProjection> publishers = publisherService.getList();
 		if (publishers.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT)
 					.body(new ApiError(false, "No publishers found.", "no_content", 204));
@@ -31,28 +34,19 @@ public class PublisherController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getPublisher(@PathVariable Long id) {
-		Publisher publisher = publisherService.getPublisher(id).orElse(null);
+	public ResponseEntity<?> get(@PathVariable Long id) {
+		PublisherInfoProjection publisher = publisherService.getInfoById(id).orElse(null);
 		if (publisher == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new ApiError(false, "Publisher not found.", "not_found", 404));
-		}
-		if (publisher.getPhoto() != null) {
-			publisher.setPhotoBase64("data:image/jpeg;base64," +
-					Base64.getEncoder().encodeToString(publisher.getPhoto()));
-			publisher.setPhoto(null);
 		}
 		return ResponseEntity.ok(publisher);
 	}
 
 	@PostMapping
-	public ResponseEntity<?> createPublisher(@ModelAttribute Publisher publisher) {
+	public ResponseEntity<?> create(@RequestBody CreatePublisherDto dto) {
 		try {
-			Publisher created = publisherService.createPublisher(publisher);
-			if (created.getPhoto() != null) {
-				created.setPhotoBase64("data:image/jpeg;base64," +
-						Base64.getEncoder().encodeToString(created.getPhoto()));
-			}
+			PublisherResponseDto created = publisherService.create(dto);
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new ApiResponse(true, created));
 		} catch (Exception e) {
@@ -62,14 +56,9 @@ public class PublisherController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updatePublisher(@PathVariable Long id, @ModelAttribute Publisher updatedData) {
+	public ResponseEntity<?> update(@RequestBody UpdatePublisherDto dto) {
 		try {
-			Publisher updated = publisherService.updatePublisher(id, updatedData);
-			if (updated.getPhoto() != null) {
-				updated.setPhotoBase64("data:image/jpeg;base64," +
-						Base64.getEncoder().encodeToString(updated.getPhoto()));
-				updated.setPhoto(null);
-			}
+			PublisherResponseDto updated = publisherService.update(dto);
 			return ResponseEntity.ok(new ApiResponse(true, updated));
 		} catch (RuntimeException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -78,9 +67,9 @@ public class PublisherController {
 	}
 
 	@GetMapping("/select-options")
-	public ResponseEntity<?> getSelectOptions() {
+	public ResponseEntity<?> selectOptions() {
 		try {
-			SelectOptions options = publisherService.populateSelects();
+			SelectOptions options = publisherService.getSelectOptions();
 			if ((options.getNationalities() != null && !options.getNationalities().isEmpty()) ||
 				(options.getLiteraryGenres() != null && !options.getLiteraryGenres().isEmpty())) {
 				return ResponseEntity.ok(options);

@@ -4,7 +4,7 @@ import java.util.Base64;
 
 import com.bookstudio.shared.util.IdFormatter;
 
-public interface UserDetailProjection {
+public interface UserViewProjection {
     Long getUserId();
     String getUsername();
     String getEmail();

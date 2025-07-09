@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -13,7 +14,11 @@ public class NationalityService {
 
     private final NationalityRepository nationalityRepository;
 
-    public List<Nationality> getNationalitiesForSelect() {
+    public List<Nationality> getForSelect() {
         return nationalityRepository.findAll();
+    }
+
+    public Optional<Nationality> findById(Long nationalityid) {
+        return nationalityRepository.findById(nationalityid);
     }
 }

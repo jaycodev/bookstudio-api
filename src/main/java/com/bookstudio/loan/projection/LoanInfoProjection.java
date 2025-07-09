@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.bookstudio.shared.util.IdFormatter;
 
-public interface LoanDetailProjection {
+public interface LoanInfoProjection {
     Long getLoanId();
 
     String getBookId();

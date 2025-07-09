@@ -4,7 +4,12 @@ import com.bookstudio.shared.model.Faculty;
 import com.bookstudio.shared.repository.FacultyRepository;
 import com.bookstudio.shared.service.FacultyService;
 import com.bookstudio.shared.util.SelectOptions;
+import com.bookstudio.student.dto.CreateStudentDto;
+import com.bookstudio.student.dto.StudentResponseDto;
+import com.bookstudio.student.dto.UpdateStudentDto;
 import com.bookstudio.student.model.Student;
+import com.bookstudio.student.projection.StudentInfoProjection;
+import com.bookstudio.student.projection.StudentListProjection;
 import com.bookstudio.student.projection.StudentSelectProjection;
 import com.bookstudio.student.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -23,63 +28,99 @@ public class StudentService {
 
 	private final FacultyService facultyService;
 
-	public List<Student> listStudents() {
-		return studentRepository.findAll();
-	}
+    public List<StudentListProjection> getList() {
+        return studentRepository.findList();
+    }
 
-	public Optional<Student> getStudent(Long id) {
-		return studentRepository.findById(id);
-	}
+    public Optional<Student> findById(Long studentId) {
+        return studentRepository.findById(studentId);
+    }
 
-	@Transactional
-	public Student createStudent(Student student) {
-		if (studentRepository.findByDni(student.getDni()).isPresent()) {
-			throw new RuntimeException("El DNI ingresado ya ha sido registrado.");
-		}
+    public Optional<StudentInfoProjection> getInfoById(Long studentId) {
+        return studentRepository.findInfoById(studentId);
+    }
 
-		if (studentRepository.findByEmail(student.getEmail()).isPresent()) {
-			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
-		}
+    @Transactional
+    public StudentResponseDto create(CreateStudentDto dto) {
+        if (studentRepository.findByDni(dto.getDni()).isPresent()) {
+            throw new RuntimeException("El DNI ingresado ya ha sido registrado.");
+        }
 
-		Faculty faculty = facultyRepository.findById(student.getFaculty().getFacultyId())
-				.orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
-		student.setFaculty(faculty);
+        if (studentRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
+        }
 
-		return studentRepository.save(student);
-	}
+        Faculty faculty = facultyRepository.findById(dto.getFacultyId())
+                .orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
 
-	@Transactional
-	public Student updateStudent(Long id, Student updatedData) {
-		Student student = studentRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+        Student student = new Student();
+        student.setDni(dto.getDni());
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setAddress(dto.getAddress());
+        student.setPhone(dto.getPhone());
+        student.setEmail(dto.getEmail());
+        student.setBirthDate(dto.getBirthDate());
+        student.setGender(dto.getGender());
+        student.setStatus(dto.getStatus());
+        student.setFaculty(faculty);
 
-		if (studentRepository.findByEmailAndIdNot(updatedData.getEmail(), id).isPresent()) {
-			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
-		}
+        Student saved = studentRepository.save(student);
 
-		Faculty faculty = facultyRepository.findById(updatedData.getFaculty().getFacultyId())
-				.orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
+        return new StudentResponseDto(
+                saved.getId(),
+                saved.getDni(),
+                saved.getFirstName(),
+                saved.getLastName(),
+                saved.getPhone(),
+                saved.getEmail(),
+                saved.getStatus().name()
+        );
+    }
 
-		student.setFirstName(updatedData.getFirstName());
-		student.setLastName(updatedData.getLastName());
-		student.setAddress(updatedData.getAddress());
-		student.setPhone(updatedData.getPhone());
-		student.setBirthDate(updatedData.getBirthDate());
-		student.setEmail(updatedData.getEmail());
-		student.setGender(updatedData.getGender());
-		student.setStatus(updatedData.getStatus());
-		student.setFaculty(faculty);
+    @Transactional
+    public StudentResponseDto update(UpdateStudentDto dto) {
+        Student student = studentRepository.findById(dto.getStudentId())
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado con ID: " + dto.getStudentId()));
 
-		return studentRepository.save(student);
-	}
+        if (studentRepository.findByEmailAndIdNot(dto.getEmail(), dto.getStudentId()).isPresent()) {
+            throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
+        }
 
-	public List<StudentSelectProjection> getStudentsForSelect() {
+        Faculty faculty = facultyRepository.findById(dto.getFacultyId())
+                .orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
+
+        student.setDni(dto.getDni());
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setAddress(dto.getAddress());
+        student.setPhone(dto.getPhone());
+        student.setEmail(dto.getEmail());
+        student.setBirthDate(dto.getBirthDate());
+        student.setGender(dto.getGender());
+        student.setStatus(dto.getStatus());
+        student.setFaculty(faculty);
+
+        Student saved = studentRepository.save(student);
+
+        return new StudentResponseDto(
+                saved.getId(),
+                saved.getDni(),
+                saved.getFirstName(),
+                saved.getLastName(),
+                saved.getPhone(),
+                saved.getEmail(),
+                saved.getStatus().name()
+        );
+    }
+
+	public List<StudentSelectProjection> getForSelect() {
 		return studentRepository.findForSelect();
 	}
 
-	public SelectOptions populateSelects() {
+	public SelectOptions getSelectOptions() {
 		return SelectOptions.builder()
-				.faculties(facultyService.getFacultiesForSelect())
+				.faculties(facultyService.getForSelect())
 				.build();
 	}
 }

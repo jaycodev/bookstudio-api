@@ -1,8 +1,7 @@
 package com.bookstudio.user.repository;
 
 import com.bookstudio.user.model.User;
-import com.bookstudio.user.projection.UserDetailProjection;
-import com.bookstudio.user.projection.UserListProjection;
+import com.bookstudio.user.projection.UserViewProjection;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +13,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
-    List<User> findByIdNot(Long excludedId);
 
     @Query("""
         SELECT 
@@ -26,8 +24,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
             u.role AS role,
             u.profilePhoto AS profilePhoto
         FROM User u
+        WHERE u.id <> :loggedUserId
     """)
-    List<UserListProjection> findList();
+    List<UserViewProjection> findList(@Param("loggedUserId") Long loggedUserId);
 
     @Query("""
         SELECT 
@@ -41,5 +40,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
         FROM User u
         WHERE u.id = :id
     """)
-    Optional<UserDetailProjection> findDetailById(@Param("id") Long id);
+    Optional<UserViewProjection> findInfoById(@Param("id") Long id);
 }

@@ -27,13 +27,17 @@ public class ProfileService {
 		});
 	}
 
-	@Transactional
-	public Optional<User> updateProfilePhoto(Long userId, byte[] newPhoto, boolean deletePhoto) {
-		return userRepository.findById(userId).map(user -> {
-			user.setProfilePhoto(deletePhoto ? null : newPhoto);
-			return userRepository.save(user);
-		});
-	}
+    @Transactional
+    public Optional<User> updateProfilePhoto(Long userId, byte[] newPhoto, boolean deletePhoto) {
+        return userRepository.findById(userId).map(user -> {
+            if (deletePhoto) {
+                user.setProfilePhoto(null);
+            } else if (newPhoto != null && newPhoto.length > 0) {
+                user.setProfilePhoto(newPhoto);
+            }
+            return userRepository.save(user);
+        });
+    }
 
 	public boolean validatePassword(Long userId, String rawPassword) {
 		return userRepository.findById(userId)

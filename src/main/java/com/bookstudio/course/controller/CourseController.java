@@ -19,8 +19,8 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
-    public ResponseEntity<?> listCourses() {
-        List<Course> courses = courseService.listCourses();
+    public ResponseEntity<?> list() {
+        List<Course> courses = courseService.list();
         if (courses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No courses found.", "no_content", 204));
@@ -29,8 +29,8 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCourse(@PathVariable Long id) {
-        Course course = courseService.getCourse(id).orElse(null);
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        Course course = courseService.findById(id).orElse(null);
         if (course == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Course not found.", "not_found", 404));
@@ -39,9 +39,9 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCourse(@RequestBody Course course) {
+    public ResponseEntity<?> create(@RequestBody Course course) {
         try {
-            Course created = courseService.createCourse(course);
+            Course created = courseService.create(course);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -50,9 +50,9 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCourse(@PathVariable Long id, @RequestBody Course updatedCourse) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Course updatedCourse) {
         try {
-            Course result = courseService.updateCourse(id, updatedCourse);
+            Course result = courseService.update(id, updatedCourse);
             return ResponseEntity.ok(new ApiResponse(true, result));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

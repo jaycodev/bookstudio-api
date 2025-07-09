@@ -1,7 +1,7 @@
 package com.bookstudio.book.repository;
 
 import com.bookstudio.book.model.Book;
-import com.bookstudio.book.projection.BookDetailProjection;
+import com.bookstudio.book.projection.BookInfoProjection;
 import com.bookstudio.book.projection.BookListProjection;
 import com.bookstudio.book.projection.BookSelectProjection;
 
@@ -61,7 +61,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         JOIN b.genre g
         WHERE b.id = :id
     """)
-    Optional<BookDetailProjection> findDetailById(@Param("id") Long id);
+    Optional<BookInfoProjection> findInfoById(@Param("id") Long id);
 
     @Query("SELECT b.id AS bookId, b.title AS title FROM Book b WHERE b.status = 'activo' AND b.totalCopies > b.loanedCopies")
     List<BookSelectProjection> findForSelect();

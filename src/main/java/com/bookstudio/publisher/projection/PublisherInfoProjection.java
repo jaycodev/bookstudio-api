@@ -1,12 +1,11 @@
-package com.bookstudio.author.projection;
+package com.bookstudio.publisher.projection;
 
-import java.time.LocalDate;
 import java.util.Base64;
 
 import com.bookstudio.shared.util.IdFormatter;
 
-public interface AuthorDetailProjection {
-    Long getAuthorId();
+public interface PublisherInfoProjection {
+    Long getPublisherId();
     String getName();
 
     Long getNationalityId();
@@ -14,14 +13,16 @@ public interface AuthorDetailProjection {
 
     Long getLiteraryGenreId();
     String getLiteraryGenreName();
-    
-    LocalDate getBirthDate();
-    String getBiography();
+
+    Integer getFoundationYear();
+    String getWebsite();
+    String getAddress();
     String getStatus();
+
     byte[] getPhoto();
 
-    default String getFormattedAuthorId() {
-        return IdFormatter.formatId(String.valueOf(getAuthorId()), "A");
+    default String getFormattedPublisherId() {
+        return IdFormatter.formatId(String.valueOf(getPublisherId()), "ED");
     }
 
     default String getPhotoBase64() {

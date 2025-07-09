@@ -1,6 +1,11 @@
 package com.bookstudio.user.service;
 
+import com.bookstudio.auth.util.PasswordUtils;
+import com.bookstudio.user.dto.CreateUserDto;
+import com.bookstudio.user.dto.UpdateUserDto;
+import com.bookstudio.user.dto.UserResponseDto;
 import com.bookstudio.user.model.User;
+import com.bookstudio.user.projection.UserViewProjection;
 import com.bookstudio.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,46 +18,83 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	public List<User> listUsersExcept(Long loggedUserId) {
-		return userRepository.findByIdNot(loggedUserId);
-	}
+    public List<UserViewProjection> getList(Long loggedUserId) {
+        return userRepository.findList(loggedUserId);
+    }
 
-	public Optional<User> getUser(Long id) {
-		return userRepository.findById(id);
-	}
+    public Optional<User> findById(Long userId) {
+        return userRepository.findById(userId);
+    }
 
-	@Transactional
-	public User createUser(User user) {
-		if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-			throw new RuntimeException("El nombre de usuario ingresado ya ha sido registrado.");
-		}
+    public Optional<UserViewProjection> getInfoById(Long userId) {
+        return userRepository.findInfoById(userId);
+    }
 
-		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-			throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
-		}
+    @Transactional
+    public UserResponseDto create(CreateUserDto dto) {
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
+            throw new RuntimeException("El nombre de usuario ingresado ya ha sido registrado.");
+        }
 
-		return userRepository.save(user);
-	}
+        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
+        }
 
-	@Transactional
-	public User updateUser(Long id, User updatedData) {
-		User user = userRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setPassword(PasswordUtils.hashPassword(dto.getPassword()));
+        user.setRole(dto.getRole());
+        user.setProfilePhoto(dto.getProfilePhoto());
 
-		user.setFirstName(updatedData.getFirstName());
-		user.setLastName(updatedData.getLastName());
-		user.setRole(updatedData.getRole());
-		user.setProfilePhoto(updatedData.getProfilePhoto());
+        User saved = userRepository.save(user);
 
-		return userRepository.save(user);
-	}
+        return new UserResponseDto(
+                saved.getId(),
+                saved.getUsername(),
+                saved.getEmail(),
+                saved.getFirstName(),
+                saved.getLastName(),
+                saved.getRole().name(),
+                saved.getProfilePhoto());
+    }
 
-	@Transactional
-	public boolean deleteUser(Long id) {
-		if (!userRepository.existsById(id)) return false;
-		userRepository.deleteById(id);
-		return true;
-	}
+    @Transactional
+    public UserResponseDto update(UpdateUserDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + dto.getUserId()));
+
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setRole(dto.getRole());
+
+        if (Boolean.TRUE.equals(dto.getDeletePhoto())) {
+            user.setProfilePhoto(null);
+        } else if (dto.getProfilePhoto() != null && dto.getProfilePhoto().length > 0) {
+            user.setProfilePhoto(dto.getProfilePhoto());
+        }
+
+        User saved = userRepository.save(user);
+
+        return new UserResponseDto(
+                saved.getId(),
+                saved.getUsername(),
+                saved.getEmail(),
+                saved.getFirstName(),
+                saved.getLastName(),
+                saved.getRole().name(),
+                saved.getProfilePhoto());
+    }
+
+    @Transactional
+    public boolean delete(Long userId) {
+        if (!userRepository.existsById(userId))
+            return false;
+        userRepository.deleteById(userId);
+        return true;
+    }
 }

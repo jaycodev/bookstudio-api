@@ -1,7 +1,7 @@
 package com.bookstudio.author.repository;
 
 import com.bookstudio.author.model.Author;
-import com.bookstudio.author.projection.AuthorDetailProjection;
+import com.bookstudio.author.projection.AuthorInfoProjection;
 import com.bookstudio.author.projection.AuthorListProjection;
 import com.bookstudio.author.projection.AuthorSelectProjection;
 
@@ -48,7 +48,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
         JOIN a.literaryGenre lg
         WHERE a.id = :id
     """)
-    Optional<AuthorDetailProjection> findDetailById(@Param("id") Long id);
+    Optional<AuthorInfoProjection> findInfoById(@Param("id") Long id);
 
     @Query("SELECT a.id AS authorId, a.name AS name FROM Author a WHERE a.status = 'activo'")
     List<AuthorSelectProjection> findForSelect();

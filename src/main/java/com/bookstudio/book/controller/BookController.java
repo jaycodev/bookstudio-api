@@ -3,7 +3,7 @@ package com.bookstudio.book.controller;
 import com.bookstudio.book.dto.BookResponseDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
-import com.bookstudio.book.projection.BookDetailProjection;
+import com.bookstudio.book.projection.BookInfoProjection;
 import com.bookstudio.book.projection.BookListProjection;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.shared.util.ApiError;
@@ -25,8 +25,8 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<?> listBooks() {
-        List<BookListProjection> books = bookService.listBooks();
+    public ResponseEntity<?> list() {
+        List<BookListProjection> books = bookService.getList();
         if (books.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No books found.", "no_content", 204));
@@ -35,8 +35,8 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getBook(@PathVariable Long id) {
-        BookDetailProjection book = bookService.getBook(id).orElse(null);
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        BookInfoProjection book = bookService.getInfoById(id).orElse(null);
         if (book == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Book not found.", "not_found", 404));
@@ -45,9 +45,9 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createBook(@RequestBody CreateBookDto dto) {
+    public ResponseEntity<?> create(@RequestBody CreateBookDto dto) {
         try {
-            BookResponseDto created = bookService.createBook(dto);
+            BookResponseDto created = bookService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -56,9 +56,9 @@ public class BookController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateBook(@RequestBody UpdateBookDto dto) {
+    public ResponseEntity<?> update(@RequestBody UpdateBookDto dto) {
         try {
-            BookResponseDto updated = bookService.updateBook(dto);
+            BookResponseDto updated = bookService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -67,9 +67,9 @@ public class BookController {
     }
 
     @GetMapping("/select-options")
-    public ResponseEntity<?> getSelectOptions() {
+    public ResponseEntity<?> selectOptions() {
         try {
-            SelectOptions options = bookService.populateSelects();
+            SelectOptions options = bookService.getSelectOptions();
 
             if ((options.getAuthors() != null && !options.getAuthors().isEmpty()) ||
                     (options.getPublishers() != null && !options.getPublishers().isEmpty()) ||

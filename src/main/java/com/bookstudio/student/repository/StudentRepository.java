@@ -1,7 +1,7 @@
 package com.bookstudio.student.repository;
 
 import com.bookstudio.student.model.Student;
-import com.bookstudio.student.projection.StudentDetailProjection;
+import com.bookstudio.student.projection.StudentInfoProjection;
 import com.bookstudio.student.projection.StudentListProjection;
 import com.bookstudio.student.projection.StudentSelectProjection;
 
@@ -50,7 +50,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         JOIN s.faculty f
         WHERE s.id = :id
     """)
-    Optional<StudentDetailProjection> findDetailById(@Param("id") Long id);
+    Optional<StudentInfoProjection> findInfoById(@Param("id") Long id);
 
     @Query("SELECT s.id as studentId, CONCAT(s.firstName, ' ', s.lastName) as fullName FROM Student s WHERE s.status = 'activo'")
     List<StudentSelectProjection> findForSelect();

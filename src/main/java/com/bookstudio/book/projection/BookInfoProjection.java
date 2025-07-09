@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.bookstudio.shared.util.IdFormatter;
 
-public interface BookDetailProjection {
+public interface BookInfoProjection {
     Long getBookId();
     String getTitle();
     Integer getTotalCopies();
