@@ -36,7 +36,6 @@ public class SessionFilter extends OncePerRequestFilter {
 			FORGOT_PASSWORD_API,
 			VALIDATE_TOKEN_API
 	};
-	private static final String[] STATIC_PATHS = { "/css/", "/js/", "/images/", "/utils/" };
 
 	@Override
 	protected void doFilterInternal(
@@ -88,11 +87,7 @@ public class SessionFilter extends OncePerRequestFilter {
 	}
 
 	private boolean isStatic(String path) {
-		for (String staticPath : STATIC_PATHS) {
-			if (path.contains(staticPath))
-				return true;
-		}
-		return false;
+		return path.matches(".*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map)$");
 	}
 
 	private boolean isIn(String target, String... paths) {

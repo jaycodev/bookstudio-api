@@ -32,6 +32,8 @@ public class FrontendController {
                 .currentRequestAttributes();
         var servletRequest = ((org.springframework.web.context.request.ServletRequestAttributes) request)
                 .getRequest();
-        return servletRequest.getServletPath();
+        String path = servletRequest.getServletPath();
+        return path.length() > 1 && path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
+
 }
