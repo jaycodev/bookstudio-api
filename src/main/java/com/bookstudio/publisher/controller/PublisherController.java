@@ -55,7 +55,7 @@ public class PublisherController {
 		}
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping
 	public ResponseEntity<?> update(@RequestBody UpdatePublisherDto dto) {
 		try {
 			PublisherResponseDto updated = publisherService.update(dto);

@@ -54,7 +54,7 @@ public class AuthorController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdateAuthorDto dto) {
         try {
             AuthorResponseDto updated = authorService.update(dto);

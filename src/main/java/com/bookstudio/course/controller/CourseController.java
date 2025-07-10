@@ -49,10 +49,10 @@ public class CourseController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Course updatedCourse) {
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody Course updatedCourse) {
         try {
-            Course result = courseService.update(id, updatedCourse);
+            Course result = courseService.update(updatedCourse);
             return ResponseEntity.ok(new ApiResponse(true, result));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

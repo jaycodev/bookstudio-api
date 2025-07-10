@@ -59,7 +59,7 @@ public class StudentController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdateStudentDto dto) {
         try {
             StudentResponseDto updated = studentService.update(dto);

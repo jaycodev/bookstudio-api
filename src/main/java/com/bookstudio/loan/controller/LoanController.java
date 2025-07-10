@@ -54,7 +54,7 @@ public class LoanController {
 		}
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping
 	public ResponseEntity<?> update(@RequestBody UpdateLoanDto dto) {
 		try {
 			LoanResponseDto result = loanService.update(dto);
