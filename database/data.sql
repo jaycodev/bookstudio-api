@@ -154,31 +154,31 @@ INSERT INTO Students (DNI, FirstName, LastName, Address, Phone, Email, BirthDate
 ('65432197', 'Lucas', 'Medina', 'Jr. Los Sauces 951', '967891234', 'lucas.medina@correo.com', '2001-05-12', 'Masculino', 3, 'activo');
 
 INSERT INTO Books (Title, TotalCopies, LoanedCopies, AuthorID, PublisherID, CourseID, ReleaseDate, GenreID, Status) VALUES
-('Álgebra Superior', 50, 1, 1, 1, 1, '2020-01-15', 19, 'activo'),
-('Harry Potter y la piedra filosofal', 55, 1, 2, 2, 2, '1997-06-26', 1, 'activo'),
-('Cien años de soledad', 30, 2, 1, 3, 15, '1967-05-30', 6, 'activo'),
-('1984', 25, 1, 18, 4, 11, '1949-06-08', 9, 'activo'),
+('Álgebra Superior', 50, 0, 1, 1, 1, '2020-01-15', 19, 'activo'),
+('Harry Potter y la piedra filosofal', 55, 0, 2, 2, 2, '1997-06-26', 1, 'activo'),
+('Cien años de soledad', 30, 0, 1, 3, 15, '1967-05-30', 6, 'activo'),
+('1984', 25, 0, 18, 4, 11, '1949-06-08', 9, 'activo'),
 ('Don Quijote de la Mancha', 20, 0, 4, 5, 2, '1605-01-16', 6, 'activo'),
-('Rayuela', 15, 1, 3, 6, 15, '1963-06-28', 6, 'activo'),
+('Rayuela', 15, 0, 3, 6, 15, '1963-06-28', 6, 'activo'),
 ('El amor en los tiempos del cólera', 18, 0, 1, 7, 15, '1985-12-08', 8, 'activo'),
-('La metamorfosis', 22, 1, 9, 8, 11, '1915-10-15', 2, 'activo'),
+('La metamorfosis', 22, 0, 9, 8, 11, '1915-10-15', 2, 'activo'),
 ('Poema 20', 12, 0, 2, 9, 15, '1924-03-14', 45, 'activo'),
 ('Pedro Páramo', 17, 0, 17, 10, 15, '1955-03-27', 6, 'activo'),
-('Orgullo y prejuicio', 24, 1, 8, 11, 15, '1813-01-28', 8, 'activo'),
-('El principito', 35, 2, 6, 12, 15, '1943-04-06', 13, 'activo'),
-('El resplandor', 20, 1, 11, 13, 10, '1977-01-28', 7, 'activo'),
+('Orgullo y prejuicio', 24, 0, 8, 11, 15, '1813-01-28', 8, 'activo'),
+('El principito', 35, 0, 6, 12, 15, '1943-04-06', 13, 'activo'),
+('El resplandor', 20, 0, 11, 13, 10, '1977-01-28', 7, 'activo'),
 ('Frankenstein', 15, 0, 19, 14, 15, '1818-01-01', 7, 'activo'),
-('Ficciones', 18, 1, 5, 15, 15, '1944-06-14', 3, 'activo'),
-('Oliver Twist', 22, 0, 10, 16, 15, '1838-02-01', 6, 'activo'),
-('La naranja mecánica', 17, 1, 18, 17, 11, '1962-05-22', 9, 'activo'),
-('Física Universitaria', 40, 2, 8, 18, 3, '2018-03-15', 20, 'activo'),
+('Ficciones', 18, 0, 5, 15, 15, '1944-06-14', 3, 'activo'),
+('Oliver Twist', 22, 1, 10, 16, 15, '1838-02-01', 6, 'activo'),
+('La naranja mecánica', 17, 0, 18, 17, 11, '1962-05-22', 9, 'activo'),
+('Física Universitaria', 40, 1, 8, 18, 3, '2018-03-15', 20, 'activo'),
 ('El extranjero', 25, 0, 13, 19, 11, '1942-05-19', 6, 'activo'),
 ('El retrato de Dorian Gray', 20, 1, 15, 20, 2, '1890-07-01', 3, 'activo'),
 ('Cuentos de la selva', 30, 0, 20, 21, 22, '1918-01-01', 13, 'activo'),
-('Química General', 45, 3, 7, 22, 9, '2019-08-12', 21, 'activo'),
-('Los miserables', 22, 1, 4, 23, 17, '1862-04-03', 6, 'activo'),
+('Química General', 45, 0, 7, 22, 9, '2019-08-12', 21, 'activo'),
+('Los miserables', 22, 0, 4, 23, 17, '1862-04-03', 6, 'activo'),
 ('Antología poética', 15, 0, 14, 24, 15, '1958-09-10', 45, 'activo'),
-('El laberinto de la soledad', 18, 1, 6, 25, 11, '1950-02-18', 24, 'activo');
+('El laberinto de la soledad', 18, 0, 6, 25, 11, '1950-02-18', 24, 'activo');
 
 INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Observation) VALUES
 -- 2024
