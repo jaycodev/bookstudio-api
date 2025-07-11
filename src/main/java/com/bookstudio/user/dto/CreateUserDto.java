@@ -11,5 +11,5 @@ public class CreateUserDto {
     private String lastName;
     private String password;
     private Role role;
-    private byte[] profilePhoto;
+    private String profilePhotoUrl;
 }

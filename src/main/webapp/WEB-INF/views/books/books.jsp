@@ -262,8 +262,8 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addBookForm" id="addBookBtn">
-	                    <span id="addBookIcon" class="me-2"><i class="bi-plus-circle"></i></span>
-	                    <span id="addBookSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -534,8 +534,8 @@
 	                
 	                <!-- Update Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editBookForm" id="editBookBtn" disabled>
-	                    <span id="editBookIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editBookSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

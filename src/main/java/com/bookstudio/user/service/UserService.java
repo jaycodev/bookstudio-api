@@ -49,7 +49,7 @@ public class UserService {
         user.setLastName(dto.getLastName());
         user.setPassword(PasswordUtils.hashPassword(dto.getPassword()));
         user.setRole(dto.getRole());
-        user.setProfilePhoto(dto.getProfilePhoto());
+        user.setProfilePhotoUrl(dto.getProfilePhotoUrl());
 
         User saved = userRepository.save(user);
 
@@ -60,7 +60,7 @@ public class UserService {
                 saved.getFirstName(),
                 saved.getLastName(),
                 saved.getRole().name(),
-                saved.getProfilePhoto());
+                saved.getProfilePhotoUrl());
     }
 
     @Transactional
@@ -72,10 +72,10 @@ public class UserService {
         user.setLastName(dto.getLastName());
         user.setRole(dto.getRole());
 
-        if (Boolean.TRUE.equals(dto.getDeletePhoto())) {
-            user.setProfilePhoto(null);
-        } else if (dto.getProfilePhoto() != null && dto.getProfilePhoto().length > 0) {
-            user.setProfilePhoto(dto.getProfilePhoto());
+        if (dto.isDeletePhoto()) {
+            user.setProfilePhotoUrl(null);
+        } else if (dto.getProfilePhotoUrl() != null && !dto.getProfilePhotoUrl().isBlank()) {
+            user.setProfilePhotoUrl(dto.getProfilePhotoUrl());
         }
 
         User saved = userRepository.save(user);
@@ -87,7 +87,7 @@ public class UserService {
                 saved.getFirstName(),
                 saved.getLastName(),
                 saved.getRole().name(),
-                saved.getProfilePhoto());
+                saved.getProfilePhotoUrl());
     }
 
     @Transactional

@@ -21,7 +21,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
             lg.name AS literaryGenreName,
             a.birthDate AS birthDate,
             a.status AS status,
-            a.photo AS photo
+            a.photoUrl AS photoUrl
         FROM Author a
         JOIN a.nationality n
         JOIN a.literaryGenre lg
@@ -42,7 +42,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
             a.birthDate AS birthDate,
             a.biography AS biography,
             a.status AS status,
-            a.photo AS photo
+            a.photoUrl AS photoUrl
         FROM Author a
         JOIN a.nationality n
         JOIN a.literaryGenre lg

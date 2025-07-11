@@ -9,6 +9,6 @@ public class UpdateUserDto {
     private String firstName;
     private String lastName;
     private Role role;
-    private Boolean deletePhoto;
-    private byte[] profilePhoto;
+    private boolean deletePhoto;
+    private String profilePhotoUrl;
 }

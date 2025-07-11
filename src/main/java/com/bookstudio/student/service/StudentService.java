@@ -90,7 +90,6 @@ public class StudentService {
         Faculty faculty = facultyRepository.findById(dto.getFacultyId())
                 .orElseThrow(() -> new RuntimeException("Facultad no encontrada"));
 
-        student.setDni(dto.getDni());
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setAddress(dto.getAddress());

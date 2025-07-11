@@ -51,7 +51,7 @@ public class AuthorService {
         author.setBirthDate(dto.getBirthDate());
         author.setBiography(dto.getBiography());
         author.setStatus(dto.getStatus());
-        author.setPhoto(dto.getPhoto());
+        author.setPhotoUrl(dto.getPhotoUrl());
 
         Author saved = authorRepository.save(author);
 
@@ -62,7 +62,7 @@ public class AuthorService {
                 saved.getLiteraryGenre().getName(),
                 saved.getBirthDate(),
                 saved.getStatus().name(),
-                saved.getPhoto());
+                saved.getPhotoUrl());
     }
 
     @Transactional
@@ -79,10 +79,10 @@ public class AuthorService {
         author.setBiography(dto.getBiography());
         author.setStatus(dto.getStatus());
 
-        if (Boolean.TRUE.equals(dto.getDeletePhoto())) {
-            author.setPhoto(null);
-        } else if (dto.getPhoto() != null) {
-            author.setPhoto(dto.getPhoto());
+        if (dto.isDeletePhoto()) {
+            author.setPhotoUrl(null);
+        } else if (dto.getPhotoUrl() != null && !dto.getPhotoUrl().isBlank()) {
+            author.setPhotoUrl(dto.getPhotoUrl());
         }
 
         Author saved = authorRepository.save(author);
@@ -94,7 +94,7 @@ public class AuthorService {
                 saved.getLiteraryGenre().getName(),
                 saved.getBirthDate(),
                 saved.getStatus().name(),
-                saved.getPhoto());
+                saved.getPhotoUrl());
     }
 
     public List<AuthorSelectProjection> getForSelect() {

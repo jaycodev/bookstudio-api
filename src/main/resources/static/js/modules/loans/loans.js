@@ -1,21 +1,23 @@
 /**
  * loans.js
  *
- * Manages the initialization, data loading, and configuration of the loans table,
- * as well as handling modals for creating, viewing, returning, and editing loan details.
- * Utilizes AJAX for CRUD operations on loan data.
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
- * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
+ * Handles the initialization and behavior of the loans table,
+ * including loading data, configuring modals for creating, viewing,
+ * returning, and editing loan records.
  *
- * @author [Jason]
+ * Uses the Fetch API to communicate with RESTful endpoints for all loan-related
+ * CRUD operations. Manages UI components such as placeholders, enhanced dropdowns,
+ * validation feedback, loading states, and tooltips.
+ *
+ * Also includes features for generating PDF receipts and exporting table data to Excel.
+ *
+ * @author Jason
  */
 
-/*****************************************
- * GLOBAL VARIABLES AND HELPER FUNCTIONS
- *****************************************/
 import {
 	showToast,
 	toggleButtonLoading,
+	toggleModalLoading,
 	populateSelect,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
@@ -35,86 +37,106 @@ import {
 	isValidLoanQuantity,
 } from '../../shared/utils/validators/index.js'
 
+/*****************************************
+ * GLOBAL VARIABLES AND HELPER FUNCTIONS
+ *****************************************/
+
 // Global list of books and students for the selectpickers
 let bookList = []
 let studentList = []
 
-function populateSelectOptions() {
-	$.ajax({
-		url: 'LoanServlet',
-		type: 'GET',
-		data: { type: 'populateSelects' },
-		dataType: 'json',
-		success: function (data, xhr) {
-			if (xhr.status === 204) {
-				console.warn('No data found for select options.')
-				return
-			}
+async function populateSelectOptions() {
+	try {
+		const response = await fetch('api/loans/select-options', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			if (data) {
-				bookList = data.books
-				studentList = data.students
+		if (response.status === 204) {
+			console.warn('No data found for select options.')
+			return
+		}
 
-				$('#addLoanBook').on('change', function () {
-					const selectedBookId = $(this).val()
-					const selectedBook = bookList.find(
-						(book) => book.bookId == selectedBookId,
-					)
+		if (!response.ok) {
+			throw response
+		}
 
-					if (selectedBook) {
-						const availableCopies = selectedBook.availableCopies
-						$('#addLoanQuantity').attr('max', availableCopies)
-					}
-				})
-			}
-		},
-		error: function (xhr) {
-			let errorResponse
+		const data = await response.json()
+
+		bookList = data.books
+		studentList = data.students
+
+		document
+			.getElementById('addLoanBook')
+			.addEventListener('change', (event) => {
+				const selectedBookId = event.target.value
+				const selectedBook = bookList.find(
+					(book) => book.bookId == selectedBookId,
+				)
+
+				if (selectedBook) {
+					const availableCopies = selectedBook.availableCopies
+					document
+						.getElementById('addLoanQuantity')
+						.setAttribute('max', availableCopies)
+				}
+			})
+	} catch (error) {
+		if (error instanceof Response) {
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				const errData = await error.json()
 				console.error(
-					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
-					errorResponse.message,
+					`Error fetching select options (${errData.errorType} - ${error.status}):`,
+					errData.message,
 				)
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error('Unexpected error:', error.status, await error.text())
 			}
-		},
-	})
+		} else {
+			console.error('Unexpected error:', error)
+		}
+	}
 }
 
-function updateBookList() {
-	$.ajax({
-		url: 'LoanServlet',
-		type: 'GET',
-		data: {
-			type: 'populateSelects',
-		},
-		dataType: 'json',
-		success: function (data, xhr) {
-			if (xhr.status === 204) {
-				console.warn('No data found for select options.')
-				return
-			}
+async function updateBookList() {
+	try {
+		const response = await fetch('api/loans/select-options', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			if (data) {
-				bookList = data.books
-				populateSelect('#addLoanBook', bookList, 'bookId', 'title')
-			}
-		},
-		error: function (xhr) {
-			let errorResponse
+		if (response.status === 204) {
+			console.warn('No data found for select options.')
+			return
+		}
+
+		if (!response.ok) {
+			throw response
+		}
+
+		const data = await response.json()
+
+		bookList = data.books
+		populateSelect('#addLoanBook', bookList, 'bookId', 'title')
+	} catch (error) {
+		if (error instanceof Response) {
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				const errorResponse = await error.json()
 				console.error(
-					`Error fetching select book options (${errorResponse.errorType} - ${xhr.status}):`,
+					`Error fetching select book options (${errorResponse.errorType} - ${error.status}):`,
 					errorResponse.message,
 				)
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error('Unexpected error:', error.status, await error.text())
 			}
-		},
-	})
+		} else {
+			console.error('Unexpected error:', error)
+		}
+	}
 }
 
 /*****************************************
@@ -182,28 +204,32 @@ function addRowToTable(loan) {
 	initializeTooltips($row)
 }
 
-function loadLoans() {
+async function loadLoans() {
 	toggleTableLoadingState('loading')
 
-	const safetyTimer = setTimeout(function () {
+	const safetyTimer = setTimeout(() => {
 		toggleTableLoadingState('loaded')
 		$('#tableContainer').removeClass('d-none')
-		$('#cardContainer').removeClass('h-100')
 	}, 8000)
 
-	$.ajax({
-		url: 'LoanServlet',
-		type: 'GET',
-		data: { type: 'list' },
-		dataType: 'json',
-		success: function (data) {
-			clearTimeout(safetyTimer)
+	try {
+		const response = await fetch('./api/loans', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			const tableBody = $('#bodyLoans')
-			tableBody.empty()
+		clearTimeout(safetyTimer)
 
-			if (data && data.length > 0) {
-				data.forEach(function (loan) {
+		const tableBody = $('#bodyLoans')
+		tableBody.empty()
+
+		if (response.status === 200) {
+			const data = await response.json()
+
+			if (data.length > 0) {
+				data.forEach((loan) => {
 					const row = generateRow(loan)
 					tableBody.append(row)
 				})
@@ -211,46 +237,15 @@ function loadLoans() {
 				initializeTooltips(tableBody)
 			}
 
-			if ($.fn.DataTable.isDataTable('#loanTable')) {
-				$('#loanTable').DataTable().destroy()
-			}
-
-			const dataTable = setupDataTable('#loanTable')
-
-			if (data && data.length > 0) {
-				$('#generatePDF, #generateExcel').prop('disabled', false)
-			} else {
-				$('#generatePDF, #generateExcel').prop('disabled', true)
-			}
-
-			dataTable.on('draw', function () {
-				const filteredCount = dataTable.rows({ search: 'applied' }).count()
-				const noDataMessage =
-					$('#authorTable').find('td.dataTables_empty').length > 0
-				$('#generatePDF, #generateExcel').prop(
-					'disabled',
-					filteredCount === 0 || noDataMessage,
-				)
-			})
-
-			$('#generatePDF')
-				.off('click')
-				.on('click', function () {
-					generatePDF(dataTable)
-				})
-
-			$('#generateExcel')
-				.off('click')
-				.on('click', function () {
-					generateExcel(dataTable)
-				})
-		},
-		error: function (xhr) {
+			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
+		} else if (response.status === 204) {
+			$('#generatePDF, #generateExcel').prop('disabled', true)
+		} else {
 			let errorResponse
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				errorResponse = await response.json()
 				console.error(
-					`Error listing loan data (${errorResponse.errorType} - ${xhr.status}):`,
+					`Error listing loan data (${errorResponse.errorType} - ${response.status}):`,
 					errorResponse.message,
 				)
 				showToast(
@@ -258,22 +253,53 @@ function loadLoans() {
 					'error',
 				)
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error(
+					'Unexpected error:',
+					response.status,
+					await response.text(),
+				)
 				showToast('Hubo un error inesperado.', 'error')
 			}
+		}
 
-			clearTimeout(safetyTimer)
+		if ($.fn.DataTable.isDataTable('#loanTable')) {
+			$('#loanTable').DataTable().destroy()
+		}
 
-			const tableBody = $('#bodyLoans')
-			tableBody.empty()
+		const dataTable = setupDataTable('#loanTable')
 
-			if ($.fn.DataTable.isDataTable('#loanTable')) {
-				$('#loanTable').DataTable().destroy()
-			}
+		dataTable.on('draw', function () {
+			const filteredCount = dataTable.rows({ search: 'applied' }).count()
+			const noDataMessage =
+				$('#loanTable').find('td.dataTables_empty').length > 0
+			$('#generatePDF, #generateExcel').prop(
+				'disabled',
+				filteredCount === 0 || noDataMessage,
+			)
+		})
 
-			setupDataTable('#loanTable')
-		},
-	})
+		$('#generatePDF')
+			.off('click')
+			.on('click', () => generatePDF(dataTable))
+
+		$('#generateExcel')
+			.off('click')
+			.on('click', () => generateExcel(dataTable))
+	} catch (err) {
+		clearTimeout(safetyTimer)
+
+		console.error('Unexpected error:', err)
+		showToast('Hubo un error inesperado.', 'error')
+
+		const tableBody = $('#bodyLoans')
+		tableBody.empty()
+
+		if ($.fn.DataTable.isDataTable('#loanTable')) {
+			$('#loanTable').DataTable().destroy()
+		}
+
+		setupDataTable('#loanTable')
+	}
 }
 
 function updateRowInTable(loan) {
@@ -321,17 +347,13 @@ function handleAddLoanForm() {
 		}
 	})
 
-	$('#addLoanForm').on('submit', function (event) {
+	$('#addLoanForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -340,213 +362,194 @@ function handleAddLoanForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateAddField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateAddField($(this))) isValid = false
 			})
-
-		if (isValid) {
-			const data = $('#addLoanForm').serialize() + '&type=create'
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#addLoanSpinnerBtn').removeClass('d-none')
-			$('#addLoanIcon').addClass('d-none')
-
-			$.ajax({
-				url: 'LoanServlet',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						addRowToTable(response.data)
-
-						$('#addLoanModal').modal('hide')
-						showToast('Préstamo agregado exitosamente.', 'success')
-						generateLoanReceipt(response.data)
-					} else {
-						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
-						)
-						$('#addLoanModal').modal('hide')
-						showToast('Hubo un error al agregar el préstamo.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						showToast('Hubo un error al agregar el préstamo.', 'error')
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
-
-					$('#addLoanModal').modal('hide')
-				},
-				complete: function () {
-					$('#addLoanSpinnerBtn').addClass('d-none')
-					$('#addLoanIcon').removeClass('d-none')
-					submitButton.prop('disabled', false)
-				},
-			})
-		} else {
-			$(this).data('submitted', false)
-		}
-	})
-
-	function validateAddField(field) {
-		if (field.attr('type') === 'search') {
-			return true
-		}
-
-		let errorMessage = 'Este campo es obligatorio.'
-		let isValid = true
-
-		// Default validation
-		if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage)
-			isValid = false
-		} else {
-			field.removeClass('is-invalid')
-		}
-
-		// Return date validation
-		if (field.is('#addReturnDate') && $('#addLoanDate').val()) {
-			const result = isValidReturnDate($('#addLoanDate').val(), field.val())
-			if (!result.valid) {
-				field.addClass('is-invalid')
-				errorMessage = result.message
-				field.siblings('.invalid-feedback').html(errorMessage)
-				isValid = false
-			}
-		}
-
-		// Quantity validation
-		if (field.is('#addLoanQuantity')) {
-			const result = isValidLoanQuantity(
-				parseInt(field.val(), 10),
-				parseInt(field.attr('max'), 10),
-			)
-			if (!result.valid) {
-				field.addClass('is-invalid')
-				errorMessage = result.message
-				field.siblings('.invalid-feedback').html(errorMessage)
-				isValid = false
-			}
-		}
-
-		// Select validation
-		if (field.is('select')) {
-			const container = field.closest('.bootstrap-select')
-			container.toggleClass('is-invalid', field.hasClass('is-invalid'))
-			container.siblings('.invalid-feedback').html(errorMessage)
-		}
 
 		if (!isValid) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage).show()
-		} else {
-			field.removeClass('is-invalid')
-			field.siblings('.invalid-feedback').hide()
+			$(this).data('submitted', false)
+			return
 		}
 
-		return isValid
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const loan = {
+			bookId: parseInt(raw.addLoanBook),
+			studentId: parseInt(raw.addLoanStudent),
+			returnDate: raw.addReturnDate,
+			quantity: parseInt(raw.addLoanQuantity),
+			observation: raw.addLoanObservation || '',
+		}
+
+		const submitButton = $('#addLoanBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			const response = await fetch('./api/loans', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(loan),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				addRowToTable(json.data)
+				$('#addLoanModal').modal('hide')
+				showToast('Préstamo agregado exitosamente.', 'success')
+				generateLoanReceipt(json.data)
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				$('#addLoanModal').modal('hide')
+				showToast('Hubo un error al agregar el préstamo.', 'error')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#addLoanModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
+		}
+	})
+}
+
+function validateAddField(field) {
+	if (field.attr('type') === 'search') {
+		return true
 	}
+
+	let errorMessage = 'Este campo es obligatorio.'
+	let isValid = true
+
+	// Default validation
+	if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage)
+		isValid = false
+	} else {
+		field.removeClass('is-invalid')
+	}
+
+	// Return date validation
+	if (field.is('#addReturnDate') && $('#addLoanDate').val()) {
+		const result = isValidReturnDate($('#addLoanDate').val(), field.val())
+		if (!result.valid) {
+			field.addClass('is-invalid')
+			errorMessage = result.message
+			field.siblings('.invalid-feedback').html(errorMessage)
+			isValid = false
+		}
+	}
+
+	// Quantity validation
+	if (field.is('#addLoanQuantity')) {
+		const result = isValidLoanQuantity(
+			parseInt(field.val(), 10),
+			parseInt(field.attr('max'), 10),
+		)
+		if (!result.valid) {
+			field.addClass('is-invalid')
+			errorMessage = result.message
+			field.siblings('.invalid-feedback').html(errorMessage)
+			isValid = false
+		}
+	}
+
+	// Select validation
+	if (field.is('select')) {
+		const container = field.closest('.bootstrap-select')
+		container.toggleClass('is-invalid', field.hasClass('is-invalid'))
+		container.siblings('.invalid-feedback').html(errorMessage)
+	}
+
+	if (!isValid) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage).show()
+	} else {
+		field.removeClass('is-invalid')
+		field.siblings('.invalid-feedback').hide()
+	}
+
+	return isValid
 }
 
 function handleReturnLoan() {
 	let isSubmitted = false
 
-	$('#confirmReturn').on('click', function () {
+	$('#confirmReturn').on('click', async function () {
 		if (isSubmitted) return
 		isSubmitted = true
 
 		const loanId = $(this).data('loanId')
 		const formattedLoanId = $(this).data('formattedLoanId')
 
-		$('#confirmReturnIcon').addClass('d-none')
-		$('#confirmReturnSpinner').removeClass('d-none')
-		$('#confirmReturn').prop('disabled', true)
+		toggleButtonLoading($(this), true)
 
-		$.ajax({
-			url: 'LoanServlet',
-			type: 'POST',
-			data: {
-				type: 'confirmReturn',
-				loanId: loanId,
-			},
-			success: function (response) {
-				if (response && response.success) {
-					const table = $('#loanTable').DataTable()
-					const row = table
-						.rows()
-						.nodes()
-						.to$()
-						.filter(function () {
-							return (
-								$(this).find('td').eq(0).text().trim() ===
-								formattedLoanId.toString()
-							)
-						})
+		try {
+			const response = await fetch(
+				`./api/loans/${encodeURIComponent(loanId)}/return`,
+				{
+					method: 'PATCH',
+					headers: {
+						Accept: 'application/json',
+					},
+				},
+			)
 
-					if (row.length > 0) {
-						row
-							.find('td:eq(6)')
-							.html(
-								'<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>',
-							)
-						row
-							.find('td:eq(7)')
-							.find('.btn[aria-label="Devolver el préstamo"]')
-							.remove()
-						row.find('button[data-status]').data('status', 'devuelto')
-						table.row(row).invalidate().draw(false)
-					}
+			const json = await response.json()
 
-					updateBookList()
+			if (response.ok && json.success) {
+				const table = $('#loanTable').DataTable()
+				const row = table
+					.rows()
+					.nodes()
+					.to$()
+					.filter(function () {
+						return (
+							$(this).find('td').eq(0).text().trim() ===
+							formattedLoanId.toString()
+						)
+					})
 
-					$('#returnLoanModal').modal('hide')
-					showToast('Préstamo devuelto exitosamente.', 'success')
-				} else {
-					console.error(
-						`Backend error (${response.errorType} - ${response.statusCode}):`,
-						response.message,
-					)
-					$('#returnLoanModal').modal('hide')
-					showToast('Hubo un error al devolver el préstamo.', 'error')
+				if (row.length > 0) {
+					row
+						.find('td:eq(6)')
+						.html(
+							'<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>',
+						)
+					row
+						.find('td:eq(7)')
+						.find('.btn[aria-label="Devolver el préstamo"]')
+						.remove()
+					row.find('button[data-status]').data('status', 'devuelto')
+					table.row(row).invalidate().draw(false)
 				}
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error returning loan (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast('Hubo un error al devolver el préstamo.', 'error')
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+
+				updateBookList()
+
 				$('#returnLoanModal').modal('hide')
-			},
-			complete: function () {
-				$('#confirmReturnSpinner').addClass('d-none')
-				$('#confirmReturnIcon').removeClass('d-none')
-				$('#confirmReturn').prop('disabled', false)
-			},
-		})
+				showToast('Préstamo devuelto exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				$('#returnLoanModal').modal('hide')
+				showToast('Hubo un error al devolver el préstamo.', 'error')
+			}
+		} catch (error) {
+			console.error('Unexpected error:', error)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#returnLoanModal').modal('hide')
+		} finally {
+			toggleButtonLoading($(this), true)
+		}
 	})
 }
 
@@ -564,17 +567,13 @@ function handleEditLoanForm() {
 		}
 	})
 
-	$('#editLoanForm').on('submit', function (event) {
+	$('#editLoanForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -585,75 +584,65 @@ function handleEditLoanForm() {
 			.each(function () {
 				const field = $(this)
 				if (field.attr('id') !== 'editLoanQuantity') {
-					const valid = validateEditField(field)
-					if (!valid) {
-						isValid = false
-					}
+					if (!validateEditField(field)) isValid = false
 				}
 			})
 
-		if (isValid) {
-			let data = $(this).serialize() + '&type=update'
-
-			const loanId = $(this).data('loanId')
-			if (loanId) {
-				data += '&loanId=' + encodeURIComponent(loanId)
-			}
-
-			const bookId = $(this).data('bookId')
-			if (bookId) {
-				data += '&bookId=' + encodeURIComponent(bookId)
-			}
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#editLoanSpinnerBtn').removeClass('d-none')
-			$('#editLoanIcon').addClass('d-none')
-
-			$.ajax({
-				url: 'LoanServlet',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						updateRowInTable(response.data)
-
-						$('#editLoanModal').modal('hide')
-						showToast('Préstamo actualizado exitosamente.', 'success')
-					} else {
-						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
-						)
-						$('#editLoanModal').modal('hide')
-						showToast('Hubo un error al actualizar el préstamo.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						showToast('Hubo un error al actualizar el préstamo.', 'error')
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
-
-					$('#editLoanModal').modal('hide')
-				},
-				complete: function () {
-					$('#editLoanSpinnerBtn').addClass('d-none')
-					$('#editLoanIcon').removeClass('d-none')
-					submitButton.prop('disabled', false)
-				},
-			})
-		} else {
+		if (!isValid) {
 			$(this).data('submitted', false)
+			return
+		}
+
+		const loanId = $('#editLoanForm').data('loanId')
+		const bookId = $('#editLoanForm').data('bookId')
+
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const loan = {
+			loanId: parseInt(loanId),
+			bookId: parseInt(bookId),
+			studentId: parseInt(raw.editLoanStudent),
+			returnDate: raw.editReturnDate,
+			observation: raw.editLoanObservation || '',
+		}
+
+		const submitButton = $('#editLoanBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			const response = await fetch('./api/loans', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(loan),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				updateRowInTable(json.data)
+				$('#editLoanModal').modal('hide')
+				showToast('Préstamo actualizado exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				showToast(
+					json.message || 'Hubo un error al actualizar el préstamo.',
+					'error',
+				)
+				$('#editLoanModal').modal('hide')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#editLoanModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
 }
@@ -749,60 +738,58 @@ function loadModalData() {
 		const loanId = $(this).data('id')
 		$('#detailsLoanModalID').text($(this).data('formatted-id'))
 
-		$('#detailsLoanSpinner').removeClass('d-none')
-		$('#detailsLoanContent').addClass('d-none')
+		toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'LoanServlet',
-			type: 'GET',
-			data: { type: 'details', loanId: loanId },
-			dataType: 'json',
-			success: function (data) {
+		fetch(`./api/loans/${encodeURIComponent(loanId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
 				$('#detailsLoanID').text(data.formattedLoanId)
 
 				$('#detailsLoanBook').html(`
-					${data.bookTitle}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>
-				`)
+				${data.bookTitle}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>
+			`)
+
 				$('#detailsLoanStudent').html(`
-					${data.studentFullName}
-					<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedStudentId}</span>
-				`)
+				${data.studentFullName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedStudentId}</span>
+			`)
 
 				$('#detailsLoanDate').text(moment(data.loanDate).format('DD MMM YYYY'))
 				$('#detailsReturnDate').text(
 					moment(data.returnDate).format('DD MMM YYYY'),
 				)
 				$('#detailsLoanQuantity').text(data.quantity)
+
 				$('#detailsLoanStatus').html(
 					data.status === 'prestado'
 						? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Prestado</span>'
 						: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>',
 				)
+
 				$('#detailsLoanObservation').text(data.observation)
 
-				$('#detailsLoanSpinner').addClass('d-none')
-				$('#detailsLoanContent').removeClass('d-none')
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading loan details (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast(
-						'Hubo un error al cargar los detalles del préstamo.',
-						'error',
-					)
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading loan details (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los detalles del préstamo.', 'error')
 				$('#detailsLoanModal').modal('hide')
-			},
-		})
+			})
 	})
 
 	// Return Loan Modal
@@ -830,22 +817,29 @@ function loadModalData() {
 		const loanId = $(this).data('id')
 		$('#editLoanModalID').text($(this).data('formatted-id'))
 
-		$('#editLoanSpinner').removeClass('d-none')
-		$('#editLoanForm').addClass('d-none')
-		$('#editLoanBtn').prop('disabled', true)
+		toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'LoanServlet',
-			type: 'GET',
-			data: { type: 'details', loanId: loanId },
-			dataType: 'json',
-			success: function (data) {
+		fetch(`./api/loans/${encodeURIComponent(loanId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
 				$('#editLoanForm').data('loanId', data.loanId)
 				$('#editLoanForm').data('bookId', data.bookId)
 
-				$('#editLoanBook').html(
-					`${data.bookTitle} <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>`,
-				)
+				$('#editLoanBook').html(`
+				${data.bookTitle}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>
+			`)
 
 				populateSelect('#editLoanStudent', studentList, 'studentId', 'fullName')
 				$('#editLoanStudent').val(data.studentId)
@@ -880,26 +874,16 @@ function loadModalData() {
 						validateEditField($(this), true)
 					})
 
-				$('#editLoanSpinner').addClass('d-none')
-				$('#editLoanForm').removeClass('d-none')
-				$('#editLoanBtn').prop('disabled', false)
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading loan details for editing (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast('Hubo un error al cargar los datos del préstamo.', 'error')
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading loan details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los datos del préstamo.', 'error')
 				$('#editLoanModal').modal('hide')
-			},
-		})
+			})
 	})
 }
 

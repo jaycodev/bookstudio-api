@@ -2,9 +2,10 @@
  * profile.js
  *
  * Manages user profile updates, including photo cropping, password validation, and general profile editing.
- * Handles the AJAX requests for updating the profile photo and details, including validation of password changes.
+ * Handles profile data and image updates using the Fetch API to interact with RESTful endpoints,
+ * including validation and error handling for password changes.
  *
- * @author [Jason]
+ * @author Jason
  */
 
 import { showToast } from '../../shared/utils/ui/index.js'
@@ -19,7 +20,7 @@ $(document).ready(function () {
 	let croppedImageBlob = null
 	let cropper
 
-	$('#currentProfilePassword, #editProfilePassword').on('input', function () {
+	$('#currentPassword, #password').on('input', function () {
 		const inputElement = this
 		const cursorPosition = inputElement.selectionStart
 		const originalValue = $(this).val()
@@ -118,17 +119,15 @@ $(document).ready(function () {
 				croppedImageBlob,
 				'croppedImage.png',
 			)
-			photoFormData.set('type', 'updateProfilePhoto')
 			photoFormData.append('deletePhoto', 'false')
 
-			$.ajax({
-				url: 'ProfileServlet',
+			fetch('/api/profile/update-photo', {
 				method: 'POST',
-				data: photoFormData,
-				processData: false,
-				contentType: false,
-				success: function (response) {
-					if (response && response.success) {
+				body: photoFormData,
+			})
+				.then((res) => res.json())
+				.then((data) => {
+					if (data.success) {
 						sessionStorage.setItem(
 							'toastMessage',
 							'Foto de perfil subida exitosamente.',
@@ -136,18 +135,17 @@ $(document).ready(function () {
 						sessionStorage.setItem('toastType', 'success')
 						window.location.href = 'profile'
 					} else {
-						showToast(response.message, 'error')
+						showToast(data.message || 'Error al actualizar la foto.', 'error')
 					}
-				},
-				error: function () {
+				})
+				.catch(() => {
 					showToast('Error al actualizar la foto.', 'error')
 					$('#cropperModal').modal('hide')
-				},
-				complete: function () {
+				})
+				.finally(() => {
 					$('#savePhotoIcon').removeClass('d-none')
 					$('#savePhotoSpinner').addClass('d-none')
-				},
-			})
+				})
 		})
 	})
 
@@ -167,17 +165,15 @@ $(document).ready(function () {
 		$('#deletePhotoSpinner').removeClass('d-none')
 
 		const photoFormData = new FormData()
-		photoFormData.append('type', 'updateProfilePhoto')
 		photoFormData.append('deletePhoto', 'true')
 
-		$.ajax({
-			url: 'ProfileServlet',
+		fetch('/api/profile/update-photo', {
 			method: 'POST',
-			data: photoFormData,
-			processData: false,
-			contentType: false,
-			success: function (response) {
-				if (response && response.success) {
+			body: photoFormData,
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.success) {
 					sessionStorage.setItem(
 						'toastMessage',
 						'Foto de perfil eliminada exitosamente.',
@@ -185,18 +181,17 @@ $(document).ready(function () {
 					sessionStorage.setItem('toastType', 'success')
 					window.location.href = 'profile'
 				} else {
-					showToast(response.message, 'error')
+					showToast(data.message || 'Error al eliminar la foto.', 'error')
 				}
-			},
-			error: function () {
+			})
+			.catch(() => {
 				showToast('Error al eliminar la foto.', 'error')
 				$('#deletePhotoModal').modal('hide')
-			},
-			complete: function () {
+			})
+			.finally(() => {
 				$('#deletePhotoIcon').removeClass('d-none')
 				$('#deletePhotoSpinner').addClass('d-none')
-			},
-		})
+			})
 	})
 
 	// Reset button state when the modal is hidden
@@ -208,71 +203,65 @@ $(document).ready(function () {
 
 	/************** Profile update logic **************/
 	function validateProfileFirstName() {
-		const result = isValidText($('#editProfileFirstName').val(), 'nombre')
+		const result = isValidText($('#firstName').val(), 'nombre')
 		if (!result.valid) {
-			$('#editProfileFirstName').addClass('is-invalid')
-			$('#editProfileFirstName')
-				.siblings('.invalid-feedback')
-				.text(result.message)
+			$('#firstName').addClass('is-invalid')
+			$('#firstName').siblings('.invalid-feedback').text(result.message)
 			return false
 		} else {
-			$('#editProfileFirstName').removeClass('is-invalid')
-			$('#editProfileFirstName').siblings('.invalid-feedback').text('')
+			$('#firstName').removeClass('is-invalid')
+			$('#firstName').siblings('.invalid-feedback').text('')
 			return true
 		}
 	}
 
 	function validateProfileLastName() {
-		const result = isValidText($('#editProfileLastName').val(), 'apellido')
+		const result = isValidText($('#lastName').val(), 'apellido')
 		if (!result.valid) {
-			$('#editProfileLastName').addClass('is-invalid')
-			$('#editProfileLastName')
-				.siblings('.invalid-feedback')
-				.text(result.message)
+			$('#lastName').addClass('is-invalid')
+			$('#lastName').siblings('.invalid-feedback').text(result.message)
 			return false
 		} else {
-			$('#editProfileLastName').removeClass('is-invalid')
-			$('#editProfileLastName').siblings('.invalid-feedback').text('')
+			$('#lastName').removeClass('is-invalid')
+			$('#lastName').siblings('.invalid-feedback').text('')
 			return true
 		}
 	}
 
 	function validateNewPassword() {
-		const newPassword = $('#editProfilePassword').val().trim()
+		const newPassword = $('#password').val().trim()
 		const result = isValidPassword(newPassword)
 
 		if (!result.valid) {
-			$('#editProfilePassword').addClass('is-invalid')
-			$('#editProfilePassword')
-				.siblings('.invalid-feedback')
-				.text(result.message)
+			$('#password').addClass('is-invalid')
+			$('#password').siblings('.invalid-feedback').text(result.message)
 			return false
 		} else {
-			$('#editProfilePassword').removeClass('is-invalid')
-			$('#editProfilePassword').siblings('.invalid-feedback').text('')
+			$('#password').removeClass('is-invalid')
+			$('#password').siblings('.invalid-feedback').text('')
 			return true
 		}
 	}
 
-	$('#editProfileFirstName').on('input', function () {
+	$('#firstName').on('input', function () {
 		validateProfileFirstName()
 	})
 
-	$('#editProfileLastName').on('input', function () {
+	$('#lastName').on('input', function () {
 		validateProfileLastName()
 	})
 
-	$('#currentProfilePassword').on('input', function () {
+	$('#currentPassword').on('input', function () {
 		$(this).removeClass('is-invalid')
 		$(this).siblings('.invalid-feedback').text('')
 	})
 
-	$('#editProfilePassword').on('input', function () {
+	$('#password').on('input', function () {
 		validateNewPassword()
 	})
 
 	// Handle profile update form submission
-	$('#editProfileForm').on('submit', function (event) {
+	$('#editProfileForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		const firstNameValid = validateProfileFirstName()
@@ -282,13 +271,17 @@ $(document).ready(function () {
 			return
 		}
 
-		const currentPassword = $('#currentProfilePassword').val().trim()
-		const newPassword = $('#editProfilePassword').val().trim()
-		let data = $(this).serialize()
+		const currentPassword = $('#currentPassword').val().trim()
+		const newPassword = $('#password').val().trim()
+
+		// Construye el cuerpo manualmente, solo lo necesario
+		let data = ''
+		data += 'firstName=' + encodeURIComponent($('#firstName').val().trim())
+		data += '&lastName=' + encodeURIComponent($('#lastName').val().trim())
 
 		if (currentPassword && !newPassword) {
-			$('#editProfilePassword').addClass('is-invalid')
-			$('#editProfilePassword')
+			$('#password').addClass('is-invalid')
+			$('#password')
 				.siblings('.invalid-feedback')
 				.text('Debes ingresar tu contraseña nueva.')
 			return
@@ -299,42 +292,37 @@ $(document).ready(function () {
 				return
 			}
 			if (!currentPassword) {
-				$('#currentProfilePassword').addClass('is-invalid')
-				$('#currentProfilePassword')
+				$('#currentPassword').addClass('is-invalid')
+				$('#currentPassword')
 					.siblings('.invalid-feedback')
 					.text('Debes ingresar tu contraseña actual.')
 				return
 			}
 
-			$.ajax({
-				url: 'ProfileServlet',
-				method: 'GET',
-				data: {
-					type: 'validatePassword',
-					confirmCurrentPassword: currentPassword,
-				},
-				success: function (response) {
-					if (response && response.success) {
-						$('#currentProfilePassword').removeClass('is-invalid')
-						$('#currentProfilePassword').siblings('.invalid-feedback').text('')
-						data += '&editProfilePassword=' + encodeURIComponent(newPassword)
-						submitProfileForm(data)
-					} else {
-						$('#currentProfilePassword').addClass('is-invalid')
-						$('#currentProfilePassword')
-							.siblings('.invalid-feedback')
-							.text(response.message || 'La contraseña actual no es correcta.')
-					}
-				},
-				error: function () {
-					$('#currentProfilePassword').addClass('is-invalid')
-					$('#currentProfilePassword')
+			try {
+				const res = await fetch(
+					`/api/profile/validate-password?currentPassword=${encodeURIComponent(currentPassword)}`,
+				)
+				const response = await res.json()
+
+				if (response && response.success) {
+					$('#currentPassword').removeClass('is-invalid')
+					$('#currentPassword').siblings('.invalid-feedback').text('')
+					data += '&password=' + encodeURIComponent(newPassword)
+					submitProfileForm(data)
+				} else {
+					$('#currentPassword').addClass('is-invalid')
+					$('#currentPassword')
 						.siblings('.invalid-feedback')
-						.text('Ocurrió un error inesperado al validar la contraseña.')
-				},
-			})
+						.text(response.message || 'La contraseña actual no es correcta.')
+				}
+			} catch {
+				$('#currentPassword').addClass('is-invalid')
+				$('#currentPassword')
+					.siblings('.invalid-feedback')
+					.text('Ocurrió un error inesperado al validar la contraseña.')
+			}
 		} else {
-			data += '&editProfilePassword='
 			submitProfileForm(data)
 		}
 	})
@@ -342,7 +330,7 @@ $(document).ready(function () {
 	let formSubmitted = false
 
 	// Submit profile form
-	function submitProfileForm(data) {
+	async function submitProfileForm(data) {
 		if (formSubmitted) return
 		formSubmitted = true
 
@@ -350,35 +338,37 @@ $(document).ready(function () {
 		$('#updateProfileSpinner').removeClass('d-none')
 		$('#updateProfileText').addClass('d-none')
 
-		data += '&type=updateProfile'
+		try {
+			const response = await fetch('/api/profile/update-profile', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: data,
+				credentials: 'include',
+			})
 
-		$.ajax({
-			url: 'ProfileServlet',
-			method: 'POST',
-			data: data,
-			success: function (response) {
-				if (response && response.success) {
-					sessionStorage.setItem(
-						'toastMessage',
-						'Perfil actualizado exitosamente.',
-					)
-					sessionStorage.setItem('toastType', 'success')
-					window.location.href = 'profile'
-				} else {
-					showToast(response.message, 'error')
-					formSubmitted = false
-				}
-			},
-			error: function () {
-				showToast('Ocurrió un error inesperado.', 'error')
+			const result = await response.json()
+
+			if (result.success) {
+				sessionStorage.setItem(
+					'toastMessage',
+					'Perfil actualizado exitosamente.',
+				)
+				sessionStorage.setItem('toastType', 'success')
+				window.location.href = 'profile'
+			} else {
+				showToast(result.message || 'Error al actualizar el perfil.', 'error')
 				formSubmitted = false
-			},
-			complete: function () {
-				$('#updateProfileBtn').prop('disabled', false)
-				$('#updateProfileSpinner').addClass('d-none')
-				$('#updateProfileText').removeClass('d-none')
-			},
-		})
+			}
+		} catch {
+			showToast('Ocurrió un error inesperado.', 'error')
+			formSubmitted = false
+		} finally {
+			$('#updateProfileBtn').prop('disabled', false)
+			$('#updateProfileSpinner').addClass('d-none')
+			$('#updateProfileText').removeClass('d-none')
+		}
 	}
 
 	// Check messages to show toasts
@@ -394,14 +384,14 @@ $(document).ready(function () {
 	})
 
 	// Enable or disable the update profile button
-	const originalFirstName = $('#editProfileFirstName').val()
-	const originalLastName = $('#editProfileLastName').val()
+	const originalFirstName = $('#firstName').val()
+	const originalLastName = $('#lastName').val()
 
 	function checkChanges() {
-		const currentFirstName = $('#editProfileFirstName').val()
-		const currentLastName = $('#editProfileLastName').val()
-		const currentPassword = $('#currentProfilePassword').val().trim()
-		const newPassword = $('#editProfilePassword').val().trim()
+		const currentFirstName = $('#firstName').val()
+		const currentLastName = $('#lastName').val()
+		const currentPassword = $('#currentPassword').val().trim()
+		const newPassword = $('#password').val().trim()
 
 		const nameChanged =
 			currentFirstName !== originalFirstName ||
@@ -415,7 +405,8 @@ $(document).ready(function () {
 		}
 	}
 
-	$(
-		'#editProfileFirstName, #editProfileLastName, #currentProfilePassword, #editProfilePassword',
-	).on('input', checkChanges)
+	$('#firstName, #lastName, #currentPassword, #password').on(
+		'input',
+		checkChanges,
+	)
 })

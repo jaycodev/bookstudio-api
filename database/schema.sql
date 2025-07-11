@@ -30,7 +30,7 @@ CREATE TABLE Authors (
     BirthDate DATE NOT NULL,
     Biography TEXT,
     Status ENUM('activo', 'inactivo') DEFAULT 'activo',
-    Photo LONGBLOB,
+    PhotoUrl VARCHAR(512),
     FOREIGN KEY (NationalityID) REFERENCES Nationalities(NationalityID),
     FOREIGN KEY (LiteraryGenreID) REFERENCES LiteraryGenres(LiteraryGenreID)
 );
@@ -44,7 +44,7 @@ CREATE TABLE Publishers (
     Website VARCHAR(255),
     Address VARCHAR(255),
     Status ENUM('activo', 'inactivo') DEFAULT 'activo',
-    Photo LONGBLOB,
+    PhotoUrl VARCHAR(512),
     FOREIGN KEY (NationalityID) REFERENCES Nationalities(NationalityID),
     FOREIGN KEY (LiteraryGenreID) REFERENCES LiteraryGenres(LiteraryGenreID)
 );
@@ -110,7 +110,7 @@ CREATE TABLE Users (
     LastName VARCHAR(255) NOT NULL,
     Password VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     Role ENUM('administrador', 'bibliotecario') NOT NULL,
-    ProfilePhoto LONGBLOB
+    ProfilePhotoUrl VARCHAR(512)
 );
 
 CREATE TABLE PasswordResetTokens (

@@ -1,15 +1,15 @@
 /**
  * reset-password.js
  *
- * Validates the reset token and new password inputs, then submits an AJAX request to reset the password.
- * On success, updates the UI to prompt the user to log in.
+ * Validates the reset token and new password inputs, then sends a password reset request
+ * to the RESTful API using the Fetch API. On success, updates the UI to prompt the user to log in.
  *
  * @author Jason
  */
 
 import { showToast } from '../../shared/utils/ui/index.js'
 
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', () => {
 	let isFirstSubmit = false
 
 	function getTokenFromURL() {
@@ -27,112 +27,128 @@ $(document).ready(function () {
 		return
 	}
 
-	$.ajax({
-		type: 'POST',
-		url: 'ValidateTokenServlet',
-		data: { token: token },
-		dataType: 'json',
-		success: function (response) {
-			if (!response.valid) {
+	fetch('/api/auth/validate-token', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: new URLSearchParams({ token }),
+	})
+		.then((res) => res.json())
+		.then((data) => {
+			if (!data.valid) {
 				redirectToForgotPassword()
 			}
-		},
-		error: function () {
-			redirectToForgotPassword()
-		},
-	})
+		})
+		.catch(() => redirectToForgotPassword())
 
 	function validatePassword() {
-		const password = $('#newPassword').val().trim()
+		const password = document.getElementById('newPassword').value.trim()
 		const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
 
 		if (!passwordRegex.test(password)) {
-			$('#newPassword').addClass('is-invalid')
-			$('#newPassword')
-				.siblings('.invalid-feedback')
-				.html(
-					'La contraseña debe tener 8 caracteres, una mayúscula, un número y un símbolo.',
-				)
+			const input = document.getElementById('newPassword')
+			input.classList.add('is-invalid')
+			input.nextElementSibling.innerHTML =
+				'La contraseña debe tener 8 caracteres, una mayúscula, un número y un símbolo.'
 			return false
 		} else {
-			$('#newPassword').removeClass('is-invalid')
-			$('#newPassword').siblings('.invalid-feedback').html('')
+			document.getElementById('newPassword').classList.remove('is-invalid')
+			document.getElementById('newPassword').nextElementSibling.innerHTML = ''
 			return true
 		}
 	}
 
 	function validateConfirmPassword() {
-		const password = $('#newPassword').val().trim()
-		const confirmPassword = $('#confirmNewPassword').val().trim()
+		const password = document.getElementById('newPassword').value.trim()
+		const confirmPassword = document
+			.getElementById('confirmNewPassword')
+			.value.trim()
 
 		if (confirmPassword !== password) {
-			$('#confirmNewPassword').addClass('is-invalid')
-			$('#confirmNewPassword')
-				.siblings('.invalid-feedback')
-				.html('Las contraseñas no coinciden.')
+			const input = document.getElementById('confirmNewPassword')
+			input.classList.add('is-invalid')
+			input.nextElementSibling.innerHTML = 'Las contraseñas no coinciden.'
 			return false
 		} else {
-			$('#confirmNewPassword').removeClass('is-invalid')
-			$('#confirmNewPassword').siblings('.invalid-feedback').html('')
+			document
+				.getElementById('confirmNewPassword')
+				.classList.remove('is-invalid')
+			document.getElementById(
+				'confirmNewPassword',
+			).nextElementSibling.innerHTML = ''
 			return true
 		}
 	}
 
-	$('#newPassword, #confirmNewPassword').on('input', function () {
-		if (isFirstSubmit) {
-			validatePassword()
-			validateConfirmPassword()
-		}
+	document.getElementById('newPassword').addEventListener('input', () => {
+		if (isFirstSubmit) validatePassword()
 	})
+	document
+		.getElementById('confirmNewPassword')
+		.addEventListener('input', () => {
+			if (isFirstSubmit) validateConfirmPassword()
+		})
 
-	$('#resetPasswordForm').on('submit', function (e) {
-		e.preventDefault()
+	document
+		.getElementById('resetPasswordForm')
+		.addEventListener('submit', async function (e) {
+			e.preventDefault()
+			isFirstSubmit = true
 
-		isFirstSubmit = true
+			if (!validatePassword() || !validateConfirmPassword()) return
 
-		if (!validatePassword() || !validateConfirmPassword()) {
-			return
-		}
+			const newPassword = document.getElementById('newPassword').value.trim()
+			const btn = document.getElementById('createBtn')
+			const spinner = document.getElementById('spinner')
+			const resetText = document.getElementById('resetText')
 
-		const newPassword = $('#newPassword').val().trim()
+			btn.disabled = true
+			spinner.classList.remove('d-none')
+			resetText.classList.add('d-none')
 
-		$('#createBtn').prop('disabled', true)
-		$('#spinner').removeClass('d-none')
-		$('#resetText').addClass('d-none')
+			try {
+				const response = await fetch('/api/auth/reset-password', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: new URLSearchParams({
+						token: token,
+						newPassword: newPassword,
+					}),
+				})
+				const result = await response.json()
 
-		$.ajax({
-			type: 'POST',
-			url: 'ResetPasswordServlet',
-			data: { token: token, newPassword: newPassword },
-			dataType: 'json',
-			success: function (response) {
-				if (response && response.success) {
-					$('header.card-header h3').text('¡Todo listo!')
-					$('header.card-header p').text(
-						'La contraseña se actualizó con éxito, inicie sesión nuevamente para disfrutar de BookStudio.',
-					)
+				if (result.success) {
+					document.querySelector('header.card-header h3').textContent =
+						'¡Todo listo!'
+					document.querySelector('header.card-header p').textContent =
+						'La contraseña se actualizó con éxito, inicie sesión nuevamente para disfrutar de BookStudio.'
 
-					$('#newPassword').closest('.mb-4').remove()
-					$('#confirmNewPassword').closest('.mb-4').remove()
-					$('#createBtn').remove()
+					document.getElementById('newPassword').closest('.mb-4').remove()
+					document
+						.getElementById('confirmNewPassword')
+						.closest('.mb-4')
+						.remove()
+					btn.remove()
 
-					if ($('#backToLogin').length === 0) {
-						$('#resetPasswordForm').append(`
-							<a href="login" class="btn btn-custom-primary w-100 text-decoration-none" id="backToLogin">Volver al inicio de sesión</a>
-						`)
+					if (!document.getElementById('backToLogin')) {
+						document
+							.getElementById('resetPasswordForm')
+							.insertAdjacentHTML(
+								'beforeend',
+								`<a href="login" class="btn btn-custom-primary w-100 text-decoration-none" id="backToLogin">Volver al inicio de sesión</a>`,
+							)
 					}
 				} else {
-					showToast(response.message, 'error')
+					showToast(
+						result.message || 'Ocurrió un error al restablecer la contraseña.',
+						'error',
+					)
 				}
-			},
-			error: function () {
+			} catch {
 				showToast('Ocurrió un error al procesar la solicitud.', 'error')
-			},
-			complete: function () {
-				$('#createBtn').prop('disabled', false)
-				$('#spinner').addClass('d-none')
-				$('#resetText').removeClass('d-none')
-			},
+			} finally {
+				btn.disabled = false
+				spinner.classList.add('d-none')
+				resetText.classList.remove('d-none')
+			}
 		})
-	})
 })

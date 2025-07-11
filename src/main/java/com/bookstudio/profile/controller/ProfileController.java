@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Base64;
 import java.util.Optional;
 
 @RestController
@@ -21,87 +18,97 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProfileController {
 
-	private final ProfileService profileService;
+    private final ProfileService profileService;
 
-	@PostMapping("/update")
-	public ResponseEntity<?> updateProfile(
-			HttpSession session,
-			@RequestParam String firstName,
-			@RequestParam String lastName,
-			@RequestParam(required = false) String password) {
-		Long userId = (Long) session.getAttribute(LoginConstants.ID);
-		if (userId == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ApiError(false, "No user session.", "unauthorized", 401));
-		}
+    @PostMapping("/update-profile")
+    public ResponseEntity<?> updateProfile(
+            HttpSession session,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam(required = false) String password) {
 
-		try {
-			Optional<User> updated = profileService.updateProfile(userId, firstName, lastName, password);
-			if (updated.isPresent()) {
-				User user = updated.get();
-				session.setAttribute(LoginConstants.FIRSTNAME, user.getFirstName());
-				session.setAttribute(LoginConstants.LASTNAME, user.getLastName());
-				return ResponseEntity.ok(new ApiResponse(true, "Perfil actualizado con éxito."));
-			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ApiError(false, "No se pudo actualizar el perfil.", "update_failed", 400));
-			}
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ApiError(false, e.getMessage(), "server_error", 500));
-		}
-	}
+        Object loggedIdObj = session.getAttribute(LoginConstants.ID);
+        if (loggedIdObj == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiError(false, "No user session.", "unauthorized", 401));
+        }
 
-	@PostMapping("/update-photo")
-	public ResponseEntity<?> updateProfilePhoto(
-			HttpSession session,
-			@RequestParam(required = false) MultipartFile file,
-			@RequestParam(defaultValue = "false") boolean deletePhoto) {
-		Long userId = (Long) session.getAttribute(LoginConstants.ID);
-		if (userId == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ApiError(false, "No user session.", "unauthorized", 401));
-		}
+        try {
+            Long loggedId = Long.valueOf(loggedIdObj.toString());
+            Optional<User> updated = profileService.updateProfile(loggedId, firstName, lastName, password);
 
-		try {
-			byte[] newPhoto = (file != null && !file.isEmpty()) ? file.getBytes() : null;
+            if (updated.isPresent()) {
+                User user = updated.get();
+                session.setAttribute(LoginConstants.FIRSTNAME, user.getFirstName());
+                session.setAttribute(LoginConstants.LASTNAME, user.getLastName());
+                return ResponseEntity.ok(new ApiResponse(true, "Perfil actualizado con éxito."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiError(false, "No se pudo actualizar el perfil.", "update_failed", 400));
+            }
 
-			Optional<User> updated = profileService.updateProfilePhoto(userId, newPhoto, deletePhoto);
-			if (updated.isPresent()) {
-				User user = updated.get();
-				if (user.getProfilePhoto() != null) {
-					String base64Image = Base64.getEncoder().encodeToString(user.getProfilePhoto());
-					session.setAttribute(LoginConstants.USER_PROFILE_IMAGE, "data:image/jpeg;base64," + base64Image);
-				} else {
-					session.removeAttribute(LoginConstants.USER_PROFILE_IMAGE);
-				}
-				return ResponseEntity.ok(new ApiResponse(true, "Foto actualizada con éxito."));
-			} else {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ApiError(false, "No se pudo actualizar la foto.", "update_failed", 400));
-			}
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ApiError(false, e.getMessage(), "server_error", 500));
-		}
-	}
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, e.getMessage(), "server_error", 500));
+        }
+    }
 
-	@GetMapping("/validate-password")
-	public ResponseEntity<?> validatePassword(
-			HttpSession session,
-			@RequestParam String currentPassword) {
-		Long userId = (Long) session.getAttribute(LoginConstants.ID);
-		if (userId == null) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-					.body(new ApiError(false, "No user session.", "unauthorized", 401));
-		}
+    @PostMapping("/update-photo")
+    public ResponseEntity<?> updatePhoto(
+            HttpSession session,
+            @RequestParam(required = false) String photoUrl,
+            @RequestParam(defaultValue = "false") boolean deletePhoto) {
 
-		boolean isValid = profileService.validatePassword(userId, currentPassword);
-		if (isValid) {
-			return ResponseEntity.ok(new ApiResponse(true));
-		} else {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body(new ApiError(false, "La contraseña actual no es correcta.", "invalid_password", 400));
-		}
-	}
+        Object loggedIdObj = session.getAttribute(LoginConstants.ID);
+        if (loggedIdObj == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiError(false, "No user session.", "unauthorized", 401));
+        }
+
+        try {
+            Long loggedId = Long.valueOf(loggedIdObj.toString());
+            Optional<User> updated = profileService.updatePhoto(loggedId, photoUrl, deletePhoto);
+
+            if (updated.isPresent()) {
+                User user = updated.get();
+
+                if (user.getProfilePhotoUrl() != null && !user.getProfilePhotoUrl().isBlank()) {
+                    session.setAttribute(LoginConstants.USER_PROFILE_IMAGE, user.getProfilePhotoUrl());
+                } else {
+                    session.removeAttribute(LoginConstants.USER_PROFILE_IMAGE);
+                }
+
+                return ResponseEntity.ok(new ApiResponse(true, "Foto actualizada con éxito."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ApiError(false, "No se pudo actualizar la foto.", "update_failed", 400));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, e.getMessage(), "server_error", 500));
+        }
+    }
+
+    @GetMapping("/validate-password")
+    public ResponseEntity<?> validatePassword(
+            HttpSession session,
+            @RequestParam String currentPassword) {
+                
+        Object loggedIdObj = session.getAttribute(LoginConstants.ID);
+        if (loggedIdObj == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiError(false, "No user session.", "unauthorized", 401));
+        }
+
+        Long loggedId = Long.valueOf(loggedIdObj.toString());
+        boolean isValid = profileService.validatePassword(loggedId, currentPassword);
+
+        if (isValid) {
+            return ResponseEntity.ok(new ApiResponse(true));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiError(false, "La contraseña actual no es correcta.", "invalid_password", 400));
+        }
+    }
 }

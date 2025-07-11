@@ -13,6 +13,6 @@ public class UpdateAuthorDto {
     private LocalDate birthDate;
     private String biography;
     private Status status;
-    private Boolean deletePhoto;
-    private byte[] photo;
+    private boolean deletePhoto;
+    private String photoUrl;
 }

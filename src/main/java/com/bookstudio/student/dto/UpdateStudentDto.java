@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class UpdateStudentDto {
     private Long studentId;
-    private String dni;
     private String firstName;
     private String lastName;
     private String address;

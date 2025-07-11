@@ -16,8 +16,8 @@ public class ProfileService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public Optional<User> updateProfile(Long userId, String firstName, String lastName, String rawPassword) {
-		return userRepository.findById(userId).map(user -> {
+	public Optional<User> updateProfile(Long loggedUserId, String firstName, String lastName, String rawPassword) {
+		return userRepository.findById(loggedUserId).map(user -> {
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
 			if (rawPassword != null && !rawPassword.trim().isEmpty()) {
@@ -28,12 +28,12 @@ public class ProfileService {
 	}
 
     @Transactional
-    public Optional<User> updateProfilePhoto(Long userId, byte[] newPhoto, boolean deletePhoto) {
+    public Optional<User> updatePhoto(Long userId, String newPhoto, boolean deletePhoto) {
         return userRepository.findById(userId).map(user -> {
             if (deletePhoto) {
-                user.setProfilePhoto(null);
-            } else if (newPhoto != null && newPhoto.length > 0) {
-                user.setProfilePhoto(newPhoto);
+                user.setProfilePhotoUrl(null);
+            } else if (newPhoto != null && !newPhoto.isBlank()) {
+                user.setProfilePhotoUrl(newPhoto);
             }
             return userRepository.save(user);
         });

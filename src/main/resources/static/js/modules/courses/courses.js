@@ -1,19 +1,23 @@
 /**
  * courses.js
  *
- * Manages the initialization, data loading, and configuration of the courses table,
- * as well as handling modals for creating, viewing, and editing course details.
- * Also supports logical delete (status change) operations on course records.
- * Utilizes AJAX for CRUD operations on course data.
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
- * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
+ * Handles the initialization and behavior of the courses table,
+ * including loading data, configuring modals for creating, viewing,
+ * editing, and logically deleting course records.
  *
- * @author [Jason]
+ * Uses the Fetch API to communicate with RESTful endpoints for all course-related
+ * CRUD operations. Manages UI components such as placeholders, enhanced dropdowns,
+ * validation feedback, loading states, and tooltips.
+ *
+ * Also includes features for generating PDF reports and exporting table data to Excel.
+ *
+ * @author Jason
  */
 
 import {
 	showToast,
 	toggleButtonLoading,
+	toggleModalLoading,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
 	setupBootstrapSelectDropdownStyles,
@@ -87,95 +91,98 @@ function addRowToTable(course) {
 	initializeTooltips($row)
 }
 
-function loadCourses() {
+async function loadCourses() {
 	toggleTableLoadingState('loading')
 
-	const safetyTimer = setTimeout(function () {
+	const safetyTimer = setTimeout(() => {
 		toggleTableLoadingState('loaded')
 		$('#tableContainer').removeClass('d-none')
-		$('#cardContainer').removeClass('h-100')
 	}, 8000)
 
-	$.ajax({
-		url: 'CourseServlet',
-		type: 'GET',
-		data: { type: 'list' },
-		dataType: 'json',
-		success: function (data) {
-			clearTimeout(safetyTimer)
+	try {
+		const response = await fetch('./api/courses', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			const tableBody = $('#bodyCourses')
-			tableBody.empty()
+		clearTimeout(safetyTimer)
 
-			if (data && data.length > 0) {
-				data.forEach(function (course) {
+		const tableBody = $('#bodyCourses')
+		tableBody.empty()
+
+		if (response.status === 200) {
+			const data = await response.json()
+
+			if (data.length > 0) {
+				data.forEach((course) => {
 					const row = generateRow(course)
 					tableBody.append(row)
 				})
-
 				initializeTooltips(tableBody)
 			}
 
-			if ($.fn.DataTable.isDataTable('#courseTable')) {
-				$('#courseTable').DataTable().destroy()
-			}
-
-			const dataTable = setupDataTable('#courseTable')
-
-			if (data && data.length > 0) {
-				$('#generatePDF, #generateExcel').prop('disabled', false)
-			} else {
-				$('#generatePDF, #generateExcel').prop('disabled', true)
-			}
-
-			dataTable.on('draw', function () {
-				const filteredCount = dataTable.rows({ search: 'applied' }).count()
-				const noDataMessage =
-					$('#authorTable').find('td.dataTables_empty').length > 0
-				$('#generatePDF, #generateExcel').prop(
-					'disabled',
-					filteredCount === 0 || noDataMessage,
-				)
-			})
-
-			$('#generatePDF')
-				.off('click')
-				.on('click', function () {
-					generatePDF(dataTable)
-				})
-
-			$('#generateExcel')
-				.off('click')
-				.on('click', function () {
-					generateExcel(dataTable)
-				})
-		},
-		error: function (xhr) {
+			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
+		} else if (response.status === 204) {
+			$('#generatePDF, #generateExcel').prop('disabled', true)
+		} else {
 			let errorResponse
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				errorResponse = await response.json()
 				console.error(
-					`Error listing loan data (${errorResponse.errorType} - ${xhr.status}):`,
+					`Error listing course data (${errorResponse.errorType} - ${response.status}):`,
 					errorResponse.message,
 				)
 				showToast('Hubo un error al listar los datos de los cursos.', 'error')
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error(
+					'Unexpected error:',
+					response.status,
+					await response.text(),
+				)
 				showToast('Hubo un error inesperado.', 'error')
 			}
+		}
 
-			clearTimeout(safetyTimer)
+		if ($.fn.DataTable.isDataTable('#courseTable')) {
+			$('#courseTable').DataTable().destroy()
+		}
 
-			const tableBody = $('#bodyCourses')
-			tableBody.empty()
+		const dataTable = setupDataTable('#courseTable')
 
-			if ($.fn.DataTable.isDataTable('#courseTable')) {
-				$('#courseTable').DataTable().destroy()
-			}
+		dataTable.on('draw', function () {
+			const filteredCount = dataTable.rows({ search: 'applied' }).count()
+			const noDataMessage =
+				$('#courseTable').find('td.dataTables_empty').length > 0
+			$('#generatePDF, #generateExcel').prop(
+				'disabled',
+				filteredCount === 0 || noDataMessage,
+			)
+		})
 
-			setupDataTable('#courseTable')
-		},
-	})
+		$('#generatePDF')
+			.off('click')
+			.on('click', () => generatePDF(dataTable))
+
+		$('#generateExcel')
+			.off('click')
+			.on('click', () => generateExcel(dataTable))
+	} catch (err) {
+		clearTimeout(safetyTimer)
+
+		console.error('Unexpected error:', err)
+		showToast('Hubo un error inesperado.', 'error')
+
+		const tableBody = $('#bodyCourses')
+		tableBody.empty()
+
+		if ($.fn.DataTable.isDataTable('#courseTable')) {
+			$('#courseTable').DataTable().destroy()
+		}
+
+		setupDataTable('#courseTable')
+	}
 }
 
 function updateRowInTable(course) {
@@ -239,17 +246,13 @@ function handleAddCourseForm() {
 		}
 	})
 
-	$('#addCourseForm').on('submit', function (event) {
+	$('#addCourseForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -258,132 +261,103 @@ function handleAddCourseForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateAddField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateAddField($(this))) isValid = false
 			})
-
-		if (isValid) {
-			const data = $(this).serialize() + '&type=create'
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#addCourseSpinnerBtn').removeClass('d-none')
-			$('#addCourseIcon').addClass('d-none')
-
-			$.ajax({
-				url: 'CourseServlet',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						addRowToTable(response.data)
-						$('#addCourseModal').modal('hide')
-						showToast('Curso agregado exitosamente.', 'success')
-					} else {
-						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
-						)
-						$('#addCourseModal').modal('hide')
-						showToast('Hubo un error al agregar el curso.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						switch (xhr.status) {
-							case 403:
-								showToast('No tienes permisos para agregar cursos.', 'warning')
-								break
-							case 400:
-								showToast(
-									'Solicitud inválida. Verifica los datos del formulario.',
-									'error',
-								)
-								break
-							case 500:
-								showToast(
-									'Error interno del servidor. Intenta más tarde.',
-									'error',
-								)
-								break
-							default:
-								showToast(
-									errorResponse.message || 'Hubo un error al agregar el curso.',
-									'error',
-								)
-								break
-						}
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
-
-					$('#addCourseModal').modal('hide')
-				},
-				complete: function () {
-					$('#addCourseSpinnerBtn').addClass('d-none')
-					$('#addCourseIcon').removeClass('d-none')
-					submitButton.prop('disabled', false)
-				},
-			})
-		} else {
-			$(this).data('submitted', false)
-		}
-	})
-
-	function validateAddField(field) {
-		if (field.attr('type') === 'search') {
-			return true
-		}
-
-		let errorMessage = 'Este campo es obligatorio.'
-		let isValid = true
-
-		// Default validation
-		if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage)
-			isValid = false
-		} else {
-			field.removeClass('is-invalid')
-		}
-
-		// Name validation
-		if (field.is('#addCourseName')) {
-			const result = isValidText(field.val(), 'nombre')
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Select validation
-		if (field.is('select')) {
-			const container = field.closest('.bootstrap-select')
-			container.toggleClass('is-invalid', field.hasClass('is-invalid'))
-			container.siblings('.invalid-feedback').html(errorMessage)
-		}
 
 		if (!isValid) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage).show()
-		} else {
-			field.removeClass('is-invalid')
-			field.siblings('.invalid-feedback').hide()
+			$(this).data('submitted', false)
+			return
 		}
 
-		return isValid
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const course = {
+			name: raw.addCourseName,
+			level: raw.addCourseLevel,
+			description: raw.addCourseDescription,
+			status: raw.addCourseStatus,
+		}
+
+		const submitButton = $('#addCourseBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			const response = await fetch('./api/courses', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(course),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				addRowToTable(json.data)
+				$('#addCourseModal').modal('hide')
+				showToast('Curso agregado exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				$('#addCourseModal').modal('hide')
+				showToast('Hubo un error al agregar el curso.', 'error')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#addCourseModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
+		}
+	})
+}
+
+function validateAddField(field) {
+	if (field.attr('type') === 'search') {
+		return true
 	}
+
+	let errorMessage = 'Este campo es obligatorio.'
+	let isValid = true
+
+	// Default validation
+	if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage)
+		isValid = false
+	} else {
+		field.removeClass('is-invalid')
+	}
+
+	// Name validation
+	if (field.is('#addCourseName')) {
+		const result = isValidText(field.val(), 'nombre')
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Select validation
+	if (field.is('select')) {
+		const container = field.closest('.bootstrap-select')
+		container.toggleClass('is-invalid', field.hasClass('is-invalid'))
+		container.siblings('.invalid-feedback').html(errorMessage)
+	}
+
+	if (!isValid) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage).show()
+	} else {
+		field.removeClass('is-invalid')
+		field.siblings('.invalid-feedback').hide()
+	}
+
+	return isValid
 }
 
 function handleEditCourseForm() {
@@ -400,17 +374,13 @@ function handleEditCourseForm() {
 		}
 	})
 
-	$('#editCourseForm').on('submit', function (event) {
+	$('#editCourseForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -419,96 +389,63 @@ function handleEditCourseForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateEditField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateEditField($(this))) isValid = false
 			})
 
-		if (isValid) {
-			let data = $(this).serialize() + '&type=update'
-
-			const courseId = $(this).data('courseId')
-			if (courseId) {
-				data += '&courseId=' + encodeURIComponent(courseId)
-			}
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#editCourseSpinnerBtn').removeClass('d-none')
-			$('#editCourseIcon').addClass('d-none')
-
-			$.ajax({
-				url: 'CourseServlet',
-				type: 'POST',
-				data: data,
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						updateRowInTable(response.data)
-
-						$('#editCourseModal').modal('hide')
-						showToast('Curso actualizado exitosamente.', 'success')
-					} else {
-						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
-						)
-						$('#editCourseModal').modal('hide')
-						showToast('Hubo un error al actualizar el curso.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						switch (xhr.status) {
-							case 403:
-								showToast(
-									'No tienes permisos para actualizar cursos.',
-									'warning',
-								)
-								break
-							case 400:
-								showToast(
-									'Solicitud inválida. Verifica los datos del formulario.',
-									'error',
-								)
-								break
-							case 500:
-								showToast(
-									'Error interno del servidor. Intenta más tarde.',
-									'error',
-								)
-								break
-							default:
-								showToast(
-									errorResponse.message ||
-										'Hubo un error al actualizar el curso.',
-									'error',
-								)
-								break
-						}
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
-
-					$('#editCourseModal').modal('hide')
-				},
-				complete: function () {
-					$('#editCourseSpinnerBtn').addClass('d-none')
-					$('#editCourseIcon').removeClass('d-none')
-					submitButton.prop('disabled', false)
-				},
-			})
-		} else {
+		if (!isValid) {
 			$(this).data('submitted', false)
+			return
+		}
+
+		const courseId = $('#editCourseForm').data('courseId')
+
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const course = {
+			courseId: parseInt(courseId),
+			name: raw.editCourseName,
+			level: raw.editCourseLevel,
+			description: raw.editCourseDescription,
+			status: raw.editCourseStatus,
+		}
+
+		const submitButton = $('#editCourseBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			const response = await fetch('./api/courses', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(course),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				updateRowInTable(json.data)
+				$('#editCourseModal').modal('hide')
+				showToast('Curso actualizado exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				showToast(
+					json.message || 'Hubo un error al actualizar el curso.',
+					'error',
+				)
+				$('#editCourseModal').modal('hide')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#editCourseModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
 }
@@ -608,75 +545,89 @@ function loadModalData() {
 	$(document).on(
 		'click',
 		'[data-bs-target="#detailsCourseModal"]',
-		function () {
+		async function () {
 			const courseId = $(this).data('id')
 			$('#detailsCourseModalID').text($(this).data('formatted-id'))
 
-			$('#detailsCourseSpinner').removeClass('d-none')
-			$('#detailsCourseContent').addClass('d-none')
+			toggleModalLoading(this, true)
 
-			$.ajax({
-				url: 'CourseServlet',
-				type: 'GET',
-				data: { type: 'details', courseId: courseId },
-				dataType: 'json',
-				success: function (data) {
-					$('#detailsCourseID').text(data.formattedCourseId)
-					$('#detailsCourseName').text(data.name)
-					$('#detailsCourseLevel').html(
-						data.level === 'Básico'
-							? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
-							: data.level === 'Intermedio'
-								? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>'
-								: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>',
-					)
-					$('#detailsCourseStatus').html(
-						data.status === 'activo'
-							? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-					)
-					$('#detailsCourseDescription').text(data.description)
+			try {
+				const response = await fetch(
+					`./api/courses/${encodeURIComponent(courseId)}`,
+					{
+						method: 'GET',
+						headers: {
+							Accept: 'application/json',
+						},
+					},
+				)
 
-					$('#detailsCourseSpinner').addClass('d-none')
-					$('#detailsCourseContent').removeClass('d-none')
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Error loading course details (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						showToast(
-							'Hubo un error al cargar los detalles del curso.',
-							'error',
-						)
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
-					$('#detailsCourseModal').modal('hide')
-				},
-			})
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+
+				const data = await response.json()
+
+				$('#detailsCourseID').text(data.formattedCourseId)
+				$('#detailsCourseName').text(data.name)
+
+				$('#detailsCourseLevel').html(
+					data.level === 'Básico'
+						? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
+						: data.level === 'Intermedio'
+							? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>'
+							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>',
+				)
+
+				$('#detailsCourseStatus').html(
+					data.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
+
+				$('#detailsCourseDescription').text(data.description)
+
+				toggleModalLoading(this, false)
+			} catch (error) {
+				console.error(
+					`Error loading course details (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los detalles del curso.', 'error')
+				$('#detailsCourseModal').modal('hide')
+			}
 		},
 	)
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editCourseModal"]', function () {
-		const courseId = $(this).data('id')
-		$('#editCourseModalID').text($(this).data('formatted-id'))
+	$(document).on(
+		'click',
+		'[data-bs-target="#editCourseModal"]',
+		async function () {
+			const courseId = $(this).data('id')
+			$('#editCourseModalID').text($(this).data('formatted-id'))
 
-		$('#editCourseSpinner').removeClass('d-none')
-		$('#editCourseForm').addClass('d-none')
-		$('#editCourseBtn').prop('disabled', true)
+			toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'CourseServlet',
-			type: 'GET',
-			data: { type: 'details', courseId: courseId },
-			dataType: 'json',
-			success: function (data) {
+			try {
+				const response = await fetch(
+					`./api/courses/${encodeURIComponent(courseId)}`,
+					{
+						method: 'GET',
+						headers: {
+							Accept: 'application/json',
+						},
+					},
+				)
+
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+
+				const data = await response.json()
+
 				$('#editCourseForm').data('courseId', data.courseId)
 				$('#editCourseName').val(data.name)
 				$('#editCourseDescription').val(data.description)
@@ -685,37 +636,20 @@ function loadModalData() {
 					.selectpicker('destroy')
 					.empty()
 					.append(
-						$('<option>', {
-							value: 'Básico',
-							text: 'Básico',
-						}),
-						$('<option>', {
-							value: 'Intermedio',
-							text: 'Intermedio',
-						}),
-						$('<option>', {
-							value: 'Avanzado',
-							text: 'Avanzado',
-						}),
+						$('<option>', { value: 'Básico', text: 'Básico' }),
+						$('<option>', { value: 'Intermedio', text: 'Intermedio' }),
+						$('<option>', { value: 'Avanzado', text: 'Avanzado' }),
 					)
-				$('#editCourseLevel').val(data.level)
-				$('#editCourseLevel').selectpicker()
+				$('#editCourseLevel').val(data.level).selectpicker()
 
 				$('#editCourseStatus')
 					.selectpicker('destroy')
 					.empty()
 					.append(
-						$('<option>', {
-							value: 'activo',
-							text: 'Activo',
-						}),
-						$('<option>', {
-							value: 'inactivo',
-							text: 'Inactivo',
-						}),
+						$('<option>', { value: 'activo', text: 'Activo' }),
+						$('<option>', { value: 'inactivo', text: 'Inactivo' }),
 					)
-				$('#editCourseStatus').val(data.status)
-				$('#editCourseStatus').selectpicker()
+				$('#editCourseStatus').val(data.status).selectpicker()
 
 				$('#editCourseForm .is-invalid').removeClass('is-invalid')
 
@@ -727,27 +661,17 @@ function loadModalData() {
 						validateEditField($(this), true)
 					})
 
-				$('#editCourseSpinner').addClass('d-none')
-				$('#editCourseForm').removeClass('d-none')
-				$('#editCourseBtn').prop('disabled', false)
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading course details for editing (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast('Hubo un error al cargar los datos del curso.', 'error')
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			} catch (error) {
+				console.error(
+					`Error loading course details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los datos del curso.', 'error')
 				$('#editCourseModal').modal('hide')
-			},
-		})
-	})
+			}
+		},
+	)
 }
 
 function generatePDF(dataTable) {

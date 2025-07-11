@@ -52,7 +52,7 @@ public class PublisherService {
         publisher.setWebsite(dto.getWebsite());
         publisher.setAddress(dto.getAddress());
         publisher.setStatus(dto.getStatus());
-        publisher.setPhoto(dto.getPhoto());
+        publisher.setPhotoUrl(dto.getPhotoUrl());
 
         Publisher saved = publisherRepository.save(publisher);
 
@@ -63,8 +63,7 @@ public class PublisherService {
                 saved.getLiteraryGenre().getName(),
                 saved.getWebsite(),
                 saved.getStatus().name(),
-                saved.getPhoto()
-        );
+                saved.getPhotoUrl());
     }
 
     @Transactional
@@ -83,9 +82,9 @@ public class PublisherService {
         publisher.setStatus(dto.getStatus());
 
         if (dto.isDeletePhoto()) {
-            publisher.setPhoto(null);
-        } else if (dto.getPhoto() != null) {
-            publisher.setPhoto(dto.getPhoto());
+            publisher.setPhotoUrl(null);
+        } else if (dto.getPhotoUrl() != null && !dto.getPhotoUrl().isBlank()) {
+            publisher.setPhotoUrl(dto.getPhotoUrl());
         }
 
         Publisher saved = publisherRepository.save(publisher);
@@ -97,8 +96,7 @@ public class PublisherService {
                 saved.getLiteraryGenre().getName(),
                 saved.getWebsite(),
                 saved.getStatus().name(),
-                saved.getPhoto()
-        );
+                saved.getPhotoUrl());
     }
 
     public List<PublisherSelectProjection> getForSelect() {

@@ -291,8 +291,8 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addUserForm" id="addUserBtn">
-	                    <span id="addUserIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -532,8 +532,8 @@
 	                
 	                <!-- Update Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editUserForm" id="editUserBtn" disabled>
-	                    <span id="editUserIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>
@@ -568,8 +568,8 @@
 	                
 	                <!-- Delete Button -->
 	                <button type="button" class="btn btn-danger d-flex align-items-center" id="confirmDeleteUser">
-	                    <span id="confirmDeleteUserIcon" class="me-2"><i class="bi bi-trash"></i></span>
-	                    <span id="confirmDeleteUserSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-trash me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Eliminar
 	                </button>
 	            </div>
@@ -586,6 +586,6 @@
 		<jsp:param name="currentPage" value="users" />
 	</jsp:include>
 
-	<script src="js/utils/ui/password.js" defer></script>
+	<script src="js/shared/utils/ui/password.js" defer></script>
 </body>
 </html>

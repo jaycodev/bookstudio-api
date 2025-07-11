@@ -278,8 +278,8 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addPublisherForm" id="addPublisherBtn">
-	                    <span id="addPublisherIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -567,8 +567,8 @@
 	                
 	                <!-- Update Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editPublisherForm" id="editPublisherBtn" disabled>
-	                    <span id="editPublisherIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editPublisherSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

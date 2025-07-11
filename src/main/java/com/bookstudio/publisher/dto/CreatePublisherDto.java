@@ -12,5 +12,5 @@ public class CreatePublisherDto {
     private String website;
     private String address;
     private Status status;
-    private byte[] photo;
+    private String photoUrl;
 }

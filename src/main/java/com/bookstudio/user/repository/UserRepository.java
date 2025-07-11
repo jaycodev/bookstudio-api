@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             u.firstName AS firstName,
             u.lastName AS lastName,
             u.role AS role,
-            u.profilePhoto AS profilePhoto
+            u.profilePhotoUrl AS profilePhotoUrl
         FROM User u
         WHERE u.id <> :loggedUserId
     """)
@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             u.firstName AS firstName,
             u.lastName AS lastName,
             u.role AS role,
-            u.profilePhoto AS profilePhoto
+            u.profilePhotoUrl AS profilePhotoUrl
         FROM User u
         WHERE u.id = :id
     """)

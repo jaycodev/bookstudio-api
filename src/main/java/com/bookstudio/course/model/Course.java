@@ -1,7 +1,6 @@
 package com.bookstudio.course.model;
 
 import com.bookstudio.shared.enums.Status;
-import com.bookstudio.shared.util.IdFormatter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,9 +29,4 @@ public class Course {
     @Enumerated(EnumType.STRING)
 	@Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
 	private Status status;
-
-	@Transient
-	public String getFormattedId() {
-		return IdFormatter.formatId(String.valueOf(id), "C");
-	}
 }

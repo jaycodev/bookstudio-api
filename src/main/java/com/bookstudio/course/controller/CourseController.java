@@ -1,6 +1,9 @@
 package com.bookstudio.course.controller;
 
-import com.bookstudio.course.model.Course;
+import com.bookstudio.course.dto.CourseResponseDto;
+import com.bookstudio.course.dto.CreateCourseDto;
+import com.bookstudio.course.dto.UpdateCourseDto;
+import com.bookstudio.course.projection.CourseViewProjection;
 import com.bookstudio.course.service.CourseService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
@@ -20,7 +23,7 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<?> list() {
-        List<Course> courses = courseService.list();
+        List<CourseViewProjection> courses = courseService.getList();
         if (courses.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No courses found.", "no_content", 204));
@@ -30,7 +33,7 @@ public class CourseController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        Course course = courseService.findById(id).orElse(null);
+        CourseViewProjection course = courseService.getInfoById(id).orElse(null);
         if (course == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Course not found.", "not_found", 404));
@@ -39,9 +42,9 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Course course) {
+    public ResponseEntity<?> create(@RequestBody CreateCourseDto dto) {
         try {
-            Course created = courseService.create(course);
+            CourseResponseDto created = courseService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -50,10 +53,10 @@ public class CourseController {
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@RequestBody Course updatedCourse) {
+    public ResponseEntity<?> update(@RequestBody UpdateCourseDto dto) {
         try {
-            Course result = courseService.update(updatedCourse);
-            return ResponseEntity.ok(new ApiResponse(true, result));
+            CourseResponseDto updated = courseService.update(dto);
+            return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));

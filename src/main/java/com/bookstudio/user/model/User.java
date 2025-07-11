@@ -1,7 +1,6 @@
 package com.bookstudio.user.model;
 
 import com.bookstudio.shared.enums.Role;
-import com.bookstudio.shared.util.IdFormatter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,15 +36,6 @@ public class User {
     @Column(name = "Role", nullable = false, columnDefinition = "ENUM('administrador', 'bibliotecario')")
     private Role role;
 
-    @Lob
-    @Column(name = "ProfilePhoto")
-    private byte[] profilePhoto;
-
-    @Transient
-    public String getFormattedId() {
-        return IdFormatter.formatId(String.valueOf(id), "U");
-    }
-
-    @Transient
-    private String profilePhotoBase64;
+    @Column(name = "ProfilePhotoUrl")
+    private String profilePhotoUrl;
 }

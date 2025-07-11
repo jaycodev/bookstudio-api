@@ -32,7 +32,6 @@ public class AuthController {
     private static final int BLOCK_DURATION_MINUTES = 3;
     private static final long EXPIRATION_TIME = 30 * 60 * 1000;
 
-    // === LOGIN ===
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestParam String txtUsername,
@@ -81,10 +80,11 @@ public class AuthController {
             session.setAttribute(LoginConstants.EMAIL, user.getEmail());
             session.setAttribute(LoginConstants.ROLE, user.getRole().name());
 
-            byte[] photoBytes = user.getProfilePhoto();
-            if (photoBytes != null) {
-                String base64 = "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(photoBytes);
-                session.setAttribute(LoginConstants.USER_PROFILE_IMAGE, base64);
+            String photoUrl = user.getProfilePhotoUrl();
+            if (photoUrl != null && !photoUrl.isBlank()) {
+                session.setAttribute(LoginConstants.USER_PROFILE_IMAGE, photoUrl);
+            } else {
+                session.removeAttribute(LoginConstants.USER_PROFILE_IMAGE);
             }
 
             return ResponseEntity.ok("{\"success\": true, \"message\": \"Inicio de sesión exitoso.\"}");
@@ -121,21 +121,18 @@ public class AuthController {
         }
     }
 
-    // === LOGOUT ===
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         request.getSession().invalidate();
         return ResponseEntity.ok("{\"success\": true, \"message\": \"Sesión cerrada.\"}");
     }
 
-    // === KEEP SESSION ALIVE ===
     @GetMapping("/keep-alive")
     public ResponseEntity<?> keepSessionAlive(HttpServletRequest request) {
         request.getSession().setMaxInactiveInterval(SESSION_TIMEOUT_MINUTES * 60);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    // === FORGOT PASSWORD ===
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestParam String email, HttpServletRequest request) {
         if (!passwordResetService.emailExists(email)) {
@@ -163,7 +160,6 @@ public class AuthController {
         }
     }
 
-    // === RESET PASSWORD ===
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(
             @RequestParam String token,
@@ -202,14 +198,11 @@ public class AuthController {
                 """);
     }
 
-    // === VALIDATE TOKEN ===
     @PostMapping("/validate-token")
     public ResponseEntity<Map<String, Boolean>> validateToken(@RequestParam String token) {
         boolean isValid = passwordResetService.isTokenValid(token);
         return ResponseEntity.ok(Map.of("valid", isValid));
     }
-
-    // === EMAIL HELPERS ===
 
     private boolean sendResetEmail(String email, String token, HttpServletRequest request) {
 
@@ -273,8 +266,6 @@ public class AuthController {
 
         return emailService.sendHtmlEmail(email, "Cambio de contraseña", msg);
     }
-
-    // === COOKIE HELPERS ===
 
     private Cookie getCookie(HttpServletRequest request, String name) {
         if (request.getCookies() == null)

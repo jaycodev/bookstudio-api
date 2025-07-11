@@ -2,7 +2,8 @@
  * dashboard.js
  *
  * Initializes Chart.js charts for borrowed books, returned books, average loan time, and loan comparison.
- * Retrieves dashboard data via AJAX and updates charts and statistics on the page.
+ * Retrieves dashboard data from RESTful API endpoints using the Fetch API,
+ * and updates charts and statistics dynamically on the page.
  *
  * @author Jason
  */

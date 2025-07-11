@@ -15,86 +15,77 @@ import java.io.IOException;
 @Component
 public class SessionFilter extends OncePerRequestFilter {
 
-	private static final String LOGIN_PAGE = "/login";
-	private static final String DASHBOARD_PAGE = "/";
-	private static final String RESET_PASSWORD_PAGE = "/reset-password";
-	private static final String FORGOT_PASSWORD_PAGE = "/forgot-password";
+    private static final String LOGIN_PAGE = "/login";
+    private static final String DASHBOARD_PAGE = "/";
+    private static final String[] PUBLIC_PATHS = {
+            LOGIN_PAGE, "/reset-password", "/forgot-password",
+            "/api/auth/login", "/api/auth/logout", "/api/auth/reset-password",
+            "/api/auth/forgot-password", "/api/auth/validate-token"
+    };
 
-	private static final String LOGIN_API = "/api/auth/login";
-	private static final String LOGOUT_API = "/api/auth/logout";
-	private static final String RESET_PASSWORD_API = "/api/auth/reset-password";
-	private static final String FORGOT_PASSWORD_API = "/api/auth/forgot-password";
-	private static final String VALIDATE_TOKEN_API = "/api/auth/validate-token";
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
-	private static final String[] PUBLIC_PATHS = {
-			LOGIN_PAGE,
-			RESET_PASSWORD_PAGE,
-			FORGOT_PASSWORD_PAGE,
-			LOGIN_API,
-			LOGOUT_API,
-			RESET_PASSWORD_API,
-			FORGOT_PASSWORD_API,
-			VALIDATE_TOKEN_API
-	};
+        String contextPath = request.getContextPath();
+        String requestURI = request.getRequestURI();
+        String relativePath = requestURI.substring(contextPath.length());
 
-	@Override
-	protected void doFilterInternal(
-			@NonNull HttpServletRequest request,
-			@NonNull HttpServletResponse response,
-			@NonNull FilterChain filterChain)
-				throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        boolean loggedIn = session != null && session.getAttribute("user") != null;
 
-		String contextPath = request.getContextPath();
-		String requestURI = request.getRequestURI();
-		String relativePath = requestURI.substring(contextPath.length());
+        if (loggedIn) {
+            if (isIn(relativePath, LOGIN_PAGE, "/reset-password", "/forgot-password")) {
+                response.sendRedirect(contextPath + DASHBOARD_PAGE);
+                return;
+            }
 
-		HttpSession session = request.getSession(false);
-		boolean loggedIn = session != null && session.getAttribute("user") != null;
+            if (relativePath.equals("/users")) {
+                if (session != null) {
+                    String userRole = (String) session.getAttribute(LoginConstants.ROLE);
+                    if (userRole == null || !userRole.equals("administrador")) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                        return;
+                    }
+                }
+            }
 
-		if (loggedIn) {
-			if (isIn(relativePath, LOGIN_PAGE, RESET_PASSWORD_PAGE, FORGOT_PASSWORD_PAGE)) {
-				response.sendRedirect(contextPath + DASHBOARD_PAGE);
-				return;
-			}
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-			if (relativePath.equals("/users")) {
-				if (session != null) {
-					String userRole = (String) session.getAttribute(LoginConstants.ROLE);
-					if (userRole == null || !userRole.equals("administrador")) {
-						response.sendError(HttpServletResponse.SC_FORBIDDEN);
-						return;
-					}
-				}
-			}
+        // No logueado
+        if (isPublic(relativePath) || isStatic(relativePath)) {
+            filterChain.doFilter(request, response);
+        } else {
+            if (relativePath.startsWith("/api/")) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+            } else {
+                response.sendRedirect(contextPath + LOGIN_PAGE);
+            }
+        }
+    }
 
-			filterChain.doFilter(request, response);
-			return;
-		}
+    private boolean isPublic(String path) {
+        for (String allowed : PUBLIC_PATHS) {
+            if (path.equals(allowed))
+                return true;
+        }
+        return false;
+    }
 
-		if (isPublic(relativePath) || isStatic(relativePath)) {
-			filterChain.doFilter(request, response);
-		} else {
-			response.sendRedirect(contextPath + LOGIN_PAGE);
-		}
-	}
+    private boolean isStatic(String path) {
+        return path.matches(".*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map)$");
+    }
 
-	private boolean isPublic(String path) {
-		for (String allowed : PUBLIC_PATHS) {
-			if (path.equals(allowed))
-				return true;
-		}
-		return false;
-	}
-
-	private boolean isStatic(String path) {
-		return path.matches(".*\\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map)$");
-	}
-
-	private boolean isIn(String target, String... paths) {
-		for (String p : paths) {
-			if (target.equals(p))
-				return true;
-		}
-		return false;
-	}
+    private boolean isIn(String target, String... paths) {
+        for (String p : paths) {
+            if (target.equals(p))
+                return true;
+        }
+        return false;
+    }
 }

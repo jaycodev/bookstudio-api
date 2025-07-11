@@ -204,6 +204,6 @@ INSERT INTO Loans (BookID, StudentID, LoanDate, ReturnDate, Quantity, Status, Ob
 (18, 18, '2025-02-18', '2025-03-01', 1, 'prestado', 'Sin observaciones'),
 (20, 20, '2025-02-23', '2025-03-07', 1, 'prestado', 'Préstamo para proyecto de fin de curso');
 
-INSERT INTO Users (Username, Email, FirstName, LastName, Password, Role, ProfilePhoto) VALUES
+INSERT INTO Users (Username, Email, FirstName, LastName, Password, Role, ProfilePhotoUrl) VALUES
 ('Admin', 'admin@example.com', 'Admin', 'Admin', '$2a$12$iWnPrDNZRwAOP3RCTJSypu9IicnZZ6D68JppSHH64dtiQdHPtMWDO', 'administrador', NULL),
 ('Biblio', 'biblio@example.com', 'Biblio', 'Biblio', '$2a$12$F7oIqfODvMk9AkPCIGWM8OXI8OcHxpNGzmBeGTCoXsOjZdeWfWU2C', 'bibliotecario', NULL);

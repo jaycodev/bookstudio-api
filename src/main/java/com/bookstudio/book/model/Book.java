@@ -5,7 +5,6 @@ import com.bookstudio.course.model.Course;
 import com.bookstudio.publisher.model.Publisher;
 import com.bookstudio.shared.enums.Status;
 import com.bookstudio.shared.model.Genre;
-import com.bookstudio.shared.util.IdFormatter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -55,11 +54,6 @@ public class Book {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "GenreID", nullable = false)
 	private Genre genre;
-
-	@Transient
-	public String getFormattedId() {
-		return IdFormatter.formatId(String.valueOf(id), "L");
-	}
 
 	@Transient
 	public int getAvailableCopies() {

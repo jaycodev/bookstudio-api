@@ -63,6 +63,13 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     """)
     Optional<BookInfoProjection> findInfoById(@Param("id") Long id);
 
-    @Query("SELECT b.id AS bookId, b.title AS title FROM Book b WHERE b.status = 'activo' AND b.totalCopies > b.loanedCopies")
+    @Query("""
+        SELECT 
+            b.id AS bookId, 
+            b.title AS title, 
+            (b.totalCopies - b.loanedCopies) AS availableCopies
+        FROM Book b 
+        WHERE b.status = 'activo' AND b.totalCopies > b.loanedCopies
+    """)
     List<BookSelectProjection> findForSelect();
 }

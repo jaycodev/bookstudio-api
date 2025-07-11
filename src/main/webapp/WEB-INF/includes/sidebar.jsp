@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.bookstudio.auth.util.LoginConstants" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -14,7 +15,7 @@
     String greeting;
 
     if (hour >= 5 && hour < 12) {
-        greeting = "Buenos días";
+        greeting = "Buenos dï¿½as";
     } else if (hour >= 12 && hour < 18) {
         greeting = "Buenas tardes";
     } else {
@@ -35,9 +36,9 @@
             </a>
         </li>
         <li class="mb-1">
-            <a href="loans" aria-label="Préstamos" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
+            <a href="loans" aria-label="Prï¿½stamos" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                 <i class="bi pe-none me-2 bi-file-earmark-text"></i>
-                <span class="sidebar-link">Préstamos</span>
+                <span class="sidebar-link">PrÃ©stamos</span>
             </a>
         </li>
         <li class="mb-1">
@@ -110,7 +111,7 @@
             <li class="mb-1">
                 <a href="loans" class="nav-link text-body-emphasis d-flex align-items-center rounded-2 hovered">
                     <i class="bi pe-none me-2 bi-file-earmark-text"></i>
-                    Préstamos
+                    PrÃ©stamos
                 </a>
             </li>
             <li class="mb-1">

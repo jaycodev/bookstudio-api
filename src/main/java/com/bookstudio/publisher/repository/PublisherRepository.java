@@ -21,7 +21,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
             lg.name AS literaryGenreName,
             p.website AS website,
             p.status AS status,
-            p.photo AS photo
+            p.photoUrl AS photoUrl
         FROM Publisher p
         JOIN p.nationality n
         JOIN p.literaryGenre lg
@@ -43,7 +43,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
             p.website AS website,
             p.address AS address,
             p.status AS status,
-            p.photo AS photo
+            p.photoUrl AS photoUrl
         FROM Publisher p
         JOIN p.nationality n
         JOIN p.literaryGenre lg

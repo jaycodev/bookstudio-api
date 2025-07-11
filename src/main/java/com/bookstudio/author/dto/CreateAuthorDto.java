@@ -12,5 +12,5 @@ public class CreateAuthorDto {
     private LocalDate birthDate;
     private String biography;
     private Status status;
-    private byte[] photo;
+    private String photoUrl;
 }

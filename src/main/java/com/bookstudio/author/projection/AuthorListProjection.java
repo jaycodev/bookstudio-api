@@ -1,7 +1,6 @@
 package com.bookstudio.author.projection;
 
 import java.time.LocalDate;
-import java.util.Base64;
 
 import com.bookstudio.shared.util.IdFormatter;
 
@@ -12,17 +11,9 @@ public interface AuthorListProjection {
     String getLiteraryGenreName();
     LocalDate getBirthDate();
     String getStatus();
-    byte[] getPhoto();
+    String getPhotoUrl();
 
     default String getFormattedAuthorId() {
         return IdFormatter.formatId(String.valueOf(getAuthorId()), "A");
-    }
-
-    default String getPhotoBase64() {
-        byte[] photoBytes = getPhoto();
-        if (photoBytes != null && photoBytes.length > 0) {
-            return "data:image/jpeg;base64," + Base64.getEncoder().encodeToString(photoBytes);
-        }
-        return null;
     }
 }

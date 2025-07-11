@@ -72,7 +72,7 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/options")
+    @GetMapping("/select-options")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = studentService.getSelectOptions();

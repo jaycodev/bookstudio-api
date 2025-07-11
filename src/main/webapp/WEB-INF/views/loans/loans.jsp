@@ -214,8 +214,8 @@
 	                
 	                <!-- Loan Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addLoanForm" id="addLoanBtn">
-	                    <span id="addLoanIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Prestar
 	                </button>
 	            </footer>
@@ -330,8 +330,8 @@
 	            	
 	            	<!-- Confirm Button -->
 					<button type="button" class="btn btn-custom-primary d-flex align-items-center" id="confirmReturn">
-	                    <span id="confirmReturnIcon" class="me-2"><i class="bi bi-check2-square"></i></span>
-	                    <span id="confirmReturnSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-check2-square me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Confirmar
 	                </button>
 	            </div>
@@ -451,8 +451,8 @@
 	                
 	                <!-- Update Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editLoanForm" id="editLoanBtn" disabled>
-	                    <span id="editLoanIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

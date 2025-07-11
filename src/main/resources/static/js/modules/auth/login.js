@@ -1,11 +1,13 @@
 /**
  * login.js
  *
- * Handles the login form validation, submission, and background image update based on the theme.
- * Implements real-time validation for username and password fields, and authenticates using
- * an AJAX request. Also initializes and updates particle animation based on the current theme.
+ * Handles login form validation, submission, and dynamic background updates based on the current theme.
+ * Implements real-time validation for username and password fields, and performs authentication
+ * via REST API using the Fetch API.
  *
- * @author [Jason]
+ * Also initializes and updates particle animations depending on the selected theme.
+ *
+ * @author Jason
  */
 
 import { showToast } from '../../shared/utils/ui/index.js'
@@ -88,6 +90,7 @@ $(document).ready(function () {
 					'Content-Type': 'application/x-www-form-urlencoded',
 				},
 				body: formData.toString(),
+				credentials: 'include',
 			})
 
 			const data = await res.json()

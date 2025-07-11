@@ -1,19 +1,23 @@
 /**
  * publishers.js
  *
- * Manages the initialization, data loading, and configuration of the publishers table,
- * as well as handling modals for creating, viewing, editing publisher details,
- * and performing logical delete (status change) operations on publishers.
- * Utilizes AJAX for CRUD operations on publisher data.
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
- * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
+ * Handles the initialization and behavior of the publishers table,
+ * including loading data, configuring modals for creating, viewing,
+ * editing, and logically deleting publisher records.
  *
- * @author [Jason]
+ * Uses the Fetch API to communicate with RESTful endpoints for all publisher-related
+ * CRUD operations. Manages UI components such as placeholders, enhanced dropdowns,
+ * validation feedback, loading states, image cropping, and tooltips.
+ *
+ * Also includes features for generating PDF reports and exporting table data to Excel.
+ *
+ * @author Jason
  */
 
 import {
 	showToast,
 	toggleButtonLoading,
+	toggleModalLoading,
 	populateSelect,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
@@ -45,36 +49,43 @@ let literaryGenreList = []
 // Global variable to handle photo deletion in edit modal
 let deletePhotoFlag = false
 
-function populateSelectOptions() {
-	$.ajax({
-		url: 'PublisherServlet',
-		type: 'GET',
-		data: { type: 'populateSelects' },
-		dataType: 'json',
-		success: function (data, xhr) {
-			if (xhr.status === 204) {
-				console.warn('No data found for select options.')
-				return
-			}
+async function populateSelectOptions() {
+	try {
+		const response = await fetch('./api/publishers/select-options', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			if (data) {
-				nationalityList = data.nationalities
-				literaryGenreList = data.literaryGenres
-			}
-		},
-		error: function (xhr) {
-			let errorResponse
+		if (response.status === 204) {
+			console.warn('No data found for select options.')
+			return
+		}
+
+		if (!response.ok) {
+			throw response
+		}
+
+		const data = await response.json()
+
+		nationalityList = data.nationalities
+		literaryGenreList = data.literaryGenres
+	} catch (error) {
+		if (error instanceof Response) {
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				const errData = await error.json()
 				console.error(
-					`Error fetching select options (${errorResponse.errorType} - ${xhr.status}):`,
-					errorResponse.message,
+					`Error fetching select options (${errData.errorType} - ${error.status}):`,
+					errData.message,
 				)
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error('Unexpected error:', error.status, await error.text())
 			}
-		},
-	})
+		} else {
+			console.error('Unexpected error:', error)
+		}
+	}
 }
 
 /*****************************************
@@ -108,8 +119,8 @@ function generateRow(publisher) {
 			</td>
 			<td class="align-middle text-center">
 				${
-					publisher.photoBase64
-						? `<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
+					publisher.photoUrl
+						? `<img src="${publisher.photoUrl}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
 						: `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -146,75 +157,47 @@ function addRowToTable(publisher) {
 	initializeTooltips($row)
 }
 
-function loadPublishers() {
+async function loadPublishers() {
 	toggleTableLoadingState('loading')
 
-	const safetyTimer = setTimeout(function () {
+	const safetyTimer = setTimeout(() => {
 		toggleTableLoadingState('loaded')
 		$('#tableContainer').removeClass('d-none')
-		$('#cardContainer').removeClass('h-100')
 	}, 8000)
 
-	$.ajax({
-		url: 'PublisherServlet',
-		type: 'GET',
-		data: { type: 'list' },
-		dataType: 'json',
-		success: function (data) {
-			clearTimeout(safetyTimer)
+	try {
+		const response = await fetch('./api/publishers', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			const tableBody = $('#bodyPublishers')
-			tableBody.empty()
+		clearTimeout(safetyTimer)
 
-			if (data && data.length > 0) {
-				data.forEach(function (publisher) {
+		const tableBody = $('#bodyPublishers')
+		tableBody.empty()
+
+		if (response.status === 200) {
+			const data = await response.json()
+
+			if (data.length > 0) {
+				data.forEach((publisher) => {
 					const row = generateRow(publisher)
 					tableBody.append(row)
 				})
-
 				initializeTooltips(tableBody)
 			}
 
-			if ($.fn.DataTable.isDataTable('#publisherTable')) {
-				$('#publisherTable').DataTable().destroy()
-			}
-
-			const dataTable = setupDataTable('#publisherTable')
-
-			if (data && data.length > 0) {
-				$('#generatePDF, #generateExcel').prop('disabled', false)
-			} else {
-				$('#generatePDF, #generateExcel').prop('disabled', true)
-			}
-
-			dataTable.on('draw', function () {
-				const filteredCount = dataTable.rows({ search: 'applied' }).count()
-				const noDataMessage =
-					$('#authorTable').find('td.dataTables_empty').length > 0
-				$('#generatePDF, #generateExcel').prop(
-					'disabled',
-					filteredCount === 0 || noDataMessage,
-				)
-			})
-
-			$('#generatePDF')
-				.off('click')
-				.on('click', function () {
-					generatePDF(dataTable)
-				})
-
-			$('#generateExcel')
-				.off('click')
-				.on('click', function () {
-					generateExcel(dataTable)
-				})
-		},
-		error: function (xhr) {
+			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
+		} else if (response.status === 204) {
+			$('#generatePDF, #generateExcel').prop('disabled', true)
+		} else {
 			let errorResponse
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				errorResponse = await response.json()
 				console.error(
-					`Error listing publisher data (${errorResponse.errorType} - ${xhr.status}):`,
+					`Error listing publisher data (${errorResponse.errorType} - ${response.status}):`,
 					errorResponse.message,
 				)
 				showToast(
@@ -222,22 +205,53 @@ function loadPublishers() {
 					'error',
 				)
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error(
+					'Unexpected error:',
+					response.status,
+					await response.text(),
+				)
 				showToast('Hubo un error inesperado.', 'error')
 			}
+		}
 
-			clearTimeout(safetyTimer)
+		if ($.fn.DataTable.isDataTable('#publisherTable')) {
+			$('#publisherTable').DataTable().destroy()
+		}
 
-			const tableBody = $('#bodyPublishers')
-			tableBody.empty()
+		const dataTable = setupDataTable('#publisherTable')
 
-			if ($.fn.DataTable.isDataTable('#publisherTable')) {
-				$('#publisherTable').DataTable().destroy()
-			}
+		dataTable.on('draw', function () {
+			const filteredCount = dataTable.rows({ search: 'applied' }).count()
+			const noDataMessage =
+				$('#publisherTable').find('td.dataTables_empty').length > 0
+			$('#generatePDF, #generateExcel').prop(
+				'disabled',
+				filteredCount === 0 || noDataMessage,
+			)
+		})
 
-			setupDataTable('#publisherTable')
-		},
-	})
+		$('#generatePDF')
+			.off('click')
+			.on('click', () => generatePDF(dataTable))
+
+		$('#generateExcel')
+			.off('click')
+			.on('click', () => generateExcel(dataTable))
+	} catch (err) {
+		clearTimeout(safetyTimer)
+
+		console.error('Unexpected error:', err)
+		showToast('Hubo un error inesperado.', 'error')
+
+		const tableBody = $('#bodyPublishers')
+		tableBody.empty()
+
+		if ($.fn.DataTable.isDataTable('#publisherTable')) {
+			$('#publisherTable').DataTable().destroy()
+		}
+
+		setupDataTable('#publisherTable')
+	}
 }
 
 function updateRowInTable(publisher) {
@@ -273,12 +287,12 @@ function updateRowInTable(publisher) {
 					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
 			)
 
-		if (publisher.photoBase64 && publisher.photoBase64.trim() !== '') {
+		if (publisher.photoUrl && publisher.photoUrl.trim() !== '') {
 			row
 				.find('td')
 				.eq(6)
 				.html(
-					`<img src="${publisher.photoBase64}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
+					`<img src="${publisher.photoUrl}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
 				)
 		} else {
 			row.find('td').eq(6).html(`
@@ -313,17 +327,13 @@ function handleAddPublisherForm() {
 		}
 	})
 
-	$('#addPublisherForm').on('submit', function (event) {
+	$('#addPublisherForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -332,188 +342,146 @@ function handleAddPublisherForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateAddField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateAddField($(this))) isValid = false
 			})
 
-		if (isValid) {
-			const formData = new FormData(this)
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#addPublisherSpinnerBtn').removeClass('d-none')
-			$('#addPublisherIcon').addClass('d-none')
-
-			if (cropper) {
-				cropper
-					.getCroppedCanvas({
-						width: 460,
-						height: 460,
-					})
-					.toBlob(
-						function (blob) {
-							formData.set('addPublisherPhoto', blob, 'photo.jpg')
-							sendAddForm(formData)
-						},
-						'image/jpeg',
-						0.7,
-					)
-			} else {
-				sendAddForm(formData)
-			}
-
-			function sendAddForm(formData) {
-				formData.append('type', 'create')
-
-				$.ajax({
-					url: 'PublisherServlet',
-					type: 'POST',
-					data: formData,
-					dataType: 'json',
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						if (response && response.success) {
-							addRowToTable(response.data)
-
-							$('#addPublisherModal').modal('hide')
-							showToast('Editorial agregada exitosamente.', 'success')
-						} else {
-							console.error(
-								`Backend error (${response.errorType} - ${response.statusCode}):`,
-								response.message,
-							)
-							$('#addPublisherModal').modal('hide')
-							showToast('Hubo un error al agregar la editorial.', 'error')
-						}
-					},
-					error: function (xhr) {
-						let errorResponse
-						try {
-							errorResponse = JSON.parse(xhr.responseText)
-							console.error(
-								`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-								errorResponse.message,
-							)
-							switch (xhr.status) {
-								case 403:
-									showToast(
-										'No tienes permisos para agregar editoriales.',
-										'warning',
-									)
-									break
-								case 400:
-									showToast(
-										'Solicitud inválida. Verifica los datos del formulario.',
-										'error',
-									)
-									break
-								case 500:
-									showToast(
-										'Error interno del servidor. Intenta más tarde.',
-										'error',
-									)
-									break
-								default:
-									showToast(
-										errorResponse.message ||
-											'Hubo un error al agregar la editorial.',
-										'error',
-									)
-									break
-							}
-						} catch {
-							console.error('Unexpected error:', xhr.status, xhr.responseText)
-							showToast('Hubo un error inesperado.', 'error')
-						}
-
-						$('#addPublisherModal').modal('hide')
-					},
-					complete: function () {
-						$('#addPublisherSpinnerBtn').addClass('d-none')
-						$('#addPublisherIcon').removeClass('d-none')
-						submitButton.prop('disabled', false)
-					},
-				})
-			}
-		} else {
+		if (!isValid) {
 			$(this).data('submitted', false)
+			return
+		}
+
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const publisherDto = {
+			name: raw.addPublisherName,
+			nationalityId: parseInt(raw.addPublisherNationality),
+			literaryGenreId: parseInt(raw.addLiteraryGenre),
+			foundationYear: parseInt(raw.addFoundationYear),
+			website: raw.addPublisherWebsite || '',
+			address: raw.addPublisherAddress || '',
+			status: raw.addPublisherStatus,
+			photoUrl: null, // 🔜 Preparado para Cloudinary
+		}
+
+		const submitButton = $('#addPublisherBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			if (cropper) {
+				const photoBlob = await new Promise((resolve) => {
+					cropper
+						.getCroppedCanvas({ width: 460, height: 460 })
+						.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7)
+				})
+
+				if (photoBlob) {
+					// 🔜 Preparado para Cloudinary
+				}
+			}
+
+			const response = await fetch('./api/publishers', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(publisherDto),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				addRowToTable(json.data)
+				$('#addPublisherModal').modal('hide')
+				showToast('Editorial agregada exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				$('#addPublisherModal').modal('hide')
+				showToast('Hubo un error al agregar la editorial.', 'error')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#addPublisherModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
+}
 
-	function validateAddField(field) {
-		if (
-			field.attr('type') === 'search' ||
-			field.is('#addPublisherWebsite') ||
-			field.is('#addPublisherAddress')
-		) {
+function validateAddField(field) {
+	if (
+		field.attr('type') === 'search' ||
+		field.is('#addPublisherWebsite') ||
+		field.is('#addPublisherAddress')
+	) {
+		return true
+	}
+
+	let errorMessage = 'Este campo es obligatorio.'
+	let isValid = true
+
+	// Default validation
+	if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage)
+		isValid = false
+	} else {
+		field.removeClass('is-invalid')
+	}
+
+	// Name validation
+	if (field.is('#addPublisherName')) {
+		const result = isValidText(field.val(), 'nombre')
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Foundation year validation
+	if (field.is('#addFoundationYear')) {
+		const result = isValidFoundationYear(field.val())
+		if (!result.valid) {
+			errorMessage = result.message
+			isValid = false
+		}
+	}
+
+	// Photo validation
+	if (field.is('#addPublisherPhoto')) {
+		const file = field[0].files[0]
+		const result = isValidImageFile(file)
+
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		} else {
+			field.removeClass('is-invalid')
 			return true
 		}
-
-		let errorMessage = 'Este campo es obligatorio.'
-		let isValid = true
-
-		// Default validation
-		if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage)
-			isValid = false
-		} else {
-			field.removeClass('is-invalid')
-		}
-
-		// Name validation
-		if (field.is('#addPublisherName')) {
-			const result = isValidText(field.val(), 'nombre')
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Foundation year validation
-		if (field.is('#addFoundationYear')) {
-			const result = isValidFoundationYear(field.val())
-			if (!result.valid) {
-				errorMessage = result.message
-				isValid = false
-			}
-		}
-
-		// Photo validation
-		if (field.is('#addPublisherPhoto')) {
-			const file = field[0].files[0]
-			const result = isValidImageFile(file)
-
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			} else {
-				field.removeClass('is-invalid')
-				return true
-			}
-		}
-
-		// Select validation
-		if (field.is('select')) {
-			const container = field.closest('.bootstrap-select')
-			container.toggleClass('is-invalid', field.hasClass('is-invalid'))
-			container.siblings('.invalid-feedback').html(errorMessage)
-		}
-
-		if (!isValid) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage).show()
-		} else {
-			field.removeClass('is-invalid')
-			field.siblings('.invalid-feedback').hide()
-		}
-
-		return isValid
 	}
+
+	// Select validation
+	if (field.is('select')) {
+		const container = field.closest('.bootstrap-select')
+		container.toggleClass('is-invalid', field.hasClass('is-invalid'))
+		container.siblings('.invalid-feedback').html(errorMessage)
+	}
+
+	if (!isValid) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage).show()
+	} else {
+		field.removeClass('is-invalid')
+		field.siblings('.invalid-feedback').hide()
+	}
+
+	return isValid
 }
 
 $('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
@@ -534,17 +502,13 @@ function handleEditPublisherForm() {
 		}
 	})
 
-	$('#editPublisherForm').on('submit', function (event) {
+	$('#editPublisherForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
 		const form = $(this)[0]
 		let isValid = true
@@ -553,118 +517,79 @@ function handleEditPublisherForm() {
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateEditField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateEditField($(this))) isValid = false
 			})
 
-		if (isValid) {
-			const formData = new FormData(this)
-
-			const publisherId = $(this).data('publisherId')
-			if (publisherId) {
-				formData.append('publisherId', publisherId)
-			}
-
-			formData.append('deletePhoto', deletePhotoFlag)
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#editPublisherSpinnerBtn').removeClass('d-none')
-			$('#editPublisherIcon').addClass('d-none')
-
-			if (cropper) {
-				cropper
-					.getCroppedCanvas({
-						width: 460,
-						height: 460,
-					})
-					.toBlob(function (blob) {
-						formData.set('editPublisherPhoto', blob, 'photo.png')
-						sendEditForm(formData)
-					}, 'image/png')
-			} else {
-				sendEditForm(formData)
-			}
-
-			function sendEditForm(formData) {
-				formData.append('type', 'update')
-
-				$.ajax({
-					url: 'PublisherServlet',
-					type: 'POST',
-					data: formData,
-					dataType: 'json',
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						if (response && response.success) {
-							updateRowInTable(response.data)
-
-							$('#editPublisherModal').modal('hide')
-							showToast('Editorial actualizada exitosamente.', 'success')
-						} else {
-							console.error(
-								`Backend error (${response.errorType} - ${response.statusCode}):`,
-								response.message,
-							)
-							$('#editPublisherModal').modal('hide')
-							showToast('Hubo un error al actualizar la editorial.', 'error')
-						}
-					},
-					error: function (xhr) {
-						let errorResponse
-						try {
-							errorResponse = JSON.parse(xhr.responseText)
-							console.error(
-								`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-								errorResponse.message,
-							)
-							switch (xhr.status) {
-								case 403:
-									showToast(
-										'No tienes permisos para actualizar editoriales.',
-										'warning',
-									)
-									break
-								case 400:
-									showToast(
-										'Solicitud inválida. Verifica los datos del formulario.',
-										'error',
-									)
-									break
-								case 500:
-									showToast(
-										'Error interno del servidor. Intenta más tarde.',
-										'error',
-									)
-									break
-								default:
-									showToast(
-										errorResponse.message ||
-											'Hubo un error al actualizar la editorial.',
-										'error',
-									)
-									break
-							}
-						} catch {
-							console.error('Unexpected error:', xhr.status, xhr.responseText)
-							showToast('Hubo un error inesperado.', 'error')
-						}
-
-						$('#editPublisherModal').modal('hide')
-					},
-					complete: function () {
-						$('#editPublisherSpinnerBtn').addClass('d-none')
-						$('#editPublisherIcon').removeClass('d-none')
-						submitButton.prop('disabled', false)
-					},
-				})
-			}
-		} else {
+		if (!isValid) {
 			$(this).data('submitted', false)
+			return
+		}
+
+		const publisherId = $('#editPublisherForm').data('publisherId')
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const publisher = {
+			publisherId: parseInt(publisherId),
+			name: raw.editPublisherName,
+			nationalityId: parseInt(raw.editPublisherNationality),
+			literaryGenreId: parseInt(raw.editLiteraryGenre),
+			foundationYear: parseInt(raw.editFoundationYear),
+			website: raw.editPublisherWebsite || '',
+			address: raw.editPublisherAddress || '',
+			status: raw.editPublisherStatus,
+			deletePhoto: deletePhotoFlag || false,
+			photoUrl: null, // 🔜 Preparado para Cloudinary
+		}
+
+		const submitButton = $('#editPublisherBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			if (cropper) {
+				const photoBlob = await new Promise((resolve) => {
+					cropper
+						.getCroppedCanvas({ width: 460, height: 460 })
+						.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7)
+				})
+
+				if (photoBlob) {
+					// 🔜 Preparado para Cloudinary
+				}
+			}
+
+			const response = await fetch('./api/publishers', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(publisher),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				updateRowInTable(json.data)
+				$('#editPublisherModal').modal('hide')
+				showToast('Editorial actualizada exitosamente.', 'success')
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				showToast(
+					json.message || 'Hubo un error al actualizar la editorial.',
+					'error',
+				)
+				$('#editPublisherModal').modal('hide')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#editPublisherModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
 }
@@ -753,7 +678,7 @@ function loadModalData() {
 			'#addPublisherNationality',
 			nationalityList,
 			'nationalityId',
-			'nationalityName',
+			'name',
 		)
 		$('#addPublisherNationality').selectpicker()
 
@@ -761,7 +686,7 @@ function loadModalData() {
 			'#addLiteraryGenre',
 			literaryGenreList,
 			'literaryGenreId',
-			'genreName',
+			'name',
 		)
 		$('#addLiteraryGenre').selectpicker()
 
@@ -802,15 +727,22 @@ function loadModalData() {
 			const publisherId = $(this).data('id')
 			$('#detailsPublisherModalID').text($(this).data('formatted-id'))
 
-			$('#detailsPublisherSpinner').removeClass('d-none')
-			$('#detailsPublisherContent').addClass('d-none')
+			toggleModalLoading(this, true)
 
-			$.ajax({
-				url: 'PublisherServlet',
-				type: 'GET',
-				data: { type: 'details', publisherId: publisherId },
-				dataType: 'json',
-				success: function (data) {
+			fetch(`./api/publishers/${encodeURIComponent(publisherId)}`, {
+				method: 'GET',
+				headers: {
+					Accept: 'application/json',
+				},
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						const errorData = await response.json()
+						throw { status: response.status, ...errorData }
+					}
+					return response.json()
+				})
+				.then((data) => {
 					$('#detailsPublisherID').text(data.formattedPublisherId)
 					$('#detailsPublisherName').text(data.name)
 					$('#detailsPublisherNationality').text(data.nationalityName)
@@ -820,14 +752,16 @@ function loadModalData() {
 						.attr('href', data.website)
 						.text(data.website)
 					$('#detailsPublisherAddress').text(data.address)
+
 					$('#detailsPublisherStatus').html(
 						data.status === 'activo'
 							? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
 					)
-					if (data.photoBase64) {
+
+					if (data.photoUrl) {
 						$('#detailsPublisherImg')
-							.attr('src', data.photoBase64)
+							.attr('src', data.photoUrl)
 							.removeClass('d-none')
 						$('#detailsPublisherSvg').addClass('d-none')
 					} else {
@@ -835,28 +769,19 @@ function loadModalData() {
 						$('#detailsPublisherSvg').removeClass('d-none')
 					}
 
-					$('#detailsPublisherSpinner').addClass('d-none')
-					$('#detailsPublisherContent').removeClass('d-none')
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Error loading publisher details (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						showToast(
-							'Hubo un error al cargar los detalles de la editorial.',
-							'error',
-						)
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
+					toggleModalLoading(this, false)
+				})
+				.catch((error) => {
+					console.error(
+						`Error loading publisher details (${error.errorType || 'unknown'} - ${error.status}):`,
+						error.message || error,
+					)
+					showToast(
+						'Hubo un error al cargar los detalles de la editorial.',
+						'error',
+					)
 					$('#detailsPublisherModal').modal('hide')
-				},
-			})
+				})
 		},
 	)
 
@@ -868,16 +793,22 @@ function loadModalData() {
 			const publisherId = $(this).data('id')
 			$('#editPublisherModalID').text($(this).data('formatted-id'))
 
-			$('#editPublisherSpinner').removeClass('d-none')
-			$('#editPublisherForm').addClass('d-none')
-			$('#editPublisherBtn').prop('disabled', true)
+			toggleModalLoading(this, true)
 
-			$.ajax({
-				url: 'PublisherServlet',
-				type: 'GET',
-				data: { type: 'details', publisherId: publisherId },
-				dataType: 'json',
-				success: function (data) {
+			fetch(`./api/publishers/${encodeURIComponent(publisherId)}`, {
+				method: 'GET',
+				headers: {
+					Accept: 'application/json',
+				},
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						const errorData = await response.json()
+						throw { status: response.status, ...errorData }
+					}
+					return response.json()
+				})
+				.then((data) => {
 					$('#editPublisherForm').data('publisherId', data.publisherId)
 					$('#editPublisherName').val(data.name)
 
@@ -885,19 +816,17 @@ function loadModalData() {
 						'#editPublisherNationality',
 						nationalityList,
 						'nationalityId',
-						'nationalityName',
+						'name',
 					)
-					$('#editPublisherNationality').val(data.nationalityId)
-					$('#editPublisherNationality').selectpicker()
+					$('#editPublisherNationality').val(data.nationalityId).selectpicker()
 
 					populateSelect(
 						'#editLiteraryGenre',
 						literaryGenreList,
 						'literaryGenreId',
-						'genreName',
+						'name',
 					)
-					$('#editLiteraryGenre').val(data.literaryGenreId)
-					$('#editLiteraryGenre').selectpicker()
+					$('#editLiteraryGenre').val(data.literaryGenreId).selectpicker()
 
 					$('#editFoundationYear').val(data.foundationYear)
 					$('#editPublisherWebsite').val(data.website)
@@ -907,22 +836,14 @@ function loadModalData() {
 						.selectpicker('destroy')
 						.empty()
 						.append(
-							$('<option>', {
-								value: 'activo',
-								text: 'Activo',
-							}),
-							$('<option>', {
-								value: 'inactivo',
-								text: 'Inactivo',
-							}),
+							$('<option>', { value: 'activo', text: 'Activo' }),
+							$('<option>', { value: 'inactivo', text: 'Inactivo' }),
 						)
-					$('#editPublisherStatus').val(data.status)
-					$('#editPublisherStatus').selectpicker()
+					$('#editPublisherStatus').val(data.status).selectpicker()
 
-					updateEditImageContainer(data.photoBase64)
+					updateEditImageContainer(data.photoUrl)
 
 					$('#editPublisherForm .is-invalid').removeClass('is-invalid')
-
 					placeholderColorEditSelect()
 
 					$('#editPublisherForm')
@@ -933,32 +854,22 @@ function loadModalData() {
 
 					$('#editPublisherPhoto').val('')
 
-					$('#editPublisherSpinner').addClass('d-none')
-					$('#editPublisherForm').removeClass('d-none')
-					$('#editPublisherBtn').prop('disabled', false)
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Error loading publisher details for editing (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						showToast(
-							'Hubo un error al cargar los datos de la editorial.',
-							'error',
-						)
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
+					toggleModalLoading(this, false)
+				})
+				.catch((error) => {
+					console.error(
+						`Error loading publisher details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+						error.message || error,
+					)
+					showToast(
+						'Hubo un error al cargar los datos de la editorial.',
+						'error',
+					)
 					$('#editPublisherModal').modal('hide')
-				},
-			})
+				})
 
+			// Reset cropper container
 			$('#cropperContainerEdit').addClass('d-none')
-
 			if (cropper) {
 				cropper.destroy()
 				cropper = null
@@ -967,15 +878,15 @@ function loadModalData() {
 	)
 }
 
-function updateEditImageContainer(photoBase64) {
+function updateEditImageContainer(photoUrl) {
 	const $editImageContainer = $('#currentEditPhotoContainer')
 	const $deleteEditPhotoBtn = $('#deleteEditPhotoBtn')
 
 	$editImageContainer.empty()
 
-	if (photoBase64) {
+	if (photoUrl) {
 		$editImageContainer.html(
-			`<img src="${photoBase64}" class="img-fluid rounded-circle" alt="Foto de la Editorial">`,
+			`<img src="${photoUrl}" class="img-fluid rounded-circle" alt="Foto de la Editorial">`,
 		)
 		$deleteEditPhotoBtn.removeClass('d-none')
 	} else {

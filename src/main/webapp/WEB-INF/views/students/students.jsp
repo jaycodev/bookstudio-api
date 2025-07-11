@@ -289,8 +289,8 @@
 	                
 	                <!-- Add Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addStudentForm" id="addStudentBtn">
-	                    <span id="addStudentIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addStudentSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -596,8 +596,8 @@
 	                
 	                <!-- Update Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editStudentForm" id="editStudentBtn" disabled>
-	                    <span id="editStudentIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editStudentSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

@@ -1,18 +1,23 @@
 /**
  * users.js
  *
- * Manages the initialization, data loading, and configuration of the users table,
- * as well as handling modals for creating, viewing, editing, and deleting user details.
- * Utilizes AJAX for CRUD operations on user data.
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
- * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
+ * Handles the initialization and behavior of the users table,
+ * including loading data, configuring modals for creating, viewing,
+ * editing, and deleting user records.
  *
- * @author [Jason]
+ * Uses the Fetch API to communicate with RESTful endpoints for all user-related
+ * CRUD operations. Manages UI components such as placeholders, enhanced dropdowns,
+ * validation feedback, loading states, image cropping, and tooltips.
+ *
+ * Also includes features for generating PDF reports and exporting table data to Excel.
+ *
+ * @author Jason
  */
 
 import {
 	showToast,
 	toggleButtonLoading,
+	toggleModalLoading,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
 	initializeCropper,
@@ -67,8 +72,8 @@ function generateRow(user) {
 			</td>
 			<td class="align-middle text-center">
 				${
-					user.profilePhotoBase64
-						? `<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
+					user.profilePhotoUrl
+						? `<img src="${user.profilePhotoUrl}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
 						: `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 						<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 						<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
@@ -105,111 +110,97 @@ function addRowToTable(user) {
 	initializeTooltips($row)
 }
 
-function loadUsers() {
+async function loadUsers() {
 	toggleTableLoadingState('loading')
 
-	const safetyTimer = setTimeout(function () {
+	const safetyTimer = setTimeout(() => {
 		toggleTableLoadingState('loaded')
 		$('#tableContainer').removeClass('d-none')
-		$('#cardContainer').removeClass('h-100')
 	}, 8000)
 
-	$.ajax({
-		url: 'UserServlet',
-		type: 'GET',
-		data: { type: 'list' },
-		dataType: 'json',
-		success: function (data) {
-			clearTimeout(safetyTimer)
+	try {
+		const response = await fetch('./api/users', {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
 
-			const tableBody = $('#bodyUsers')
-			tableBody.empty()
+		clearTimeout(safetyTimer)
 
-			if (data && data.length > 0) {
-				data.forEach(function (user) {
+		const tableBody = $('#bodyUsers')
+		tableBody.empty()
+
+		if (response.status === 200) {
+			const data = await response.json()
+
+			if (data.length > 0) {
+				data.forEach((user) => {
 					const row = generateRow(user)
 					tableBody.append(row)
 				})
-
 				initializeTooltips(tableBody)
 			}
 
-			if ($.fn.DataTable.isDataTable('#bookTable')) {
-				$('#userTable').DataTable().destroy()
-			}
-
-			const dataTable = setupDataTable('#userTable')
-
-			if (data && data.length > 0) {
-				$('#generatePDF, #generateExcel').prop('disabled', false)
-			} else {
-				$('#generatePDF, #generateExcel').prop('disabled', true)
-			}
-
-			dataTable.on('draw', function () {
-				const filteredCount = dataTable.rows({ search: 'applied' }).count()
-				const noDataMessage =
-					$('#authorTable').find('td.dataTables_empty').length > 0
-				$('#generatePDF, #generateExcel').prop(
-					'disabled',
-					filteredCount === 0 || noDataMessage,
-				)
-			})
-
-			$('#generatePDF')
-				.off('click')
-				.on('click', function () {
-					generatePDF(dataTable)
-				})
-
-			$('#generateExcel')
-				.off('click')
-				.on('click', function () {
-					generateExcel(dataTable)
-				})
-		},
-		error: function (xhr) {
+			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
+		} else if (response.status === 204) {
+			$('#generatePDF, #generateExcel').prop('disabled', true)
+		} else {
 			let errorResponse
 			try {
-				errorResponse = JSON.parse(xhr.responseText)
+				errorResponse = await response.json()
 				console.error(
-					`Error listing user data (${errorResponse.errorType} - ${xhr.status}):`,
+					`Error listing user data (${errorResponse.errorType} - ${response.status}):`,
 					errorResponse.message,
 				)
-				switch (xhr.status) {
-					case 403:
-						showToast('No tienes permisos para listar los usuarios.', 'warning')
-						break
-					case 400:
-						showToast('Solicitud inválida. Verifica la petición.', 'error')
-						break
-					case 500:
-						showToast('Error interno del servidor. Intenta más tarde.', 'error')
-						break
-					default:
-						showToast(
-							'Hubo un error al listar los datos de los usuarios.',
-							'error',
-						)
-						break
-				}
+				showToast('Hubo un error al listar los datos de los usuarios.', 'error')
 			} catch {
-				console.error('Unexpected error:', xhr.status, xhr.responseText)
+				console.error(
+					'Unexpected error:',
+					response.status,
+					await response.text(),
+				)
 				showToast('Hubo un error inesperado.', 'error')
 			}
+		}
 
-			clearTimeout(safetyTimer)
+		if ($.fn.DataTable.isDataTable('#userTable')) {
+			$('#userTable').DataTable().destroy()
+		}
 
-			const tableBody = $('#bodyUsers')
-			tableBody.empty()
+		const dataTable = setupDataTable('#userTable')
 
-			if ($.fn.DataTable.isDataTable('#userTable')) {
-				$('#userTable').DataTable().destroy()
-			}
+		dataTable.on('draw', function () {
+			const filteredCount = dataTable.rows({ search: 'applied' }).count()
+			const noDataMessage =
+				$('#userTable').find('td.dataTables_empty').length > 0
+			$('#generatePDF, #generateExcel').prop(
+				'disabled',
+				filteredCount === 0 || noDataMessage,
+			)
+		})
 
-			setupDataTable('#userTable')
-		},
-	})
+		$('#generatePDF')
+			.off('click')
+			.on('click', () => generatePDF(dataTable))
+		$('#generateExcel')
+			.off('click')
+			.on('click', () => generateExcel(dataTable))
+	} catch (err) {
+		clearTimeout(safetyTimer)
+
+		console.error('Unexpected error:', err)
+		showToast('Hubo un error inesperado.', 'error')
+
+		const tableBody = $('#bodyUsers')
+		tableBody.empty()
+
+		if ($.fn.DataTable.isDataTable('#userTable')) {
+			$('#userTable').DataTable().destroy()
+		}
+
+		setupDataTable('#userTable')
+	}
 }
 
 function updateRowInTable(user) {
@@ -239,12 +230,12 @@ function updateRowInTable(user) {
 					: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario',
 			)
 
-		if (user.profilePhotoBase64 && user.profilePhotoBase64.trim() !== '') {
+		if (user.profilePhotoUrl && user.profilePhotoUrl.trim() !== '') {
 			row
 				.find('td')
 				.eq(6)
 				.html(
-					`<img src="${user.profilePhotoBase64}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
+					`<img src="${user.profilePhotoUrl}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
 				)
 		} else {
 			row.find('td').eq(6).html(`
@@ -279,255 +270,214 @@ function handleAddUserForm() {
 		}
 	})
 
-	$('#addUserForm').on('submit', function (event) {
+	$('#addUserForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
-		const form = $(this)[0]
+		const form = this
 		let isValid = true
 
 		$(form)
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateAddField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateAddField($(this))) isValid = false
 			})
 
-		if (isValid) {
-			const formData = new FormData(this)
+		if (!isValid) {
+			$(form).data('submitted', false)
+			return
+		}
 
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#addUserSpinnerBtn').removeClass('d-none')
-			$('#addUserIcon').addClass('d-none')
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
 
+		const user = {
+			username: raw.addUserUsername,
+			email: raw.addUserEmail,
+			firstName: raw.addUserFirstName,
+			lastName: raw.addUserLastName,
+			password: raw.addUserPassword,
+			role: raw.addUserRole,
+			profilePhotoUrl: null, // 🔜 Preparado para Cloudinary
+		}
+
+		const submitButton = $('#addUserBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
 			if (cropper) {
-				cropper
-					.getCroppedCanvas({
-						width: 460,
-						height: 460,
-					})
-					.toBlob(
-						function (blob) {
-							formData.set('addUserProfilePhoto', blob, 'photo.jpg')
-							sendAddForm(formData)
-						},
-						'image/jpeg',
-						0.7,
-					)
-			} else {
-				sendAddForm(formData)
-			}
-
-			function sendAddForm(formData) {
-				formData.append('type', 'create')
-
-				$.ajax({
-					url: 'UserServlet',
-					type: 'POST',
-					data: formData,
-					dataType: 'json',
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						if (response && response.success) {
-							addRowToTable(response.data)
-
-							$('#addUserModal').modal('hide')
-							showToast('Usuario agregado exitosamente.', 'success')
-						} else {
-							if (response.field) {
-								setFieldError(response.field, response.message)
-								$('#addUserForm').data('submitted', false)
-							} else {
-								console.error(
-									`Backend error (${response.errorType} - ${response.statusCode}):`,
-									response.message,
-								)
-								showToast(response.message, 'error')
-								$('#addUserModal').modal('hide')
-							}
-						}
-					},
-					error: function (xhr) {
-						const errorMessage =
-							xhr.responseJSON && xhr.responseJSON.message
-								? xhr.responseJSON.message
-								: 'Hubo un error al agregar el usuario.'
-						const errorField =
-							xhr.responseJSON && xhr.responseJSON.field
-								? xhr.responseJSON.field
-								: null
-
-						if (errorField) {
-							setFieldError(errorField, errorMessage)
-							$('#addUserForm').data('submitted', false)
-						} else {
-							console.error(
-								`Server error (${xhr.responseJSON ? xhr.responseJSON.errorType : 'unknown'} - ${xhr.status}):`,
-								errorMessage,
-							)
-							switch (xhr.status) {
-								case 403:
-									showToast(
-										'No tienes permisos para agregar usuarios.',
-										'warning',
-									)
-									break
-								case 400:
-									showToast(
-										'Solicitud inválida. Verifica los datos del formulario.',
-										'error',
-									)
-									break
-								case 500:
-									showToast(
-										'Error interno del servidor. Intenta más tarde.',
-										'error',
-									)
-									break
-								default:
-									showToast(
-										errorMessage || 'Hubo un error al agregar el usuario.',
-										'error',
-									)
-									break
-							}
-							$('#addUserModal').modal('hide')
-						}
-					},
-					complete: function () {
-						$('#addUserSpinnerBtn').addClass('d-none')
-						$('#addUserIcon').removeClass('d-none')
-						submitButton.prop('disabled', false)
-					},
+				const photoBlob = await new Promise((resolve) => {
+					cropper
+						.getCroppedCanvas({ width: 460, height: 460 })
+						.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7)
 				})
+
+				if (photoBlob) {
+					// 🔜 Preparado para Cloudinary
+				}
 			}
-			function setFieldError(fieldId, message) {
-				const field = $('#' + fieldId)
-				field.addClass('is-invalid')
-				field.siblings('.invalid-feedback').html(message).show()
+
+			const response = await fetch('./api/users', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(user),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				addRowToTable(json.data)
+				$('#addUserModal').modal('hide')
+				showToast('Usuario agregado exitosamente.', 'success')
+			} else if (
+				response.status === 400 &&
+				json.errorType === 'validation_error'
+			) {
+				if (json.errors && Array.isArray(json.errors)) {
+					json.errors.forEach((err) => {
+						setFieldError(err.field, err.message)
+					})
+				} else {
+					console.warn('Validation error sin detalles de campos:', json)
+				}
+				$('#addUserForm').data('submitted', false)
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				showToast(
+					json.message || 'Hubo un error al agregar el usuario.',
+					'error',
+				)
+				$('#addUserModal').modal('hide')
 			}
-		} else {
-			$(this).data('submitted', false)
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#addUserModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
 
-	function validateAddField(field) {
-		if (field.attr('type') === 'search') {
+	function setFieldError(fieldId, message) {
+		const field = $('#' + fieldId)
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(message).show()
+	}
+}
+
+function validateAddField(field) {
+	if (field.attr('type') === 'search') {
+		return true
+	}
+
+	let errorMessage = 'Este campo es obligatorio.'
+	let isValid = true
+
+	// Default validation
+	if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage)
+		isValid = false
+	} else {
+		field.removeClass('is-invalid')
+	}
+
+	// Email validation
+	if (field.is('#addUserEmail')) {
+		const result = isValidEmail(field.val())
+		if (!result.valid) {
+			errorMessage = result.message
+			isValid = false
+		}
+	}
+
+	// Username validation
+	if (field.is('#addUserUsername')) {
+		const result = isValidUsername(field.val())
+		if (!result.valid) {
+			errorMessage = result.message
+			isValid = false
+		}
+	}
+
+	// First name validation
+	if (field.is('#addUserFirstName')) {
+		const result = isValidText(field.val(), 'nombre')
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Last name validation
+	if (field.is('#addUserLastName')) {
+		const result = isValidText(field.val(), 'apellido')
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		}
+	}
+
+	// Password validation
+	if (field.is('#addUserPassword')) {
+		const result = isValidPassword(field.val())
+		if (!result.valid) {
+			errorMessage = result.message
+			isValid = false
+		}
+	}
+
+	// Confirm password validation
+	if (field.is('#addUserConfirmPassword')) {
+		const password = $('#addUserPassword').val()
+		const result = doPasswordsMatch(password, field.val())
+		if (!result.valid) {
+			errorMessage = result.message
+			isValid = false
+		}
+	}
+
+	// Profile photo validation
+	if (field.is('#addUserProfilePhoto')) {
+		const file = field[0].files[0]
+		const result = isValidImageFile(file)
+
+		if (!result.valid) {
+			isValid = false
+			errorMessage = result.message
+		} else {
+			field.removeClass('is-invalid')
 			return true
 		}
-
-		let errorMessage = 'Este campo es obligatorio.'
-		let isValid = true
-
-		// Default validation
-		if (!field.val() || (field[0].checkValidity && !field[0].checkValidity())) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage)
-			isValid = false
-		} else {
-			field.removeClass('is-invalid')
-		}
-
-		// Email validation
-		if (field.is('#addUserEmail')) {
-			const result = isValidEmail(field.val())
-			if (!result.valid) {
-				errorMessage = result.message
-				isValid = false
-			}
-		}
-
-		// Username validation
-		if (field.is('#addUserUsername')) {
-			const result = isValidUsername(field.val())
-			if (!result.valid) {
-				errorMessage = result.message
-				isValid = false
-			}
-		}
-
-		// First name validation
-		if (field.is('#addUserFirstName')) {
-			const result = isValidText(field.val(), 'nombre')
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Last name validation
-		if (field.is('#addUserLastName')) {
-			const result = isValidText(field.val(), 'apellido')
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			}
-		}
-
-		// Password validation
-		if (field.is('#addUserPassword')) {
-			const result = isValidPassword(field.val())
-			if (!result.valid) {
-				errorMessage = result.message
-				isValid = false
-			}
-		}
-
-		// Confirm password validation
-		if (field.is('#addUserConfirmPassword')) {
-			const password = $('#addUserPassword').val()
-			const result = doPasswordsMatch(password, field.val())
-			if (!result.valid) {
-				errorMessage = result.message
-				isValid = false
-			}
-		}
-
-		// Profile photo validation
-		if (field.is('#addUserProfilePhoto')) {
-			const file = field[0].files[0]
-			const result = isValidImageFile(file)
-
-			if (!result.valid) {
-				isValid = false
-				errorMessage = result.message
-			} else {
-				field.removeClass('is-invalid')
-				return true
-			}
-		}
-
-		// Select validation
-		if (field.is('select')) {
-			const container = field.closest('.bootstrap-select')
-			container.toggleClass('is-invalid', field.hasClass('is-invalid'))
-			container.siblings('.invalid-feedback').html(errorMessage)
-		}
-
-		if (!isValid) {
-			field.addClass('is-invalid')
-			field.siblings('.invalid-feedback').html(errorMessage).show()
-		} else {
-			field.removeClass('is-invalid')
-			field.siblings('.invalid-feedback').hide()
-		}
-
-		return isValid
 	}
+
+	// Select validation
+	if (field.is('select')) {
+		const container = field.closest('.bootstrap-select')
+		container.toggleClass('is-invalid', field.hasClass('is-invalid'))
+		container.siblings('.invalid-feedback').html(errorMessage)
+	}
+
+	if (!isValid) {
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(errorMessage).show()
+	} else {
+		field.removeClass('is-invalid')
+		field.siblings('.invalid-feedback').hide()
+	}
+
+	return isValid
 }
 
 $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function () {
@@ -548,139 +498,110 @@ function handleEditUserForm() {
 		}
 	})
 
-	$('#editUserForm').on('submit', function (event) {
+	$('#editUserForm').on('submit', async function (event) {
 		event.preventDefault()
 
-		if ($(this).data('submitted') === true) {
-			return
-		}
+		if ($(this).data('submitted') === true) return
 		$(this).data('submitted', true)
 
-		if (isFirstSubmit) {
-			isFirstSubmit = false
-		}
+		if (isFirstSubmit) isFirstSubmit = false
 
-		const form = $(this)[0]
+		const form = this
 		let isValid = true
 
 		$(form)
 			.find('input, select')
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
-				const field = $(this)
-				const valid = validateEditField(field)
-				if (!valid) {
-					isValid = false
-				}
+				if (!validateEditField($(this))) isValid = false
 			})
 
-		if (isValid) {
-			const formData = new FormData(this)
-
-			const userId = $(this).data('userId')
-			if (userId) {
-				formData.append('userId', userId)
-			}
-
-			formData.append('deleteProfilePhoto', deletePhotoFlag)
-
-			const submitButton = $(this).find('[type="submit"]')
-			submitButton.prop('disabled', true)
-			$('#editUserSpinnerBtn').removeClass('d-none')
-			$('#editUserIcon').addClass('d-none')
-
-			if (cropper) {
-				cropper
-					.getCroppedCanvas({
-						width: 460,
-						height: 460,
-					})
-					.toBlob(function (blob) {
-						formData.set('editUserProfilePhoto', blob, 'photo.png')
-						sendEditForm(formData)
-					}, 'image/png')
-			} else {
-				sendEditForm(formData)
-			}
-
-			function sendEditForm(formData) {
-				formData.append('type', 'update')
-
-				$.ajax({
-					url: 'UserServlet',
-					type: 'POST',
-					data: formData,
-					dataType: 'json',
-					processData: false,
-					contentType: false,
-					success: function (response) {
-						if (response && response.success) {
-							updateRowInTable(response.data)
-
-							$('#editUserModal').modal('hide')
-							showToast('Usuario actualizado exitosamente.', 'success')
-						} else {
-							console.error(
-								`Backend error (${response.errorType} - ${response.statusCode}):`,
-								response.message,
-							)
-							$('#editUserModal').modal('hide')
-							showToast('Hubo un error al actualizar el usuario.', 'error')
-						}
-					},
-					error: function (xhr) {
-						let errorResponse
-						try {
-							errorResponse = JSON.parse(xhr.responseText)
-							console.error(
-								`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-								errorResponse.message,
-							)
-							switch (xhr.status) {
-								case 403:
-									showToast(
-										'No tienes permisos para actualizar usuarios.',
-										'warning',
-									)
-									break
-								case 400:
-									showToast(
-										'Solicitud inválida. Verifica los datos del formulario.',
-										'error',
-									)
-									break
-								case 500:
-									showToast(
-										'Error interno del servidor. Intenta más tarde.',
-										'error',
-									)
-									break
-								default:
-									showToast(
-										errorResponse.message ||
-											'Hubo un error al actualizar el usuario.',
-										'error',
-									)
-									break
-							}
-						} catch {
-							console.error('Unexpected error:', xhr.status, xhr.responseText)
-							showToast('Hubo un error inesperado.', 'error')
-						}
-
-						$('#editUserModal').modal('hide')
-					},
-					complete: function () {
-						$('#editUserSpinnerBtn').addClass('d-none')
-						$('#editUserIcon').removeClass('d-none')
-						submitButton.prop('disabled', false)
-					},
-				})
-			}
-		} else {
+		if (!isValid) {
 			$(this).data('submitted', false)
+			return
+		}
+
+		const userId = $('#editUserForm').data('userId')
+		const formData = new FormData(form)
+		const raw = Object.fromEntries(formData.entries())
+
+		const user = {
+			userId: parseInt(userId),
+			firstName: raw.editUserFirstName,
+			lastName: raw.editUserLastName,
+			role: raw.editUserRole,
+			deletePhoto: deletePhotoFlag || false,
+			profilePhotoUrl: null, // 🔜 Preparado para Cloudinary
+		}
+
+		const submitButton = $('#editUserBtn')
+		toggleButtonLoading(submitButton, true)
+
+		try {
+			if (cropper) {
+				const photoBlob = await new Promise((resolve) => {
+					cropper
+						.getCroppedCanvas({ width: 460, height: 460 })
+						.toBlob((blob) => resolve(blob), 'image/jpeg', 0.7)
+				})
+
+				if (photoBlob) {
+					// 🔜 Preparado para Cloudinary
+				}
+			}
+
+			const response = await fetch('./api/users', {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+				},
+				body: JSON.stringify(user),
+			})
+
+			const json = await response.json()
+
+			if (response.ok && json.success) {
+				updateRowInTable(json.data)
+				$('#editUserModal').modal('hide')
+				showToast('Usuario actualizado exitosamente.', 'success')
+			} else if (
+				response.status === 400 &&
+				json.errorType === 'validation_error'
+			) {
+				if (json.errors && Array.isArray(json.errors)) {
+					json.errors.forEach((err) => {
+						setFieldError(err.field, err.message)
+					})
+				} else {
+					console.warn('Validation error sin detalles de campos:', json)
+				}
+				$('#editUserForm').data('submitted', false)
+			} else {
+				console.error(
+					`Backend error (${json.errorType} - ${json.statusCode}):`,
+					json.message,
+				)
+				showToast(
+					json.message || 'Hubo un error al actualizar el usuario.',
+					'error',
+				)
+				$('#editUserModal').modal('hide')
+			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
+			$('#editUserModal').modal('hide')
+		} finally {
+			toggleButtonLoading(submitButton, false)
 		}
 	})
+
+	function setFieldError(fieldId, message) {
+		const field = $('#' + fieldId)
+		field.addClass('is-invalid')
+		field.siblings('.invalid-feedback').html(message).show()
+	}
 }
 
 function validateEditField(field) {
@@ -757,97 +678,65 @@ function handleDeleteUser() {
 
 	$('#confirmDeleteUser')
 		.off('click')
-		.on('click', function () {
+		.on('click', async function () {
 			if (isSubmitted) return
 			isSubmitted = true
-
-			$('#confirmDeleteUserIcon').addClass('d-none')
-			$('#confirmDeleteUserSpinner').removeClass('d-none')
-			$('#confirmDeleteUser').prop('disabled', true)
 
 			const userId = $(this).data('userId')
 			const formattedUserId = $(this).data('formattedUserId')
 
-			$.ajax({
-				url: 'UserServlet',
-				type: 'POST',
-				data: {
-					type: 'delete',
-					userId: userId,
-				},
-				dataType: 'json',
-				success: function (response) {
-					if (response && response.success) {
-						const table = $('#userTable').DataTable()
+			toggleButtonLoading($(this), true)
 
-						table.rows().every(function () {
-							const data = this.data()
-							const spanText = $('<div>').html(data[0]).text().trim()
-							if (spanText == formattedUserId) {
-								this.remove()
-							}
+			try {
+				const response = await fetch(
+					`./api/users/${encodeURIComponent(userId)}`,
+					{
+						method: 'DELETE',
+						headers: {
+							Accept: 'application/json',
+						},
+					},
+				)
+
+				const json = await response.json()
+
+				if (response.ok && json.success) {
+					const table = $('#userTable').DataTable()
+					const row = table
+						.rows()
+						.nodes()
+						.to$()
+						.filter(function () {
+							return (
+								$(this).find('td').eq(0).text().trim() ===
+								formattedUserId.toString()
+							)
 						})
 
-						table.draw(false)
+					if (row.length > 0) {
+						table.row(row).remove().draw(false)
+					}
 
-						$('#deleteUserModal').modal('hide')
-						showToast('Usuario eliminado exitosamente.', 'success')
-					} else {
-						console.error(
-							`Backend error (${response.errorType} - ${response.statusCode}):`,
-							response.message,
-						)
-						$('#deleteUserModal').modal('hide')
-						showToast('Hubo un error al eliminar el usuario.', 'error')
-					}
-				},
-				error: function (xhr) {
-					let errorResponse
-					try {
-						errorResponse = JSON.parse(xhr.responseText)
-						console.error(
-							`Server error (${errorResponse.errorType} - ${xhr.status}):`,
-							errorResponse.message,
-						)
-						switch (xhr.status) {
-							case 403:
-								showToast(
-									'No tienes permisos para eliminar usuarios.',
-									'warning',
-								)
-								break
-							case 400:
-								showToast(
-									'Solicitud inválida. Verifica los datos del formulario.',
-									'error',
-								)
-								break
-							case 500:
-								showToast(
-									'Error interno del servidor. Intenta más tarde.',
-									'error',
-								)
-								break
-							default:
-								showToast(
-									errorResponse.message ||
-										'Hubo un error al eliminar el usuario.',
-									'error',
-								)
-								break
-						}
-					} catch {
-						console.error('Unexpected error:', xhr.status, xhr.responseText)
-						showToast('Hubo un error inesperado.', 'error')
-					}
 					$('#deleteUserModal').modal('hide')
-				},
-				complete: function () {
-					$('#confirmDeleteUserSpinner').addClass('d-none')
-					$('#confirmDeleteUserIcon').removeClass('d-none')
-					$('#confirmDeleteUser').prop('disabled', false)
-				},
-			})
+					showToast('Usuario eliminado exitosamente.', 'success')
+				} else {
+					console.error(
+						`Backend error (${json.errorType} - ${json.statusCode}):`,
+						json.message,
+					)
+					$('#deleteUserModal').modal('hide')
+					showToast(
+						json.message || 'Hubo un error al eliminar el usuario.',
+						'error',
+					)
+				}
+			} catch (err) {
+				console.error('Unexpected error:', err)
+				showToast('Hubo un error inesperado.', 'error')
+				$('#deleteUserModal').modal('hide')
+			} finally {
+				toggleButtonLoading($(this), false)
+			}
 		})
 }
 
@@ -900,28 +789,37 @@ function loadModalData() {
 		const userId = $(this).data('id')
 		$('#detailsUserModalID').text($(this).data('formatted-id'))
 
-		$('#detailsUserSpinner').removeClass('d-none')
-		$('#detailsUserContent').addClass('d-none')
+		toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'UserServlet',
-			type: 'GET',
-			data: { type: 'details', userId: userId },
-			dataType: 'json',
-			success: function (data) {
+		fetch(`./api/users/${encodeURIComponent(userId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
 				$('#detailsUserID').text(data.formattedUserId)
 				$('#detailsUserUsername').text(data.username)
 				$('#detailsUserEmail').text(data.email)
 				$('#detailsUserFirstName').text(data.firstName)
 				$('#detailsUserLastName').text(data.lastName)
+
 				$('#detailsUserRole').html(
 					data.role === 'administrador'
 						? '<i class="bi bi-shield-lock me-1"></i> Administrador'
 						: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario',
 				)
-				if (data.profilePhotoBase64) {
+
+				if (data.profilePhotoUrl) {
 					$('#detailsUserImg')
-						.attr('src', data.profilePhotoBase64)
+						.attr('src', data.profilePhotoUrl)
 						.removeClass('d-none')
 					$('#detailsUserSvg').addClass('d-none')
 				} else {
@@ -929,28 +827,16 @@ function loadModalData() {
 					$('#detailsUserSvg').removeClass('d-none')
 				}
 
-				$('#detailsUserSpinner').addClass('d-none')
-				$('#detailsUserContent').removeClass('d-none')
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading user details (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast(
-						'Hubo un error al cargar los detalles del usuario.',
-						'error',
-					)
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading user details (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los detalles del usuario.', 'error')
 				$('#detailsUserModal').modal('hide')
-			},
-		})
+			})
 	})
 
 	// Edit Modal
@@ -958,16 +844,22 @@ function loadModalData() {
 		const userId = $(this).data('id')
 		$('#editUserModalID').text($(this).data('formatted-id'))
 
-		$('#editUserSpinner').removeClass('d-none')
-		$('#editUserForm').addClass('d-none')
-		$('#editUserBtn').prop('disabled', true)
+		toggleModalLoading(this, true)
 
-		$.ajax({
-			url: 'UserServlet',
-			type: 'GET',
-			data: { type: 'details', userId: userId },
-			dataType: 'json',
-			success: function (data) {
+		fetch(`./api/users/${encodeURIComponent(userId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
 				$('#editUserForm').data('userId', data.userId)
 				$('#editUserUsername').val(data.username)
 				$('#editUserEmail').val(data.email)
@@ -978,22 +870,15 @@ function loadModalData() {
 					.selectpicker('destroy')
 					.empty()
 					.append(
-						$('<option>', {
-							value: 'administrador',
-							text: 'Administrador',
-						}),
-						$('<option>', {
-							value: 'bibliotecario',
-							text: 'Bibliotecario',
-						}),
+						$('<option>', { value: 'administrador', text: 'Administrador' }),
+						$('<option>', { value: 'bibliotecario', text: 'Bibliotecario' }),
 					)
 				$('#editUserRole').val(data.role)
 				$('#editUserRole').selectpicker()
 
-				updateEditImageContainer(data.profilePhotoBase64)
+				updateEditImageContainer(data.profilePhotoUrl)
 
 				$('#editUserForm .is-invalid').removeClass('is-invalid')
-
 				placeholderColorEditSelect()
 
 				$('#editUserForm')
@@ -1004,29 +889,18 @@ function loadModalData() {
 
 				$('#editUserProfilePhoto').val('')
 
-				$('#editUserSpinner').addClass('d-none')
-				$('#editUserForm').removeClass('d-none')
-				$('#editUserBtn').prop('disabled', false)
-			},
-			error: function (xhr) {
-				let errorResponse
-				try {
-					errorResponse = JSON.parse(xhr.responseText)
-					console.error(
-						`Error loading user details for editing (${errorResponse.errorType} - ${xhr.status}):`,
-						errorResponse.message,
-					)
-					showToast('Hubo un error al cargar los datos del usuario.', 'error')
-				} catch {
-					console.error('Unexpected error:', xhr.status, xhr.responseText)
-					showToast('Hubo un error inesperado.', 'error')
-				}
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading user details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los datos del usuario.', 'error')
 				$('#editUserModal').modal('hide')
-			},
-		})
+			})
 
 		$('#cropperContainerEdit').addClass('d-none')
-
 		if (cropper) {
 			cropper.destroy()
 			cropper = null
@@ -1067,15 +941,15 @@ function preventSpacesInPasswordField(selector) {
 		})
 }
 
-function updateEditImageContainer(profilePhotoBase64) {
+function updateEditImageContainer(profilePhotoUrl) {
 	const $editImageContainer = $('#currentEditPhotoContainer')
 	const $deleteEditPhotoBtn = $('#deleteEditPhotoBtn')
 
 	$editImageContainer.empty()
 
-	if (profilePhotoBase64) {
+	if (profilePhotoUrl) {
 		$editImageContainer.html(
-			`<img src="${profilePhotoBase64}" class="img-fluid rounded-circle" alt="Foto del Usuario">`,
+			`<img src="${profilePhotoUrl}" class="img-fluid rounded-circle" alt="Foto del Usuario">`,
 		)
 		$deleteEditPhotoBtn.removeClass('d-none')
 	} else {

@@ -53,17 +53,18 @@ export function showToast(message, type) {
 }
 
 export function toggleButtonLoading(button, loading = true) {
-	const icon = button.find('span').first()
-	const spinner = button.find('.spinner-border')
+	const $button = $(button)
+	const $icon = $button.children('i')
+	const $spinner = $button.children('.spinner-border')
 
 	if (loading) {
-		button.prop('disabled', true)
-		icon.addClass('d-none')
-		spinner.removeClass('d-none')
+		$button.prop('disabled', true)
+		$icon.addClass('d-none')
+		$spinner.removeClass('d-none')
 	} else {
-		button.prop('disabled', false)
-		icon.removeClass('d-none')
-		spinner.addClass('d-none')
+		$button.prop('disabled', false)
+		$icon.removeClass('d-none')
+		$spinner.addClass('d-none')
 	}
 }
 

@@ -1,158 +1,160 @@
 /**
  * forgot-password.js
  *
- * Handles forgot password form validation, submission, and UI updates. Validates the email format in real-time,
- * submits the form via AJAX to ForgotPasswordServlet, and updates the UI based on the response.
+ * Handles the forgot password form validation, submission, and UI feedback. Validates email format in real time,
+ * then submits the request to the RESTful API using the Fetch API. Updates the UI based on the server response.
  *
  * @author Jason
  */
 
 import { showToast } from '../../shared/utils/ui/index.js'
 
-$(document).ready(function () {
+document.addEventListener('DOMContentLoaded', () => {
 	let isFirstSubmit = false
 
-	const originalTitle = $('header.card-header h3').text()
-	const originalParagraph = $('header.card-header p').text()
-	const originalCancelHTML = $(
+	const originalTitle = document.querySelector(
+		'header.card-header h3',
+	).textContent
+	const originalParagraph = document.querySelector(
+		'header.card-header p',
+	).textContent
+	const originalCancelHTML = document.querySelector(
 		'#forgotPasswordForm a.btn-custom-secondary',
-	).prop('outerHTML')
+	)?.outerHTML
 
 	function validateEmail() {
-		const email = $('#email').val().trim()
+		const email = document.getElementById('email').value.trim()
 		const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+
 		if (!emailRegex.test(email)) {
-			$('#email').addClass('is-invalid')
-			$('#email')
-				.siblings('.invalid-feedback')
-				.html('Por favor ingrese un correo electrónico válido.')
+			const input = document.getElementById('email')
+			input.classList.add('is-invalid')
+			input.nextElementSibling.innerHTML =
+				'Por favor ingrese un correo electrónico válido.'
 			return false
 		} else {
-			$('#email').removeClass('is-invalid')
-			$('#email').siblings('.invalid-feedback').html('')
+			const input = document.getElementById('email')
+			input.classList.remove('is-invalid')
+			input.nextElementSibling.innerHTML = ''
 			return true
 		}
 	}
 
-	$('#email').on('input', function () {
-		if (isFirstSubmit) {
-			validateEmail()
-		}
+	document.getElementById('email').addEventListener('input', () => {
+		if (isFirstSubmit) validateEmail()
 	})
 
 	function updateUIOnSuccess() {
-		const $headerTitle = $('header.card-header h3')
-		const $headerParagraph = $('header.card-header p')
-		const $emailContainer = $('#email').closest('.mb-4')
-		const $sendBtn = $('#sendBtn')
-		const $cancelBtn = $('#forgotPasswordForm a.btn-custom-secondary')
+		document.querySelector('header.card-header h3').textContent =
+			'Comprueba tu bandeja de entrada'
+		document.querySelector('header.card-header p').textContent =
+			'Te hemos enviado un correo. Sigue las instrucciones para acceder a tu cuenta de BookStudio.'
 
-		$headerTitle.text('Comprueba tu bandeja de entrada')
-		$headerParagraph.text(
-			'Te hemos enviado un correo. Sigue las instrucciones para acceder a tu cuenta de BookStudio.',
+		document.getElementById('email').closest('.mb-4').style.display = 'none'
+		document.getElementById('sendBtn').style.display = 'none'
+
+		const cancelBtn = document.querySelector(
+			'#forgotPasswordForm a.btn-custom-secondary',
 		)
+		cancelBtn.textContent = 'Volver al inicio de sesión'
+		cancelBtn.classList.remove('btn-custom-secondary', 'mt-3')
+		cancelBtn.classList.add('btn-custom-primary')
 
-		$emailContainer.hide()
-		$sendBtn.hide()
+		if (!document.getElementById('editBtn')) {
+			const editBtn = document.createElement('button')
+			editBtn.type = 'button'
+			editBtn.id = 'editBtn'
+			editBtn.className =
+				'btn btn-custom-secondary w-100 mt-3 d-flex align-items-center justify-content-center'
+			editBtn.innerHTML = `<i class="bi bi-pencil me-2"></i>Editar correo`
+			cancelBtn.insertAdjacentElement('afterend', editBtn)
 
-		$cancelBtn
-			.text('Volver al inicio de sesión')
-			.removeClass('btn-custom-secondary mt-3')
-			.addClass('btn-custom-primary')
-
-		if ($('#editBtn').length === 0) {
-			const $editBtn = $(`
-	                <button type="button" class="btn btn-custom-secondary w-100 mt-3 d-flex align-items-center justify-content-center" id="editBtn">
-	                    <i class="bi bi-pencil me-2"></i>Editar correo
-	                </button>
-	            `)
-			$cancelBtn.after($editBtn)
-
-			$editBtn.on('click', function () {
+			editBtn.addEventListener('click', () => {
 				restoreOriginalUI()
-				$editBtn.remove()
+				editBtn.remove()
 			})
 		}
 	}
 
 	function restoreOriginalUI() {
-		$('header.card-header h3').text(originalTitle)
-		$('header.card-header p').text(originalParagraph)
-		$('#email').closest('.mb-4').show()
-		$('#sendBtn').show()
-		$('#forgotPasswordForm a.btn-custom-primary').replaceWith(
-			originalCancelHTML,
+		document.querySelector('header.card-header h3').textContent = originalTitle
+		document.querySelector('header.card-header p').textContent =
+			originalParagraph
+		document.getElementById('email').closest('.mb-4').style.display = ''
+		document.getElementById('sendBtn').style.display = ''
+		const btn = document.querySelector(
+			'#forgotPasswordForm a.btn-custom-primary',
 		)
+		if (btn && originalCancelHTML) {
+			btn.outerHTML = originalCancelHTML
+		}
 	}
 
-	$('#forgotPasswordForm').on('submit', function (e) {
-		e.preventDefault()
+	document
+		.getElementById('forgotPasswordForm')
+		.addEventListener('submit', async (e) => {
+			e.preventDefault()
+			document.getElementById('alertContainer').innerHTML = ''
+			isFirstSubmit = true
 
-		$('#alertContainer').empty()
+			if (!validateEmail()) return
 
-		isFirstSubmit = true
+			const email = document.getElementById('email').value.trim()
+			const sendBtn = document.getElementById('sendBtn')
+			const spinner = document.getElementById('spinner')
+			const sendText = document.getElementById('sendText')
 
-		if (!validateEmail()) {
-			return
-		}
+			sendBtn.disabled = true
+			spinner.classList.remove('d-none')
+			sendText.classList.add('d-none')
 
-		const email = $('#email').val().trim()
+			try {
+				const response = await fetch('/api/auth/forgot-password', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+					body: new URLSearchParams({ email }),
+				})
 
-		$('#sendBtn').prop('disabled', true)
-		$('#spinner').removeClass('d-none')
-		$('#sendText').addClass('d-none')
+				const result = await response.json()
 
-		$.ajax({
-			type: 'POST',
-			url: 'ForgotPasswordServlet',
-			data: { email: email },
-			dataType: 'json',
-			success: function (response) {
-				if (response && response.success) {
+				if (response.ok && result.success) {
 					updateUIOnSuccess()
 				} else {
-					if (response.target === 'field-error') {
-						$('#email').addClass('is-invalid')
-						$('#email').siblings('.invalid-feedback').html(response.message)
+					if (result.target === 'field-error') {
+						const input = document.getElementById('email')
+						input.classList.add('is-invalid')
+						input.nextElementSibling.innerHTML = result.message
 					} else {
-						showToast(response.message, 'error')
+						showToast(
+							result.message || 'Ocurrió un error al enviar el correo.',
+							'error',
+						)
 					}
 				}
-			},
-			error: function () {
+			} catch {
 				showToast('Ocurrió un error al procesar la solicitud.', 'error')
-			},
-			complete: function () {
-				$('#sendBtn').prop('disabled', false)
-				$('#spinner').addClass('d-none')
-				$('#sendText').removeClass('d-none')
+			} finally {
+				sendBtn.disabled = false
+				spinner.classList.add('d-none')
+				sendText.classList.remove('d-none')
 
 				const urlParams = new URLSearchParams(window.location.search)
 				if (urlParams.get('linkInvalid') === 'true') {
 					urlParams.delete('linkInvalid')
-
-					if (urlParams.toString()) {
-						window.history.replaceState(
-							{},
-							'',
-							`${location.pathname}?${urlParams}`,
-						)
-					} else {
-						window.history.replaceState({}, '', location.pathname)
-					}
+					const newUrl = urlParams.toString()
+						? `${location.pathname}?${urlParams}`
+						: location.pathname
+					window.history.replaceState({}, '', newUrl)
 				}
-			},
+			}
 		})
-	})
 
 	const urlParams = new URLSearchParams(window.location.search)
 	if (urlParams.get('linkInvalid') === 'true') {
-		const alertHTML = `
+		document.getElementById('alertContainer').innerHTML = `
 			<div class="alert alert-danger alert-dismissible fade show" role="alert">
-			    <i class="bi bi-x-circle me-1"></i>
-			    <small>El enlace de restablecimiento ha expirado o es inválido.</small>
-			</div>
-        `
-		$('#alertContainer').html(alertHTML)
+				<i class="bi bi-x-circle me-1"></i>
+				<small>El enlace de restablecimiento ha expirado o es inválido.</small>
+			</div>`
 	}
 })

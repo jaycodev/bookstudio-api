@@ -2,7 +2,6 @@ package com.bookstudio.loan.model;
 
 import com.bookstudio.book.model.Book;
 import com.bookstudio.shared.enums.LoanStatus;
-import com.bookstudio.shared.util.IdFormatter;
 import com.bookstudio.student.model.Student;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,9 +44,4 @@ public class Loan {
 
 	@Column(name = "Observation", columnDefinition = "TEXT")
 	private String observation;
-
-	@Transient
-	public String getFormattedId() {
-		return IdFormatter.formatId(String.valueOf(id), "P");
-	}
 }

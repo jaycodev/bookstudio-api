@@ -14,5 +14,5 @@ public class UpdatePublisherDto {
     private String address;
     private Status status;
     private boolean deletePhoto;
-    private byte[] photo;
+    private String photoUrl;
 }

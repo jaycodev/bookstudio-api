@@ -1,14 +1,17 @@
 /**
  * books.js
  *
- * Manages the initialization, data loading, and configuration of the books table,
- * as well as handling modals for creating, viewing, and editing book details.
- * Also supports logical delete (status change) operations on book records.
- * Utilizes AJAX for CRUD operations on book data.
- * Includes functions to manage UI elements like placeholders, dropdown styles, and tooltips.
- * Additionally, incorporates functionality to generate PDFs and Excel files directly from the datatable.
+ * Handles the initialization and behavior of the books table,
+ * including loading data, configuring modals for creating, viewing,
+ * editing, and logically deleting book records.
  *
- * @author [Jason]
+ * Uses the Fetch API to communicate with RESTful endpoints for all book-related
+ * CRUD operations. Manages UI components such as placeholders, enhanced dropdowns,
+ * validation feedback, loading states, and tooltips.
+ *
+ * Also includes features for generating PDF reports and exporting table data to Excel.
+ *
+ * @author Jason
  */
 
 import {
@@ -345,7 +348,7 @@ function handleAddBookForm() {
 			status: raw.addBookStatus,
 		}
 
-		const submitButton = $(this).find('[type="submit"]')
+		const submitButton = $('#addBookBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -372,45 +375,9 @@ function handleAddBookForm() {
 				$('#addBookModal').modal('hide')
 				showToast('Hubo un error al agregar el libro.', 'error')
 			}
-		} catch (error) {
-			if (error instanceof Response) {
-				try {
-					const errData = await error.json()
-					console.error(
-						`Server error (${errData.errorType} - ${error.status}):`,
-						errData.message,
-					)
-					switch (error.status) {
-						case 403:
-							showToast('No tienes permisos para agregar libros.', 'warning')
-							break
-						case 400:
-							showToast(
-								'Solicitud inválida. Verifica los datos del formulario.',
-								'error',
-							)
-							break
-						case 500:
-							showToast(
-								'Error interno del servidor. Intenta más tarde.',
-								'error',
-							)
-							break
-						default:
-							showToast(
-								errData.message || 'Hubo un error al agregar el libro.',
-								'error',
-							)
-							break
-					}
-				} catch {
-					console.error('Unexpected error:', error.status, await error.text())
-					showToast('Hubo un error inesperado.', 'error')
-				}
-			} else {
-				console.error('Unexpected error:', error)
-				showToast('Hubo un error inesperado.', 'error')
-			}
+		} catch (err) {
+			console.error('Unexpected error:', err)
+			showToast('Hubo un error inesperado.', 'error')
 			$('#addBookModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
@@ -534,7 +501,7 @@ function handleEditBookForm() {
 			status: raw.editBookStatus,
 		}
 
-		const submitButton = $(this).find('[type="submit"]')
+		const submitButton = $('#editBookBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
