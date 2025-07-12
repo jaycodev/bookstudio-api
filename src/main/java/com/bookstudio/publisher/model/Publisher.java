@@ -43,7 +43,7 @@ public class Publisher {
     @Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
     private Status status;
 
-    @Column(name = "PhotoUrl")
+    @Column(name = "PhotoUrl", length = 512)
     private String photoUrl;
 
     @Transient

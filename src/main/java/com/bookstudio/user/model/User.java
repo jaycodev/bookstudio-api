@@ -36,6 +36,6 @@ public class User {
     @Column(name = "Role", nullable = false, columnDefinition = "ENUM('administrador', 'bibliotecario')")
     private Role role;
 
-    @Column(name = "ProfilePhotoUrl")
+    @Column(name = "ProfilePhotoUrl", length = 512)
     private String profilePhotoUrl;
 }
