@@ -24,10 +24,7 @@ import {
 	initializeTooltips,
 } from '../../shared/utils/ui/index.js'
 
-import {
-	toggleTableLoadingState,
-	setupDataTable,
-} from '../../shared/utils/tables/index.js'
+import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import { isValidText } from '../../shared/utils/validators/index.js'
 
@@ -82,7 +79,7 @@ function generateRow(course) {
 }
 
 function addRowToTable(course) {
-	const table = $('#courseTable').DataTable()
+	const table = $('#table').DataTable()
 	const rowHtml = generateRow(course)
 	const $row = $(rowHtml)
 
@@ -91,102 +88,8 @@ function addRowToTable(course) {
 	initializeTooltips($row)
 }
 
-async function loadCourses() {
-	toggleTableLoadingState('loading')
-
-	const safetyTimer = setTimeout(() => {
-		toggleTableLoadingState('loaded')
-		$('#tableContainer').removeClass('d-none')
-	}, 8000)
-
-	try {
-		const response = await fetch('./api/courses', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		clearTimeout(safetyTimer)
-
-		const tableBody = $('#bodyCourses')
-		tableBody.empty()
-
-		if (response.status === 200) {
-			const data = await response.json()
-
-			if (data.length > 0) {
-				data.forEach((course) => {
-					const row = generateRow(course)
-					tableBody.append(row)
-				})
-				initializeTooltips(tableBody)
-			}
-
-			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
-		} else if (response.status === 204) {
-			$('#generatePDF, #generateExcel').prop('disabled', true)
-		} else {
-			let errorResponse
-			try {
-				errorResponse = await response.json()
-				console.error(
-					`Error listing course data (${errorResponse.errorType} - ${response.status}):`,
-					errorResponse.message,
-				)
-				showToast('Hubo un error al listar los datos de los cursos.', 'error')
-			} catch {
-				console.error(
-					'Unexpected error:',
-					response.status,
-					await response.text(),
-				)
-				showToast('Hubo un error inesperado.', 'error')
-			}
-		}
-
-		if ($.fn.DataTable.isDataTable('#courseTable')) {
-			$('#courseTable').DataTable().destroy()
-		}
-
-		const dataTable = setupDataTable('#courseTable')
-
-		dataTable.on('draw', function () {
-			const filteredCount = dataTable.rows({ search: 'applied' }).count()
-			const noDataMessage =
-				$('#courseTable').find('td.dataTables_empty').length > 0
-			$('#generatePDF, #generateExcel').prop(
-				'disabled',
-				filteredCount === 0 || noDataMessage,
-			)
-		})
-
-		$('#generatePDF')
-			.off('click')
-			.on('click', () => generatePDF(dataTable))
-
-		$('#generateExcel')
-			.off('click')
-			.on('click', () => generateExcel(dataTable))
-	} catch (err) {
-		clearTimeout(safetyTimer)
-
-		console.error('Unexpected error:', err)
-		showToast('Hubo un error inesperado.', 'error')
-
-		const tableBody = $('#bodyCourses')
-		tableBody.empty()
-
-		if ($.fn.DataTable.isDataTable('#courseTable')) {
-			$('#courseTable').DataTable().destroy()
-		}
-
-		setupDataTable('#courseTable')
-	}
-}
-
 function updateRowInTable(course) {
-	const table = $('#courseTable').DataTable()
+	const table = $('#table').DataTable()
 
 	const row = table
 		.rows()
@@ -927,7 +830,12 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadCourses()
+	loadTableData({
+		apiUrl: './api/courses',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
 	handleAddCourseForm()
 	handleEditCourseForm()
 	loadModalData()

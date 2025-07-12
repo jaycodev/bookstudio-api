@@ -26,10 +26,7 @@ import {
 	initializeTooltips,
 } from '../../shared/utils/ui/index.js'
 
-import {
-	toggleTableLoadingState,
-	setupDataTable,
-} from '../../shared/utils/tables/index.js'
+import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidText,
@@ -148,7 +145,7 @@ function generateRow(publisher) {
 }
 
 function addRowToTable(publisher) {
-	const table = $('#publisherTable').DataTable()
+	const table = $('#table').DataTable()
 	const rowHtml = generateRow(publisher)
 	const $row = $(rowHtml)
 
@@ -157,105 +154,8 @@ function addRowToTable(publisher) {
 	initializeTooltips($row)
 }
 
-async function loadPublishers() {
-	toggleTableLoadingState('loading')
-
-	const safetyTimer = setTimeout(() => {
-		toggleTableLoadingState('loaded')
-		$('#tableContainer').removeClass('d-none')
-	}, 8000)
-
-	try {
-		const response = await fetch('./api/publishers', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		clearTimeout(safetyTimer)
-
-		const tableBody = $('#bodyPublishers')
-		tableBody.empty()
-
-		if (response.status === 200) {
-			const data = await response.json()
-
-			if (data.length > 0) {
-				data.forEach((publisher) => {
-					const row = generateRow(publisher)
-					tableBody.append(row)
-				})
-				initializeTooltips(tableBody)
-			}
-
-			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
-		} else if (response.status === 204) {
-			$('#generatePDF, #generateExcel').prop('disabled', true)
-		} else {
-			let errorResponse
-			try {
-				errorResponse = await response.json()
-				console.error(
-					`Error listing publisher data (${errorResponse.errorType} - ${response.status}):`,
-					errorResponse.message,
-				)
-				showToast(
-					'Hubo un error al listar los datos de las editoriales.',
-					'error',
-				)
-			} catch {
-				console.error(
-					'Unexpected error:',
-					response.status,
-					await response.text(),
-				)
-				showToast('Hubo un error inesperado.', 'error')
-			}
-		}
-
-		if ($.fn.DataTable.isDataTable('#publisherTable')) {
-			$('#publisherTable').DataTable().destroy()
-		}
-
-		const dataTable = setupDataTable('#publisherTable')
-
-		dataTable.on('draw', function () {
-			const filteredCount = dataTable.rows({ search: 'applied' }).count()
-			const noDataMessage =
-				$('#publisherTable').find('td.dataTables_empty').length > 0
-			$('#generatePDF, #generateExcel').prop(
-				'disabled',
-				filteredCount === 0 || noDataMessage,
-			)
-		})
-
-		$('#generatePDF')
-			.off('click')
-			.on('click', () => generatePDF(dataTable))
-
-		$('#generateExcel')
-			.off('click')
-			.on('click', () => generateExcel(dataTable))
-	} catch (err) {
-		clearTimeout(safetyTimer)
-
-		console.error('Unexpected error:', err)
-		showToast('Hubo un error inesperado.', 'error')
-
-		const tableBody = $('#bodyPublishers')
-		tableBody.empty()
-
-		if ($.fn.DataTable.isDataTable('#publisherTable')) {
-			$('#publisherTable').DataTable().destroy()
-		}
-
-		setupDataTable('#publisherTable')
-	}
-}
-
 function updateRowInTable(publisher) {
-	const table = $('#publisherTable').DataTable()
+	const table = $('#table').DataTable()
 
 	const row = table
 		.rows()
@@ -982,7 +882,7 @@ $('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
 	}
 })
 
-function generatePDF(publisherTable) {
+function generatePDF(dataTable) {
 	const pdfBtn = $('#generatePDF')
 	toggleButtonLoading(pdfBtn, true)
 
@@ -1032,7 +932,7 @@ function generatePDF(publisherTable) {
 			align: 'right',
 		})
 
-		const data = publisherTable
+		const data = dataTable
 			.rows({ search: 'applied' })
 			.nodes()
 			.toArray()
@@ -1122,7 +1022,7 @@ function generatePDF(publisherTable) {
 	}
 }
 
-function generateExcel(publisherTable) {
+function generateExcel(dataTable) {
 	const excelBtn = $('#generateExcel')
 	toggleButtonLoading(excelBtn, true)
 
@@ -1187,7 +1087,7 @@ function generateExcel(publisherTable) {
 			}
 		})
 
-		const data = publisherTable
+		const data = dataTable
 			.rows({ search: 'applied' })
 			.nodes()
 			.toArray()
@@ -1271,7 +1171,12 @@ function generateExcel(publisherTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadPublishers()
+	loadTableData({
+		apiUrl: './api/publishers',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
 	handleAddPublisherForm()
 	handleEditPublisherForm()
 	loadModalData()

@@ -25,10 +25,7 @@ import {
 	initializeTooltips,
 } from '../../shared/utils/ui/index.js'
 
-import {
-	toggleTableLoadingState,
-	setupDataTable,
-} from '../../shared/utils/tables/index.js'
+import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidEmail,
@@ -101,7 +98,7 @@ function generateRow(user) {
 }
 
 function addRowToTable(user) {
-	const table = $('#userTable').DataTable()
+	const table = $('#table').DataTable()
 	const rowHtml = generateRow(user)
 	const $row = $(rowHtml)
 
@@ -110,101 +107,8 @@ function addRowToTable(user) {
 	initializeTooltips($row)
 }
 
-async function loadUsers() {
-	toggleTableLoadingState('loading')
-
-	const safetyTimer = setTimeout(() => {
-		toggleTableLoadingState('loaded')
-		$('#tableContainer').removeClass('d-none')
-	}, 8000)
-
-	try {
-		const response = await fetch('./api/users', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		clearTimeout(safetyTimer)
-
-		const tableBody = $('#bodyUsers')
-		tableBody.empty()
-
-		if (response.status === 200) {
-			const data = await response.json()
-
-			if (data.length > 0) {
-				data.forEach((user) => {
-					const row = generateRow(user)
-					tableBody.append(row)
-				})
-				initializeTooltips(tableBody)
-			}
-
-			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
-		} else if (response.status === 204) {
-			$('#generatePDF, #generateExcel').prop('disabled', true)
-		} else {
-			let errorResponse
-			try {
-				errorResponse = await response.json()
-				console.error(
-					`Error listing user data (${errorResponse.errorType} - ${response.status}):`,
-					errorResponse.message,
-				)
-				showToast('Hubo un error al listar los datos de los usuarios.', 'error')
-			} catch {
-				console.error(
-					'Unexpected error:',
-					response.status,
-					await response.text(),
-				)
-				showToast('Hubo un error inesperado.', 'error')
-			}
-		}
-
-		if ($.fn.DataTable.isDataTable('#userTable')) {
-			$('#userTable').DataTable().destroy()
-		}
-
-		const dataTable = setupDataTable('#userTable')
-
-		dataTable.on('draw', function () {
-			const filteredCount = dataTable.rows({ search: 'applied' }).count()
-			const noDataMessage =
-				$('#userTable').find('td.dataTables_empty').length > 0
-			$('#generatePDF, #generateExcel').prop(
-				'disabled',
-				filteredCount === 0 || noDataMessage,
-			)
-		})
-
-		$('#generatePDF')
-			.off('click')
-			.on('click', () => generatePDF(dataTable))
-		$('#generateExcel')
-			.off('click')
-			.on('click', () => generateExcel(dataTable))
-	} catch (err) {
-		clearTimeout(safetyTimer)
-
-		console.error('Unexpected error:', err)
-		showToast('Hubo un error inesperado.', 'error')
-
-		const tableBody = $('#bodyUsers')
-		tableBody.empty()
-
-		if ($.fn.DataTable.isDataTable('#userTable')) {
-			$('#userTable').DataTable().destroy()
-		}
-
-		setupDataTable('#userTable')
-	}
-}
-
 function updateRowInTable(user) {
-	const table = $('#userTable').DataTable()
+	const table = $('#table').DataTable()
 
 	const row = table
 		.rows()
@@ -701,7 +605,7 @@ function handleDeleteUser() {
 				const json = await response.json()
 
 				if (response.ok && json.success) {
-					const table = $('#userTable').DataTable()
+					const table = $('#table').DataTable()
 					const row = table
 						.rows()
 						.nodes()
@@ -1285,7 +1189,12 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadUsers()
+	loadTableData({
+		apiUrl: './api/users',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
 	handleAddUserForm()
 	handleEditUserForm()
 	handleDeleteUser()

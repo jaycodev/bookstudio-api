@@ -72,7 +72,7 @@
 
 				<!-- Table Container -->
 				<section id="tableContainer" class="d-none small">
-					<table id="userTable" class="table table-sm">
+					<table id="table" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -85,9 +85,7 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyUsers">
-							<!-- Data will be populated here via JavaScript -->
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</section>
 			</div>

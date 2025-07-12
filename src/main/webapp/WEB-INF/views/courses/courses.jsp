@@ -77,7 +77,7 @@
 
 				<!-- Table Container -->
 				<div id="tableContainer" class="d-none small">
-					<table id="courseTable" class="table table-sm">
+					<table id="table" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -88,9 +88,7 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyCourses">
-							<!-- Data will be populated here via JavaScript -->
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>

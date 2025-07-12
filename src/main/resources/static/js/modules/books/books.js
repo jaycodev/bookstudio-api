@@ -27,10 +27,7 @@ import {
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
 
-import {
-	toggleTableLoadingState,
-	setupDataTable,
-} from '../../shared/utils/tables/index.js'
+import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidText,
@@ -145,7 +142,7 @@ function generateRow(book) {
 }
 
 function addRowToTable(book) {
-	const table = $('#bookTable').DataTable()
+	const table = $('#table').DataTable()
 	const rowHtml = generateRow(book)
 	const $row = $(rowHtml)
 
@@ -154,102 +151,8 @@ function addRowToTable(book) {
 	initializeTooltips($row)
 }
 
-async function loadBooks() {
-	toggleTableLoadingState('loading')
-
-	const safetyTimer = setTimeout(() => {
-		toggleTableLoadingState('loaded')
-		$('#tableContainer').removeClass('d-none')
-	}, 8000)
-
-	try {
-		const response = await fetch('./api/books', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		clearTimeout(safetyTimer)
-
-		const tableBody = $('#bodyBooks')
-		tableBody.empty()
-
-		if (response.status === 200) {
-			const data = await response.json()
-
-			if (data.length > 0) {
-				data.forEach((book) => {
-					const row = generateRow(book)
-					tableBody.append(row)
-				})
-				initializeTooltips(tableBody)
-			}
-
-			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
-		} else if (response.status === 204) {
-			$('#generatePDF, #generateExcel').prop('disabled', true)
-		} else {
-			let errorResponse
-			try {
-				errorResponse = await response.json()
-				console.error(
-					`Error listing book data (${errorResponse.errorType} - ${response.status}):`,
-					errorResponse.message,
-				)
-				showToast('Hubo un error al listar los datos de los libros.', 'error')
-			} catch {
-				console.error(
-					'Unexpected error:',
-					response.status,
-					await response.text(),
-				)
-				showToast('Hubo un error inesperado.', 'error')
-			}
-		}
-
-		if ($.fn.DataTable.isDataTable('#bookTable')) {
-			$('#bookTable').DataTable().destroy()
-		}
-
-		const dataTable = setupDataTable('#bookTable')
-
-		dataTable.on('draw', function () {
-			const filteredCount = dataTable.rows({ search: 'applied' }).count()
-			const noDataMessage =
-				$('#bookTable').find('td.dataTables_empty').length > 0
-			$('#generatePDF, #generateExcel').prop(
-				'disabled',
-				filteredCount === 0 || noDataMessage,
-			)
-		})
-
-		$('#generatePDF')
-			.off('click')
-			.on('click', () => generatePDF(dataTable))
-
-		$('#generateExcel')
-			.off('click')
-			.on('click', () => generateExcel(dataTable))
-	} catch (err) {
-		clearTimeout(safetyTimer)
-
-		console.error('Unexpected error:', err)
-		showToast('Hubo un error inesperado.', 'error')
-
-		const tableBody = $('#bodyBooks')
-		tableBody.empty()
-
-		if ($.fn.DataTable.isDataTable('#bookTable')) {
-			$('#bookTable').DataTable().destroy()
-		}
-
-		setupDataTable('#bookTable')
-	}
-}
-
 function updateRowInTable(book) {
-	const table = $('#bookTable').DataTable()
+	const table = $('#table').DataTable()
 
 	const row = table
 		.rows()
@@ -1095,7 +998,12 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadBooks()
+	loadTableData({
+		apiUrl: './api/books',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
 	handleAddBookForm()
 	handleEditBookForm()
 	loadModalData()

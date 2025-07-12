@@ -27,10 +27,7 @@ import {
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
 
-import {
-	toggleTableLoadingState,
-	setupDataTable,
-} from '../../shared/utils/tables/index.js'
+import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidDNI,
@@ -129,7 +126,7 @@ function generateRow(student) {
 }
 
 function addRowToTable(student) {
-	const table = $('#studentTable').DataTable()
+	const table = $('#table').DataTable()
 	const rowHtml = generateRow(student)
 	const $row = $(rowHtml)
 
@@ -138,105 +135,8 @@ function addRowToTable(student) {
 	initializeTooltips($row)
 }
 
-async function loadStudents() {
-	toggleTableLoadingState('loading')
-
-	const safetyTimer = setTimeout(() => {
-		toggleTableLoadingState('loaded')
-		$('#tableContainer').removeClass('d-none')
-	}, 8000)
-
-	try {
-		const response = await fetch('./api/students', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		clearTimeout(safetyTimer)
-
-		const tableBody = $('#bodyStudents')
-		tableBody.empty()
-
-		if (response.status === 200) {
-			const data = await response.json()
-
-			if (data.length > 0) {
-				data.forEach((student) => {
-					const row = generateRow(student)
-					tableBody.append(row)
-				})
-				initializeTooltips(tableBody)
-			}
-
-			$('#generatePDF, #generateExcel').prop('disabled', data.length === 0)
-		} else if (response.status === 204) {
-			$('#generatePDF, #generateExcel').prop('disabled', true)
-		} else {
-			let errorResponse
-			try {
-				errorResponse = await response.json()
-				console.error(
-					`Error listing student data (${errorResponse.errorType} - ${response.status}):`,
-					errorResponse.message,
-				)
-				showToast(
-					'Hubo un error al listar los datos de los estudiantes.',
-					'error',
-				)
-			} catch {
-				console.error(
-					'Unexpected error:',
-					response.status,
-					await response.text(),
-				)
-				showToast('Hubo un error inesperado.', 'error')
-			}
-		}
-
-		if ($.fn.DataTable.isDataTable('#studentTable')) {
-			$('#studentTable').DataTable().destroy()
-		}
-
-		const dataTable = setupDataTable('#studentTable')
-
-		dataTable.on('draw', function () {
-			const filteredCount = dataTable.rows({ search: 'applied' }).count()
-			const noDataMessage =
-				$('#studentTable').find('td.dataTables_empty').length > 0
-			$('#generatePDF, #generateExcel').prop(
-				'disabled',
-				filteredCount === 0 || noDataMessage,
-			)
-		})
-
-		$('#generatePDF')
-			.off('click')
-			.on('click', () => generatePDF(dataTable))
-
-		$('#generateExcel')
-			.off('click')
-			.on('click', () => generateExcel(dataTable))
-	} catch (err) {
-		clearTimeout(safetyTimer)
-
-		console.error('Unexpected error:', err)
-		showToast('Hubo un error inesperado.', 'error')
-
-		const tableBody = $('#bodyStudents')
-		tableBody.empty()
-
-		if ($.fn.DataTable.isDataTable('#studentTable')) {
-			$('#studentTable').DataTable().destroy()
-		}
-
-		setupDataTable('#studentTable')
-	}
-}
-
 function updateRowInTable(student) {
-	const table = $('#studentTable').DataTable()
+	const table = $('#table').DataTable()
 
 	const row = table
 		.rows()
@@ -1148,7 +1048,12 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadStudents()
+	loadTableData({
+		apiUrl: './api/students',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
 	handleAddStudentForm()
 	handleEditStudentForm()
 	loadModalData()
