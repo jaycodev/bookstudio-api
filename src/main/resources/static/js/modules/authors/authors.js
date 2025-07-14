@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import {
@@ -37,7 +38,6 @@ import {
 	placeholderColorDateInput,
 	initializeCropper,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
 
@@ -109,54 +109,36 @@ function generateRow(author) {
 	`
 }
 
-function updateRowInTable(author) {
-	const table = $('#table').DataTable()
-
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				author.formattedAuthorId.toString()
-			)
-		})
-
-	if (row.length > 0) {
-		row.find('td').eq(1).text(author.name)
-		row.find('td').eq(2).find('span').text(author.nationalityName)
-		row.find('td').eq(3).find('span').text(author.literaryGenreName)
-		row.find('td').eq(4).text(moment(author.birthDate).format('DD MMM YYYY'))
-		row
-			.find('td')
-			.eq(5)
-			.html(
-				author.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-			)
-
-		if (author.photoUrl && author.photoUrl.trim() !== '') {
+function updateRow(author) {
+	updateRowInTable({
+		entity: author,
+		getFormattedId: (a) => a.formattedAuthorId.toString(),
+		updateCellsFn: (row, a) => {
+			row.find('td').eq(1).text(a.name)
+			row.find('td').eq(2).find('span').text(a.nationalityName)
+			row.find('td').eq(3).find('span').text(a.literaryGenreName)
+			row.find('td').eq(4).text(moment(a.birthDate).format('DD MMM YYYY'))
+			row
+				.find('td')
+				.eq(5)
+				.html(
+					a.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
 			row
 				.find('td')
 				.eq(6)
 				.html(
-					`<img src="${author.photoUrl}" alt="Foto del Autor" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
+					a.photoUrl?.trim()
+						? `<img src="${a.photoUrl}" alt="Foto del Autor" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
+						: `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+							<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+						</svg>`,
 				)
-		} else {
-			row.find('td').eq(6).html(`
-				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
-					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
-					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
-				</svg>
-			`)
-		}
-
-		table.row(row).invalidate().draw(false)
-
-		initializeTooltips(row)
-	}
+		},
+	})
 }
 
 /*****************************************
@@ -414,7 +396,7 @@ function handleEditAuthorForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editAuthorModal').modal('hide')
 				showToast('Autor actualizado exitosamente.', 'success')
 			} else {

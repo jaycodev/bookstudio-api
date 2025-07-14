@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import { isValidText } from '../../shared/utils/forms/index.js'
@@ -28,7 +29,6 @@ import {
 	placeholderColorSelect,
 	placeholderColorEditSelect,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 } from '../../shared/utils/ui/index.js'
 
 /*****************************************
@@ -81,47 +81,36 @@ function generateRow(course) {
 	`
 }
 
-function updateRowInTable(course) {
-	const table = $('#table').DataTable()
+function updateRow(course) {
+	updateRowInTable({
+		entity: course,
+		getFormattedId: (c) => c.formattedCourseId?.toString(),
+		updateCellsFn: (row, c) => {
+			row.find('td').eq(1).text(c.name)
 
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				course.formattedCourseId.toString()
-			)
-		})
+			const levelBadge =
+				{
+					Básico:
+						'<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>',
+					Intermedio:
+						'<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>',
+					Avanzado:
+						'<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>',
+				}[c.level] || `<span class="badge bg-secondary">${c.level}</span>`
 
-	if (row.length > 0) {
-		row.find('td').eq(1).text(course.name)
-		row
-			.find('td')
-			.eq(2)
-			.html(
-				course.level === 'Básico'
-					? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
-					: course.level === 'Intermedio'
-						? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Intermedio</span>'
-						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>',
-			)
-		row.find('td').eq(3).text(course.description)
+			row.find('td').eq(2).html(levelBadge)
+			row.find('td').eq(3).text(c.description)
 
-		row
-			.find('td')
-			.eq(4)
-			.html(
-				course.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-			)
-
-		table.row(row).invalidate().draw(false)
-
-		initializeTooltips(row)
-	}
+			row
+				.find('td')
+				.eq(4)
+				.html(
+					c.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
+		},
+	})
 }
 
 /*****************************************
@@ -322,7 +311,7 @@ function handleEditCourseForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editCourseModal').modal('hide')
 				showToast('Curso actualizado exitosamente.', 'success')
 			} else {

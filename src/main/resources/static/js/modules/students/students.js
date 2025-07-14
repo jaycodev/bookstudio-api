@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import {
@@ -38,7 +39,6 @@ import {
 	placeholderColorEditSelect,
 	placeholderColorDateInput,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
 
@@ -91,39 +91,25 @@ function generateRow(student) {
 	`
 }
 
-function updateRowInTable(student) {
-	const table = $('#table').DataTable()
-
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				student.formattedStudentId.toString()
-			)
-		})
-
-	if (row.length > 0) {
-		row.find('td').eq(2).text(student.firstName)
-		row.find('td').eq(3).text(student.lastName)
-		row.find('td').eq(4).find('span').text(student.phone)
-		row.find('td').eq(5).text(student.email)
-
-		row
-			.find('td')
-			.eq(6)
-			.html(
-				student.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-			)
-
-		table.row(row).invalidate().draw(false)
-
-		initializeTooltips(row)
-	}
+function updateRow(student) {
+	updateRowInTable({
+		entity: student,
+		getFormattedId: (s) => s.formattedStudentId?.toString(),
+		updateCellsFn: (row, s) => {
+			row.find('td').eq(2).text(s.firstName)
+			row.find('td').eq(3).text(s.lastName)
+			row.find('td').eq(4).find('span').text(s.phone)
+			row.find('td').eq(5).text(s.email)
+			row
+				.find('td')
+				.eq(6)
+				.html(
+					s.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
+		},
+	})
 }
 
 /*****************************************
@@ -409,7 +395,7 @@ function handleEditStudentForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editStudentModal').modal('hide')
 				showToast('Estudiante actualizado exitosamente.', 'success')
 			} else if (

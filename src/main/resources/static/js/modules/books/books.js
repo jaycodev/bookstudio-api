@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import {
@@ -36,7 +37,6 @@ import {
 	placeholderColorEditSelect,
 	placeholderColorDateInput,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
 
@@ -104,49 +104,45 @@ function generateRow(book) {
 	`
 }
 
-function updateRowInTable(book) {
-	const table = $('#table').DataTable()
+function updateRow(book) {
+	updateRowInTable({
+		entity: book,
+		getFormattedId: (b) => b.formattedBookId?.toString(),
+		updateCellsFn: (row, b) => {
+			row.find('td').eq(1).text(b.title)
 
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				book.formattedBookId.toString()
-			)
-		})
+			row.find('td').eq(2).html(`
+				<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">
+					${b.availableCopies}
+				</span>
+			`)
 
-	if (row.length > 0) {
-		row.find('td').eq(1).text(book.title)
-		row.find('td').eq(2).html(`
-			<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">${book.availableCopies}</span>
-		`)
-		row.find('td').eq(3).html(`
-			<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">${book.loanedCopies}</span>
-		`)
-		row.find('td').eq(4).html(`
-			${book.authorName}
-			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedAuthorId}</span>
-		`)
-		row.find('td').eq(5).html(`
-			${book.publisherName}
-			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${book.formattedPublisherId}</span>
-		`)
-		row
-			.find('td')
-			.eq(6)
-			.html(
-				book.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-			)
+			row.find('td').eq(3).html(`
+				<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">
+					${b.loanedCopies}
+				</span>
+			`)
 
-		table.row(row).invalidate().draw(false)
+			row.find('td').eq(4).html(`
+				${b.authorName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${b.formattedAuthorId}</span>
+			`)
 
-		initializeTooltips(row)
-	}
+			row.find('td').eq(5).html(`
+				${b.publisherName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${b.formattedPublisherId}</span>
+			`)
+
+			row
+				.find('td')
+				.eq(6)
+				.html(
+					b.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
+		},
+	})
 }
 
 /*****************************************
@@ -373,7 +369,7 @@ function handleEditBookForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editBookModal').modal('hide')
 				showToast('Libro actualizado exitosamente.', 'success')
 			} else {

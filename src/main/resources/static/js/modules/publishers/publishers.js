@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import {
@@ -36,7 +37,6 @@ import {
 	placeholderColorEditSelect,
 	initializeCropper,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 } from '../../shared/utils/ui/index.js'
 
 /*****************************************
@@ -109,59 +109,36 @@ function generateRow(publisher) {
 	`
 }
 
-function updateRowInTable(publisher) {
-	const table = $('#table').DataTable()
-
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				publisher.formattedPublisherId.toString()
-			)
-		})
-
-	if (row.length > 0) {
-		row.find('td').eq(1).text(publisher.name)
-		row.find('td').eq(2).find('span').text(publisher.nationalityName)
-		row.find('td').eq(3).find('span').text(publisher.literaryGenreName)
-		row
-			.find('td')
-			.eq(4)
-			.find('a')
-			.attr('href', publisher.website)
-			.text(publisher.website)
-		row
-			.find('td')
-			.eq(5)
-			.html(
-				publisher.status === 'activo'
-					? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-					: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-			)
-
-		if (publisher.photoUrl && publisher.photoUrl.trim() !== '') {
+function updateRow(publisher) {
+	updateRowInTable({
+		entity: publisher,
+		getFormattedId: (p) => p.formattedPublisherId?.toString(),
+		updateCellsFn: (row, p) => {
+			row.find('td').eq(1).text(p.name)
+			row.find('td').eq(2).find('span').text(p.nationalityName)
+			row.find('td').eq(3).find('span').text(p.literaryGenreName)
+			row.find('td').eq(4).find('a').attr('href', p.website).text(p.website)
+			row
+				.find('td')
+				.eq(5)
+				.html(
+					p.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
 			row
 				.find('td')
 				.eq(6)
 				.html(
-					`<img src="${publisher.photoUrl}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
+					p.photoUrl?.trim()
+						? `<img src="${p.photoUrl}" alt="Foto de la Editorial" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
+						: `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+							<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
+							<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
+						</svg>`,
 				)
-		} else {
-			row.find('td').eq(6).html(`
-				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
-					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
-					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
-				</svg>
-			`)
-		}
-
-		table.row(row).invalidate().draw(false)
-
-		initializeTooltips(row)
-	}
+		},
+	})
 }
 
 /*****************************************
@@ -425,7 +402,7 @@ function handleEditPublisherForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editPublisherModal').modal('hide')
 				showToast('Editorial actualizada exitosamente.', 'success')
 			} else {

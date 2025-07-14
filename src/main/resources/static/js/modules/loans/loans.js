@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import {
@@ -34,7 +35,6 @@ import {
 	placeholderColorEditSelect,
 	placeholderColorDateInput,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
 
@@ -101,31 +101,18 @@ function generateRow(loan) {
 	`
 }
 
-function updateRowInTable(loan) {
-	const table = $('#table').DataTable()
-
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				loan.formattedLoanId.toString()
-			)
-		})
-
-	if (row.length > 0) {
-		row.find('td').eq(2).html(`
-			${loan.studentFullName}
-			<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${loan.formattedStudentId}</span>
-		`)
-		row.find('td').eq(4).text(moment(loan.returnDate).format('DD MMM YYYY'))
-
-		table.row(row).invalidate().draw(false)
-
-		initializeTooltips(row)
-	}
+function updateRow(loan) {
+	updateRowInTable({
+		entity: loan,
+		getFormattedId: (l) => l.formattedLoanId?.toString(),
+		updateCellsFn: (row, l) => {
+			row.find('td').eq(2).html(`
+				${l.studentFullName}
+				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${l.formattedStudentId}</span>
+			`)
+			row.find('td').eq(4).text(moment(l.returnDate).format('DD MMM YYYY'))
+		},
+	})
 }
 
 /*****************************************
@@ -428,7 +415,7 @@ function handleEditLoanForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editLoanModal').modal('hide')
 				showToast('Préstamo actualizado exitosamente.', 'success')
 			} else {

@@ -17,6 +17,7 @@
 import {
 	loadTableData,
 	addRowToTable,
+	updateRowInTable,
 } from '../../shared/utils/tables/index.js'
 
 import {
@@ -37,7 +38,6 @@ import {
 	placeholderColorEditSelect,
 	initializeCropper,
 	setupBootstrapSelectDropdownStyles,
-	initializeTooltips,
 	togglePasswordVisibility,
 } from '../../shared/utils/ui/index.js'
 
@@ -101,53 +101,33 @@ function generateRow(user) {
 	`
 }
 
-function updateRowInTable(user) {
-	const table = $('#table').DataTable()
-
-	const row = table
-		.rows()
-		.nodes()
-		.to$()
-		.filter(function () {
-			return (
-				$(this).find('td').eq(0).text().trim() ===
-				user.formattedUserId.toString()
-			)
-		})
-
-	if (row.length > 0) {
-		row.find('td').eq(3).text(user.firstName)
-		row.find('td').eq(4).text(user.lastName)
-		row
-			.find('td')
-			.eq(5)
-			.find('span')
-			.html(
-				user.role === 'administrador'
-					? '<i class="bi bi-shield-lock me-1"></i> Administrador'
-					: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario',
-			)
-
-		if (user.profilePhotoUrl && user.profilePhotoUrl.trim() !== '') {
+function updateRow(user) {
+	updateRowInTable({
+		entity: user,
+		getFormattedId: (u) => u.formattedUserId?.toString(),
+		updateCellsFn: (row, u) => {
+			row.find('td').eq(3).text(u.firstName)
+			row.find('td').eq(4).text(u.lastName)
 			row
 				.find('td')
-				.eq(6)
+				.eq(5)
+				.find('span')
 				.html(
-					`<img src="${user.profilePhotoUrl}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`,
+					u.role === 'administrador'
+						? '<i class="bi bi-shield-lock me-1"></i> Administrador'
+						: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario',
 				)
-		} else {
-			row.find('td').eq(6).html(`
-				<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+
+			const avatarHtml = u.profilePhotoUrl?.trim()
+				? `<img src="${u.profilePhotoUrl}" alt="Foto del Usuario" class="img-fluid rounded-circle" style="width: 23px; height: 23px;">`
+				: `<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 					<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"></path>
 					<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"></path>
-				</svg>
-			`)
-		}
+				</svg>`
 
-		table.row(row).invalidate().draw(false)
-
-		initializeTooltips(row)
-	}
+			row.find('td').eq(6).html(avatarHtml)
+		},
+	})
 }
 
 /*****************************************
@@ -460,7 +440,7 @@ function handleEditUserForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				updateRowInTable(json.data)
+				updateRow(json.data)
 				$('#editUserModal').modal('hide')
 				showToast('Usuario actualizado exitosamente.', 'success')
 			} else if (
