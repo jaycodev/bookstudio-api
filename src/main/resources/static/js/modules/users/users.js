@@ -17,6 +17,16 @@
 import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
+	isValidEmail,
+	isValidUsername,
+	isValidText,
+	isValidPassword,
+	doPasswordsMatch,
+	isValidImageFile,
+	validateImageFileUI,
+} from '../../shared/utils/forms/index.js'
+
+import {
 	showToast,
 	toggleButtonLoading,
 	toggleModalLoading,
@@ -25,17 +35,8 @@ import {
 	initializeCropper,
 	setupBootstrapSelectDropdownStyles,
 	initializeTooltips,
+	togglePasswordVisibility,
 } from '../../shared/utils/ui/index.js'
-
-import {
-	isValidEmail,
-	isValidUsername,
-	isValidText,
-	isValidPassword,
-	doPasswordsMatch,
-	isValidImageFile,
-	validateImageFileUI,
-} from '../../shared/utils/validators/index.js'
 
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS
@@ -1202,4 +1203,5 @@ $(document).ready(function () {
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()
+	togglePasswordVisibility()
 })

@@ -17,9 +17,13 @@
 import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
+	isValidText,
+	isValidTotalCopies,
+	isValidTotalCopiesInRange,
+	isValidReleaseDate,
 	loadSelectOptions,
 	populateSelect,
-} from '../../shared/utils/forms/select-options.js'
+} from '../../shared/utils/forms/index.js'
 
 import {
 	showToast,
@@ -32,13 +36,6 @@ import {
 	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
-
-import {
-	isValidText,
-	isValidTotalCopies,
-	isValidTotalCopiesInRange,
-	isValidReleaseDate,
-} from '../../shared/utils/validators/index.js'
 
 /*****************************************
  * GLOBAL VARIABLES AND HELPER FUNCTIONS

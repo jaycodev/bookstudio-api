@@ -583,7 +583,5 @@
 	<jsp:include page="/WEB-INF/includes/scripts.jsp">
 		<jsp:param name="currentPage" value="users" />
 	</jsp:include>
-
-	<script src="js/shared/utils/ui/password.js" defer></script>
 </body>
 </html>

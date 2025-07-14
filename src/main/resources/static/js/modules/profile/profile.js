@@ -8,12 +8,12 @@
  * @author Jason
  */
 
-import { showToast } from '../../shared/utils/ui/index.js'
+import { isValidText, isValidPassword } from '../../shared/utils/forms/index.js'
 
 import {
-	isValidText,
-	isValidPassword,
-} from '../../shared/utils/validators/index.js'
+	showToast,
+	togglePasswordVisibility,
+} from '../../shared/utils/ui/index.js'
 
 $(document).ready(function () {
 	/************** Logic for Profile Photo **************/
@@ -409,4 +409,6 @@ $(document).ready(function () {
 		'input',
 		checkChanges,
 	)
+
+	togglePasswordVisibility()
 })

@@ -100,7 +100,6 @@
 
 	<!-- Custom Scripts -->
 	<script src="js/shared/setup/theme-toggle.js" defer></script>
-	<script src="js/shared/utils/ui/password.js" defer></script>
 	
 	<!-- Page-Specific Script -->
 	<script type="module" src="js/modules/auth/login.js" defer></script>

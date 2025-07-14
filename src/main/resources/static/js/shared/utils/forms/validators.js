@@ -1,6 +1,5 @@
 import { getCurrentPeruDate } from '../ui/index.js'
 
-// Basic generic text and format validations
 export function isValidText(value, label = 'Texto', minLength = 3) {
 	const clean = value?.trim() || ''
 	if (clean.length < minLength) {

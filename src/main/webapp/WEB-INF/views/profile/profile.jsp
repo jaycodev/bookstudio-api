@@ -286,7 +286,6 @@
 	<script src="js/shared/layout/header.js" defer></script>
 	<script src="js/shared/layout/sidebar.js" defer></script>
 	<script src="js/shared/setup/theme-toggle.js" defer></script>
-	<script src="js/shared/utils/ui/password.js" defer></script>
 	
 	<!-- Page-Specific Script -->
 	<script type="module" src="js/modules/profile/profile.js" defer></script>

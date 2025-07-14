@@ -1,4 +1,4 @@
-const togglePasswordVisibility = () => {
+export function togglePasswordVisibility() {
 	$('.input-group-text').each(function () {
 		$(this).on('click', function () {
 			const toggleId = $(this).data('toggle-id')
@@ -15,5 +15,3 @@ const togglePasswordVisibility = () => {
 		})
 	})
 }
-
-togglePasswordVisibility()

@@ -7,7 +7,10 @@
  * @author Jason
  */
 
-import { showToast } from '../../shared/utils/ui/index.js'
+import {
+	showToast,
+	togglePasswordVisibility,
+} from '../../shared/utils/ui/index.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 	let isFirstSubmit = false
@@ -151,4 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				resetText.classList.remove('d-none')
 			}
 		})
+
+	togglePasswordVisibility()
 })
