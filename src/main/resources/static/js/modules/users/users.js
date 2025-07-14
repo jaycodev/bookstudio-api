@@ -14,7 +14,10 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
 
 import {
 	isValidEmail,
@@ -96,16 +99,6 @@ function generateRow(user) {
 			</td>
 		</tr>
 	`
-}
-
-function addRowToTable(user) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(user)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
 }
 
 function updateRowInTable(user) {
@@ -239,7 +232,7 @@ function handleAddUserForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addUserModal').modal('hide')
 				showToast('Usuario agregado exitosamente.', 'success')
 			} else if (

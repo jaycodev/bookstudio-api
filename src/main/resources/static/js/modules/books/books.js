@@ -14,7 +14,10 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
 
 import {
 	isValidText,
@@ -99,16 +102,6 @@ function generateRow(book) {
 			</td>
 		</tr>
 	`
-}
-
-function addRowToTable(book) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(book)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
 }
 
 function updateRowInTable(book) {
@@ -227,7 +220,7 @@ function handleAddBookForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addBookModal').modal('hide')
 				showToast('Libro agregado exitosamente.', 'success')
 			} else {

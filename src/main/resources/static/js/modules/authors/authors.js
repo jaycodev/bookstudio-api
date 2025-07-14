@@ -14,7 +14,10 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
 
 import {
 	isValidText,
@@ -104,16 +107,6 @@ function generateRow(author) {
 			</td>
 		</tr>
 	`
-}
-
-function addRowToTable(author) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(author)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
 }
 
 function updateRowInTable(author) {
@@ -248,7 +241,7 @@ function handleAddAuthorForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addAuthorModal').modal('hide')
 				showToast('Autor agregado exitosamente.', 'success')
 			} else {

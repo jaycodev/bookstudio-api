@@ -14,7 +14,10 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
 
 import {
 	isValidDNI,
@@ -86,16 +89,6 @@ function generateRow(student) {
 			</td>
 		</tr>
 	`
-}
-
-function addRowToTable(student) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(student)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
 }
 
 function updateRowInTable(student) {
@@ -206,7 +199,7 @@ function handleAddStudentForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addStudentModal').modal('hide')
 				showToast('Estudiante agregado exitosamente.', 'success')
 			} else if (

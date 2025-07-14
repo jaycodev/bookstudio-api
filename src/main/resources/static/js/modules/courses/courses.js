@@ -14,7 +14,11 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
+
 import { isValidText } from '../../shared/utils/forms/index.js'
 
 import {
@@ -75,16 +79,6 @@ function generateRow(course) {
 			</td>
 		</tr>
 	`
-}
-
-function addRowToTable(course) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(course)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
 }
 
 function updateRowInTable(course) {
@@ -197,7 +191,7 @@ function handleAddCourseForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addCourseModal').modal('hide')
 				showToast('Curso agregado exitosamente.', 'success')
 			} else {

@@ -14,7 +14,10 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
 
 import {
 	isValidReturnDate,
@@ -137,16 +140,6 @@ function generateRow(loan) {
 	`
 }
 
-function addRowToTable(loan) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(loan)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
-}
-
 function updateRowInTable(loan) {
 	const table = $('#table').DataTable()
 
@@ -242,7 +235,7 @@ function handleAddLoanForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addLoanModal').modal('hide')
 				showToast('Préstamo agregado exitosamente.', 'success')
 				generateLoanReceipt(json.data)

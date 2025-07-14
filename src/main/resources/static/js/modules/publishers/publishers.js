@@ -14,7 +14,10 @@
  * @author Jason
  */
 
-import { loadTableData } from '../../shared/utils/tables/index.js'
+import {
+	loadTableData,
+	addRowToTable,
+} from '../../shared/utils/tables/index.js'
 
 import {
 	isValidText,
@@ -104,16 +107,6 @@ function generateRow(publisher) {
 			</td>
 		</tr>
 	`
-}
-
-function addRowToTable(publisher) {
-	const table = $('#table').DataTable()
-	const rowHtml = generateRow(publisher)
-	const $row = $(rowHtml)
-
-	table.row.add($row).draw(false)
-
-	initializeTooltips($row)
 }
 
 function updateRowInTable(publisher) {
@@ -254,7 +247,7 @@ function handleAddPublisherForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data)
+				addRowToTable(json.data, generateRow)
 				$('#addPublisherModal').modal('hide')
 				showToast('Editorial agregada exitosamente.', 'success')
 			} else {
