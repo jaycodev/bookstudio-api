@@ -46,6 +46,32 @@ import {
 let bookList = []
 let studentList = []
 
+function loadOptions() {
+	loadSelectOptions({
+		url: './api/loans/select-options',
+		onSuccess: (data) => {
+			bookList = data.books
+			studentList = data.students
+
+			document
+				.getElementById('addLoanBook')
+				.addEventListener('change', (event) => {
+					const selectedBookId = event.target.value
+					const selectedBook = bookList.find(
+						(book) => book.bookId == selectedBookId,
+					)
+
+					if (selectedBook) {
+						const availableCopies = selectedBook.availableCopies
+						document
+							.getElementById('addLoanQuantity')
+							.setAttribute('max', availableCopies)
+					}
+				})
+		},
+	})
+}
+
 /*****************************************
  * TABLE HANDLING
  *****************************************/
@@ -101,6 +127,19 @@ function generateRow(loan) {
 	`
 }
 
+function addRow(loan) {
+	addRowToTable(loan, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/loans',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(loan) {
 	updateRowInTable({
 		entity: loan,
@@ -119,7 +158,7 @@ function updateRow(loan) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddLoanForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addLoanModal').on('hidden.bs.modal', function () {
@@ -183,7 +222,7 @@ function handleAddLoanForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addLoanModal').modal('hide')
 				showToast('Préstamo agregado exitosamente.', 'success')
 				generateLoanReceipt(json.data)
@@ -265,7 +304,7 @@ function validateAddField(field) {
 	return isValid
 }
 
-function handleReturnLoan() {
+function handleReturn() {
 	let isSubmitted = false
 
 	$('#confirmReturn').on('click', async function () {
@@ -317,13 +356,7 @@ function handleReturnLoan() {
 					table.row(row).invalidate().draw(false)
 				}
 
-				loadSelectOptions({
-					url: './api/loans/select-options',
-					onSuccess: (data) => {
-						bookList = data.books
-						populateSelect('#addLoanBook', bookList, 'bookId', 'title')
-					},
-				})
+				loadOptions()
 
 				$('#returnLoanModal').modal('hide')
 				showToast('Préstamo devuelto exitosamente.', 'success')
@@ -345,7 +378,7 @@ function handleReturnLoan() {
 	})
 }
 
-function handleEditLoanForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editLoanModal').on('hidden.bs.modal', function () {
@@ -1074,39 +1107,12 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/loans',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddLoanForm()
-	handleReturnLoan()
-	handleEditLoanForm()
+	loadData()
+	handleAddForm()
+	handleReturn()
+	handleEditForm()
 	loadModalData()
-	loadSelectOptions({
-		url: './api/loans/select-options',
-		onSuccess: (data) => {
-			bookList = data.books
-			studentList = data.students
-
-			document
-				.getElementById('addLoanBook')
-				.addEventListener('change', (event) => {
-					const selectedBookId = event.target.value
-					const selectedBook = bookList.find(
-						(book) => book.bookId == selectedBookId,
-					)
-
-					if (selectedBook) {
-						const availableCopies = selectedBook.availableCopies
-						document
-							.getElementById('addLoanQuantity')
-							.setAttribute('max', availableCopies)
-					}
-				})
-		},
-	})
+	loadOptions()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()

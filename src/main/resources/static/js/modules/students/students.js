@@ -49,6 +49,15 @@ import {
 // Global list of faculties for the selectpickers
 let facultyList = []
 
+function loadOptions() {
+	loadSelectOptions({
+		url: './api/students/select-options',
+		onSuccess: (data) => {
+			facultyList = data.faculties
+		},
+	})
+}
+
 /*****************************************
  * TABLE HANDLING
  *****************************************/
@@ -91,6 +100,19 @@ function generateRow(student) {
 	`
 }
 
+function addRow(student) {
+	addRowToTable(student, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/students',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(student) {
 	updateRowInTable({
 		entity: student,
@@ -116,7 +138,7 @@ function updateRow(student) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddStudentForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addStudentModal').on('hidden.bs.modal', function () {
@@ -185,7 +207,7 @@ function handleAddStudentForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addStudentModal').modal('hide')
 				showToast('Estudiante agregado exitosamente.', 'success')
 			} else if (
@@ -325,7 +347,7 @@ function validateAddField(field) {
 	return isValid
 }
 
-function handleEditStudentForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editStudentModal').on('hidden.bs.modal', function () {
@@ -990,21 +1012,11 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/students',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddStudentForm()
-	handleEditStudentForm()
+	loadData()
+	handleAddForm()
+	handleEditForm()
 	loadModalData()
-	loadSelectOptions({
-		url: './api/students/select-options',
-		onSuccess: (data) => {
-			facultyList = data.faculties
-		},
-	})
+	loadOptions()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()

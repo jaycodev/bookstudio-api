@@ -81,6 +81,19 @@ function generateRow(course) {
 	`
 }
 
+function addRow(course) {
+	addRowToTable(course, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/courses',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(course) {
 	updateRowInTable({
 		entity: course,
@@ -117,7 +130,7 @@ function updateRow(course) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddCourseForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addCourseModal').on('hidden.bs.modal', function () {
@@ -180,7 +193,7 @@ function handleAddCourseForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addCourseModal').modal('hide')
 				showToast('Curso agregado exitosamente.', 'success')
 			} else {
@@ -245,7 +258,7 @@ function validateAddField(field) {
 	return isValid
 }
 
-function handleEditCourseForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editCourseModal').on('hidden.bs.modal', function () {
@@ -812,14 +825,9 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/courses',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddCourseForm()
-	handleEditCourseForm()
+	loadData()
+	handleAddForm()
+	handleEditForm()
 	loadModalData()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()

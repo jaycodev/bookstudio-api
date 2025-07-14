@@ -52,6 +52,16 @@ let literaryGenreList = []
 // Global variable to handle photo deletion in edit modal
 let deletePhotoFlag = false
 
+function loadOptions() {
+	loadSelectOptions({
+		url: './api/authors/select-options',
+		onSuccess: (data) => {
+			nationalityList = data.nationalities
+			literaryGenreList = data.literaryGenres
+		},
+	})
+}
+
 /*****************************************
  * TABLE HANDLING
  *****************************************/
@@ -109,6 +119,19 @@ function generateRow(author) {
 	`
 }
 
+function addRow(author) {
+	addRowToTable(author, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/authors',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(author) {
 	updateRowInTable({
 		entity: author,
@@ -145,7 +168,7 @@ function updateRow(author) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddAuthorForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addAuthorModal').on('hidden.bs.modal', function () {
@@ -223,7 +246,7 @@ function handleAddAuthorForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addAuthorModal').modal('hide')
 				showToast('Autor agregado exitosamente.', 'success')
 			} else {
@@ -315,7 +338,7 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function () {
 	validateImageFileUI($(this))
 })
 
-function handleEditAuthorForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editAuthorModal').on('hidden.bs.modal', function () {
@@ -1082,22 +1105,11 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/authors',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddAuthorForm()
-	handleEditAuthorForm()
+	loadData()
+	handleAddForm()
+	handleEditForm()
 	loadModalData()
-	loadSelectOptions({
-		url: './api/authors/select-options',
-		onSuccess: (data) => {
-			nationalityList = data.nationalities
-			literaryGenreList = data.literaryGenres
-		},
-	})
+	loadOptions()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()

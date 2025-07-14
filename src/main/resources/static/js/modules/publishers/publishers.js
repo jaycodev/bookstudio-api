@@ -47,6 +47,16 @@ import {
 let nationalityList = []
 let literaryGenreList = []
 
+function loadOptions() {
+	loadSelectOptions({
+		url: './api/publishers/select-options',
+		onSuccess: (data) => {
+			nationalityList = data.nationalities
+			literaryGenreList = data.literaryGenres
+		},
+	})
+}
+
 // Global variable to handle photo deletion in edit modal
 let deletePhotoFlag = false
 
@@ -109,6 +119,19 @@ function generateRow(publisher) {
 	`
 }
 
+function addRow(publisher) {
+	addRowToTable(publisher, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/publishers',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(publisher) {
 	updateRowInTable({
 		entity: publisher,
@@ -145,7 +168,7 @@ function updateRow(publisher) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddPublisherForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addPublisherModal').on('hidden.bs.modal', function () {
@@ -224,7 +247,7 @@ function handleAddPublisherForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addPublisherModal').modal('hide')
 				showToast('Editorial agregada exitosamente.', 'success')
 			} else {
@@ -320,7 +343,7 @@ $('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
 	validateImageFileUI($(this))
 })
 
-function handleEditPublisherForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editPublisherModal').on('hidden.bs.modal', function () {
@@ -1103,22 +1126,11 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/publishers',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddPublisherForm()
-	handleEditPublisherForm()
+	loadData()
+	handleAddForm()
+	handleEditForm()
 	loadModalData()
-	loadSelectOptions({
-		url: './api/publishers/select-options',
-		onSuccess: (data) => {
-			nationalityList = data.nationalities
-			literaryGenreList = data.literaryGenres
-		},
-	})
+	loadOptions()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()

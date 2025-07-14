@@ -50,6 +50,18 @@ let publisherList = []
 let courseList = []
 let genreList = []
 
+function loadOptions() {
+	loadSelectOptions({
+		url: './api/books/select-options',
+		onSuccess: (data) => {
+			authorList = data.authors
+			publisherList = data.publishers
+			courseList = data.courses
+			genreList = data.genres
+		},
+	})
+}
+
 /*****************************************
  * TABLE HANDLING
  *****************************************/
@@ -104,6 +116,19 @@ function generateRow(book) {
 	`
 }
 
+function addRow(book) {
+	addRowToTable(book, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/books',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(book) {
 	updateRowInTable({
 		entity: book,
@@ -149,7 +174,7 @@ function updateRow(book) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddBookForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addBookModal').on('hidden.bs.modal', function () {
@@ -216,7 +241,7 @@ function handleAddBookForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addBookModal').modal('hide')
 				showToast('Libro agregado exitosamente.', 'success')
 			} else {
@@ -299,7 +324,7 @@ function validateAddField(field) {
 	return isValid
 }
 
-function handleEditBookForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editBookModal').on('hidden.bs.modal', function () {
@@ -947,24 +972,11 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/books',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddBookForm()
-	handleEditBookForm()
+	loadData()
+	handleAddForm()
+	handleEditForm()
 	loadModalData()
-	loadSelectOptions({
-		url: './api/books/select-options',
-		onSuccess: (data) => {
-			authorList = data.authors
-			publisherList = data.publishers
-			courseList = data.courses
-			genreList = data.genres
-		},
-	})
+	loadOptions()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()

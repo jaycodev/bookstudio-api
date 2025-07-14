@@ -101,6 +101,19 @@ function generateRow(user) {
 	`
 }
 
+function addRow(user) {
+	addRowToTable(user, generateRow)
+}
+
+function loadData() {
+	loadTableData({
+		apiUrl: './api/users',
+		generateRow,
+		generatePDF,
+		generateExcel,
+	})
+}
+
 function updateRow(user) {
 	updateRowInTable({
 		entity: user,
@@ -134,7 +147,7 @@ function updateRow(user) {
  * FORM LOGIC
  *****************************************/
 
-function handleAddUserForm() {
+function handleAddForm() {
 	let isFirstSubmit = true
 
 	$('#addUserModal').on('hidden.bs.modal', function () {
@@ -212,7 +225,7 @@ function handleAddUserForm() {
 			const json = await response.json()
 
 			if (response.ok && json.success) {
-				addRowToTable(json.data, generateRow)
+				addRow(json.data)
 				$('#addUserModal').modal('hide')
 				showToast('Usuario agregado exitosamente.', 'success')
 			} else if (
@@ -362,7 +375,7 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function () {
 	validateImageFileUI($(this))
 })
 
-function handleEditUserForm() {
+function handleEditForm() {
 	let isFirstSubmit = true
 
 	$('#editUserModal').on('hidden.bs.modal', function () {
@@ -551,7 +564,7 @@ function validateEditField(field) {
 	return isValid
 }
 
-function handleDeleteUser() {
+function handleDelete() {
 	let isSubmitted = false
 
 	$('#confirmDeleteUser')
@@ -1163,15 +1176,10 @@ function generateExcel(dataTable) {
  *****************************************/
 
 $(document).ready(function () {
-	loadTableData({
-		apiUrl: './api/users',
-		generateRow,
-		generatePDF,
-		generateExcel,
-	})
-	handleAddUserForm()
-	handleEditUserForm()
-	handleDeleteUser()
+	loadData()
+	handleAddForm()
+	handleEditForm()
+	handleDelete()
 	loadModalData()
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
