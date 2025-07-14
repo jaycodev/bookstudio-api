@@ -87,41 +87,6 @@ export function toggleModalLoading(triggerElement, loading = true) {
 	}
 }
 
-export function populateSelect(
-	selector,
-	dataList,
-	valueKey,
-	textKey,
-	badgeValueKey = null,
-) {
-	if (!badgeValueKey && dataList.length > 0) {
-		const inferredKey =
-			'formatted' + valueKey.charAt(0).toUpperCase() + valueKey.slice(1)
-		if (inferredKey in dataList[0]) {
-			badgeValueKey = inferredKey
-		}
-	}
-
-	const select = $(selector).selectpicker('destroy').empty()
-
-	dataList.forEach((item) => {
-		if (item[valueKey]) {
-			let content = item[textKey]
-
-			if (badgeValueKey && item[badgeValueKey] !== undefined) {
-				const badgeValue = item[badgeValueKey]
-				content += ` <span class="badge bg-body-tertiary text-body-emphasis border ms-1">${badgeValue}</span>`
-			}
-
-			select.append(
-				$('<option>', {
-					value: item[valueKey],
-				}).attr('data-content', content),
-			)
-		}
-	})
-}
-
 export function placeholderColorSelect() {
 	$('select.selectpicker').on('change', function () {
 		const $select = $(this)
@@ -256,24 +221,6 @@ export function initializeTooltips(container) {
 		.on('click', function () {
 			$(this).tooltip('hide')
 		})
-}
-
-export const togglePasswordVisibility = () => {
-	$('.input-group-text').each(function () {
-		$(this).on('click', function () {
-			const toggleId = $(this).data('toggle-id')
-			const $input = $(`.password-field[data-toggle-id="${toggleId}"]`)
-			const $icon = $(this).find('i')
-
-			if ($input.attr('type') === 'password') {
-				$input.attr('type', 'text')
-				$icon.removeClass('bi-eye').addClass('bi-eye-slash')
-			} else {
-				$input.attr('type', 'password')
-				$icon.removeClass('bi-eye-slash').addClass('bi-eye')
-			}
-		})
-	})
 }
 
 export function getCurrentPeruDate() {

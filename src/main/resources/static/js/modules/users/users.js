@@ -14,6 +14,8 @@
  * @author Jason
  */
 
+import { loadTableData } from '../../shared/utils/tables/index.js'
+
 import {
 	showToast,
 	toggleButtonLoading,
@@ -24,8 +26,6 @@ import {
 	setupBootstrapSelectDropdownStyles,
 	initializeTooltips,
 } from '../../shared/utils/ui/index.js'
-
-import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidEmail,

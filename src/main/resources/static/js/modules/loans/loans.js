@@ -14,11 +14,17 @@
  * @author Jason
  */
 
+import { loadTableData } from '../../shared/utils/tables/index.js'
+
+import {
+	loadSelectOptions,
+	populateSelect,
+} from '../../shared/utils/forms/select-options.js'
+
 import {
 	showToast,
 	toggleButtonLoading,
 	toggleModalLoading,
-	populateSelect,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
 	placeholderColorDateInput,
@@ -26,8 +32,6 @@ import {
 	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
-
-import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidReturnDate,
@@ -41,61 +45,6 @@ import {
 // Global list of books and students for the selectpickers
 let bookList = []
 let studentList = []
-
-async function populateSelectOptions() {
-	try {
-		const response = await fetch('api/loans/select-options', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		if (response.status === 204) {
-			console.warn('No data found for select options.')
-			return
-		}
-
-		if (!response.ok) {
-			throw response
-		}
-
-		const data = await response.json()
-
-		bookList = data.books
-		studentList = data.students
-
-		document
-			.getElementById('addLoanBook')
-			.addEventListener('change', (event) => {
-				const selectedBookId = event.target.value
-				const selectedBook = bookList.find(
-					(book) => book.bookId == selectedBookId,
-				)
-
-				if (selectedBook) {
-					const availableCopies = selectedBook.availableCopies
-					document
-						.getElementById('addLoanQuantity')
-						.setAttribute('max', availableCopies)
-				}
-			})
-	} catch (error) {
-		if (error instanceof Response) {
-			try {
-				const errData = await error.json()
-				console.error(
-					`Error fetching select options (${errData.errorType} - ${error.status}):`,
-					errData.message,
-				)
-			} catch {
-				console.error('Unexpected error:', error.status, await error.text())
-			}
-		} else {
-			console.error('Unexpected error:', error)
-		}
-	}
-}
 
 async function updateBookList() {
 	try {
@@ -1191,7 +1140,29 @@ $(document).ready(function () {
 	handleReturnLoan()
 	handleEditLoanForm()
 	loadModalData()
-	populateSelectOptions()
+	loadSelectOptions({
+		url: './api/loans/select-options',
+		onSuccess: (data) => {
+			bookList = data.books
+			studentList = data.students
+
+			document
+				.getElementById('addLoanBook')
+				.addEventListener('change', (event) => {
+					const selectedBookId = event.target.value
+					const selectedBook = bookList.find(
+						(book) => book.bookId == selectedBookId,
+					)
+
+					if (selectedBook) {
+						const availableCopies = selectedBook.availableCopies
+						document
+							.getElementById('addLoanQuantity')
+							.setAttribute('max', availableCopies)
+					}
+				})
+		},
+	})
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()

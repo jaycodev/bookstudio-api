@@ -14,11 +14,17 @@
  * @author Jason
  */
 
+import { loadTableData } from '../../shared/utils/tables/index.js'
+
+import {
+	loadSelectOptions,
+	populateSelect,
+} from '../../shared/utils/forms/select-options.js'
+
 import {
 	showToast,
 	toggleButtonLoading,
 	toggleModalLoading,
-	populateSelect,
 	placeholderColorSelect,
 	placeholderColorEditSelect,
 	placeholderColorDateInput,
@@ -26,8 +32,6 @@ import {
 	initializeTooltips,
 	getCurrentPeruDate,
 } from '../../shared/utils/ui/index.js'
-
-import { loadTableData } from '../../shared/utils/tables/index.js'
 
 import {
 	isValidText,
@@ -45,47 +49,6 @@ let authorList = []
 let publisherList = []
 let courseList = []
 let genreList = []
-
-async function populateSelectOptions() {
-	try {
-		const response = await fetch('./api/books/select-options', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		if (response.status === 204) {
-			console.warn('No data found for select options.')
-			return
-		}
-
-		if (!response.ok) {
-			throw response
-		}
-
-		const data = await response.json()
-
-		authorList = data.authors
-		publisherList = data.publishers
-		courseList = data.courses
-		genreList = data.genres
-	} catch (error) {
-		if (error instanceof Response) {
-			try {
-				const errData = await error.json()
-				console.error(
-					`Error fetching select options (${errData.errorType} - ${error.status}):`,
-					errData.message,
-				)
-			} catch {
-				console.error('Unexpected error:', error.status, await error.text())
-			}
-		} else {
-			console.error('Unexpected error:', error)
-		}
-	}
-}
 
 /*****************************************
  * TABLE HANDLING
@@ -1007,7 +970,15 @@ $(document).ready(function () {
 	handleAddBookForm()
 	handleEditBookForm()
 	loadModalData()
-	populateSelectOptions()
+	loadSelectOptions({
+		url: './api/books/select-options',
+		onSuccess: (data) => {
+			authorList = data.authors
+			publisherList = data.publishers
+			courseList = data.courses
+			genreList = data.genres
+		},
+	})
 	$('.selectpicker').selectpicker()
 	setupBootstrapSelectDropdownStyles()
 	placeholderColorSelect()
