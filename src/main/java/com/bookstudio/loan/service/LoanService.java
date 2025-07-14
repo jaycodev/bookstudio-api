@@ -1,79 +1,133 @@
 package com.bookstudio.loan.service;
 
+import com.bookstudio.book.model.Book;
+import com.bookstudio.book.repository.BookRepository;
+import com.bookstudio.book.service.BookService;
+import com.bookstudio.loan.dto.CreateLoanDto;
+import com.bookstudio.loan.dto.LoanResponseDto;
+import com.bookstudio.loan.dto.UpdateLoanDto;
+import com.bookstudio.loan.model.Loan;
+import com.bookstudio.loan.projection.LoanInfoProjection;
+import com.bookstudio.loan.projection.LoanListProjection;
+import com.bookstudio.loan.repository.LoanRepository;
+import com.bookstudio.shared.enums.LoanStatus;
+import com.bookstudio.shared.util.SelectOptions;
+import com.bookstudio.student.model.Student;
+import com.bookstudio.student.repository.StudentRepository;
+import com.bookstudio.student.service.StudentService;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
-import com.bookstudio.book.dao.BookDao;
-import com.bookstudio.book.dao.BookDaoImpl;
-import com.bookstudio.loan.dao.LoanDao;
-import com.bookstudio.loan.dao.LoanDaoImpl;
-import com.bookstudio.loan.model.Loan;
-import com.bookstudio.shared.util.SelectOptions;
-import com.bookstudio.student.dao.StudentDao;
-import com.bookstudio.student.dao.StudentDaoImpl;
-
+@Service
+@RequiredArgsConstructor
 public class LoanService {
-	private LoanDao loanDao = new LoanDaoImpl();
-	private BookDao bookDao = new BookDaoImpl();
-	private StudentDao studentDao = new StudentDaoImpl();
 
-	public List<Loan> listLoans() throws Exception {
-		return loanDao.listAll();
-	}
+    private final LoanRepository loanRepository;
+    private final BookRepository bookRepository;
+    private final StudentRepository studentRepository;
 
-	public Loan getLoan(String loanId) throws Exception {
-		return loanDao.getById(loanId);
-	}
+    private final BookService bookService;
+    private final StudentService studentService;
 
-	public Loan createLoan(HttpServletRequest request) throws Exception {
-		String bookId = request.getParameter("addLoanBook");
-		String studentId = request.getParameter("addLoanStudent");
-		LocalDate loanDate = LocalDate.now();
-		LocalDate returnDate = LocalDate.parse(request.getParameter("addReturnDate"));
-		int quantity = Integer.parseInt(request.getParameter("addLoanQuantity"));
-		String status = "prestado";
-		String observation = request.getParameter("addLoanObservation");
+    public List<LoanListProjection> getList() {
+        return loanRepository.findList();
+    }
 
-		Loan loan = new Loan();
-		loan.setBookId(bookId);
-		loan.setStudentId(studentId);
-		loan.setLoanDate(loanDate);
-		loan.setReturnDate(returnDate);
-		loan.setQuantity(quantity);
-		loan.setStatus(status);
-		loan.setObservation(observation);
+    public Optional<LoanInfoProjection> getInfoById(Long loanId) {
+        return loanRepository.findInfoById(loanId);
+    }
 
-		return loanDao.create(loan);
-	}
+    @Transactional
+    public LoanResponseDto create(CreateLoanDto dto) {
+        Book book = bookRepository.findById(dto.getBookId())
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
+        Student student = studentRepository.findById(dto.getStudentId())
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
 
-	public Loan updateLoan(String loanId, HttpServletRequest request) throws Exception {
-		String bookId = request.getParameter("editLoanBook");
-		String studentId = request.getParameter("editLoanStudent");
-		LocalDate returnDate = LocalDate.parse(request.getParameter("editReturnDate"));
-		String observation = request.getParameter("editLoanObservation");
+        book.setLoanedCopies(0);
+        bookRepository.save(book);
 
-		Loan loan = new Loan();
-		loan.setLoanId(loanId);
-		loan.setBookId(bookId);
-		loan.setStudentId(studentId);
-		loan.setReturnDate(returnDate);
-		loan.setObservation(observation);
+        Loan loan = new Loan();
+        loan.setBook(book);
+        loan.setStudent(student);
+        loan.setLoanDate(LocalDate.now());
+        loan.setReturnDate(dto.getReturnDate());
+        loan.setQuantity(dto.getQuantity());
+        loan.setObservation(dto.getObservation());
+        loan.setStatus(LoanStatus.prestado);
 
-		return loanDao.update(loan);
-	}
+        Loan saved = loanRepository.save(loan);
 
-	public int confirmReturn(String loanId) throws Exception {
-		return loanDao.confirmReturn(loanId);
-	}
+        return new LoanResponseDto(
+                saved.getId(),
+                String.valueOf(saved.getBook().getId()),
+                saved.getBook().getTitle(),
+                String.valueOf(saved.getStudent().getId()),
+                saved.getStudent().getFullName(),
+                saved.getLoanDate(),
+                saved.getReturnDate(),
+                saved.getQuantity(),
+                saved.getStatus().name());
+    }
 
-	public SelectOptions populateSelects() throws Exception {
-		SelectOptions selectOptions = new SelectOptions();
+    @Transactional
+    public LoanResponseDto update(UpdateLoanDto dto) {
+        Loan loan = loanRepository.findById(dto.getLoanId())
+                .orElseThrow(() -> new RuntimeException("Préstamo no encontrado con ID: " + dto.getLoanId()));
 
-		selectOptions.setBooks(bookDao.populateBookSelect());
+        Student student = studentRepository.findById(dto.getStudentId())
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
 
-		selectOptions.setStudents(studentDao.populateStudentSelect());
+        loan.setStudent(student);
+        loan.setReturnDate(dto.getReturnDate());
+        loan.setObservation(dto.getObservation());
 
-		return selectOptions;
-	}
+        Loan saved = loanRepository.save(loan);
+
+        return new LoanResponseDto(
+                saved.getId(),
+                String.valueOf(saved.getBook().getId()),
+                saved.getBook().getTitle(),
+                String.valueOf(saved.getStudent().getId()),
+                saved.getStudent().getFullName(),
+                saved.getLoanDate(),
+                saved.getReturnDate(),
+                saved.getQuantity(),
+                saved.getStatus().name());
+    }
+
+    @Transactional
+    public int markAsReturned(Long loanId) {
+        Optional<Loan> optionalLoan = loanRepository.findById(loanId);
+
+        if (optionalLoan.isEmpty())
+            return 0;
+
+        Loan loan = optionalLoan.get();
+        if (loan.getStatus() == LoanStatus.devuelto) {
+            return 0;
+        }
+
+        Book book = loan.getBook();
+        book.setLoanedCopies(book.getLoanedCopies() - loan.getQuantity());
+        bookRepository.save(book);
+
+        loan.setStatus(LoanStatus.devuelto);
+        loanRepository.save(loan);
+
+        return 1;
+    }
+
+    public SelectOptions getSelectOptions() {
+        return SelectOptions.builder()
+                .books(bookService.getForSelect())
+                .students(studentService.getForSelect())
+                .build();
+    }
 }

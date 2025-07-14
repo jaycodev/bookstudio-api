@@ -122,12 +122,12 @@
 		                                                
 		                        <!-- First Name and Last Name Section -->
 		                        <div class="col-12 col-md-6 mb-3">
-		                            <label for="editProfileFirstName" class="form-label">Nombres</label>
+		                            <label for="firstName" class="form-label">Nombres</label>
 		                            <input 
 		                                type="text" 
 		                                class="form-control w-100" 
-		                                id="editProfileFirstName" 
-		                                name="editProfileFirstName" 
+		                                id="firstName" 
+		                                name="firstName" 
 		                                value="${sessionScope.firstname}" 
 		                                placeholder="Actualizar nombres" 
 		                                autocomplete="given-name" 
@@ -137,12 +137,12 @@
 		                            <div class="invalid-feedback"></div>
 		                        </div>
 		                        <div class="col-12 col-md-6 mb-3">
-		                            <label for="editProfileLastName" class="form-label">Apellidos</label>
+		                            <label for="lastName" class="form-label">Apellidos</label>
 		                            <input 
 		                                type="text" 
 		                                class="form-control w-100" 
-		                                id="editProfileLastName" 
-		                                name="editProfileLastName" 
+		                                id="lastName" 
+		                                name="lastName" 
 		                                value="${sessionScope.lastname}" 
 		                                placeholder="Actualizar apellidos" 
 		                                autocomplete="family-name" 
@@ -154,13 +154,13 @@
 		                        
 		                        <!-- Password Section -->
 		                        <div class="col-12 col-md-6 mb-4 position-relative">
-		                            <label for="currentProfilePassword" class="form-label">Contraseña actual</label>
+		                            <label for="currentPassword" class="form-label">Contraseña actual</label>
 		                            <div class="input-group">
 		                                <input 
 		                                    type="password" 
 		                                    class="form-control password-field" 
-		                                    id="currentProfilePassword" 
-		                                    name="currentProfilePassword" 
+		                                    id="currentPassword" 
+		                                    name="currentPassword" 
 		                                    data-toggle-id="1" 
 		                                    placeholder="Contraseña actual" 
 		                                    autocomplete="current-password"
@@ -172,13 +172,13 @@
 		                            </div>
 		                        </div>
 		                        <div class="col-12 col-md-6 mb-4 position-relative">
-		                            <label for="editProfilePassword" class="form-label">Nueva contraseña</label>
+		                            <label for="password" class="form-label">Nueva contraseña</label>
 		                            <div class="input-group">       
 		                                <input 
 		                                    type="password" 
 		                                    class="form-control password-field" 
-		                                    id="editProfilePassword" 
-		                                    name="editProfilePassword" 
+		                                    id="password" 
+		                                    name="password" 
 		                                    data-toggle-id="2" 
 		                                    placeholder="Actualizar contraseña" 
 		                                    autocomplete="new-password"
@@ -286,7 +286,6 @@
 	<script src="js/shared/layout/header.js" defer></script>
 	<script src="js/shared/layout/sidebar.js" defer></script>
 	<script src="js/shared/setup/theme-toggle.js" defer></script>
-	<script src="js/shared/utils/ui/password.js" defer></script>
 	
 	<!-- Page-Specific Script -->
 	<script type="module" src="js/modules/profile/profile.js" defer></script>

@@ -1,0 +1,57 @@
+# ===== Text files =====
+
+# Java source files
+*.java text eol=lf
+
+# JSP views
+*.jsp text eol=lf
+
+# Configuration files
+*.properties text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+
+# Frontend files
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Windows scripts
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Markdown and docs
+*.md text eol=lf
+*.txt text eol=lf
+
+# .env files (if used)
+.env text eol=lf
+
+# Maven wrapper
+/mvnw text eol=lf
+*.cmd text eol=crlf
+
+# ===== Binary files =====
+
+# Java binaries
+*.class binary
+*.jar binary
+*.war binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+
+# Fonts and other binaries
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

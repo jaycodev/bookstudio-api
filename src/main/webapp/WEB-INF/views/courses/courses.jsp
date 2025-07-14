@@ -77,7 +77,7 @@
 
 				<!-- Table Container -->
 				<div id="tableContainer" class="d-none small">
-					<table id="courseTable" class="table table-sm">
+					<table id="table" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -88,9 +88,7 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyCourses">
-							<!-- Data will be populated here via JavaScript -->
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</div>
 			</div>
@@ -182,8 +180,8 @@
 		            
 		            <!-- Add Button -->
 		            <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addCourseForm" id="addCourseBtn">
-		                <span id="addCourseIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-		                <span id="addCourseSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+		                <i class="bi bi-plus-circle me-2"></i>
+		                <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 		                Agregar
 		            </button>
 		        </footer>
@@ -351,8 +349,8 @@
 	                
 	                <!-- Update Button -->
 	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editCourseForm" id="editCourseBtn" disabled>
-	                    <span id="editCourseIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editCourseSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

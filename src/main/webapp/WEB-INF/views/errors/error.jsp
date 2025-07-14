@@ -50,12 +50,12 @@
 	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="${pageContext.request.contextPath}/js/setup/color-modes.js"></script>
+	<script src="js/shared/setup/color-modes.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/views/auth.css">
+	<link rel="stylesheet" href="css/views/auth.css">
 	<title>BookStudio</title>
-	<link href="${pageContext.request.contextPath}/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="${pageContext.request.contextPath}/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<main class="bg-body-primary">
@@ -72,14 +72,14 @@
 					<button onclick="window.history.back()" class="btn btn-custom-secondary">
 						Volver
 					</button>
-					<a href="${pageContext.request.contextPath}/" class="btn btn-custom-primary text-decoration-none">
+					<a href="/" class="btn btn-custom-primary text-decoration-none">
 						Ir al inicio
 					</a>
 				</div>
 				<div class="position-absolute bottom-0 start-50 translate-middle-x mb-2 d-flex flex-sm-nowrap flex-wrap align-items-center justify-content-center text-center mb-4">
 					<span class="text-muted small me-2 text-nowrap">Desarrollado por</span>
 					<span class="d-inline-flex align-items-center text-nowrap">
-						<img class="logo me-1" alt="Logo de Bookstudio" src="${pageContext.request.contextPath}/images/logo-light.png" width="18">
+						<img class="logo me-1" alt="Logo de Bookstudio" src="images/logo-light.png" width="18">
 						<span class="fs-6 text-logo align-middle text-body-emphasis">BookStudio</span>
 					</span>
 				</div>

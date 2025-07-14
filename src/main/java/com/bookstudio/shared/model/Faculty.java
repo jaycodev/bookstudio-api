@@ -1,22 +1,21 @@
 package com.bookstudio.shared.model;
 
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "Faculties")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Faculty {
-	private String facultyId;
-	private String facultyName;
 
-	public String getFacultyId() {
-		return facultyId;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "FacultyID")
+    private Long facultyId;
 
-	public void setFacultyId(String facultyId) {
-		this.facultyId = facultyId;
-	}
-
-	public String getFacultyName() {
-		return facultyName;
-	}
-
-	public void setFacultyName(String facultyName) {
-		this.facultyName = facultyName;
-	}
+    @Column(name = "Name", nullable = false, unique = true)
+    private String name;
 }

@@ -1,167 +1,62 @@
 package com.bookstudio.book.model;
 
+import com.bookstudio.author.model.Author;
+import com.bookstudio.course.model.Course;
+import com.bookstudio.publisher.model.Publisher;
+import com.bookstudio.shared.enums.Status;
+import com.bookstudio.shared.model.Genre;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
-import com.bookstudio.shared.util.IdFormatter;
-
+@Entity
+@Table(name = "Books")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Book {
-	private String bookId;
-	private String formattedBookId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "BookID")
+	private Long id;
+
+	@Column(name = "Title", nullable = false)
 	private String title;
+
+	@Column(name = "TotalCopies", nullable = false)
 	private int totalCopies;
-	private int availableCopies;
+
+	@Column(name = "LoanedCopies", nullable = false)
 	private int loanedCopies;
-	private String authorId;
-	private String formattedAuthorId;
-	private String authorName;
-	private String publisherId;
-	private String formattedPublisherId;
-	private String publisherName;
-	private String courseId;
-	private String formattedCourseId;
-	private String courseName;
+
+	@Column(name = "ReleaseDate", nullable = false)
 	private LocalDate releaseDate;
-	private String genreId;
-	private String genreName;
-	private String status;
 
-	public String getBookId() {
-		return bookId;
-	}
+    @Enumerated(EnumType.STRING)
+	@Column(name = "Status", columnDefinition = "ENUM('activo', 'inactivo')")
+	private Status status;
 
-	public void setBookId(String bookId) {
-		this.bookId = bookId;
-        this.formattedBookId = IdFormatter.formatId(bookId, "L");
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "AuthorID", nullable = false)
+	private Author author;
 
-	public String getFormattedBookId() {
-		return formattedBookId;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "PublisherID", nullable = false)
+	private Publisher publisher;
 
-	public String getTitle() {
-		return title;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CourseID", nullable = false)
+	private Course course;
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "GenreID", nullable = false)
+	private Genre genre;
 
-	public int getTotalCopies() {
-		return totalCopies;
-	}
-
-	public void setTotalCopies(int totalCopies) {
-		this.totalCopies = totalCopies;
-	}
-
+	@Transient
 	public int getAvailableCopies() {
-		return availableCopies;
-	}
-
-	public void setAvailableCopies(int availableCopies) {
-		this.availableCopies = availableCopies;
-	}
-
-	public int getLoanedCopies() {
-		return loanedCopies;
-	}
-
-	public void setLoanedCopies(int loanedCopies) {
-		this.loanedCopies = loanedCopies;
-	}
-
-	public String getAuthorId() {
-		return authorId;
-	}
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
-        this.formattedAuthorId = IdFormatter.formatId(authorId, "A");
-    }
-    
-	public String getFormattedAuthorId() {
-		return formattedAuthorId;
-	}
-
-	public String getAuthorName() {
-		return authorName;
-	}
-
-	public void setAuthorName(String authorName) {
-		this.authorName = authorName;
-	}
-
-	public String getPublisherId() {
-		return publisherId;
-	}
-
-	public void setPublisherId(String publisherId) {
-		this.publisherId = publisherId;
-        this.formattedPublisherId = IdFormatter.formatId(publisherId, "ED");
-	}
-	
-	public String getFormattedPublisherId() {
-		return formattedPublisherId;
-	}
-
-	public String getPublisherName() {
-		return publisherName;
-	}
-
-	public void setPublisherName(String publisherName) {
-		this.publisherName = publisherName;
-	}
-
-	public String getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(String courseId) {
-		this.courseId = courseId;
-        this.formattedCourseId = IdFormatter.formatId(courseId, "C");
-	}
-	
-	public String getFormattedCourseId() {
-		return formattedCourseId;
-	}
-
-	public String getCourseName() {
-		return courseName;
-	}
-
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
-	}
-
-	public LocalDate getReleaseDate() {
-		return releaseDate;
-	}
-
-	public void setReleaseDate(LocalDate releaseDate) {
-		this.releaseDate = releaseDate;
-	}
-
-	public String getGenreId() {
-		return genreId;
-	}
-
-	public void setGenreId(String genreId) {
-		this.genreId = genreId;
-	}
-
-	public String getGenreName() {
-		return genreName;
-	}
-
-	public void setGenreName(String genreName) {
-		this.genreName = genreName;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
+		return totalCopies - loanedCopies;
 	}
 }

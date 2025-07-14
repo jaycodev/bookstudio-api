@@ -1,52 +1,77 @@
 package com.bookstudio.course.service;
 
-import java.sql.SQLException;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-import com.bookstudio.course.dao.CourseDao;
-import com.bookstudio.course.dao.CourseDaoImpl;
+import com.bookstudio.course.dto.CourseResponseDto;
+import com.bookstudio.course.dto.CreateCourseDto;
+import com.bookstudio.course.dto.UpdateCourseDto;
 import com.bookstudio.course.model.Course;
+import com.bookstudio.course.projection.CourseSelectProjection;
+import com.bookstudio.course.projection.CourseViewProjection;
+import com.bookstudio.course.repository.CourseRepository;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class CourseService {
-	private CourseDao courseDao = new CourseDaoImpl();
 
-	public List<Course> listCourses() throws SQLException {
-		return courseDao.listAll();
-	}
+    private final CourseRepository courseRepository;
 
-	public Course getCourse(String courseId) throws SQLException {
-		return courseDao.getById(courseId);
-	}
+    public List<CourseViewProjection> getList() {
+        return courseRepository.findList();
+    }
 
-	public Course createCourse(HttpServletRequest request) throws Exception {
-		String name = request.getParameter("addCourseName");
-		String level = request.getParameter("addCourseLevel");
-		String description = request.getParameter("addCourseDescription");
-		String status = request.getParameter("addCourseStatus");
+    public Optional<Course> findById(Long courseId) {
+        return courseRepository.findById(courseId);
+    }
 
-		Course course = new Course();
-		course.setName(name);
-		course.setLevel(level);
-		course.setDescription(description);
-		course.setStatus(status);
+    public Optional<CourseViewProjection> getInfoById(Long courseId) {
+        return courseRepository.findInfoById(courseId);
+    }
 
-		return courseDao.create(course);
-	}
+    @Transactional
+    public CourseResponseDto create(CreateCourseDto dto) {
+        Course course = new Course();
+        course.setName(dto.getName());
+        course.setLevel(dto.getLevel());
+        course.setDescription(dto.getDescription());
+        course.setStatus(dto.getStatus());
 
-	public Course updateCourse(String courseId, HttpServletRequest request) throws Exception {
-		String name = request.getParameter("editCourseName");
-		String level = request.getParameter("editCourseLevel");
-		String description = request.getParameter("editCourseDescription");
-		String status = request.getParameter("editCourseStatus");
+        Course saved = courseRepository.save(course);
 
-		Course course = new Course();
-		course.setCourseId(courseId);
-		course.setName(name);
-		course.setLevel(level);
-		course.setDescription(description);
-		course.setStatus(status);
+        return new CourseResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getLevel(),
+                saved.getDescription(),
+                saved.getStatus().name());
+    }
 
-		return courseDao.update(course);
-	}
+    @Transactional
+    public CourseResponseDto update(UpdateCourseDto dto) {
+        Course course = courseRepository.findById(dto.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + dto.getCourseId()));
+
+        course.setName(dto.getName());
+        course.setLevel(dto.getLevel());
+        course.setDescription(dto.getDescription());
+        course.setStatus(dto.getStatus());
+
+        Course updated = courseRepository.save(course);
+
+        return new CourseResponseDto(
+                updated.getId(),
+                updated.getName(),
+                updated.getLevel(),
+                updated.getDescription(),
+                updated.getStatus().name());
+    }
+
+    public List<CourseSelectProjection> getForSelect() {
+        return courseRepository.findForSelect();
+    }
 }

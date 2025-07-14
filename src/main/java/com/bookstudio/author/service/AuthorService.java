@@ -1,147 +1,110 @@
 package com.bookstudio.author.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.Base64;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-
-import com.bookstudio.author.dao.AuthorDao;
-import com.bookstudio.author.dao.AuthorDaoImpl;
+import com.bookstudio.author.dto.AuthorResponseDto;
+import com.bookstudio.author.dto.CreateAuthorDto;
+import com.bookstudio.author.dto.UpdateAuthorDto;
 import com.bookstudio.author.model.Author;
-import com.bookstudio.shared.dao.LiteraryGenreDao;
-import com.bookstudio.shared.dao.LiteraryGenreDaoImpl;
-import com.bookstudio.shared.dao.NationalityDao;
-import com.bookstudio.shared.dao.NationalityDaoImpl;
+import com.bookstudio.author.projection.AuthorInfoProjection;
+import com.bookstudio.author.projection.AuthorListProjection;
+import com.bookstudio.author.projection.AuthorSelectProjection;
+import com.bookstudio.author.repository.AuthorRepository;
+import com.bookstudio.shared.service.LiteraryGenreService;
+import com.bookstudio.shared.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class AuthorService {
-	private AuthorDao authorDao = new AuthorDaoImpl();
-	private NationalityDao nationalityDao = new NationalityDaoImpl();
-	private LiteraryGenreDao literaryGenreDao = new LiteraryGenreDaoImpl();
 
-	public List<Author> listAuthors() throws Exception {
-		List<Author> authorData = authorDao.listAll();
+    private final AuthorRepository authorRepository;
 
-		for (Author author : authorData) {
-			encodeAuthorPhoto(author);
-		}
+    private final NationalityService nationalityService;
+    private final LiteraryGenreService literaryGenreService;
 
-		return authorData;
-	}
+    public List<AuthorListProjection> getList() {
+        return authorRepository.findList();
+    }
 
-	public Author getAuthor(String authorId) throws Exception {
-		Author author = authorDao.getById(authorId);
-		encodeAuthorPhoto(author);
-		
-		return author;
-	}
+    public Optional<Author> findById(Long authorId) {
+        return authorRepository.findById(authorId);
+    }
 
-	public Author createAuthor(HttpServletRequest request) throws Exception {
-		String name = getUtf8Parameter(request, "addAuthorName");
-		String nationalityId = getUtf8Parameter(request, "addAuthorNationality");
-		String literaryGenreId = getUtf8Parameter(request, "addLiteraryGenre");
-		LocalDate birthDate = LocalDate.parse(request.getParameter("addAuthorBirthDate"));
-		String biography = getUtf8Parameter(request, "addAuthorBiography");
-		String status = getUtf8Parameter(request, "addAuthorStatus");
+    public Optional<AuthorInfoProjection> getInfoById(Long authorId) {
+        return authorRepository.findInfoById(authorId);
+    }
 
-		byte[] photo = readPhoto(request, "addAuthorPhoto");
+    @Transactional
+    public AuthorResponseDto create(CreateAuthorDto dto) {
+        Author author = new Author();
+        author.setName(dto.getName());
+        author.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
+        author.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Género literario no encontrado")));
+        author.setBirthDate(dto.getBirthDate());
+        author.setBiography(dto.getBiography());
+        author.setStatus(dto.getStatus());
+        author.setPhotoUrl(dto.getPhotoUrl());
 
-		Author author = new Author();
-		author.setName(name);
-		author.setNationalityId(nationalityId);
-		author.setLiteraryGenreId(literaryGenreId);
-		author.setBirthDate(birthDate);
-		author.setBiography(biography);
-		author.setStatus(status);
-		author.setPhoto(photo);
+        Author saved = authorRepository.save(author);
 
-		Author createdAuthor = authorDao.create(author);
-		encodeAuthorPhoto(createdAuthor);
+        return new AuthorResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getBirthDate(),
+                saved.getStatus().name(),
+                saved.getPhotoUrl());
+    }
 
-		return createdAuthor;
-	}
+    @Transactional
+    public AuthorResponseDto update(UpdateAuthorDto dto) {
+        Author author = authorRepository.findById(dto.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("Autor no encontrado con ID: " + dto.getAuthorId()));
 
-	public Author updateAuthor(String authorId, HttpServletRequest request) throws Exception {
-		String name = getUtf8Parameter(request, "editAuthorName");
-		String nationalityId = getUtf8Parameter(request, "editAuthorNationality");
-		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");
-		LocalDate birthDate = LocalDate.parse(request.getParameter("editAuthorBirthDate"));
-		String biography = getUtf8Parameter(request, "editAuthorBiography");
-		String status = getUtf8Parameter(request, "editAuthorStatus");
-		String deletePhoto = request.getParameter("deletePhoto");
+        author.setName(dto.getName());
+        author.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
+        author.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Género literario no encontrado")));
+        author.setBirthDate(dto.getBirthDate());
+        author.setBiography(dto.getBiography());
+        author.setStatus(dto.getStatus());
 
-		byte[] photo = null;
-		if ("true".equals(deletePhoto)) {
-			photo = null;
-		} else {
-			photo = readPhoto(request, "editAuthorPhoto");
-			if (photo == null) {
-				Author currentAuthor = authorDao.getById(authorId);
-				photo = currentAuthor.getPhoto();
-			}
-		}
+        if (dto.isDeletePhoto()) {
+            author.setPhotoUrl(null);
+        } else if (dto.getPhotoUrl() != null && !dto.getPhotoUrl().isBlank()) {
+            author.setPhotoUrl(dto.getPhotoUrl());
+        }
 
-		Author author = new Author();
-		author.setAuthorId(authorId);
-		author.setName(name);
-		author.setNationalityId(nationalityId);
-		author.setLiteraryGenreId(literaryGenreId);
-		author.setBirthDate(birthDate);
-		author.setBiography(biography);
-		author.setStatus(status);
-		author.setPhoto(photo);
+        Author saved = authorRepository.save(author);
 
-		return authorDao.update(author);
-	}
+        return new AuthorResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getBirthDate(),
+                saved.getStatus().name(),
+                saved.getPhotoUrl());
+    }
 
-	public SelectOptions populateSelects() throws Exception {
-		SelectOptions selectOptions = new SelectOptions();
+    public List<AuthorSelectProjection> getForSelect() {
+        return authorRepository.findForSelect();
+    }
 
-		selectOptions.setNationalities(nationalityDao.populateNationalitySelect());
-
-		selectOptions.setLiteraryGenres(literaryGenreDao.populateLiteraryGenreSelect());
-
-		return selectOptions;
-	}
-
-	private String getUtf8Parameter(HttpServletRequest request, String fieldName) throws IOException, ServletException {
-		Part part = request.getPart(fieldName);
-		if (part != null) {
-			try (InputStream is = part.getInputStream()) {
-				return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-			}
-		}
-		
-		return "";
-	}
-
-	private byte[] readPhoto(HttpServletRequest request, String partName) {
-		try {
-			Part part = request.getPart(partName);
-			if (part != null) {
-				InputStream inputStream = part.getInputStream();
-				if (inputStream.available() > 0) {
-					return inputStream.readAllBytes();
-				}
-			}
-		} catch (Exception e) {
-			System.err.println("Error reading photo from part '" + partName + "': " + e.getMessage());
-		}
-		
-		return null;
-	}
-
-	private void encodeAuthorPhoto(Author author) {
-		byte[] photo = author.getPhoto();
-		if (photo != null) {
-			String photoBase64 = Base64.getEncoder().encodeToString(photo);
-			author.setPhotoBase64("data:image/jpeg;base64," + photoBase64);
-		}
-	}
+    public SelectOptions getSelectOptions() {
+        return SelectOptions.builder()
+                .nationalities(nationalityService.getForSelect())
+                .literaryGenres(literaryGenreService.getForSelect())
+                .build();
+    }
 }

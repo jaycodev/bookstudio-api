@@ -1,120 +1,51 @@
 package com.bookstudio.publisher.model;
 
-import com.bookstudio.shared.util.IdFormatter;
+import com.bookstudio.shared.enums.Status;
+import com.bookstudio.shared.model.LiteraryGenre;
+import com.bookstudio.shared.model.Nationality;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Entity
+@Table(name = "Publishers")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Publisher {
-	private String publisherId;
-	private String formattedPublisherId;
-	private String name;
-	private String nationalityId;
-	private String nationalityName;
-	private String literaryGenreId;
-	private String literaryGenreName;
-	private Integer foundationYear;
-	private String website;
-	private String address;
-	private String status;
-	private byte[] photo;
-	private String photoBase64;
 
-	public String getPublisherId() {
-		return publisherId;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PublisherID")
+    private Long id;
 
-	public void setPublisherId(String publisherId) {
-		this.publisherId = publisherId;
-        this.formattedPublisherId = IdFormatter.formatId(publisherId, "ED");
-	}
-	
-	public String getFormattedPublisherId() {
-		return formattedPublisherId;
-	}
+    @Column(name = "Name", nullable = false)
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "NationalityID", nullable = false)
+    private Nationality nationality;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LiteraryGenreID", nullable = false)
+    private LiteraryGenre literaryGenre;
 
-	public String getNationalityId() {
-		return nationalityId;
-	}
+    @Column(name = "FoundationYear", nullable = false)
+    private Integer foundationYear;
 
-	public void setNationalityId(String nationalityId) {
-		this.nationalityId = nationalityId;
-	}
+    @Column(name = "Website")
+    private String website;
 
-	public String getNationalityName() {
-		return nationalityName;
-	}
+    @Column(name = "Address")
+    private String address;
 
-	public void setNationalityName(String nationalityName) {
-		this.nationalityName = nationalityName;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
+    private Status status;
 
-	public String getLiteraryGenreId() {
-		return literaryGenreId;
-	}
+    @Column(name = "PhotoUrl", length = 512)
+    private String photoUrl;
 
-	public void setLiteraryGenreId(String literaryGenreId) {
-		this.literaryGenreId = literaryGenreId;
-	}
-
-	public String getLiteraryGenreName() {
-		return literaryGenreName;
-	}
-
-	public void setLiteraryGenreName(String literaryGenreName) {
-		this.literaryGenreName = literaryGenreName;
-	}
-
-	public int getFoundationYear() {
-		return foundationYear;
-	}
-
-	public void setFoundationYear(int foundationYear) {
-		this.foundationYear = foundationYear;
-	}
-
-	public String getWebsite() {
-		return website;
-	}
-
-	public void setWebsite(String website) {
-		this.website = website;
-	}
-
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public byte[] getPhoto() {
-		return photo;
-	}
-
-	public void setPhoto(byte[] photo) {
-		this.photo = photo;
-	}
-
-	public String getPhotoBase64() {
-		return photoBase64;
-	}
-
-	public void setPhotoBase64(String photoBase64) {
-		this.photoBase64 = photoBase64;
-	}
+    @Transient
+    private String photoBase64;
 }

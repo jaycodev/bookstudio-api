@@ -1,95 +1,124 @@
 package com.bookstudio.book.service;
 
-import java.time.LocalDate;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-import com.bookstudio.author.dao.AuthorDao;
-import com.bookstudio.author.dao.AuthorDaoImpl;
-import com.bookstudio.book.dao.BookDao;
-import com.bookstudio.book.dao.BookDaoImpl;
+import com.bookstudio.author.service.AuthorService;
+import com.bookstudio.book.dto.BookResponseDto;
+import com.bookstudio.book.dto.CreateBookDto;
+import com.bookstudio.book.dto.UpdateBookDto;
 import com.bookstudio.book.model.Book;
-import com.bookstudio.course.dao.CourseDao;
-import com.bookstudio.course.dao.CourseDaoImpl;
-import com.bookstudio.publisher.dao.PublisherDao;
-import com.bookstudio.publisher.dao.PublisherDaoImpl;
-import com.bookstudio.shared.dao.GenreDao;
-import com.bookstudio.shared.dao.GenreDaoImpl;
+import com.bookstudio.book.projection.BookInfoProjection;
+import com.bookstudio.book.projection.BookListProjection;
+import com.bookstudio.book.projection.BookSelectProjection;
+import com.bookstudio.book.repository.BookRepository;
+import com.bookstudio.course.service.CourseService;
+import com.bookstudio.publisher.service.PublisherService;
+import com.bookstudio.shared.service.GenreService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class BookService {
-	private BookDao bookDao = new BookDaoImpl();
-	private AuthorDao authorDao = new AuthorDaoImpl();
-	private PublisherDao publisherDao = new PublisherDaoImpl();
-	private CourseDao courseDao = new CourseDaoImpl();
-	private GenreDao genreDao = new GenreDaoImpl();
 
-	public List<Book> listBooks() throws Exception {
-		return bookDao.listAll();
-	}
+    private final BookRepository bookRepository;
 
-	public Book getBook(String bookId) throws Exception {
-		return bookDao.getById(bookId);
-	}
+    private final AuthorService authorService;
+    private final PublisherService publisherService;
+    private final CourseService courseService;
+    private final GenreService genreService;
 
-	public Book createBook(HttpServletRequest request) throws Exception {
-		String title = request.getParameter("addBookTitle");
-		int totalCopies = Integer.parseInt(request.getParameter("addBookTotalCopies"));
-		String authorId = request.getParameter("addBookAuthor");
-		String publisherId = request.getParameter("addBookPublisher");
-		String courseId = request.getParameter("addBookCourse");
-		LocalDate releaseDate = LocalDate.parse(request.getParameter("addReleaseDate"));
-		String genreId = request.getParameter("addBookGenre");
-		String status = request.getParameter("addBookStatus");
+    public List<BookListProjection> getList() {
+        return bookRepository.findList();
+    }
 
-		Book book = new Book();
-		book.setTitle(title);
-		book.setTotalCopies(totalCopies);
-		book.setAuthorId(authorId);
-		book.setPublisherId(publisherId);
-		book.setCourseId(courseId);
-		book.setReleaseDate(releaseDate);
-		book.setGenreId(genreId);
-		book.setStatus(status);
+    public Optional<Book> findById(Long bookId) {
+        return bookRepository.findById(bookId);
+    }
 
-		return bookDao.create(book);
-	}
+    public Optional<BookInfoProjection> getInfoById(Long bookId) {
+        return bookRepository.findInfoById(bookId);
+    }
 
-	public Book updateBook(String bookId, HttpServletRequest request) throws Exception {
-		String title = request.getParameter("editBookTitle");
-		int totalCopies = Integer.parseInt(request.getParameter("editBookTotalCopies"));
-		String authorId = request.getParameter("editBookAuthor");
-		String publisherId = request.getParameter("editBookPublisher");
-		String courseId = request.getParameter("editBookCourse");
-		LocalDate releaseDate = LocalDate.parse(request.getParameter("editReleaseDate"));
-		String genreId = request.getParameter("editBookGenre");
-		String status = request.getParameter("editBookStatus");
+    @Transactional
+    public BookResponseDto create(CreateBookDto dto) {
+        Book book = new Book();
+        book.setTitle(dto.getTitle());
+        book.setTotalCopies(dto.getTotalCopies());
+        book.setReleaseDate(dto.getReleaseDate());
+        book.setStatus(dto.getStatus());
+        book.setLoanedCopies(0);
 
-		Book book = new Book();
-		book.setBookId(bookId);
-		book.setTitle(title);
-		book.setTotalCopies(totalCopies);
-		book.setAuthorId(authorId);
-		book.setPublisherId(publisherId);
-		book.setCourseId(courseId);
-		book.setReleaseDate(releaseDate);
-		book.setGenreId(genreId);
-		book.setStatus(status);
+        book.setAuthor(authorService.findById(dto.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("Author not found")));
+        book.setPublisher(publisherService.findById(dto.getPublisherId())
+                .orElseThrow(() -> new RuntimeException("Publisher not found")));
+        book.setCourse(courseService.findById(dto.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Course not found")));
+        book.setGenre(genreService.findById(dto.getGenreId())
+                .orElseThrow(() -> new RuntimeException("Genre not found")));
 
-		return bookDao.update(book);
-	}
+        Book saved = bookRepository.save(book);
 
-	public SelectOptions populateSelects() throws Exception {
-		SelectOptions selectOptions = new SelectOptions();
+        return new BookResponseDto(
+                saved.getId(),
+                saved.getTitle(),
+                saved.getAvailableCopies(),
+                saved.getLoanedCopies(),
+                String.valueOf(saved.getAuthor().getId()),
+                saved.getAuthor().getName(),
+                String.valueOf(saved.getPublisher().getId()),
+                saved.getPublisher().getName(),
+                saved.getStatus().name());
+    }
 
-		selectOptions.setAuthors(authorDao.populateAuthorSelect());
+    @Transactional
+    public BookResponseDto update(UpdateBookDto dto) {
+        Book book = bookRepository.findById(dto.getBookId())
+                .orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + dto.getBookId()));
 
-		selectOptions.setPublishers(publisherDao.populatePublisherSelect());
+        book.setTitle(dto.getTitle());
+        book.setTotalCopies(dto.getTotalCopies());
+        book.setReleaseDate(dto.getReleaseDate());
+        book.setStatus(dto.getStatus());
 
-		selectOptions.setCourses(courseDao.populateCourseSelect());
+        book.setAuthor(authorService.findById(dto.getAuthorId())
+                .orElseThrow(() -> new RuntimeException("Author not found")));
+        book.setPublisher(publisherService.findById(dto.getPublisherId())
+                .orElseThrow(() -> new RuntimeException("Publisher not found")));
+        book.setCourse(courseService.findById(dto.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Course not found")));
+        book.setGenre(genreService.findById(dto.getGenreId())
+                .orElseThrow(() -> new RuntimeException("Genre not found")));
 
-		selectOptions.setGenres(genreDao.populateGenreSelect());
+        Book saved = bookRepository.save(book);
 
-		return selectOptions;
-	}
+        return new BookResponseDto(
+                saved.getId(),
+                saved.getTitle(),
+                saved.getAvailableCopies(),
+                saved.getLoanedCopies(),
+                String.valueOf(saved.getAuthor().getId()),
+                saved.getAuthor().getName(),
+                String.valueOf(saved.getPublisher().getId()),
+                saved.getPublisher().getName(),
+                saved.getStatus().name());
+    }
+
+    public List<BookSelectProjection> getForSelect() {
+        return bookRepository.findForSelect();
+    }
+
+    public SelectOptions getSelectOptions() {
+        return SelectOptions.builder()
+                .authors(authorService.getForSelect())
+                .publishers(publisherService.getForSelect())
+                .courses(courseService.getForSelect())
+                .genres(genreService.getForSelect())
+                .build();
+    }
 }

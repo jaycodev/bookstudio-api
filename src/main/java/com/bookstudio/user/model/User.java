@@ -1,93 +1,41 @@
 package com.bookstudio.user.model;
 
-import com.bookstudio.shared.util.IdFormatter;
+import com.bookstudio.shared.enums.Role;
+import jakarta.persistence.*;
+import lombok.*;
 
+@Entity
+@Table(name = "Users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
-	private String userId;
-	private String formattedUserId;
-	private String username;
-	private String email;
-	private String firstName;
-	private String lastName;
-	private String password;
-	private String role;
-	private byte[] profilePhoto;
-	private String profilePhotoBase64;
 
-	public String getUserId() {
-		return userId;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "UserID")
+    private Long id;
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-        this.formattedUserId = IdFormatter.formatId(userId, "US");
-	}
-	
-	public String getFormattedUserId() {
-		return formattedUserId;
-	}
+    @Column(name = "Username", nullable = false, unique = true, length = 50, columnDefinition = "VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin")
+    private String username;
 
-	public String getUsername() {
-		return username;
-	}
+    @Column(name = "Email", nullable = false, unique = true, length = 100)
+    private String email;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    @Column(name = "FirstName", nullable = false)
+    private String firstName;
 
-	public String getEmail() {
-		return email;
-	}
+    @Column(name = "LastName", nullable = false)
+    private String lastName;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    @Column(name = "Password", nullable = false, columnDefinition = "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin")
+    private String password;
 
-	public String getFirstName() {
-		return firstName;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Role", nullable = false, columnDefinition = "ENUM('administrador', 'bibliotecario')")
+    private Role role;
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public byte[] getProfilePhoto() {
-		return profilePhoto;
-	}
-
-	public void setProfilePhoto(byte[] profilePhoto) {
-		this.profilePhoto = profilePhoto;
-	}
-
-	public String getProfilePhotoBase64() {
-		return profilePhotoBase64;
-	}
-
-	public void setProfilePhotoBase64(String profilePhotoBase64) {
-		this.profilePhotoBase64 = profilePhotoBase64;
-	}
+    @Column(name = "ProfilePhotoUrl", length = 512)
+    private String profilePhotoUrl;
 }
