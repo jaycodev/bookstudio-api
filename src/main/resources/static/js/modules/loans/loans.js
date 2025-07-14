@@ -46,45 +46,6 @@ import {
 let bookList = []
 let studentList = []
 
-async function updateBookList() {
-	try {
-		const response = await fetch('api/loans/select-options', {
-			method: 'GET',
-			headers: {
-				Accept: 'application/json',
-			},
-		})
-
-		if (response.status === 204) {
-			console.warn('No data found for select options.')
-			return
-		}
-
-		if (!response.ok) {
-			throw response
-		}
-
-		const data = await response.json()
-
-		bookList = data.books
-		populateSelect('#addLoanBook', bookList, 'bookId', 'title')
-	} catch (error) {
-		if (error instanceof Response) {
-			try {
-				const errorResponse = await error.json()
-				console.error(
-					`Error fetching select book options (${errorResponse.errorType} - ${error.status}):`,
-					errorResponse.message,
-				)
-			} catch {
-				console.error('Unexpected error:', error.status, await error.text())
-			}
-		} else {
-			console.error('Unexpected error:', error)
-		}
-	}
-}
-
 /*****************************************
  * TABLE HANDLING
  *****************************************/
@@ -369,7 +330,13 @@ function handleReturnLoan() {
 					table.row(row).invalidate().draw(false)
 				}
 
-				updateBookList()
+				loadSelectOptions({
+					url: './api/loans/select-options',
+					onSuccess: (data) => {
+						bookList = data.books
+						populateSelect('#addLoanBook', bookList, 'bookId', 'title')
+					},
+				})
 
 				$('#returnLoanModal').modal('hide')
 				showToast('Préstamo devuelto exitosamente.', 'success')
