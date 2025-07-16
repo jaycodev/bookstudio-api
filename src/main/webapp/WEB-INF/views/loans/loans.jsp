@@ -9,8 +9,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<%@ include file="/WEB-INF/includes/styles.jspf" %>
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
@@ -18,7 +18,7 @@
 
 	<!-- ===================== Sidebar ==================== -->
 	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="loans" />
+		<jsp:param name="currentPage" value="/loans" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->

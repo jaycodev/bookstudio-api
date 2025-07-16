@@ -6,13 +6,13 @@
 	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="js/shared/setup/color-modes.js"></script>
+	<script src="/js/shared/setup/color-modes.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-	<link rel="stylesheet" href="css/views/auth.css">
+	<link rel="stylesheet" href="/css/views/auth.css">
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- Background -->
@@ -25,7 +25,7 @@
 			<section class="card border">
 				<!-- Card header -->
 				<header class="card-header text-center">
-					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="./images/logo-light.png" width="40">
+					<img class="logo mt-1 mb-2" alt="Logo de Bookstudio" src="/images/logo-light.png" width="40">
 					<h3 class="fw-bold mb-0 text-body-emphasis">Iniciar sesión</h3>
 					<p class="text-muted mb-0">Empieza a gestionar tus préstamos.</p>
 				</header>
@@ -77,7 +77,7 @@
 		                
 						<!-- Forgot password -->
 						<div class="text-center">
-							<a href="forgot-password" class="text-body-emphasis link-underline-hover"><small>¿Olvidaste tu contraseña?</small></a>
+							<a href="/forgot-password" class="text-body-emphasis link-underline-hover"><small>¿Olvidaste tu contraseña?</small></a>
 						</div>
 					</form>
 				</div>
@@ -99,9 +99,9 @@
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
 	<!-- Custom Scripts -->
-	<script src="js/shared/setup/theme-toggle.js" defer></script>
+	<script src="/js/shared/setup/theme-toggle.js" defer></script>
 	
 	<!-- Page-Specific Script -->
-	<script type="module" src="js/modules/auth/login.js" defer></script>
+	<script type="module" src="/js/modules/auth/login.js" defer></script>
 </body>
 </html>

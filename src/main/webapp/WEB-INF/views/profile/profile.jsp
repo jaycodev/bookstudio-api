@@ -7,15 +7,15 @@
 	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="js/shared/setup/color-modes.js"></script>
-	<script src="js/shared/setup/sidebar-collapse.js"></script>
+	<script src="/js/shared/setup/color-modes.js"></script>
+	<script src="/js/shared/setup/sidebar-collapse.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-	<link rel="stylesheet" href="css/views/user.css">
+	<link rel="stylesheet" href="/css/views/user.css">
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
@@ -283,11 +283,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js" defer></script>
 
 	<!-- Custom Scripts -->
-	<script src="js/shared/layout/header.js" defer></script>
-	<script src="js/shared/layout/sidebar.js" defer></script>
-	<script src="js/shared/setup/theme-toggle.js" defer></script>
+	<script src="/js/shared/layout/header.js" defer></script>
+	<script src="/js/shared/layout/sidebar.js" defer></script>
+	<script src="/js/shared/setup/theme-toggle.js" defer></script>
 	
 	<!-- Page-Specific Script -->
-	<script type="module" src="js/modules/profile/profile.js" defer></script>
+	<script type="module" src="/js/modules/profile/profile.js" defer></script>
 </body>
 </html>
