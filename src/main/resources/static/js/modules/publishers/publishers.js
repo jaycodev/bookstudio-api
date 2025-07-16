@@ -102,13 +102,13 @@ function generateRow(publisher) {
             <td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsPublisherModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
+						data-bs-toggle="modal" data-bs-target="#detailsModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
 						<i class="bi bi-info-circle"></i>
 					</button>
 					${
 						userRole === 'administrador'
 							? `<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editPublisherModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
+							data-bs-toggle="modal" data-bs-target="#editModal" data-id="${publisher.publisherId}" data-formatted-id="${publisher.formattedPublisherId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 							: ''
@@ -171,18 +171,18 @@ function updateRow(publisher) {
 function handleAddForm() {
 	let isFirstSubmit = true
 
-	$('#addPublisherModal').on('hidden.bs.modal', function () {
+	$('#addModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#addPublisherForm').data('submitted', false)
+		$('#addForm').data('submitted', false)
 	})
 
-	$('#addPublisherForm').on('input change', 'input, select', function () {
+	$('#addForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateAddField($(this))
 		}
 	})
 
-	$('#addPublisherForm').on('submit', async function (event) {
+	$('#addForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -208,18 +208,18 @@ function handleAddForm() {
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
-		const publisherDto = {
-			name: raw.addPublisherName,
-			nationalityId: parseInt(raw.addPublisherNationality),
-			literaryGenreId: parseInt(raw.addLiteraryGenre),
-			foundationYear: parseInt(raw.addFoundationYear),
-			website: raw.addPublisherWebsite || '',
-			address: raw.addPublisherAddress || '',
-			status: raw.addPublisherStatus,
+		const publisher = {
+			name: raw.name,
+			nationalityId: parseInt(raw.nationality),
+			literaryGenreId: parseInt(raw.literaryGenre),
+			foundationYear: parseInt(raw.foundationYear),
+			website: raw.website || '',
+			address: raw.address || '',
+			status: raw.status,
 			photoUrl: null, // 🔜 Preparado para Cloudinary
 		}
 
-		const submitButton = $('#addPublisherBtn')
+		const submitButton = $('#addBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -241,27 +241,27 @@ function handleAddForm() {
 					'Content-Type': 'application/json',
 					Accept: 'application/json',
 				},
-				body: JSON.stringify(publisherDto),
+				body: JSON.stringify(publisher),
 			})
 
 			const json = await response.json()
 
 			if (response.ok && json.success) {
 				addRow(json.data)
-				$('#addPublisherModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Editorial agregada exitosamente.', 'success')
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
 					json.message,
 				)
-				$('#addPublisherModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Hubo un error al agregar la editorial.', 'error')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#addPublisherModal').modal('hide')
+			$('#addModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -271,8 +271,8 @@ function handleAddForm() {
 function validateAddField(field) {
 	if (
 		field.attr('type') === 'search' ||
-		field.is('#addPublisherWebsite') ||
-		field.is('#addPublisherAddress')
+		field.is('#addWebsite') ||
+		field.is('#addAddress')
 	) {
 		return true
 	}
@@ -290,7 +290,7 @@ function validateAddField(field) {
 	}
 
 	// Name validation
-	if (field.is('#addPublisherName')) {
+	if (field.is('#addName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -308,7 +308,7 @@ function validateAddField(field) {
 	}
 
 	// Photo validation
-	if (field.is('#addPublisherPhoto')) {
+	if (field.is('#addPhoto')) {
 		const file = field[0].files[0]
 		const result = isValidImageFile(file)
 
@@ -339,25 +339,25 @@ function validateAddField(field) {
 	return isValid
 }
 
-$('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
+$('#addPhoto, #editPhoto').on('change', function () {
 	validateImageFileUI($(this))
 })
 
 function handleEditForm() {
 	let isFirstSubmit = true
 
-	$('#editPublisherModal').on('hidden.bs.modal', function () {
+	$('#editModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#editPublisherForm').data('submitted', false)
+		$('#editForm').data('submitted', false)
 	})
 
-	$('#editPublisherForm').on('input change', 'input, select', function () {
+	$('#editForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateEditField($(this))
 		}
 	})
 
-	$('#editPublisherForm').on('submit', async function (event) {
+	$('#editForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -380,24 +380,24 @@ function handleEditForm() {
 			return
 		}
 
-		const publisherId = $('#editPublisherForm').data('publisherId')
+		const publisherId = $('#editForm').data('publisherId')
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
 		const publisher = {
 			publisherId: parseInt(publisherId),
-			name: raw.editPublisherName,
-			nationalityId: parseInt(raw.editPublisherNationality),
-			literaryGenreId: parseInt(raw.editLiteraryGenre),
-			foundationYear: parseInt(raw.editFoundationYear),
-			website: raw.editPublisherWebsite || '',
-			address: raw.editPublisherAddress || '',
-			status: raw.editPublisherStatus,
+			name: raw.name,
+			nationalityId: parseInt(raw.nationality),
+			literaryGenreId: parseInt(raw.literaryGenre),
+			foundationYear: parseInt(raw.foundationYear),
+			website: raw.website || '',
+			address: raw.address || '',
+			status: raw.status,
 			deletePhoto: deletePhotoFlag || false,
 			photoUrl: null, // 🔜 Preparado para Cloudinary
 		}
 
-		const submitButton = $('#editPublisherBtn')
+		const submitButton = $('#updateBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -426,7 +426,7 @@ function handleEditForm() {
 
 			if (response.ok && json.success) {
 				updateRow(json.data)
-				$('#editPublisherModal').modal('hide')
+				$('#editModal').modal('hide')
 				showToast('Editorial actualizada exitosamente.', 'success')
 			} else {
 				console.error(
@@ -437,12 +437,12 @@ function handleEditForm() {
 					json.message || 'Hubo un error al actualizar la editorial.',
 					'error',
 				)
-				$('#editPublisherModal').modal('hide')
+				$('#editModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#editPublisherModal').modal('hide')
+			$('#editModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -452,8 +452,8 @@ function handleEditForm() {
 function validateEditField(field) {
 	if (
 		field.attr('type') === 'search' ||
-		field.is('#editPublisherWebsite') ||
-		field.is('#editPublisherAddress')
+		field.is('#editWebsite') ||
+		field.is('#editAddress')
 	) {
 		return true
 	}
@@ -471,7 +471,7 @@ function validateEditField(field) {
 	}
 
 	// Name validation
-	if (field.is('#editPublisherName')) {
+	if (field.is('#editName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -489,7 +489,7 @@ function validateEditField(field) {
 	}
 
 	// Photo validation
-	if (field.is('#editPublisherPhoto')) {
+	if (field.is('#editPhoto')) {
 		const file = field[0].files[0]
 		const result = isValidImageFile(file)
 
@@ -528,14 +528,9 @@ function validateEditField(field) {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addPublisherModal"]', function () {
-		populateSelect(
-			'#addPublisherNationality',
-			nationalityList,
-			'nationalityId',
-			'name',
-		)
-		$('#addPublisherNationality').selectpicker()
+	$(document).on('click', '[data-bs-target="#addModal"]', function () {
+		populateSelect('#addNationality', nationalityList, 'nationalityId', 'name')
+		$('#addNationality').selectpicker()
 
 		populateSelect(
 			'#addLiteraryGenre',
@@ -545,7 +540,7 @@ function loadModalData() {
 		)
 		$('#addLiteraryGenre').selectpicker()
 
-		$('#addPublisherStatus')
+		$('#addStatus')
 			.selectpicker('destroy')
 			.empty()
 			.append(
@@ -558,13 +553,13 @@ function loadModalData() {
 					text: 'Inactivo',
 				}),
 			)
-		$('#addPublisherStatus').selectpicker()
+		$('#addStatus').selectpicker()
 
 		$('#defaultAddPhotoContainer').removeClass('d-none')
 		$('#deleteAddPhotoBtn').addClass('d-none')
 
-		$('#addPublisherForm')[0].reset()
-		$('#addPublisherForm .is-invalid').removeClass('is-invalid')
+		$('#addForm')[0].reset()
+		$('#addForm .is-invalid').removeClass('is-invalid')
 
 		$('#cropperContainerAdd').addClass('d-none')
 
@@ -575,162 +570,147 @@ function loadModalData() {
 	})
 
 	// Details Modal
-	$(document).on(
-		'click',
-		'[data-bs-target="#detailsPublisherModal"]',
-		function () {
-			const publisherId = $(this).data('id')
-			$('#detailsPublisherModalID').text($(this).data('formatted-id'))
+	$(document).on('click', '[data-bs-target="#detailsModal"]', function () {
+		const publisherId = $(this).data('id')
+		$('#detailsModalID').text($(this).data('formatted-id'))
 
-			toggleModalLoading(this, true)
+		toggleModalLoading(this, true)
 
-			fetch(`./api/publishers/${encodeURIComponent(publisherId)}`, {
-				method: 'GET',
-				headers: {
-					Accept: 'application/json',
-				},
+		fetch(`./api/publishers/${encodeURIComponent(publisherId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
 			})
-				.then(async (response) => {
-					if (!response.ok) {
-						const errorData = await response.json()
-						throw { status: response.status, ...errorData }
-					}
-					return response.json()
-				})
-				.then((data) => {
-					$('#detailsPublisherID').text(data.formattedPublisherId)
-					$('#detailsPublisherName').text(data.name)
-					$('#detailsPublisherNationality').text(data.nationalityName)
-					$('#detailsPublisherGenre').text(data.literaryGenreName)
-					$('#detailsPublisherYear').text(data.foundationYear)
-					$('#detailsPublisherWebsite a')
-						.attr('href', data.website)
-						.text(data.website)
-					$('#detailsPublisherAddress').text(data.address)
+			.then((data) => {
+				$('#detailsID').text(data.formattedPublisherId)
+				$('#detailsName').text(data.name)
+				$('#detailsNationality').text(data.nationalityName)
+				$('#detailsGenre').text(data.literaryGenreName)
+				$('#detailsYear').text(data.foundationYear)
+				$('#detailsWebsite a').attr('href', data.website).text(data.website)
+				$('#detailsAddress').text(data.address)
 
-					$('#detailsPublisherStatus').html(
-						data.status === 'activo'
-							? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-					)
+				$('#detailsStatus').html(
+					data.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
 
-					if (data.photoUrl) {
-						$('#detailsPublisherImg')
-							.attr('src', data.photoUrl)
-							.removeClass('d-none')
-						$('#detailsPublisherSvg').addClass('d-none')
-					} else {
-						$('#detailsPublisherImg').addClass('d-none')
-						$('#detailsPublisherSvg').removeClass('d-none')
-					}
+				if (data.photoUrl) {
+					$('#detailsImg').attr('src', data.photoUrl).removeClass('d-none')
+					$('#detailsSvg').addClass('d-none')
+				} else {
+					$('#detailsImg').addClass('d-none')
+					$('#detailsSvg').removeClass('d-none')
+				}
 
-					toggleModalLoading(this, false)
-				})
-				.catch((error) => {
-					console.error(
-						`Error loading publisher details (${error.errorType || 'unknown'} - ${error.status}):`,
-						error.message || error,
-					)
-					showToast(
-						'Hubo un error al cargar los detalles de la editorial.',
-						'error',
-					)
-					$('#detailsPublisherModal').modal('hide')
-				})
-		},
-	)
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading publisher details (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast(
+					'Hubo un error al cargar los detalles de la editorial.',
+					'error',
+				)
+				$('#detailsModal').modal('hide')
+			})
+	})
 
 	// Edit Modal
-	$(document).on(
-		'click',
-		'[data-bs-target="#editPublisherModal"]',
-		function () {
-			const publisherId = $(this).data('id')
-			$('#editPublisherModalID').text($(this).data('formatted-id'))
+	$(document).on('click', '[data-bs-target="#editModal"]', function () {
+		const publisherId = $(this).data('id')
+		$('#editModalID').text($(this).data('formatted-id'))
 
-			toggleModalLoading(this, true)
+		toggleModalLoading(this, true)
 
-			fetch(`./api/publishers/${encodeURIComponent(publisherId)}`, {
-				method: 'GET',
-				headers: {
-					Accept: 'application/json',
-				},
+		fetch(`./api/publishers/${encodeURIComponent(publisherId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
 			})
-				.then(async (response) => {
-					if (!response.ok) {
-						const errorData = await response.json()
-						throw { status: response.status, ...errorData }
-					}
-					return response.json()
-				})
-				.then((data) => {
-					$('#editPublisherForm').data('publisherId', data.publisherId)
-					$('#editPublisherName').val(data.name)
+			.then((data) => {
+				$('#editForm').data('publisherId', data.publisherId)
+				$('#editName').val(data.name)
 
-					populateSelect(
-						'#editPublisherNationality',
-						nationalityList,
-						'nationalityId',
-						'name',
+				populateSelect(
+					'#editNationality',
+					nationalityList,
+					'nationalityId',
+					'name',
+				)
+				$('#editNationality').val(data.nationalityId).selectpicker()
+
+				populateSelect(
+					'#editLiteraryGenre',
+					literaryGenreList,
+					'literaryGenreId',
+					'name',
+				)
+				$('#editLiteraryGenre').val(data.literaryGenreId).selectpicker()
+
+				$('#editFoundationYear').val(data.foundationYear)
+				$('#editWebsite').val(data.website)
+				$('#editAddress').val(data.address)
+
+				$('#editStatus')
+					.selectpicker('destroy')
+					.empty()
+					.append(
+						$('<option>', { value: 'activo', text: 'Activo' }),
+						$('<option>', { value: 'inactivo', text: 'Inactivo' }),
 					)
-					$('#editPublisherNationality').val(data.nationalityId).selectpicker()
+				$('#editStatus').val(data.status).selectpicker()
 
-					populateSelect(
-						'#editLiteraryGenre',
-						literaryGenreList,
-						'literaryGenreId',
-						'name',
-					)
-					$('#editLiteraryGenre').val(data.literaryGenreId).selectpicker()
+				updateEditImageContainer(data.photoUrl)
 
-					$('#editFoundationYear').val(data.foundationYear)
-					$('#editPublisherWebsite').val(data.website)
-					$('#editPublisherAddress').val(data.address)
+				$('#editForm .is-invalid').removeClass('is-invalid')
+				placeholderColorEditSelect()
 
-					$('#editPublisherStatus')
-						.selectpicker('destroy')
-						.empty()
-						.append(
-							$('<option>', { value: 'activo', text: 'Activo' }),
-							$('<option>', { value: 'inactivo', text: 'Inactivo' }),
-						)
-					$('#editPublisherStatus').val(data.status).selectpicker()
+				$('#editForm')
+					.find('select')
+					.each(function () {
+						validateEditField($(this), true)
+					})
 
-					updateEditImageContainer(data.photoUrl)
+				$('#editPhoto').val('')
 
-					$('#editPublisherForm .is-invalid').removeClass('is-invalid')
-					placeholderColorEditSelect()
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading publisher details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los datos de la editorial.', 'error')
+				$('#editModal').modal('hide')
+			})
 
-					$('#editPublisherForm')
-						.find('select')
-						.each(function () {
-							validateEditField($(this), true)
-						})
-
-					$('#editPublisherPhoto').val('')
-
-					toggleModalLoading(this, false)
-				})
-				.catch((error) => {
-					console.error(
-						`Error loading publisher details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
-						error.message || error,
-					)
-					showToast(
-						'Hubo un error al cargar los datos de la editorial.',
-						'error',
-					)
-					$('#editPublisherModal').modal('hide')
-				})
-
-			// Reset cropper container
-			$('#cropperContainerEdit').addClass('d-none')
-			if (cropper) {
-				cropper.destroy()
-				cropper = null
-			}
-		},
-	)
+		// Reset cropper container
+		$('#cropperContainerEdit').addClass('d-none')
+		if (cropper) {
+			cropper.destroy()
+			cropper = null
+		}
+	})
 }
 
 function updateEditImageContainer(photoUrl) {
@@ -764,7 +744,7 @@ $('#deleteAddPhotoBtn').on('click', function () {
 		cropper = null
 	}
 	$('#cropperContainerAdd').addClass('d-none')
-	$('#addPublisherPhoto').val('')
+	$('#addPhoto').val('')
 	$('#defaultAddPhotoContainer').removeClass('d-none')
 })
 
@@ -779,7 +759,7 @@ $('#deleteEditPhotoBtn').on('click', function () {
 		cropper = null
 	}
 	$('#cropperContainerEdit').addClass('d-none')
-	$('#editPublisherPhoto').val('')
+	$('#editPhoto').val('')
 })
 
 let cropper
@@ -788,7 +768,7 @@ const $imageToCropAdd = $('#imageToCropAdd')
 const $cropperContainerEdit = $('#cropperContainerEdit')
 const $imageToCropEdit = $('#imageToCropEdit')
 
-$('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
+$('#addPhoto, #editPhoto').on('change', function () {
 	const file = this.files[0]
 	deletePhotoFlag = false
 
@@ -806,7 +786,7 @@ $('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
 		$('#deleteEditPhotoBtn').removeClass('d-none')
 
 		let $container, $image
-		if ($(this).is('#addPublisherPhoto')) {
+		if ($(this).is('#addPhoto')) {
 			$container = $cropperContainerAdd
 			$image = $imageToCropAdd
 		} else {
@@ -815,7 +795,7 @@ $('#addPublisherPhoto, #editPublisherPhoto').on('change', function () {
 		}
 		initializeCropper(file, $container, $image, cropper)
 	} else {
-		if ($(this).is('#addPublisherPhoto')) {
+		if ($(this).is('#addPhoto')) {
 			$cropperContainerAdd.addClass('d-none')
 			if (cropper) {
 				cropper.destroy()

@@ -64,13 +64,13 @@ function generateRow(course) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsCourseModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
+						data-bs-toggle="modal" data-bs-target="#detailsModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
 						<i class="bi bi-info-circle"></i>
 					</button>
 					${
 						userRole === 'administrador'
 							? `<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editCourseModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
+							data-bs-toggle="modal" data-bs-target="#editModal" data-id="${course.courseId}" data-formatted-id="${course.formattedCourseId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 							: ''
@@ -133,18 +133,18 @@ function updateRow(course) {
 function handleAddForm() {
 	let isFirstSubmit = true
 
-	$('#addCourseModal').on('hidden.bs.modal', function () {
+	$('#addModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#addCourseForm').data('submitted', false)
+		$('#addForm').data('submitted', false)
 	})
 
-	$('#addCourseForm').on('input change', 'input, select', function () {
+	$('#addForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateAddField($(this))
 		}
 	})
 
-	$('#addCourseForm').on('submit', async function (event) {
+	$('#addForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -171,13 +171,13 @@ function handleAddForm() {
 		const raw = Object.fromEntries(formData.entries())
 
 		const course = {
-			name: raw.addCourseName,
-			level: raw.addCourseLevel,
-			description: raw.addCourseDescription,
-			status: raw.addCourseStatus,
+			name: raw.name,
+			level: raw.level,
+			description: raw.description,
+			status: raw.status,
 		}
 
-		const submitButton = $('#addCourseBtn')
+		const submitButton = $('#addBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -194,20 +194,20 @@ function handleAddForm() {
 
 			if (response.ok && json.success) {
 				addRow(json.data)
-				$('#addCourseModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Curso agregado exitosamente.', 'success')
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
 					json.message,
 				)
-				$('#addCourseModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Hubo un error al agregar el curso.', 'error')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#addCourseModal').modal('hide')
+			$('#addModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -232,7 +232,7 @@ function validateAddField(field) {
 	}
 
 	// Name validation
-	if (field.is('#addCourseName')) {
+	if (field.is('#addName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -261,18 +261,18 @@ function validateAddField(field) {
 function handleEditForm() {
 	let isFirstSubmit = true
 
-	$('#editCourseModal').on('hidden.bs.modal', function () {
+	$('#editModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#editCourseForm').data('submitted', false)
+		$('#editForm').data('submitted', false)
 	})
 
-	$('#editCourseForm').on('input change', 'input, select', function () {
+	$('#editForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateEditField($(this))
 		}
 	})
 
-	$('#editCourseForm').on('submit', async function (event) {
+	$('#editForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -295,20 +295,20 @@ function handleEditForm() {
 			return
 		}
 
-		const courseId = $('#editCourseForm').data('courseId')
+		const courseId = $('#editForm').data('courseId')
 
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
 		const course = {
 			courseId: parseInt(courseId),
-			name: raw.editCourseName,
-			level: raw.editCourseLevel,
-			description: raw.editCourseDescription,
-			status: raw.editCourseStatus,
+			name: raw.name,
+			level: raw.level,
+			description: raw.description,
+			status: raw.status,
 		}
 
-		const submitButton = $('#editCourseBtn')
+		const submitButton = $('#updateBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -325,7 +325,7 @@ function handleEditForm() {
 
 			if (response.ok && json.success) {
 				updateRow(json.data)
-				$('#editCourseModal').modal('hide')
+				$('#editModal').modal('hide')
 				showToast('Curso actualizado exitosamente.', 'success')
 			} else {
 				console.error(
@@ -336,12 +336,12 @@ function handleEditForm() {
 					json.message || 'Hubo un error al actualizar el curso.',
 					'error',
 				)
-				$('#editCourseModal').modal('hide')
+				$('#editModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#editCourseModal').modal('hide')
+			$('#editModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -366,7 +366,7 @@ function validateEditField(field) {
 	}
 
 	// Name validation
-	if (field.is('#editCourseName')) {
+	if (field.is('#editName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -400,8 +400,8 @@ function validateEditField(field) {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addCourseModal"]', function () {
-		$('#addCourseLevel')
+	$(document).on('click', '[data-bs-target="#addModal"]', function () {
+		$('#addLevel')
 			.selectpicker('destroy')
 			.empty()
 			.append(
@@ -418,9 +418,9 @@ function loadModalData() {
 					text: 'Avanzado',
 				}),
 			)
-		$('#addCourseLevel').selectpicker()
+		$('#addLevel').selectpicker()
 
-		$('#addCourseStatus')
+		$('#addStatus')
 			.selectpicker('destroy')
 			.empty()
 			.append(
@@ -433,19 +433,19 @@ function loadModalData() {
 					text: 'Inactivo',
 				}),
 			)
-		$('#addCourseStatus').selectpicker()
+		$('#addStatus').selectpicker()
 
-		$('#addCourseForm')[0].reset()
-		$('#addCourseForm .is-invalid').removeClass('is-invalid')
+		$('#addForm')[0].reset()
+		$('#addForm .is-invalid').removeClass('is-invalid')
 	})
 
 	// Details Modal
 	$(document).on(
 		'click',
-		'[data-bs-target="#detailsCourseModal"]',
+		'[data-bs-target="#detailsModal"]',
 		async function () {
 			const courseId = $(this).data('id')
-			$('#detailsCourseModalID').text($(this).data('formatted-id'))
+			$('#detailsModalID').text($(this).data('formatted-id'))
 
 			toggleModalLoading(this, true)
 
@@ -467,10 +467,10 @@ function loadModalData() {
 
 				const data = await response.json()
 
-				$('#detailsCourseID').text(data.formattedCourseId)
-				$('#detailsCourseName').text(data.name)
+				$('#detailsID').text(data.formattedCourseId)
+				$('#detailsName').text(data.name)
 
-				$('#detailsCourseLevel').html(
+				$('#detailsLevel').html(
 					data.level === 'Básico'
 						? '<span class="badge text-primary-emphasis bg-primary-subtle border border-primary-subtle">Básico</span>'
 						: data.level === 'Intermedio'
@@ -478,13 +478,13 @@ function loadModalData() {
 							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Avanzado</span>',
 				)
 
-				$('#detailsCourseStatus').html(
+				$('#detailsStatus').html(
 					data.status === 'activo'
 						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
 				)
 
-				$('#detailsCourseDescription').text(data.description)
+				$('#detailsDescription').text(data.description)
 
 				toggleModalLoading(this, false)
 			} catch (error) {
@@ -493,83 +493,79 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los detalles del curso.', 'error')
-				$('#detailsCourseModal').modal('hide')
+				$('#detailsModal').modal('hide')
 			}
 		},
 	)
 
 	// Edit Modal
-	$(document).on(
-		'click',
-		'[data-bs-target="#editCourseModal"]',
-		async function () {
-			const courseId = $(this).data('id')
-			$('#editCourseModalID').text($(this).data('formatted-id'))
+	$(document).on('click', '[data-bs-target="#editModal"]', async function () {
+		const courseId = $(this).data('id')
+		$('#editModalID').text($(this).data('formatted-id'))
 
-			toggleModalLoading(this, true)
+		toggleModalLoading(this, true)
 
-			try {
-				const response = await fetch(
-					`./api/courses/${encodeURIComponent(courseId)}`,
-					{
-						method: 'GET',
-						headers: {
-							Accept: 'application/json',
-						},
+		try {
+			const response = await fetch(
+				`./api/courses/${encodeURIComponent(courseId)}`,
+				{
+					method: 'GET',
+					headers: {
+						Accept: 'application/json',
 					},
-				)
+				},
+			)
 
-				if (!response.ok) {
-					const errorData = await response.json()
-					throw { status: response.status, ...errorData }
-				}
-
-				const data = await response.json()
-
-				$('#editCourseForm').data('courseId', data.courseId)
-				$('#editCourseName').val(data.name)
-				$('#editCourseDescription').val(data.description)
-
-				$('#editCourseLevel')
-					.selectpicker('destroy')
-					.empty()
-					.append(
-						$('<option>', { value: 'Básico', text: 'Básico' }),
-						$('<option>', { value: 'Intermedio', text: 'Intermedio' }),
-						$('<option>', { value: 'Avanzado', text: 'Avanzado' }),
-					)
-				$('#editCourseLevel').val(data.level).selectpicker()
-
-				$('#editCourseStatus')
-					.selectpicker('destroy')
-					.empty()
-					.append(
-						$('<option>', { value: 'activo', text: 'Activo' }),
-						$('<option>', { value: 'inactivo', text: 'Inactivo' }),
-					)
-				$('#editCourseStatus').val(data.status).selectpicker()
-
-				$('#editCourseForm .is-invalid').removeClass('is-invalid')
-
-				placeholderColorEditSelect()
-
-				$('#editCourseForm')
-					.find('select')
-					.each(function () {
-						validateEditField($(this), true)
-					})
-
-				toggleModalLoading(this, false)
-			} catch (error) {
-				console.error(
-					`Error loading course details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
-					error.message || error,
-				)
-				showToast('Hubo un error al cargar los datos del curso.', 'error')
-				$('#editCourseModal').modal('hide')
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw { status: response.status, ...errorData }
 			}
-		},
-	)
+
+			const data = await response.json()
+
+			$('#editForm').data('courseId', data.courseId)
+			$('#editName').val(data.name)
+			$('#editDescription').val(data.description)
+
+			$('#editLevel')
+				.selectpicker('destroy')
+				.empty()
+				.append(
+					$('<option>', { value: 'Básico', text: 'Básico' }),
+					$('<option>', { value: 'Intermedio', text: 'Intermedio' }),
+					$('<option>', { value: 'Avanzado', text: 'Avanzado' }),
+				)
+			$('#editLevel').val(data.level).selectpicker()
+
+			$('#editStatus')
+				.selectpicker('destroy')
+				.empty()
+				.append(
+					$('<option>', { value: 'activo', text: 'Activo' }),
+					$('<option>', { value: 'inactivo', text: 'Inactivo' }),
+				)
+			$('#editStatus').val(data.status).selectpicker()
+
+			$('#editForm .is-invalid').removeClass('is-invalid')
+
+			placeholderColorEditSelect()
+
+			$('#editForm')
+				.find('select')
+				.each(function () {
+					validateEditField($(this), true)
+				})
+
+			toggleModalLoading(this, false)
+		} catch (error) {
+			console.error(
+				`Error loading course details for editing (${error.errorType || 'unknown'} - ${error.status}):`,
+				error.message || error,
+			)
+			showToast('Hubo un error al cargar los datos del curso.', 'error')
+			$('#editModal').modal('hide')
+		}
+	})
 }
 
 function generatePDF(dataTable) {

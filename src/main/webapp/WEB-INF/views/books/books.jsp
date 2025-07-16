@@ -57,7 +57,7 @@
 				<c:if test="${userRole == 'administrador'}">
 					<!-- Add Button -->
 					<button class="btn btn-custom-primary d-flex align-items-center"
-						data-bs-toggle="modal" data-bs-target="#addBookModal"
+						data-bs-toggle="modal" data-bs-target="#addModal"
 						aria-label="Agregar libro" disabled>
 						<i class="bi-plus-circle me-2"></i>
 						Agregar
@@ -97,13 +97,13 @@
 		</section>
 	</main>
 
-	<!-- Add Book Modal -->
-	<div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Add Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addBookModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="addModalLabel">
 	                	<i class="bi bi-plus-circle me-1"></i> 
 	                	Agregar un libro
 	                </h5>
@@ -112,17 +112,17 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="addBookForm" accept-charset="UTF-8" novalidate>
-	                    <!-- Book Title and Total Copies Section -->
+	                <form id="addForm" accept-charset="UTF-8" novalidate>
+	                    <!-- Title and Total Copies Section -->
 	                    <div class="row">
-	                        <!-- Book Title Field -->
+	                        <!-- Title Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookTitle" class="form-label">Título <span class="text-danger">*</span></label>
+	                            <label for="addTitle" class="form-label">Título <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addBookTitle" 
-	                                name="addBookTitle" 
+	                                id="addTitle" 
+                                    name="title"
 	                                placeholder="Ingrese el título del libro" 
 	                                required
 	                            >
@@ -131,12 +131,12 @@
 	                        
 	                        <!-- Total Copies Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookTotalCopies" class="form-label">Ejemplares totales <span class="text-danger">*</span></label>
+	                            <label for="addTotalCopies" class="form-label">Ejemplares totales <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
-	                                id="addBookTotalCopies" 
-	                                name="addBookTotalCopies" 
+	                                id="addTotalCopies" 
+                                    name="totalCopies"
 	                                min="1" 
 	                                max="1000" 
 	                                placeholder="Ingrese la cantidad de ejemplares" 
@@ -150,11 +150,11 @@
 	                    <div class="row">
 	                        <!-- Author Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookAuthor" class="form-label">Autor <span class="text-danger">*</span></label>
+	                            <label for="addAuthor" class="form-label">Autor <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addBookAuthor" 
-	                                name="addBookAuthor" 
+	                                id="addAuthor" 
+                                    name="author"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione un autor" 
@@ -167,11 +167,11 @@
 	                        
 	                        <!-- Publisher Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookPublisher" class="form-label">Editorial <span class="text-danger">*</span></label>
+	                            <label for="addPublisher" class="form-label">Editorial <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addBookPublisher" 
-	                                name="addBookPublisher" 
+	                                id="addPublisher" 
+                                    name="publisher"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione una editorial" 
@@ -187,11 +187,11 @@
 	                    <div class="row">
 	                        <!-- Course Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookCourse" class="form-label">Curso <span class="text-danger">*</span></label>
+	                            <label for="addCourse" class="form-label">Curso <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addBookCourse" 
-	                                name="addBookCourse" 
+	                                id="addCourse" 
+                                    name="course"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione un curso" 
@@ -209,7 +209,7 @@
 	                                type="date" 
 	                                class="form-control" 
 	                                id="addReleaseDate" 
-	                                name="addReleaseDate" 
+                                    name="releaseDate"
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -220,11 +220,11 @@
 	                    <div class="row">
 	                        <!-- Genre Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookGenre" class="form-label">Género <span class="text-danger">*</span></label>
+	                            <label for="addGenre" class="form-label">Género <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addBookGenre" 
-	                                name="addBookGenre" 
+	                                id="addGenre" 
+                                    name="genre"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione un género" 
@@ -237,11 +237,11 @@
 	                        
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addBookStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="addStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addBookStatus" 
-	                                name="addBookStatus" 
+	                                id="addStatus" 
+                                    name="status"
 	                                title="Seleccione un estado" 
 	                                required
 	                            >
@@ -259,7 +259,7 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Add Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addBookForm" id="addBookBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addForm" id="addBtn">
 	                    <i class="bi-plus-circle me-2"></i>
 	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
@@ -269,39 +269,39 @@
 	    </div>
 	</div>
 	
-	<!-- Book Details Modal -->
-	<div class="modal fade" id="detailsBookModal" tabindex="-1" aria-labelledby="detailsBookModalLabel" aria-hidden="true">
+	<!-- Details Modal -->
+	<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsBookModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="detailsModalLabel">
 	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del libro 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsBookModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="detailsBookSpinner" class="text-center my-5">
+	            	<div id="detailsSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsBookContent" class="d-none">
+	            	<div id="detailsContent" class="d-none">
 		            	<!-- ID and Title Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsBookID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Título</h6>
-		                        <p class="fw-bold" id="detailsBookTitle"></p>
+		                        <p class="fw-bold" id="detailsTitle"></p>
 		                    </div>
 		                </div>
 		                
@@ -309,12 +309,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Ejemplares disponibles</h6>
-		                        <p class="badge text-success-emphasis bg-success-subtle border border-success-subtle" id="detailsBookAvaibleCopies"></p>
+		                        <p class="badge text-success-emphasis bg-success-subtle border border-success-subtle" id="detailsAvaibleCopies"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Ejemplares prestados</h6>
-		                        <p class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle" id="detailsBookLoanedCopies"></p>
+		                        <p class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle" id="detailsLoanedCopies"></p>
 		                    </div>
 		                </div>
 		                
@@ -322,12 +322,12 @@
 		                <div class="row">
 		                	<div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Autor</h6>
-		                        <p class="fw-bold" id="detailsBookAuthor"></p>
+		                        <p class="fw-bold" id="detailsAuthor"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Editorial</h6>
-		                        <p class="fw-bold" id="detailsBookPublisher"></p>
+		                        <p class="fw-bold" id="detailsPublisher"></p>
 		                    </div>
 		                </div>
 		                
@@ -335,7 +335,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Curso</h6>
-		                        <p class="fw-bold" id="detailsBookCourse"></p>
+		                        <p class="fw-bold" id="detailsCourse"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
@@ -348,12 +348,12 @@
 		                <div class="row">   
 		                    <div class="col-md-6">
 		                        <h6 class="small text-muted">Género</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsBookGenre"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsGenre"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6">
 		                        <h6 class="small text-muted">Estado</h6>
-		                        <p id="detailsBookStatus"></p>
+		                        <p id="detailsStatus"></p>
 		                    </div>
 		                </div>
 					</div>
@@ -368,39 +368,39 @@
 	    </div>
 	</div>
 	
-	<!-- Edit Book Modal -->
-	<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Modal -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editBookModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="editModalLabel">
 	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar libro 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editBookModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="editBookSpinner" class="text-center my-5">
+	            	<div id="editSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 	            
-	                <form id="editBookForm" class="d-none" accept-charset="UTF-8" novalidate>
+	                <form id="editForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Title and Total Copies Section -->
 	                    <div class="row">
-	                        <!-- Book Title Field -->
+	                        <!-- Title Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookTitle" class="form-label">Título <span class="text-danger">*</span></label>
+	                            <label for="editTitle" class="form-label">Título <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editBookTitle" 
-	                                name="editBookTitle" 
+	                                id="editTitle" 
+                                    name="title"
 	                                placeholder="Ingrese el título del libro" 
 	                                required
 	                            >
@@ -409,12 +409,12 @@
 	                        
 	                        <!-- Total Copies Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookTotalCopies" class="form-label">Ejemplares totales <span class="text-danger">*</span></label>
+	                            <label for="editTotalCopies" class="form-label">Ejemplares totales <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
-	                                id="editBookTotalCopies" 
-	                                name="editBookTotalCopies" 
+	                                id="editTotalCopies" 
+                                    name="totalCopies"
 	                                min="1" 
 	                                max="1000" 
 	                                placeholder="Ingrese la cantidad de ejemplares" 
@@ -428,11 +428,11 @@
 	                    <div class="row">
 	                        <!-- Author Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookAuthor" class="form-label">Autor <span class="text-danger">*</span></label>
+	                            <label for="editAuthor" class="form-label">Autor <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editBookAuthor" 
-	                                name="editBookAuthor" 
+	                                id="editAuthor" 
+                                    name="author"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -444,11 +444,11 @@
 	                        
 	                        <!-- Publisher Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookPublisher" class="form-label">Editorial <span class="text-danger">*</span></label>
+	                            <label for="editPublisher" class="form-label">Editorial <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editBookPublisher" 
-	                                name="editBookPublisher" 
+	                                id="editPublisher" 
+                                    name="publisher"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -463,11 +463,11 @@
 	                    <div class="row">
 	                        <!-- Course Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookCourse" class="form-label">Curso <span class="text-danger">*</span></label>
+	                            <label for="editCourse" class="form-label">Curso <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editBookCourse" 
-	                                name="editBookCourse" 
+	                                id="editCourse" 
+                                    name="course"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -484,7 +484,7 @@
 	                                type="date" 
 	                                class="form-control" 
 	                                id="editReleaseDate" 
-	                                name="editReleaseDate" 
+                                    name="releaseDate"
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -495,11 +495,11 @@
 	                    <div class="row">
 	                        <!-- Genre Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookGenre" class="form-label">Género <span class="text-danger">*</span></label>
+	                            <label for="editGenre" class="form-label">Género <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editBookGenre" 
-	                                name="editBookGenre" 
+	                                id="editGenre" 
+                                    name="genre"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -511,11 +511,11 @@
 	                        
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editBookStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="editStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editBookStatus" 
-	                                name="editBookStatus" 
+	                                id="editStatus" 
+                                    name="status"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -531,7 +531,7 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editBookForm" id="editBookBtn" disabled>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editForm" id="updateBtn" disabled>
 	                    <i class="bi bi-floppy me-2"></i>
 	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar

@@ -54,7 +54,7 @@
 
 				<!-- Add Button -->
 				<button class="btn btn-custom-primary d-flex align-items-center"
-					data-bs-toggle="modal" data-bs-target="#addStudentModal"
+					data-bs-toggle="modal" data-bs-target="#addModal"
 					aria-label="Agregar estudiante" disabled>
 					<i class="bi bi-plus-circle me-2"></i>
 					Agregar
@@ -93,13 +93,13 @@
 		</section>
 	</main>
 
-	<!-- Add Student Modal -->
-	<div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Add Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addStudentModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="addModalLabel">
 	                	<i class="bi bi-plus-circle me-1"></i> 
 	                	Agregar un estudiante
 	                </h5>
@@ -108,17 +108,17 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="addStudentForm" accept-charset="UTF-8" novalidate>
+	                <form id="addForm" accept-charset="UTF-8" novalidate>
 	                    <!-- Personal Information Section -->
 	                    <div class="row">
 	                        <!-- DNI Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentDNI" class="form-label">DNI <span class="text-danger">*</span></label>
+	                            <label for="addDNI" class="form-label">DNI <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="tel" 
 	                                class="form-control" 
-	                                id="addStudentDNI" 
-	                                name="addStudentDNI" 
+	                                id="addDNI" 
+                                    name="DNI"
 	                                maxlength="8" 
 	                                pattern="\d{8}" 
 	                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 8);" 
@@ -130,12 +130,12 @@
 	                        
 	                        <!-- First Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
+	                            <label for="addFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addStudentFirstName" 
-	                                name="addStudentFirstName" 
+	                                id="addFirstName" 
+                                    name="firstName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese los nombres del estudiante" 
@@ -149,12 +149,12 @@
 	                    <div class="row">
 	                        <!-- Last Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
+	                            <label for="addLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addStudentLastName" 
-	                                name="addStudentLastName" 
+	                                id="addLastName" 
+                                    name="lastName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese los apellidos del estudiante" 
@@ -165,12 +165,12 @@
 	                        
 	                        <!-- Address Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentAddress" class="form-label">Dirección <span class="text-danger">*</span></label>
+	                            <label for="addAddress" class="form-label">Dirección <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addStudentAddress" 
-	                                name="addStudentAddress" 
+	                                id="addAddress" 
+                                    name="address"
 	                                placeholder="Ingrese la dirección del estudiante" 
 	                                required
 	                            >
@@ -182,12 +182,12 @@
 	                    <div class="row">
 	                        <!-- Phone Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentPhone" class="form-label">Teléfono <span class="text-danger">*</span></label>
+	                            <label for="addPhone" class="form-label">Teléfono <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="tel" 
 	                                class="form-control" 
-	                                id="addStudentPhone" 
-	                                name="addStudentPhone" 
+	                                id="addPhone" 
+                                    name="phone"
 	                                maxlength="9" 
 	                                pattern="\d{9}" 
 	                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 9);" 
@@ -199,12 +199,12 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+	                            <label for="addEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
-	                                id="addStudentEmail" 
-	                                name="addStudentEmail" 
+	                                id="addEmail" 
+                                    name="email"
 	                                placeholder="ejemplo@correo.com" 
 	                                required
 	                            >
@@ -216,12 +216,12 @@
 	                    <div class="row">
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+	                            <label for="addBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
-	                                id="addStudentBirthDate" 
-	                                name="addStudentBirthDate" 
+	                                id="addBirthDate" 
+                                    name="birthDate"
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -229,11 +229,11 @@
 	                        
 	                        <!-- Gender Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentGender" class="form-label">Género <span class="text-danger">*</span></label>
+	                            <label for="addGender" class="form-label">Género <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addStudentGender" 
-	                                name="addStudentGender" 
+	                                id="addGender" 
+                                    name="gender"
 	                                title="Seleccione un género" 
 	                                required
 	                            >
@@ -247,11 +247,11 @@
 	                    <div class="row">
 	                        <!-- Faculty Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentFaculty" class="form-label">Facultad <span class="text-danger">*</span></label>
+	                            <label for="addFaculty" class="form-label">Facultad <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addStudentFaculty" 
-	                                name="addStudentFaculty" 
+	                                id="addFaculty" 
+                                    name="faculty"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione una facultad" 
@@ -264,11 +264,11 @@
 	                        
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addStudentStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="addStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addStudentStatus" 
-	                                name="addStudentStatus" 
+	                                id="addStatus" 
+                                    name="status"
 	                                title="Seleccione un estado" 
 	                                required
 	                            >
@@ -286,7 +286,7 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Add Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addStudentForm" id="addStudentBtn">
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addForm" id="addBtn">
 	                    <i class="bi bi-plus-circle me-2"></i>
 	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
@@ -296,39 +296,39 @@
 	    </div>
 	</div>
 	
-	<!-- Student Details Modal -->
-	<div class="modal fade" id="detailsStudentModal" tabindex="-1" aria-labelledby="detailsStudentModalLabel" aria-hidden="true">
+	<!-- Details Modal -->
+	<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsStudentModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="detailsModalLabel">
 	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del estudiante 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsStudentModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="detailsStudentSpinner" class="text-center my-5">
+	            	<div id="detailsSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsStudentContent" class="d-none">
+	            	<div id="detailsContent" class="d-none">
 		                <!-- ID and DNI Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsStudentID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">DNI</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentDNI"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsDNI"></p>
 		                    </div>
 		                </div>
 		                
@@ -336,12 +336,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nombres</h6>
-		                        <p class="fw-bold" id="detailsStudentFirstName"></p>
+		                        <p class="fw-bold" id="detailsFirstName"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Apellidos</h6>
-		                        <p class="fw-bold" id="detailsStudentLastName"></p>
+		                        <p class="fw-bold" id="detailsLastName"></p>
 		                    </div>
 		                </div>
 		                
@@ -349,12 +349,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Dirección</h6>
-		                        <p class="fw-bold" id="detailsStudentAddress"></p>
+		                        <p class="fw-bold" id="detailsAddress"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Teléfono</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentPhone"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsPhone"></p>
 		                    </div>
 		                </div>
 		                
@@ -362,12 +362,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Correo electrónico</h6>
-		                        <p class="fw-bold" id="detailsStudentEmail"></p>
+		                        <p class="fw-bold" id="detailsEmail"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Fecha de nacimiento</h6>
-		                        <p class="fw-bold" id="detailsStudentBirthDate"></p>
+		                        <p class="fw-bold" id="detailsBirthDate"></p>
 		                    </div>
 		                </div>
 		                
@@ -375,12 +375,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Género</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentGender"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsGender"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Facultad</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsStudentFaculty"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsFaculty"></p>
 		                    </div>
 		                </div>
 		                
@@ -388,7 +388,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Estado</h6>
-		                        <p id="detailsStudentStatus"></p>
+		                        <p id="detailsStatus"></p>
 		                    </div>
 		                </div>
 					</div>
@@ -403,50 +403,50 @@
 	    </div>
 	</div>
 	
-	<!-- Edit Student Modal -->
-	<div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Modal -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editStudentModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="editModalLabel">
 	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar estudiante 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editStudentModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="editStudentSpinner" class="text-center my-5">
+	            	<div id="editSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	                <form id="editStudentForm" class="d-none" accept-charset="UTF-8" novalidate>
+	                <form id="editForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Personal Information Section -->
 	                    <div class="row">
 	                        <!-- DNI Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentDNI" class="form-label">DNI</label>
+	                            <label for="editDNI" class="form-label">DNI</label>
 	                            <input 
 	                                type="tel" 
 	                                class="form-control" 
-	                                id="editStudentDNI" 
+	                                id="editDNI" 
 	                                disabled
 	                            >
 	                        </div>
 	                        
 							<!-- First Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
+	                            <label for="editFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editStudentFirstName" 
-	                                name="editStudentFirstName" 
+	                                id="editFirstName" 
+                                    name="firstName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese los nombres del estudiante" 
@@ -460,12 +460,12 @@
 	                    <div class="row">
 	                        <!-- Last Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
+	                            <label for="editLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editStudentLastName" 
-	                                name="editStudentLastName" 
+	                                id="editLastName" 
+                                    name="lastName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese los apellidos del estudiante" 
@@ -476,12 +476,12 @@
 	                        
 	                        <!-- Address Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentAddress" class="form-label">Dirección <span class="text-danger">*</span></label>
+	                            <label for="editAddress" class="form-label">Dirección <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editStudentAddress" 
-	                                name="editStudentAddress" 
+	                                id="editAddress" 
+                                    name="address"
 	                                placeholder="Ingrese la dirección del estudiante" 
 	                                required
 	                            >
@@ -493,12 +493,12 @@
 	                    <div class="row">
 	                        <!-- Phone Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentPhone" class="form-label">Teléfono <span class="text-danger">*</span></label>
+	                            <label for="editPhone" class="form-label">Teléfono <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="tel" 
 	                                class="form-control" 
-	                                id="editStudentPhone" 
-	                                name="editStudentPhone" 
+	                                id="editPhone" 
+                                    name="phone"
 	                                maxlength="9" 
 	                                pattern="\d{9}" 
 	                                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 9);" 
@@ -510,12 +510,12 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+	                            <label for="editEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
-	                                id="editStudentEmail" 
-	                                name="editStudentEmail" 
+	                                id="editEmail" 
+                                    name="email"
 	                                placeholder="ejemplo@correo.com" 
 	                                required
 	                            >
@@ -527,12 +527,12 @@
 	                    <div class="row">
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+	                            <label for="editBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
-	                                id="editStudentBirthDate" 
-	                                name="editStudentBirthDate" 
+	                                id="editBirthDate" 
+                                    name="birthDate"
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -540,11 +540,11 @@
 	                        
 	                        <!-- Gender Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentGender" class="form-label">Género <span class="text-danger">*</span></label>
+	                            <label for="editGender" class="form-label">Género <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editStudentGender" 
-	                                name="editStudentGender" 
+	                                id="editGender" 
+                                    name="gender"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -557,11 +557,11 @@
 	                    <div class="row">
 	                        <!-- Faculty Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentFaculty" class="form-label">Facultad <span class="text-danger">*</span></label>
+	                            <label for="editFaculty" class="form-label">Facultad <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editStudentFaculty" 
-	                                name="editStudentFaculty" 
+	                                id="editFaculty" 
+                                    name="faculty"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -573,11 +573,11 @@
 	                        
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editStudentStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="editStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editStudentStatus" 
-	                                name="editStudentStatus" 
+	                                id="editStatus" 
+                                    name="status"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -593,7 +593,7 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editStudentForm" id="editStudentBtn" disabled>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editForm" id="editBtn" disabled>
 	                    <i class="bi bi-floppy me-2"></i>
 	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar

@@ -57,7 +57,7 @@
 				<c:if test="${userRole == 'administrador'}">
 					<!-- Add Button -->
 					<button class="btn btn-custom-primary d-flex align-items-center"
-						data-bs-toggle="modal" data-bs-target="#addCourseModal"
+						data-bs-toggle="modal" data-bs-target="#addModal"
 						aria-label="Agregar curso" disabled>
 						<i class="bi bi-plus-circle me-2"></i>
 						Agregar
@@ -95,13 +95,13 @@
 		</section>
 	</main>
 
-	<!-- Add Course Modal -->
-	<div class="modal fade" id="addCourseModal" tabindex="-1" aria-labelledby="addCourseModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Add Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
 		<div class="modal-dialog modal-lg">
 		    <div class="modal-content">
 		        <!-- Modal Header -->
 		        <header class="modal-header">
-		            <h5 class="modal-title text-body-emphasis" id="addCourseModalLabel">
+		            <h5 class="modal-title text-body-emphasis" id="addModalLabel">
 		            	<i class="bi bi-plus-circle me-1"></i> 
 		            	Agregar un curso
 		            </h5>
@@ -110,29 +110,29 @@
 		        
 		        <!-- Modal Body -->
 		        <div class="modal-body">
-		            <form id="addCourseForm" accept-charset="UTF-8" novalidate>
+		            <form id="addForm" accept-charset="UTF-8" novalidate>
 		                <div class="row">
-		                    <!-- Course Name Field -->
+		                    <!-- Name Field -->
 		                    <div class="col-md-6 mb-3">
-		                        <label for="addCourseName" class="form-label">Nombre <span class="text-danger">*</span></label>
+		                        <label for="addName" class="form-label">Nombre <span class="text-danger">*</span></label>
 		                        <input 
 		                            type="text" 
 		                            class="form-control" 
-		                            id="addCourseName" 
-		                            name="addCourseName" 
+		                            id="addName" 
+                                    name="name"
 		                            placeholder="Ingrese el nombre del curso" 
 		                            required
 		                        >
 		                        <div class="invalid-feedback"></div>
 		                    </div>
 		                    
-		                    <!-- Course Level Field -->
+		                    <!-- Level Field -->
 		                    <div class="col-md-6 mb-3">
-		                        <label for="addCourseLevel" class="form-label">Nivel <span class="text-danger">*</span></label>
+		                        <label for="addLevel" class="form-label">Nivel <span class="text-danger">*</span></label>
 		                        <select 
 		                            class="selectpicker form-control placeholder-color" 
-		                            id="addCourseLevel" 
-		                            name="addCourseLevel" 
+		                            id="addLevel" 
+                                    name="level"
 		                            title="Seleccione un nivel" 
 		                            required
 		                        >
@@ -143,25 +143,25 @@
 		                </div>
 		                
 		                <div class="row">
-		                    <!-- Course Description Field -->
+		                    <!-- Description Field -->
 		                    <div class="col-md-6 mb-3">
-		                        <label for="addCourseDescription" class="form-label">Descripción</label>
+		                        <label for="addDescription" class="form-label">Descripción</label>
 		                        <textarea 
 		                            class="form-control" 
-		                            id="addCourseDescription" 
-		                            name="addCourseDescription" 
+		                            id="addDescription" 
+                                    name="description"
 		                            rows="4" 
 		                            placeholder="Ingrese una breve descripción"
 		                        ></textarea>
 		                    </div>
 		                    
-		                    <!-- Course Status Field -->
+		                    <!-- Status Field -->
 		                    <div class="col-md-6 mb-3">
-		                        <label for="addCourseStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+		                        <label for="addStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 		                        <select 
 		                            class="selectpicker form-control placeholder-color" 
-		                            id="addCourseStatus" 
-		                            name="addCourseStatus" 
+		                            id="addStatus" 
+                                    name="status"
 		                            title="Seleccione un estado" 
 		                            required
 		                        >
@@ -179,7 +179,7 @@
 		            <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 		            
 		            <!-- Add Button -->
-		            <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addCourseForm" id="addCourseBtn">
+		            <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addForm" id="addBtn">
 		                <i class="bi bi-plus-circle me-2"></i>
 		                <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 		                Agregar
@@ -189,39 +189,39 @@
 		</div>
 	</div>
 	
-	<!-- Details Course Modal -->
-	<div class="modal fade" id="detailsCourseModal" tabindex="-1" aria-labelledby="detailsCourseModalLabel" aria-hidden="true">
+	<!-- Details Modal -->
+	<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsCourseModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="detailsModalLabel">
 	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del curso 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsCourseModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-					<div id="detailsCourseSpinner" class="text-center my-5">
+					<div id="detailsSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsCourseContent" class="d-none">
+	            	<div id="detailsContent" class="d-none">
 		                <!-- ID and Name Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsCourseID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nombre</h6>
-		                        <p class="fw-bold" id="detailsCourseName"></p>
+		                        <p class="fw-bold" id="detailsName"></p>
 		                    </div>
 		                </div>
 		                
@@ -229,12 +229,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nivel</h6>
-		                        <p class="fw-bold" id="detailsCourseLevel"></p>
+		                        <p class="fw-bold" id="detailsLevel"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Estado</h6>
-		                        <p id="detailsCourseStatus"></p>
+		                        <p id="detailsStatus"></p>
 		                    </div>
 		                </div>
 		                
@@ -242,7 +242,7 @@
 		                <div class="row">
 		                    <div class="col-md-12 mb-3">
 		                        <h6 class="small text-muted">Descripción</h6>
-		                        <p class="fw-bold" id="detailsCourseDescription"></p>
+		                        <p class="fw-bold" id="detailsDescription"></p>
 		                    </div>
 		                </div>
 					</div>
@@ -257,52 +257,52 @@
 	    </div>
 	</div>
 	
-	<!-- Edit Course Modal -->
-	<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Modal -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editCourseModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="editModalLabel">
 	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar curso 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editCourseModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="editCourseSpinner" class="text-center my-5">
+	            	<div id="editSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 	            
-	                <form id="editCourseForm" class="d-none" accept-charset="UTF-8" novalidate>
-	                    <!-- Course Name and Level Section -->
+	                <form id="editForm" class="d-none" accept-charset="UTF-8" novalidate>
+	                    <!-- Name and Level Section -->
 	                    <div class="row">
-	                        <!-- Course Name Field -->
+	                        <!-- Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editCourseName" class="form-label">Nombre <span class="text-danger">*</span></label>
+	                            <label for="editName" class="form-label">Nombre <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editCourseName" 
-	                                name="editCourseName" 
+	                                id="editName" 
+                                    name="name"
 	                                placeholder="Ingrese el nombre del curso" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
 	                        </div>
 	                        
-	                        <!-- Course Level Field -->
+	                        <!-- Level Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editCourseLevel" class="form-label">Nivel <span class="text-danger">*</span></label>
+	                            <label for="editLevel" class="form-label">Nivel <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editCourseLevel" 
-	                                name="editCourseLevel" 
+	                                id="editLevel" 
+                                    name="level"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -311,27 +311,27 @@
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- Course Description and Status Section -->
+	                    <!-- Description and Status Section -->
 	                    <div class="row">
-	                        <!-- Course Description Field -->
+	                        <!-- Description Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editCourseDescription" class="form-label">Descripción</label>
+	                            <label for="editDescription" class="form-label">Descripción</label>
 	                            <textarea 
 	                                class="form-control" 
-	                                id="editCourseDescription" 
-	                                name="editCourseDescription" 
+	                                id="editDescription" 
+                                    name="description"
 	                                rows="4" 
 	                                placeholder="Ingrese una breve descripcion"
 	                            ></textarea>
 	                        </div>
 	                        
-	                        <!-- Course Status Field -->
+	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editCourseStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="editStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editCourseStatus" 
-	                                name="editCourseStatus" 
+	                                id="editStatus" 
+                                    name="status"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -348,7 +348,7 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editCourseForm" id="editCourseBtn" disabled>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editForm" id="updateBtn" disabled>
 	                    <i class="bi bi-floppy me-2"></i>
 	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar

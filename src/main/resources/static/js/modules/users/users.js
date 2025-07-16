@@ -84,15 +84,15 @@ function generateRow(user) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
+						data-bs-toggle="modal" data-bs-target="#detailsModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-info-circle"></i>
 					</button>
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-						data-bs-toggle="modal" data-bs-target="#editUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
+						data-bs-toggle="modal" data-bs-target="#editModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-pencil"></i>
 					</button>
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Eliminar"
-						data-bs-toggle="modal" data-bs-target="#deleteUserModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
+						data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="${user.userId}" data-formatted-id="${user.formattedUserId}">
 						<i class="bi bi-trash"></i>
 					</button>
 				</div>
@@ -150,18 +150,18 @@ function updateRow(user) {
 function handleAddForm() {
 	let isFirstSubmit = true
 
-	$('#addUserModal').on('hidden.bs.modal', function () {
+	$('#addModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#addUserForm').data('submitted', false)
+		$('#addForm').data('submitted', false)
 	})
 
-	$('#addUserForm').on('input change', 'input, select', function () {
+	$('#addForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateAddField($(this))
 		}
 	})
 
-	$('#addUserForm').on('submit', async function (event) {
+	$('#addForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -188,16 +188,16 @@ function handleAddForm() {
 		const raw = Object.fromEntries(formData.entries())
 
 		const user = {
-			username: raw.addUserUsername,
-			email: raw.addUserEmail,
-			firstName: raw.addUserFirstName,
-			lastName: raw.addUserLastName,
-			password: raw.addUserPassword,
-			role: raw.addUserRole,
+			username: raw.username,
+			email: raw.email,
+			firstName: raw.firstName,
+			lastName: raw.lastName,
+			password: raw.password,
+			role: raw.role,
 			profilePhotoUrl: null, // 🔜 Preparado para Cloudinary
 		}
 
-		const submitButton = $('#addUserBtn')
+		const submitButton = $('#addBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -226,7 +226,7 @@ function handleAddForm() {
 
 			if (response.ok && json.success) {
 				addRow(json.data)
-				$('#addUserModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Usuario agregado exitosamente.', 'success')
 			} else if (
 				response.status === 400 &&
@@ -239,7 +239,7 @@ function handleAddForm() {
 				} else {
 					console.warn('Validation error sin detalles de campos:', json)
 				}
-				$('#addUserForm').data('submitted', false)
+				$('#addForm').data('submitted', false)
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
@@ -249,12 +249,12 @@ function handleAddForm() {
 					json.message || 'Hubo un error al agregar el usuario.',
 					'error',
 				)
-				$('#addUserModal').modal('hide')
+				$('#addModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#addUserModal').modal('hide')
+			$('#addModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -285,7 +285,7 @@ function validateAddField(field) {
 	}
 
 	// Email validation
-	if (field.is('#addUserEmail')) {
+	if (field.is('#addEmail')) {
 		const result = isValidEmail(field.val())
 		if (!result.valid) {
 			errorMessage = result.message
@@ -294,7 +294,7 @@ function validateAddField(field) {
 	}
 
 	// Username validation
-	if (field.is('#addUserUsername')) {
+	if (field.is('#addUsername')) {
 		const result = isValidUsername(field.val())
 		if (!result.valid) {
 			errorMessage = result.message
@@ -303,7 +303,7 @@ function validateAddField(field) {
 	}
 
 	// First name validation
-	if (field.is('#addUserFirstName')) {
+	if (field.is('#addFirstName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -312,7 +312,7 @@ function validateAddField(field) {
 	}
 
 	// Last name validation
-	if (field.is('#addUserLastName')) {
+	if (field.is('#addLastName')) {
 		const result = isValidText(field.val(), 'apellido')
 		if (!result.valid) {
 			isValid = false
@@ -321,7 +321,7 @@ function validateAddField(field) {
 	}
 
 	// Password validation
-	if (field.is('#addUserPassword')) {
+	if (field.is('#addPassword')) {
 		const result = isValidPassword(field.val())
 		if (!result.valid) {
 			errorMessage = result.message
@@ -330,8 +330,8 @@ function validateAddField(field) {
 	}
 
 	// Confirm password validation
-	if (field.is('#addUserConfirmPassword')) {
-		const password = $('#addUserPassword').val()
+	if (field.is('#addConfirmPassword')) {
+		const password = $('#addPassword').val()
 		const result = doPasswordsMatch(password, field.val())
 		if (!result.valid) {
 			errorMessage = result.message
@@ -340,7 +340,7 @@ function validateAddField(field) {
 	}
 
 	// Profile photo validation
-	if (field.is('#addUserProfilePhoto')) {
+	if (field.is('#addProfilePhoto')) {
 		const file = field[0].files[0]
 		const result = isValidImageFile(file)
 
@@ -371,25 +371,25 @@ function validateAddField(field) {
 	return isValid
 }
 
-$('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function () {
+$('#addProfilePhoto, #editProfilePhoto').on('change', function () {
 	validateImageFileUI($(this))
 })
 
 function handleEditForm() {
 	let isFirstSubmit = true
 
-	$('#editUserModal').on('hidden.bs.modal', function () {
+	$('#editModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#editUserForm').data('submitted', false)
+		$('#editForm').data('submitted', false)
 	})
 
-	$('#editUserForm').on('input change', 'input, select', function () {
+	$('#editForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateEditField($(this))
 		}
 	})
 
-	$('#editUserForm').on('submit', async function (event) {
+	$('#editForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -412,20 +412,20 @@ function handleEditForm() {
 			return
 		}
 
-		const userId = $('#editUserForm').data('userId')
+		const userId = $('#editForm').data('userId')
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
 		const user = {
 			userId: parseInt(userId),
-			firstName: raw.editUserFirstName,
-			lastName: raw.editUserLastName,
-			role: raw.editUserRole,
+			firstName: raw.firstName,
+			lastName: raw.lastName,
+			role: raw.role,
 			deletePhoto: deletePhotoFlag || false,
 			profilePhotoUrl: null, // 🔜 Preparado para Cloudinary
 		}
 
-		const submitButton = $('#editUserBtn')
+		const submitButton = $('#updateBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -454,7 +454,7 @@ function handleEditForm() {
 
 			if (response.ok && json.success) {
 				updateRow(json.data)
-				$('#editUserModal').modal('hide')
+				$('#editModal').modal('hide')
 				showToast('Usuario actualizado exitosamente.', 'success')
 			} else if (
 				response.status === 400 &&
@@ -467,7 +467,7 @@ function handleEditForm() {
 				} else {
 					console.warn('Validation error sin detalles de campos:', json)
 				}
-				$('#editUserForm').data('submitted', false)
+				$('#editForm').data('submitted', false)
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
@@ -477,12 +477,12 @@ function handleEditForm() {
 					json.message || 'Hubo un error al actualizar el usuario.',
 					'error',
 				)
-				$('#editUserModal').modal('hide')
+				$('#editModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#editUserModal').modal('hide')
+			$('#editModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -513,7 +513,7 @@ function validateEditField(field) {
 	}
 
 	// First name validation
-	if (field.is('#editUserFirstName')) {
+	if (field.is('#editFirstName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -522,7 +522,7 @@ function validateEditField(field) {
 	}
 
 	// Last name validation
-	if (field.is('#editUserLastName')) {
+	if (field.is('#editLastName')) {
 		const result = isValidText(field.val(), 'apellido')
 		if (!result.valid) {
 			isValid = false
@@ -531,7 +531,7 @@ function validateEditField(field) {
 	}
 
 	// Profile photo validation
-	if (field.is('#editUserProfilePhoto')) {
+	if (field.is('#editProfilePhoto')) {
 		const file = field[0].files[0]
 		const result = isValidImageFile(file)
 
@@ -567,7 +567,7 @@ function validateEditField(field) {
 function handleDelete() {
 	let isSubmitted = false
 
-	$('#confirmDeleteUser')
+	$('#deleteBtn')
 		.off('click')
 		.on('click', async function () {
 			if (isSubmitted) return
@@ -608,14 +608,14 @@ function handleDelete() {
 						table.row(row).remove().draw(false)
 					}
 
-					$('#deleteUserModal').modal('hide')
+					$('#deleteModal').modal('hide')
 					showToast('Usuario eliminado exitosamente.', 'success')
 				} else {
 					console.error(
 						`Backend error (${json.errorType} - ${json.statusCode}):`,
 						json.message,
 					)
-					$('#deleteUserModal').modal('hide')
+					$('#deleteModal').modal('hide')
 					showToast(
 						json.message || 'Hubo un error al eliminar el usuario.',
 						'error',
@@ -624,7 +624,7 @@ function handleDelete() {
 			} catch (err) {
 				console.error('Unexpected error:', err)
 				showToast('Hubo un error inesperado.', 'error')
-				$('#deleteUserModal').modal('hide')
+				$('#deleteModal').modal('hide')
 			} finally {
 				toggleButtonLoading($(this), false)
 			}
@@ -637,8 +637,8 @@ function handleDelete() {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addUserModal"]', function () {
-		$('#addUserRole')
+	$(document).on('click', '[data-bs-target="#addModal"]', function () {
+		$('#addRole')
 			.selectpicker('destroy')
 			.empty()
 			.append(
@@ -651,13 +651,13 @@ function loadModalData() {
 					text: 'Bibliotecario',
 				}),
 			)
-		$('#addUserRole').selectpicker()
+		$('#addRole').selectpicker()
 
 		$('#defaultAddPhotoContainer').removeClass('d-none')
 		$('#deleteAddPhotoBtn').addClass('d-none')
 
-		$('#addUserForm')[0].reset()
-		$('#addUserForm .is-invalid').removeClass('is-invalid')
+		$('#addForm')[0].reset()
+		$('#addForm .is-invalid').removeClass('is-invalid')
 
 		$('#cropperContainerAdd').addClass('d-none')
 
@@ -666,19 +666,19 @@ function loadModalData() {
 			cropper = null
 		}
 
-		$('#addUserForm .password-field').attr('type', 'password')
-		$('#addUserForm .input-group-text')
+		$('#addForm .password-field').attr('type', 'password')
+		$('#addForm .input-group-text')
 			.find('i')
 			.removeClass('bi-eye-slash')
 			.addClass('bi-eye')
 
-		preventSpacesInPasswordField('#addUserPassword, #addUserConfirmPassword')
+		preventSpacesInPasswordField('#addPassword, #addConfirmPassword')
 	})
 
 	// Details Modal
-	$(document).on('click', '[data-bs-target="#detailsUserModal"]', function () {
+	$(document).on('click', '[data-bs-target="#detailsModal"]', function () {
 		const userId = $(this).data('id')
-		$('#detailsUserModalID').text($(this).data('formatted-id'))
+		$('#detailsModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -696,26 +696,26 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#detailsUserID').text(data.formattedUserId)
-				$('#detailsUserUsername').text(data.username)
-				$('#detailsUserEmail').text(data.email)
-				$('#detailsUserFirstName').text(data.firstName)
-				$('#detailsUserLastName').text(data.lastName)
+				$('#detailsID').text(data.formattedUserId)
+				$('#detailsUsername').text(data.username)
+				$('#detailsEmail').text(data.email)
+				$('#detailsFirstName').text(data.firstName)
+				$('#detailsLastName').text(data.lastName)
 
-				$('#detailsUserRole').html(
+				$('#detailsRole').html(
 					data.role === 'administrador'
 						? '<i class="bi bi-shield-lock me-1"></i> Administrador'
 						: '<i class="bi bi-person-workspace me-1"></i> Bibliotecario',
 				)
 
 				if (data.profilePhotoUrl) {
-					$('#detailsUserImg')
+					$('#detailsImg')
 						.attr('src', data.profilePhotoUrl)
 						.removeClass('d-none')
-					$('#detailsUserSvg').addClass('d-none')
+					$('#detailsSvg').addClass('d-none')
 				} else {
-					$('#detailsUserImg').addClass('d-none')
-					$('#detailsUserSvg').removeClass('d-none')
+					$('#detailsImg').addClass('d-none')
+					$('#detailsSvg').removeClass('d-none')
 				}
 
 				toggleModalLoading(this, false)
@@ -726,14 +726,14 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los detalles del usuario.', 'error')
-				$('#detailsUserModal').modal('hide')
+				$('#detailsModal').modal('hide')
 			})
 	})
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editUserModal"]', function () {
+	$(document).on('click', '[data-bs-target="#editModal"]', function () {
 		const userId = $(this).data('id')
-		$('#editUserModalID').text($(this).data('formatted-id'))
+		$('#editModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -751,34 +751,34 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#editUserForm').data('userId', data.userId)
-				$('#editUserUsername').val(data.username)
-				$('#editUserEmail').val(data.email)
-				$('#editUserFirstName').val(data.firstName)
-				$('#editUserLastName').val(data.lastName)
+				$('#editForm').data('userId', data.userId)
+				$('#editUsername').val(data.username)
+				$('#editEmail').val(data.email)
+				$('#editFirstName').val(data.firstName)
+				$('#editLastName').val(data.lastName)
 
-				$('#editUserRole')
+				$('#editRole')
 					.selectpicker('destroy')
 					.empty()
 					.append(
 						$('<option>', { value: 'administrador', text: 'Administrador' }),
 						$('<option>', { value: 'bibliotecario', text: 'Bibliotecario' }),
 					)
-				$('#editUserRole').val(data.role)
-				$('#editUserRole').selectpicker()
+				$('#editRole').val(data.role)
+				$('#editRole').selectpicker()
 
 				updateEditImageContainer(data.profilePhotoUrl)
 
-				$('#editUserForm .is-invalid').removeClass('is-invalid')
+				$('#editForm .is-invalid').removeClass('is-invalid')
 				placeholderColorEditSelect()
 
-				$('#editUserForm')
+				$('#editForm')
 					.find('select')
 					.each(function () {
 						validateEditField($(this), true)
 					})
 
-				$('#editUserProfilePhoto').val('')
+				$('#editProfilePhoto').val('')
 
 				toggleModalLoading(this, false)
 			})
@@ -788,7 +788,7 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los datos del usuario.', 'error')
-				$('#editUserModal').modal('hide')
+				$('#editModal').modal('hide')
 			})
 
 		$('#cropperContainerEdit').addClass('d-none')
@@ -799,14 +799,14 @@ function loadModalData() {
 	})
 
 	// Delete Modal
-	$('#deleteUserModal').on('show.bs.modal', function (event) {
+	$('#deleteModal').on('show.bs.modal', function (event) {
 		const button = $(event.relatedTarget)
 		const userId = button.data('id')
 		const formattedUserId = button.data('formatted-id')
 
-		$('#deleteUserModalID').text(formattedUserId)
-		$('#confirmDeleteUser').data('userId', userId)
-		$('#confirmDeleteUser').data('formattedUserId', formattedUserId)
+		$('#deleteModalID').text(formattedUserId)
+		$('#deleteBtn').data('userId', userId)
+		$('#deleteBtn').data('formattedUserId', formattedUserId)
 	})
 }
 
@@ -863,7 +863,7 @@ $('#deleteAddPhotoBtn').on('click', function () {
 		cropper = null
 	}
 	$('#cropperContainerAdd').addClass('d-none')
-	$('#addUserProfilePhoto').val('')
+	$('#addProfilePhoto').val('')
 	$('#defaultAddPhotoContainer').removeClass('d-none')
 })
 
@@ -878,7 +878,7 @@ $('#deleteEditPhotoBtn').on('click', function () {
 		cropper = null
 	}
 	$('#cropperContainerEdit').addClass('d-none')
-	$('#editUserProfilePhoto').val('')
+	$('#editProfilePhoto').val('')
 })
 
 let cropper
@@ -887,7 +887,7 @@ const $imageToCropAdd = $('#imageToCropAdd')
 const $cropperContainerEdit = $('#cropperContainerEdit')
 const $imageToCropEdit = $('#imageToCropEdit')
 
-$('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function () {
+$('#addProfilePhoto, #editProfilePhoto').on('change', function () {
 	const file = this.files[0]
 	deletePhotoFlag = false
 
@@ -905,7 +905,7 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function () {
 		$('#deleteEditPhotoBtn').removeClass('d-none')
 
 		let $container, $image
-		if ($(this).is('#addUserProfilePhoto')) {
+		if ($(this).is('#addProfilePhoto')) {
 			$container = $cropperContainerAdd
 			$image = $imageToCropAdd
 		} else {
@@ -914,7 +914,7 @@ $('#addUserProfilePhoto, #editUserProfilePhoto').on('change', function () {
 		}
 		initializeCropper(file, $container, $image, cropper)
 	} else {
-		if ($(this).is('#addUserProfilePhoto')) {
+		if ($(this).is('#addProfilePhoto')) {
 			$cropperContainerAdd.addClass('d-none')
 			if (cropper) {
 				cropper.destroy()

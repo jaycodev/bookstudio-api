@@ -102,13 +102,13 @@ function generateRow(author) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsAuthorModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
+						data-bs-toggle="modal" data-bs-target="#detailsModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
 						<i class="bi bi-info-circle"></i>
 					</button>
 					${
 						userRole === 'administrador'
 							? `<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editAuthorModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
+							data-bs-toggle="modal" data-bs-target="#editModal" data-id="${author.authorId}" data-formatted-id="${author.formattedAuthorId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 							: ''
@@ -171,18 +171,18 @@ function updateRow(author) {
 function handleAddForm() {
 	let isFirstSubmit = true
 
-	$('#addAuthorModal').on('hidden.bs.modal', function () {
+	$('#addModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#addAuthorForm').data('submitted', false)
+		$('#addForm').data('submitted', false)
 	})
 
-	$('#addAuthorForm').on('input change', 'input, select', function () {
+	$('#addForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateAddField($(this))
 		}
 	})
 
-	$('#addAuthorForm').on('submit', async function (event) {
+	$('#addForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -208,17 +208,17 @@ function handleAddForm() {
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
-		const authorDto = {
-			name: raw.addAuthorName,
-			nationalityId: parseInt(raw.addAuthorNationality),
-			literaryGenreId: parseInt(raw.addLiteraryGenre),
-			birthDate: raw.addAuthorBirthDate,
-			biography: raw.addAuthorBiography || '',
-			status: raw.addAuthorStatus,
+		const author = {
+			name: raw.name,
+			nationalityId: parseInt(raw.nationality),
+			literaryGenreId: parseInt(raw.literaryGenre),
+			birthDate: raw.birthDate,
+			biography: raw.biography || '',
+			status: raw.status,
 			photoUrl: null, // 🔜 Preparado para Cloudinary
 		}
 
-		const submitButton = $('#addAuthorBtn')
+		const submitButton = $('#addBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -240,27 +240,27 @@ function handleAddForm() {
 					'Content-Type': 'application/json',
 					Accept: 'application/json',
 				},
-				body: JSON.stringify(authorDto),
+				body: JSON.stringify(author),
 			})
 
 			const json = await response.json()
 
 			if (response.ok && json.success) {
 				addRow(json.data)
-				$('#addAuthorModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Autor agregado exitosamente.', 'success')
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
 					json.message,
 				)
-				$('#addAuthorModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Hubo un error al agregar el autor.', 'error')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#addAuthorModal').modal('hide')
+			$('#addModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -285,7 +285,7 @@ function validateAddField(field) {
 	}
 
 	// Name validation
-	if (field.is('#addAuthorName')) {
+	if (field.is('#addName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -294,7 +294,7 @@ function validateAddField(field) {
 	}
 
 	// Birth date validation
-	if (field.is('#addAuthorBirthDate')) {
+	if (field.is('#addBirthDate')) {
 		const result = isValidBirthDate(field.val())
 		if (!result.valid) {
 			isValid = false
@@ -303,7 +303,7 @@ function validateAddField(field) {
 	}
 
 	// Photo validation
-	if (field.is('#addAuthorPhoto')) {
+	if (field.is('#addPhoto')) {
 		const file = field[0].files[0]
 		const result = isValidImageFile(file)
 
@@ -334,25 +334,25 @@ function validateAddField(field) {
 	return isValid
 }
 
-$('#addAuthorPhoto, #editAuthorPhoto').on('change', function () {
+$('#addPhoto, #editPhoto').on('change', function () {
 	validateImageFileUI($(this))
 })
 
 function handleEditForm() {
 	let isFirstSubmit = true
 
-	$('#editAuthorModal').on('hidden.bs.modal', function () {
+	$('#editModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#editAuthorForm').data('submitted', false)
+		$('#editForm').data('submitted', false)
 	})
 
-	$('#editAuthorForm').on('input change', 'input, select', function () {
+	$('#editForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateEditField($(this))
 		}
 	})
 
-	$('#editAuthorForm').on('submit', async function (event) {
+	$('#editForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -375,23 +375,23 @@ function handleEditForm() {
 			return
 		}
 
-		const authorId = $('#editAuthorForm').data('authorId')
+		const authorId = $('#editForm').data('authorId')
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
 		const author = {
 			authorId: parseInt(authorId),
-			name: raw.editAuthorName,
-			nationalityId: parseInt(raw.editAuthorNationality),
-			literaryGenreId: parseInt(raw.editLiteraryGenre),
-			birthDate: raw.editAuthorBirthDate,
-			biography: raw.editAuthorBiography || '',
-			status: raw.editAuthorStatus,
+			name: raw.name,
+			nationalityId: parseInt(raw.nationality),
+			literaryGenreId: parseInt(raw.literaryGenre),
+			birthDate: raw.birthDate,
+			biography: raw.biography || '',
+			status: raw.status,
 			deletePhoto: deletePhotoFlag || false,
 			photoUrl: null, // 🔜 Preparado para Cloudinary
 		}
 
-		const submitButton = $('#editAuthorBtn')
+		const submitButton = $('#updateBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -420,7 +420,7 @@ function handleEditForm() {
 
 			if (response.ok && json.success) {
 				updateRow(json.data)
-				$('#editAuthorModal').modal('hide')
+				$('#editModal').modal('hide')
 				showToast('Autor actualizado exitosamente.', 'success')
 			} else {
 				console.error(
@@ -431,12 +431,12 @@ function handleEditForm() {
 					json.message || 'Hubo un error al actualizar el autor.',
 					'error',
 				)
-				$('#editAuthorModal').modal('hide')
+				$('#editModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#editAuthorModal').modal('hide')
+			$('#editModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -461,7 +461,7 @@ function validateEditField(field) {
 	}
 
 	// Name validation
-	if (field.is('#editAuthorName')) {
+	if (field.is('#editName')) {
 		const result = isValidText(field.val(), 'nombre')
 		if (!result.valid) {
 			isValid = false
@@ -470,7 +470,7 @@ function validateEditField(field) {
 	}
 
 	// Birth date validation
-	if (field.is('#editAuthorBirthDate')) {
+	if (field.is('#editBirthDate')) {
 		const result = isValidBirthDate(field.val())
 		if (!result.valid) {
 			isValid = false
@@ -479,7 +479,7 @@ function validateEditField(field) {
 	}
 
 	// Photo validation
-	if (field.is('#editAuthorPhoto')) {
+	if (field.is('#editPhoto')) {
 		const file = field[0].files[0]
 		const result = isValidImageFile(file)
 
@@ -518,14 +518,9 @@ function validateEditField(field) {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addAuthorModal"]', function () {
-		populateSelect(
-			'#addAuthorNationality',
-			nationalityList,
-			'nationalityId',
-			'name',
-		)
-		$('#addAuthorNationality').selectpicker()
+	$(document).on('click', '[data-bs-target="#addModal"]', function () {
+		populateSelect('#addNationality', nationalityList, 'nationalityId', 'name')
+		$('#addNationality').selectpicker()
 
 		populateSelect(
 			'#addLiteraryGenre',
@@ -535,7 +530,7 @@ function loadModalData() {
 		)
 		$('#addLiteraryGenre').selectpicker()
 
-		$('#addAuthorStatus')
+		$('#addStatus')
 			.selectpicker('destroy')
 			.empty()
 			.append(
@@ -548,13 +543,13 @@ function loadModalData() {
 					text: 'Inactivo',
 				}),
 			)
-		$('#addAuthorStatus').selectpicker()
+		$('#addStatus').selectpicker()
 
 		$('#defaultAddPhotoContainer').removeClass('d-none')
 		$('#deleteAddPhotoBtn').addClass('d-none')
 
-		$('#addAuthorForm')[0].reset()
-		$('#addAuthorForm .is-invalid').removeClass('is-invalid')
+		$('#addForm')[0].reset()
+		$('#addForm .is-invalid').removeClass('is-invalid')
 
 		const today = getCurrentPeruDate()
 		const maxDate = new Date(
@@ -563,7 +558,7 @@ function loadModalData() {
 			today.getDate(),
 		)
 		const maxDateStr = maxDate.toISOString().split('T')[0]
-		$('#addAuthorBirthDate').attr('max', maxDateStr)
+		$('#addBirthDate').attr('max', maxDateStr)
 
 		placeholderColorDateInput()
 
@@ -575,71 +570,9 @@ function loadModalData() {
 	})
 
 	// Details Modal
-	$(document).on(
-		'click',
-		'[data-bs-target="#detailsAuthorModal"]',
-		function () {
-			const authorId = $(this).data('id')
-			$('#detailsAuthorModalID').text($(this).data('formatted-id'))
-
-			toggleModalLoading(this, true)
-
-			fetch(`./api/authors/${encodeURIComponent(authorId)}`, {
-				method: 'GET',
-				headers: {
-					Accept: 'application/json',
-				},
-			})
-				.then(async (response) => {
-					if (!response.ok) {
-						const errorData = await response.json()
-						throw { status: response.status, ...errorData }
-					}
-					return response.json()
-				})
-				.then((data) => {
-					$('#detailsAuthorID').text(data.formattedAuthorId)
-					$('#detailsAuthorName').text(data.name)
-					$('#detailsAuthorNationality').text(data.nationalityName)
-					$('#detailsAuthorGenre').text(data.literaryGenreName)
-					$('#detailsAuthorBirthDate').text(
-						moment(data.birthDate).format('DD MMM YYYY'),
-					)
-					$('#detailsAuthorBiography').text(data.biography || '')
-
-					$('#detailsAuthorStatus').html(
-						data.status === 'activo'
-							? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
-							: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
-					)
-
-					if (data.photoUrl) {
-						$('#detailsAuthorImg')
-							.attr('src', data.photoUrl)
-							.removeClass('d-none')
-						$('#detailsAuthorSvg').addClass('d-none')
-					} else {
-						$('#detailsAuthorImg').addClass('d-none')
-						$('#detailsAuthorSvg').removeClass('d-none')
-					}
-
-					toggleModalLoading(this, false)
-				})
-				.catch((error) => {
-					console.error(
-						`Error loading author details (${error.errorType || 'unknown'} - ${error.status}):`,
-						error.message || error,
-					)
-					showToast('Hubo un error al cargar los detalles del autor.', 'error')
-					$('#detailsAuthorModal').modal('hide')
-				})
-		},
-	)
-
-	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editAuthorModal"]', function () {
+	$(document).on('click', '[data-bs-target="#detailsModal"]', function () {
 		const authorId = $(this).data('id')
-		$('#editAuthorModalID').text($(this).data('formatted-id'))
+		$('#detailsModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -657,16 +590,72 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#editAuthorForm').data('authorId', data.authorId)
-				$('#editAuthorName').val(data.name)
+				$('#detailsID').text(data.formattedAuthorId)
+				$('#detailsName').text(data.name)
+				$('#detailsNationality').text(data.nationalityName)
+				$('#detailsGenre').text(data.literaryGenreName)
+				$('#detailsBirthDate').text(
+					moment(data.birthDate).format('DD MMM YYYY'),
+				)
+				$('#detailsBiography').text(data.biography || '')
+
+				$('#detailsStatus').html(
+					data.status === 'activo'
+						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
+						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
+				)
+
+				if (data.photoUrl) {
+					$('#detailsImg').attr('src', data.photoUrl).removeClass('d-none')
+					$('#detailsSvg').addClass('d-none')
+				} else {
+					$('#detailsImg').addClass('d-none')
+					$('#detailsSvg').removeClass('d-none')
+				}
+
+				toggleModalLoading(this, false)
+			})
+			.catch((error) => {
+				console.error(
+					`Error loading author details (${error.errorType || 'unknown'} - ${error.status}):`,
+					error.message || error,
+				)
+				showToast('Hubo un error al cargar los detalles del autor.', 'error')
+				$('#detailsModal').modal('hide')
+			})
+	})
+
+	// Edit Modal
+	$(document).on('click', '[data-bs-target="#editModal"]', function () {
+		const authorId = $(this).data('id')
+		$('#editModalID').text($(this).data('formatted-id'))
+
+		toggleModalLoading(this, true)
+
+		fetch(`./api/authors/${encodeURIComponent(authorId)}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/json',
+			},
+		})
+			.then(async (response) => {
+				if (!response.ok) {
+					const errorData = await response.json()
+					throw { status: response.status, ...errorData }
+				}
+				return response.json()
+			})
+			.then((data) => {
+				$('#editForm').data('authorId', data.authorId)
+				$('#editName').val(data.name)
 
 				populateSelect(
-					'#editAuthorNationality',
+					'#editNationality',
 					nationalityList,
 					'nationalityId',
 					'name',
 				)
-				$('#editAuthorNationality').val(data.nationalityId).selectpicker()
+				$('#editNationality').val(data.nationalityId).selectpicker()
 
 				populateSelect(
 					'#editLiteraryGenre',
@@ -676,9 +665,7 @@ function loadModalData() {
 				)
 				$('#editLiteraryGenre').val(data.literaryGenreId).selectpicker()
 
-				$('#editAuthorBirthDate').val(
-					moment(data.birthDate).format('YYYY-MM-DD'),
-				)
+				$('#editBirthDate').val(moment(data.birthDate).format('YYYY-MM-DD'))
 				const today = getCurrentPeruDate()
 				const maxDate = new Date(
 					today.getFullYear() - 10,
@@ -686,32 +673,32 @@ function loadModalData() {
 					today.getDate(),
 				)
 				const maxDateStr = maxDate.toISOString().split('T')[0]
-				$('#editAuthorBirthDate').attr('max', maxDateStr)
+				$('#editBirthDate').attr('max', maxDateStr)
 
-				$('#editAuthorBiography').val(data.biography)
+				$('#editBiography').val(data.biography)
 
-				$('#editAuthorStatus')
+				$('#editStatus')
 					.selectpicker('destroy')
 					.empty()
 					.append(
 						$('<option>', { value: 'activo', text: 'Activo' }),
 						$('<option>', { value: 'inactivo', text: 'Inactivo' }),
 					)
-				$('#editAuthorStatus').val(data.status).selectpicker()
+				$('#editStatus').val(data.status).selectpicker()
 
 				updateEditImageContainer(data.photoUrl)
 
-				$('#editAuthorForm .is-invalid').removeClass('is-invalid')
+				$('#editForm .is-invalid').removeClass('is-invalid')
 				placeholderColorEditSelect()
 				placeholderColorDateInput()
 
-				$('#editAuthorForm')
+				$('#editForm')
 					.find('select')
 					.each(function () {
 						validateEditField($(this), true)
 					})
 
-				$('#editAuthorPhoto').val('')
+				$('#editPhoto').val('')
 
 				toggleModalLoading(this, false)
 			})
@@ -721,7 +708,7 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los datos del autor.', 'error')
-				$('#editAuthorModal').modal('hide')
+				$('#editModal').modal('hide')
 			})
 
 		$('#cropperContainerEdit').addClass('d-none')
@@ -763,7 +750,7 @@ $('#deleteAddPhotoBtn').on('click', function () {
 		cropper = null
 	}
 	$('#cropperContainerAdd').addClass('d-none')
-	$('#addAuthorPhoto').val('')
+	$('#addPhoto').val('')
 	$('#defaultAddPhotoContainer').removeClass('d-none')
 })
 
@@ -778,7 +765,7 @@ $('#deleteEditPhotoBtn').on('click', function () {
 		cropper = null
 	}
 	$('#cropperContainerEdit').addClass('d-none')
-	$('#editAuthorPhoto').val('')
+	$('#editPhoto').val('')
 })
 
 let cropper
@@ -787,7 +774,7 @@ const $imageToCropAdd = $('#imageToCropAdd')
 const $cropperContainerEdit = $('#cropperContainerEdit')
 const $imageToCropEdit = $('#imageToCropEdit')
 
-$('#addAuthorPhoto, #editAuthorPhoto').on('change', function () {
+$('#addPhoto, #editPhoto').on('change', function () {
 	const file = this.files[0]
 	deletePhotoFlag = false
 
@@ -805,7 +792,7 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function () {
 		$('#deleteEditPhotoBtn').removeClass('d-none')
 
 		let $container, $image
-		if ($(this).is('#addAuthorPhoto')) {
+		if ($(this).is('#addPhoto')) {
 			$container = $cropperContainerAdd
 			$image = $imageToCropAdd
 		} else {
@@ -814,7 +801,7 @@ $('#addAuthorPhoto, #editAuthorPhoto').on('change', function () {
 		}
 		initializeCropper(file, $container, $image, cropper)
 	} else {
-		if ($(this).is('#addAuthorPhoto')) {
+		if ($(this).is('#addPhoto')) {
 			$cropperContainerAdd.addClass('d-none')
 			if (cropper) {
 				cropper.destroy()

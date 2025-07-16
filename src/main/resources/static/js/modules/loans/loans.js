@@ -53,21 +53,19 @@ function loadOptions() {
 			bookList = data.books
 			studentList = data.students
 
-			document
-				.getElementById('addLoanBook')
-				.addEventListener('change', (event) => {
-					const selectedBookId = event.target.value
-					const selectedBook = bookList.find(
-						(book) => book.bookId == selectedBookId,
-					)
+			document.getElementById('addBook').addEventListener('change', (event) => {
+				const selectedBookId = event.target.value
+				const selectedBook = bookList.find(
+					(book) => book.bookId == selectedBookId,
+				)
 
-					if (selectedBook) {
-						const availableCopies = selectedBook.availableCopies
-						document
-							.getElementById('addLoanQuantity')
-							.setAttribute('max', availableCopies)
-					}
-				})
+				if (selectedBook) {
+					const availableCopies = selectedBook.availableCopies
+					document
+						.getElementById('addQuantity')
+						.setAttribute('max', availableCopies)
+				}
+			})
 		},
 	})
 }
@@ -105,20 +103,20 @@ function generateRow(loan) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
+						data-bs-toggle="modal" data-bs-target="#detailsModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
 						<i class="bi bi-info-circle"></i>
 					</button>
 					${
 						loan.status === 'prestado'
 							? `<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Devolver" 
-							data-bs-toggle="modal" data-bs-target="#returnLoanModal" aria-label="Devolver el préstamo"
+							data-bs-toggle="modal" data-bs-target="#returnModal" aria-label="Devolver el préstamo"
 							data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}" data-status="${loan.status}">
 							<i class="bi bi-check2-square"></i>
 						</button>`
 							: ''
 					}
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-						data-bs-toggle="modal" data-bs-target="#editLoanModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
+						data-bs-toggle="modal" data-bs-target="#editModal" data-id="${loan.loanId}" data-formatted-id="${loan.formattedLoanId}">
 						<i class="bi bi-pencil"></i>
 					</button>
 				</div>
@@ -161,18 +159,18 @@ function updateRow(loan) {
 function handleAddForm() {
 	let isFirstSubmit = true
 
-	$('#addLoanModal').on('hidden.bs.modal', function () {
+	$('#addModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#addLoanForm').data('submitted', false)
+		$('#addForm').data('submitted', false)
 	})
 
-	$('#addLoanForm').on('input change', 'input, select', function () {
+	$('#addForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateAddField($(this))
 		}
 	})
 
-	$('#addLoanForm').on('submit', async function (event) {
+	$('#addForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -199,14 +197,14 @@ function handleAddForm() {
 		const raw = Object.fromEntries(formData.entries())
 
 		const loan = {
-			bookId: parseInt(raw.addLoanBook),
-			studentId: parseInt(raw.addLoanStudent),
-			returnDate: raw.addReturnDate,
-			quantity: parseInt(raw.addLoanQuantity),
-			observation: raw.addLoanObservation || '',
+			bookId: parseInt(raw.book),
+			studentId: parseInt(raw.student),
+			returnDate: raw.returnDate,
+			quantity: parseInt(raw.quantity),
+			observation: raw.observation || '',
 		}
 
-		const submitButton = $('#addLoanBtn')
+		const submitButton = $('#addBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -223,7 +221,7 @@ function handleAddForm() {
 
 			if (response.ok && json.success) {
 				addRow(json.data)
-				$('#addLoanModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Préstamo agregado exitosamente.', 'success')
 				generateLoanReceipt(json.data)
 			} else {
@@ -231,13 +229,13 @@ function handleAddForm() {
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
 					json.message,
 				)
-				$('#addLoanModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Hubo un error al agregar el préstamo.', 'error')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#addLoanModal').modal('hide')
+			$('#addModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -273,7 +271,7 @@ function validateAddField(field) {
 	}
 
 	// Quantity validation
-	if (field.is('#addLoanQuantity')) {
+	if (field.is('#addQuantity')) {
 		const result = isValidLoanQuantity(
 			parseInt(field.val(), 10),
 			parseInt(field.attr('max'), 10),
@@ -307,7 +305,7 @@ function validateAddField(field) {
 function handleReturn() {
 	let isSubmitted = false
 
-	$('#confirmReturn').on('click', async function () {
+	$('#returnBtn').on('click', async function () {
 		if (isSubmitted) return
 		isSubmitted = true
 
@@ -358,20 +356,20 @@ function handleReturn() {
 
 				loadOptions()
 
-				$('#returnLoanModal').modal('hide')
+				$('#returnModal').modal('hide')
 				showToast('Préstamo devuelto exitosamente.', 'success')
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
 					json.message,
 				)
-				$('#returnLoanModal').modal('hide')
+				$('#returnModal').modal('hide')
 				showToast('Hubo un error al devolver el préstamo.', 'error')
 			}
 		} catch (error) {
 			console.error('Unexpected error:', error)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#returnLoanModal').modal('hide')
+			$('#returnModal').modal('hide')
 		} finally {
 			toggleButtonLoading($(this), true)
 		}
@@ -381,18 +379,18 @@ function handleReturn() {
 function handleEditForm() {
 	let isFirstSubmit = true
 
-	$('#editLoanModal').on('hidden.bs.modal', function () {
+	$('#editModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#editLoanForm').data('submitted', false)
+		$('#editForm').data('submitted', false)
 	})
 
-	$('#editLoanForm').on('input change', 'input, select', function () {
+	$('#editForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateEditField($(this))
 		}
 	})
 
-	$('#editLoanForm').on('submit', async function (event) {
+	$('#editForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -408,7 +406,7 @@ function handleEditForm() {
 			.not('.bootstrap-select input[type="search"]')
 			.each(function () {
 				const field = $(this)
-				if (field.attr('id') !== 'editLoanQuantity') {
+				if (field.attr('id') !== 'editQuantity') {
 					if (!validateEditField(field)) isValid = false
 				}
 			})
@@ -418,8 +416,8 @@ function handleEditForm() {
 			return
 		}
 
-		const loanId = $('#editLoanForm').data('loanId')
-		const bookId = $('#editLoanForm').data('bookId')
+		const loanId = $('#editForm').data('loanId')
+		const bookId = $('#editForm').data('bookId')
 
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
@@ -427,12 +425,12 @@ function handleEditForm() {
 		const loan = {
 			loanId: parseInt(loanId),
 			bookId: parseInt(bookId),
-			studentId: parseInt(raw.editLoanStudent),
-			returnDate: raw.editReturnDate,
-			observation: raw.editLoanObservation || '',
+			studentId: parseInt(raw.student),
+			returnDate: raw.returnDate,
+			observation: raw.observation || '',
 		}
 
-		const submitButton = $('#editLoanBtn')
+		const submitButton = $('#updateBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -449,7 +447,7 @@ function handleEditForm() {
 
 			if (response.ok && json.success) {
 				updateRow(json.data)
-				$('#editLoanModal').modal('hide')
+				$('#editModal').modal('hide')
 				showToast('Préstamo actualizado exitosamente.', 'success')
 			} else {
 				console.error(
@@ -460,12 +458,12 @@ function handleEditForm() {
 					json.message || 'Hubo un error al actualizar el préstamo.',
 					'error',
 				)
-				$('#editLoanModal').modal('hide')
+				$('#editModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#editLoanModal').modal('hide')
+			$('#editModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -526,15 +524,15 @@ function validateEditField(field) {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addLoanModal"]', function () {
-		populateSelect('#addLoanBook', bookList, 'bookId', 'title')
-		$('#addLoanBook').selectpicker()
+	$(document).on('click', '[data-bs-target="#addModal"]', function () {
+		populateSelect('#addBook', bookList, 'bookId', 'title')
+		$('#addBook').selectpicker()
 
-		populateSelect('#addLoanStudent', studentList, 'studentId', 'fullName')
-		$('#addLoanStudent').selectpicker()
+		populateSelect('#addStudent', studentList, 'studentId', 'fullName')
+		$('#addStudent').selectpicker()
 
-		$('#addLoanForm')[0].reset()
-		$('#addLoanForm .is-invalid').removeClass('is-invalid')
+		$('#addForm')[0].reset()
+		$('#addForm .is-invalid').removeClass('is-invalid')
 
 		const today = getCurrentPeruDate()
 		const peruDateStr = today.toISOString().split('T')[0]
@@ -559,9 +557,9 @@ function loadModalData() {
 	})
 
 	// Details Modal
-	$(document).on('click', '[data-bs-target="#detailsLoanModal"]', function () {
+	$(document).on('click', '[data-bs-target="#detailsModal"]', function () {
 		const loanId = $(this).data('id')
-		$('#detailsLoanModalID').text($(this).data('formatted-id'))
+		$('#detailsModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -579,14 +577,14 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#detailsLoanID').text(data.formattedLoanId)
+				$('#detailsID').text(data.formattedLoanId)
 
-				$('#detailsLoanBook').html(`
+				$('#detailsBook').html(`
 				${data.bookTitle}
 				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>
 			`)
 
-				$('#detailsLoanStudent').html(`
+				$('#detailsStudent').html(`
 				${data.studentFullName}
 				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedStudentId}</span>
 			`)
@@ -595,9 +593,9 @@ function loadModalData() {
 				$('#detailsReturnDate').text(
 					moment(data.returnDate).format('DD MMM YYYY'),
 				)
-				$('#detailsLoanQuantity').text(data.quantity)
+				$('#detailsQuantity').text(data.quantity)
 
-				$('#detailsLoanStatus').html(
+				$('#detailsStatus').html(
 					data.status === 'prestado'
 						? '<span class="badge text-warning-emphasis bg-warning-subtle border border-warning-subtle">Prestado</span>'
 						: '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Devuelto</span>',
@@ -613,34 +611,34 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los detalles del préstamo.', 'error')
-				$('#detailsLoanModal').modal('hide')
+				$('#detailsModal').modal('hide')
 			})
 	})
 
 	// Return Loan Modal
-	$('#returnLoanModal').on('show.bs.modal', function (event) {
+	$('#returnModal').on('show.bs.modal', function (event) {
 		const button = $(event.relatedTarget)
 		const loanId = button.data('id')
 		const formattedLoanId = button.data('formatted-id')
 
 		const currentStatus = button.data('status')
 
-		$('#returnLoanModalID').text(formattedLoanId)
+		$('#returnModalID').text(formattedLoanId)
 
 		if (currentStatus !== 'prestado') {
-			$('#returnLoanModal').modal('hide')
+			$('#returnModal').modal('hide')
 			showToast('Este préstamo ya ha sido devuelto.', 'error')
 			return
 		}
 
-		$('#confirmReturn').data('loanId', loanId)
-		$('#confirmReturn').data('formattedLoanId', formattedLoanId)
+		$('#returnBtn').data('loanId', loanId)
+		$('#returnBtn').data('formattedLoanId', formattedLoanId)
 	})
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editLoanModal"]', function () {
+	$(document).on('click', '[data-bs-target="#editModal"]', function () {
 		const loanId = $(this).data('id')
-		$('#editLoanModalID').text($(this).data('formatted-id'))
+		$('#editModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -658,24 +656,24 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#editLoanForm').data('loanId', data.loanId)
-				$('#editLoanForm').data('bookId', data.bookId)
+				$('#editForm').data('loanId', data.loanId)
+				$('#editForm').data('bookId', data.bookId)
 
-				$('#editLoanBook').html(`
+				$('#editBook').html(`
 				${data.bookTitle}
 				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedBookId}</span>
 			`)
 
-				populateSelect('#editLoanStudent', studentList, 'studentId', 'fullName')
-				$('#editLoanStudent').val(data.studentId)
-				$('#editLoanStudent').selectpicker()
+				populateSelect('#editStudent', studentList, 'studentId', 'fullName')
+				$('#editStudent').val(data.studentId)
+				$('#editStudent').selectpicker()
 
 				$('#editLoanDate').val(moment(data.loanDate).format('YYYY-MM-DD'))
 				$('#editReturnDate').val(moment(data.returnDate).format('YYYY-MM-DD'))
-				$('#editLoanQuantity').val(data.quantity)
-				$('#editloanObservation').val(data.observation)
+				$('#editQuantity').val(data.quantity)
+				$('#editObservation').val(data.observation)
 
-				$('#editLoanForm .is-invalid').removeClass('is-invalid')
+				$('#editForm .is-invalid').removeClass('is-invalid')
 
 				const loanDate = new Date(data.loanDate)
 				const minReturnDate = new Date(loanDate)
@@ -693,7 +691,7 @@ function loadModalData() {
 				placeholderColorEditSelect()
 				placeholderColorDateInput()
 
-				$('#editLoanForm')
+				$('#editForm')
 					.find('select')
 					.each(function () {
 						validateEditField($(this), true)
@@ -707,7 +705,7 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los datos del préstamo.', 'error')
-				$('#editLoanModal').modal('hide')
+				$('#editModal').modal('hide')
 			})
 	})
 }

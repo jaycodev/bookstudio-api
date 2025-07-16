@@ -39,7 +39,6 @@
 							<div class="input-group">
 								<input
 	                                id="newPassword" 
-	                                name="newPassword" 
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="1" 
@@ -57,7 +56,6 @@
 							<div class="input-group">
 								<input
 	                                id="confirmNewPassword" 
-	                                name="confirmNewPassword" 
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="2" 

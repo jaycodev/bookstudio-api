@@ -34,8 +34,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestParam String txtUsername,
-            @RequestParam String txtPassword,
+            @RequestParam String username,
+            @RequestParam String password,
             HttpServletRequest request,
             HttpServletResponse response) {
         Cookie blockTimeCookie = getCookie(request, "blockTime");
@@ -59,7 +59,7 @@ public class AuthController {
             }
         }
 
-        Optional<User> optionalUser = authService.verifyLogin(txtUsername, txtPassword);
+        Optional<User> optionalUser = authService.verifyLogin(username, password);
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();

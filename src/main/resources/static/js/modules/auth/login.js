@@ -20,29 +20,29 @@ $(document).ready(function () {
 
 	// Validation functions
 	function validateUsername() {
-		const username = $('#txtUsername').val().trim()
+		const username = $('#username').val().trim()
 		if (username === '') {
-			if (formSubmitted) $('#txtUsername').addClass('is-invalid')
+			if (formSubmitted) $('#username').addClass('is-invalid')
 			return false
 		} else {
-			$('#txtUsername').removeClass('is-invalid')
+			$('#username').removeClass('is-invalid')
 			return true
 		}
 	}
 
 	function validatePassword() {
-		const password = $('#txtPassword').val().trim()
+		const password = $('#password').val().trim()
 		if (password === '') {
-			if (formSubmitted) $('#txtPassword').addClass('is-invalid')
+			if (formSubmitted) $('#password').addClass('is-invalid')
 			return false
 		} else {
-			$('#txtPassword').removeClass('is-invalid')
+			$('#password').removeClass('is-invalid')
 			return true
 		}
 	}
 
 	// Prevent spaces in password field in real-time
-	$('#txtPassword').on('input', function () {
+	$('#password').on('input', function () {
 		const inputElement = this
 		const cursorPosition = inputElement.selectionStart
 		const originalValue = $(this).val()
@@ -61,7 +61,7 @@ $(document).ready(function () {
 	})
 
 	// Event listeners
-	$('#txtUsername, #txtPassword').on('input', function () {
+	$('#username, #password').on('input', function () {
 		if (formSubmitted) {
 			validateUsername()
 			validatePassword()
@@ -83,8 +83,8 @@ $(document).ready(function () {
 		$('#loginText').addClass('d-none')
 
 		const formData = new URLSearchParams()
-		formData.append('txtUsername', $('#txtUsername').val().trim())
-		formData.append('txtPassword', $('#txtPassword').val().trim())
+		formData.append('username', $('#username').val().trim())
+		formData.append('password', $('#password').val().trim())
 
 		try {
 			const res = await fetch('/api/auth/login', {
@@ -102,14 +102,14 @@ $(document).ready(function () {
 				window.location.href = './'
 			} else {
 				showToast(data.message || 'Error de autenticación.', 'error')
-				$('#txtUsername').removeClass('is-invalid')
-				$('#txtPassword').removeClass('is-invalid')
+				$('#username').removeClass('is-invalid')
+				$('#password').removeClass('is-invalid')
 			}
 		} catch (err) {
 			console.error(err)
 			showToast('Se produjo un error inesperado.', 'error')
-			$('#txtUsername').removeClass('is-invalid')
-			$('#txtPassword').removeClass('is-invalid')
+			$('#username').removeClass('is-invalid')
+			$('#password').removeClass('is-invalid')
 		} finally {
 			$('#loginBtn').prop('disabled', false)
 			$('#spinner').addClass('d-none')

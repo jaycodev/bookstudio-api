@@ -35,10 +35,9 @@
 					<form id="loginForm" novalidate>
 						<!-- Username field -->
 						<div class="mb-3">
-							<label for="txtUsername" class="form-label">Nombre de usuario</label>
+							<label for="username" class="form-label">Nombre de usuario</label>
 							<input
-	                            id="txtUsername" 
-	                            name="txtUsername" 
+	                            id="username" 
 	                            type="text" 
 	                            class="form-control" 
 	                            placeholder="Nombre de usuario" 
@@ -51,11 +50,10 @@
 						
 						<!-- Password field -->
 						<div class="mb-3">
-							<label for="txtPassword" class="form-label">Contraseña</label>								
+							<label for="password" class="form-label">Contraseña</label>								
 							<div class="input-group">
 								<input
-	                                id="txtPassword" 
-	                                name="txtPassword" 
+	                                id="password" 
 	                                type="password" 
 	                                class="form-control password-field" 
 	                                data-toggle-id="1" 

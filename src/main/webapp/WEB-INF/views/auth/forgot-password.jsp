@@ -41,7 +41,6 @@
 							<label for="email" class="form-label">Dirección de correo electrónico</label>
 							<input
 	                            id="email" 
-	                            name="email" 
 	                            type="email" 
 	                            class="form-control" 
 	                            placeholder="correo@ejemplo.com">

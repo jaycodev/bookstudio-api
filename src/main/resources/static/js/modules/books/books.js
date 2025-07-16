@@ -99,13 +99,13 @@ function generateRow(book) {
 			<td class="align-middle text-center">
 				<div class="d-inline-flex gap-2">
 					<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Detalles"
-						data-bs-toggle="modal" data-bs-target="#detailsBookModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
+						data-bs-toggle="modal" data-bs-target="#detailsModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
 						<i class="bi bi-info-circle"></i>
 					</button>
 					${
 						userRole === 'administrador'
 							? `<button class="btn btn-sm btn-icon-hover" data-tooltip="tooltip" data-bs-placement="top" title="Editar"
-							data-bs-toggle="modal" data-bs-target="#editBookModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
+							data-bs-toggle="modal" data-bs-target="#editModal" data-id="${book.bookId}" data-formatted-id="${book.formattedBookId}">
 							<i class="bi bi-pencil"></i>
 						</button>`
 							: ''
@@ -177,18 +177,18 @@ function updateRow(book) {
 function handleAddForm() {
 	let isFirstSubmit = true
 
-	$('#addBookModal').on('hidden.bs.modal', function () {
+	$('#addModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#addBookForm').data('submitted', false)
+		$('#addForm').data('submitted', false)
 	})
 
-	$('#addBookForm').on('input change', 'input, select', function () {
+	$('#addForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateAddField($(this))
 		}
 	})
 
-	$('#addBookForm').on('submit', async function (event) {
+	$('#addForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -215,17 +215,17 @@ function handleAddForm() {
 		const raw = Object.fromEntries(formData.entries())
 
 		const book = {
-			title: raw.addBookTitle,
-			totalCopies: parseInt(raw.addBookTotalCopies),
-			authorId: parseInt(raw.addBookAuthor),
-			publisherId: parseInt(raw.addBookPublisher),
-			courseId: parseInt(raw.addBookCourse),
-			releaseDate: raw.addReleaseDate,
-			genreId: parseInt(raw.addBookGenre),
-			status: raw.addBookStatus,
+			title: raw.title,
+			totalCopies: parseInt(raw.totalCopies),
+			authorId: parseInt(raw.author),
+			publisherId: parseInt(raw.publisher),
+			courseId: parseInt(raw.course),
+			releaseDate: raw.releaseDate,
+			genreId: parseInt(raw.genre),
+			status: raw.status,
 		}
 
-		const submitButton = $('#addBookBtn')
+		const submitButton = $('#addBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -242,20 +242,20 @@ function handleAddForm() {
 
 			if (response.ok && json.success) {
 				addRow(json.data)
-				$('#addBookModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Libro agregado exitosamente.', 'success')
 			} else {
 				console.error(
 					`Backend error (${json.errorType} - ${json.statusCode}):`,
 					json.message,
 				)
-				$('#addBookModal').modal('hide')
+				$('#addModal').modal('hide')
 				showToast('Hubo un error al agregar el libro.', 'error')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#addBookModal').modal('hide')
+			$('#addModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -280,7 +280,7 @@ function validateAddField(field) {
 	}
 
 	// Title validation
-	if (field.is('#addBookTitle')) {
+	if (field.is('#addTitle')) {
 		const result = isValidText(field.val(), 'título')
 		if (!result.valid) {
 			isValid = false
@@ -289,7 +289,7 @@ function validateAddField(field) {
 	}
 
 	// Total copies validation
-	if (field.is('#addBookTotalCopies')) {
+	if (field.is('#addTotalCopies')) {
 		const result = isValidTotalCopies(parseInt(field.val(), 10))
 		if (!result.valid) {
 			isValid = false
@@ -327,18 +327,18 @@ function validateAddField(field) {
 function handleEditForm() {
 	let isFirstSubmit = true
 
-	$('#editBookModal').on('hidden.bs.modal', function () {
+	$('#editModal').on('hidden.bs.modal', function () {
 		isFirstSubmit = true
-		$('#editBookForm').data('submitted', false)
+		$('#editForm').data('submitted', false)
 	})
 
-	$('#editBookForm').on('input change', 'input, select', function () {
+	$('#editForm').on('input change', 'input, select', function () {
 		if (!isFirstSubmit) {
 			validateEditField($(this))
 		}
 	})
 
-	$('#editBookForm').on('submit', async function (event) {
+	$('#editForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		if ($(this).data('submitted') === true) return
@@ -361,24 +361,24 @@ function handleEditForm() {
 			return
 		}
 
-		const bookId = $('#editBookForm').data('bookId')
+		const bookId = $('#editForm').data('bookId')
 
 		const formData = new FormData(form)
 		const raw = Object.fromEntries(formData.entries())
 
 		const book = {
 			bookId: parseInt(bookId),
-			title: raw.editBookTitle,
-			totalCopies: parseInt(raw.editBookTotalCopies),
-			authorId: parseInt(raw.editBookAuthor),
-			publisherId: parseInt(raw.editBookPublisher),
-			courseId: parseInt(raw.editBookCourse),
-			releaseDate: raw.editReleaseDate,
-			genreId: parseInt(raw.editBookGenre),
-			status: raw.editBookStatus,
+			title: raw.title,
+			totalCopies: parseInt(raw.totalCopies),
+			authorId: parseInt(raw.author),
+			publisherId: parseInt(raw.publisher),
+			courseId: parseInt(raw.course),
+			releaseDate: raw.releaseDate,
+			genreId: parseInt(raw.genre),
+			status: raw.status,
 		}
 
-		const submitButton = $('#editBookBtn')
+		const submitButton = $('#updateBtn')
 		toggleButtonLoading(submitButton, true)
 
 		try {
@@ -395,7 +395,7 @@ function handleEditForm() {
 
 			if (response.ok && json.success) {
 				updateRow(json.data)
-				$('#editBookModal').modal('hide')
+				$('#editModal').modal('hide')
 				showToast('Libro actualizado exitosamente.', 'success')
 			} else {
 				console.error(
@@ -406,12 +406,12 @@ function handleEditForm() {
 					json.message || 'Hubo un error al actualizar el libro.',
 					'error',
 				)
-				$('#editBookModal').modal('hide')
+				$('#editModal').modal('hide')
 			}
 		} catch (err) {
 			console.error('Unexpected error:', err)
 			showToast('Hubo un error inesperado.', 'error')
-			$('#editBookModal').modal('hide')
+			$('#editModal').modal('hide')
 		} finally {
 			toggleButtonLoading(submitButton, false)
 		}
@@ -436,7 +436,7 @@ function validateEditField(field) {
 	}
 
 	// Title validation
-	if (field.is('#editBookTitle')) {
+	if (field.is('#editTitle')) {
 		const result = isValidText(field.val(), 'título')
 		if (!result.valid) {
 			isValid = false
@@ -445,7 +445,7 @@ function validateEditField(field) {
 	}
 
 	// Total copies validation
-	if (field.is('#editBookTotalCopies')) {
+	if (field.is('#editTotalCopies')) {
 		const copies = parseInt(field.val(), 10)
 		const minCopies = parseInt(field.attr('min'), 10)
 		const result = isValidTotalCopiesInRange(copies, minCopies, 1000)
@@ -490,24 +490,24 @@ function validateEditField(field) {
 
 function loadModalData() {
 	// Add Modal
-	$(document).on('click', '[data-bs-target="#addBookModal"]', function () {
-		populateSelect('#addBookAuthor', authorList, 'authorId', 'name')
-		$('#addBookAuthor').selectpicker()
+	$(document).on('click', '[data-bs-target="#addModal"]', function () {
+		populateSelect('#addAuthor', authorList, 'authorId', 'name')
+		$('#addAuthor').selectpicker()
 
-		populateSelect('#addBookPublisher', publisherList, 'publisherId', 'name')
-		$('#addBookPublisher').selectpicker()
+		populateSelect('#addPublisher', publisherList, 'publisherId', 'name')
+		$('#addPublisher').selectpicker()
 
-		populateSelect('#addBookCourse', courseList, 'courseId', 'name')
-		$('#addBookCourse').selectpicker()
+		populateSelect('#addCourse', courseList, 'courseId', 'name')
+		$('#addCourse').selectpicker()
 
 		const today = getCurrentPeruDate()
 		const peruDateStr = today.toISOString().split('T')[0]
 		$('#addReleaseDate').attr('max', peruDateStr)
 
-		populateSelect('#addBookGenre', genreList, 'genreId', 'name')
-		$('#addBookGenre').selectpicker()
+		populateSelect('#addGenre', genreList, 'genreId', 'name')
+		$('#addGenre').selectpicker()
 
-		$('#addBookStatus')
+		$('#addStatus')
 			.selectpicker('destroy')
 			.empty()
 			.append(
@@ -520,18 +520,18 @@ function loadModalData() {
 					text: 'Inactivo',
 				}),
 			)
-		$('#addBookStatus').selectpicker()
+		$('#addStatus').selectpicker()
 
-		$('#addBookForm')[0].reset()
-		$('#addBookForm .is-invalid').removeClass('is-invalid')
+		$('#addForm')[0].reset()
+		$('#addForm .is-invalid').removeClass('is-invalid')
 
 		placeholderColorDateInput()
 	})
 
 	// Details Modal
-	$(document).on('click', '[data-bs-target="#detailsBookModal"]', function () {
+	$(document).on('click', '[data-bs-target="#detailsModal"]', function () {
 		const bookId = $(this).data('id')
-		$('#detailsBookModalID').text($(this).data('formatted-id'))
+		$('#detailsModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -549,20 +549,20 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#detailsBookID').text(data.formattedBookId)
-				$('#detailsBookTitle').text(data.title)
-				$('#detailsBookAvaibleCopies').text(data.availableCopies)
-				$('#detailsBookLoanedCopies').text(data.loanedCopies)
+				$('#detailsID').text(data.formattedBookId)
+				$('#detailsTitle').text(data.title)
+				$('#detailsAvaibleCopies').text(data.availableCopies)
+				$('#detailsLoanedCopies').text(data.loanedCopies)
 
-				$('#detailsBookAuthor').html(`
+				$('#detailsAuthor').html(`
 				${data.authorName}
 				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedAuthorId}</span>
 			`)
-				$('#detailsBookPublisher').html(`
+				$('#detailsPublisher').html(`
 				${data.publisherName}
 				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedPublisherId}</span>
 			`)
-				$('#detailsBookCourse').html(`
+				$('#detailsCourse').html(`
 				${data.courseName}
 				<span class="badge bg-body-tertiary text-body-emphasis border ms-1">${data.formattedCourseId}</span>
 			`)
@@ -570,8 +570,8 @@ function loadModalData() {
 				$('#detailsReleaseDate').text(
 					moment(data.releaseDate).format('DD MMM YYYY'),
 				)
-				$('#detailsBookGenre').text(data.genreName)
-				$('#detailsBookStatus').html(
+				$('#detailsGenre').text(data.genreName)
+				$('#detailsStatus').html(
 					data.status === 'activo'
 						? '<span class="badge text-success-emphasis bg-success-subtle border border-success-subtle">Activo</span>'
 						: '<span class="badge text-danger-emphasis bg-danger-subtle border border-danger-subtle">Inactivo</span>',
@@ -585,14 +585,14 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los detalles del libro.', 'error')
-				$('#detailsBookModal').modal('hide')
+				$('#detailsModal').modal('hide')
 			})
 	})
 
 	// Edit Modal
-	$(document).on('click', '[data-bs-target="#editBookModal"]', function () {
+	$(document).on('click', '[data-bs-target="#editModal"]', function () {
 		const bookId = $(this).data('id')
-		$('#editBookModalID').text($(this).data('formatted-id'))
+		$('#editModalID').text($(this).data('formatted-id'))
 
 		toggleModalLoading(this, true)
 
@@ -610,31 +610,26 @@ function loadModalData() {
 				return response.json()
 			})
 			.then((data) => {
-				$('#editBookForm').data('bookId', data.bookId)
-				$('#editBookTitle').val(data.title)
-				$('#editBookTotalCopies').val(data.totalCopies)
-				$('#editBookTotalCopies').attr('min', Math.max(1, data.loanedCopies))
+				$('#editForm').data('bookId', data.bookId)
+				$('#editTitle').val(data.title)
+				$('#editTotalCopies').val(data.totalCopies)
+				$('#editTotalCopies').attr('min', Math.max(1, data.loanedCopies))
 
-				populateSelect('#editBookAuthor', authorList, 'authorId', 'name')
-				$('#editBookAuthor').val(data.authorId)
-				$('#editBookAuthor').selectpicker()
+				populateSelect('#editAuthor', authorList, 'authorId', 'name')
+				$('#editAuthor').val(data.authorId)
+				$('#editAuthor').selectpicker()
 
-				populateSelect(
-					'#editBookPublisher',
-					publisherList,
-					'publisherId',
-					'name',
-				)
-				$('#editBookPublisher').val(data.publisherId)
-				$('#editBookPublisher').selectpicker()
+				populateSelect('#editPublisher', publisherList, 'publisherId', 'name')
+				$('#editPublisher').val(data.publisherId)
+				$('#editPublisher').selectpicker()
 
-				populateSelect('#editBookCourse', courseList, 'courseId', 'name')
-				$('#editBookCourse').val(data.courseId)
-				$('#editBookCourse').selectpicker()
+				populateSelect('#editCourse', courseList, 'courseId', 'name')
+				$('#editCourse').val(data.courseId)
+				$('#editCourse').selectpicker()
 
-				populateSelect('#editBookGenre', genreList, 'genreId', 'name')
-				$('#editBookGenre').val(data.genreId)
-				$('#editBookGenre').selectpicker()
+				populateSelect('#editGenre', genreList, 'genreId', 'name')
+				$('#editGenre').val(data.genreId)
+				$('#editGenre').selectpicker()
 
 				$('#editReleaseDate').val(moment(data.releaseDate).format('YYYY-MM-DD'))
 
@@ -642,21 +637,21 @@ function loadModalData() {
 				const peruDateStr = today.toISOString().split('T')[0]
 				$('#editReleaseDate').attr('max', peruDateStr)
 
-				$('#editBookStatus')
+				$('#editStatus')
 					.selectpicker('destroy')
 					.empty()
 					.append(
 						$('<option>', { value: 'activo', text: 'Activo' }),
 						$('<option>', { value: 'inactivo', text: 'Inactivo' }),
 					)
-				$('#editBookStatus').val(data.status)
-				$('#editBookStatus').selectpicker()
+				$('#editStatus').val(data.status)
+				$('#editStatus').selectpicker()
 
-				$('#editBookForm .is-invalid').removeClass('is-invalid')
+				$('#editForm .is-invalid').removeClass('is-invalid')
 				placeholderColorEditSelect()
 				placeholderColorDateInput()
 
-				$('#editBookForm')
+				$('#editForm')
 					.find('select')
 					.each(function () {
 						validateEditField($(this), true)
@@ -670,7 +665,7 @@ function loadModalData() {
 					error.message || error,
 				)
 				showToast('Hubo un error al cargar los datos del libro.', 'error')
-				$('#editBookModal').modal('hide')
+				$('#editModal').modal('hide')
 			})
 	})
 }

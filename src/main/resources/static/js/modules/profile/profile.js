@@ -65,7 +65,7 @@ $(document).ready(function () {
 	})
 
 	// When a photo is selected in the profile photo input
-	$('#editProfilePhoto').on('change', function () {
+	$('#profilePhoto').on('change', function () {
 		const file = this.files[0]
 		if (!file) return
 
@@ -95,13 +95,12 @@ $(document).ready(function () {
 		reader.readAsDataURL(file)
 	})
 
-	// When "Save" is clicked in the cropper modal
-	$('#saveCroppedImage').on('click', function () {
+	$('#uploadBtn').on('click', function () {
 		if ($(this).prop('disabled')) return
 
 		$(this).prop('disabled', true)
-		$('#savePhotoIcon').addClass('d-none')
-		$('#savePhotoSpinner').removeClass('d-none')
+		$('#uploadIcon').addClass('d-none')
+		$('#uploadSpinner').removeClass('d-none')
 
 		if (!cropper) return
 		const canvas = cropper.getCroppedCanvas({
@@ -111,14 +110,10 @@ $(document).ready(function () {
 
 		canvas.toBlob(function (blob) {
 			croppedImageBlob = blob
-			const photoFormData = new FormData($('#editProfilePhotoForm')[0])
-			photoFormData.delete('editProfilePhoto')
+			const photoFormData = new FormData($('#profilePhotoForm')[0])
+			photoFormData.delete('profilePhoto')
 
-			photoFormData.append(
-				'editProfilePhoto',
-				croppedImageBlob,
-				'croppedImage.png',
-			)
+			photoFormData.append('photoUrl', croppedImageBlob, 'croppedImage.png')
 			photoFormData.append('deletePhoto', 'false')
 
 			fetch('/api/profile/update-photo', {
@@ -143,26 +138,26 @@ $(document).ready(function () {
 					$('#cropperModal').modal('hide')
 				})
 				.finally(() => {
-					$('#savePhotoIcon').removeClass('d-none')
-					$('#savePhotoSpinner').addClass('d-none')
+					$('#uploadIcon').removeClass('d-none')
+					$('#uploadSpinner').addClass('d-none')
 				})
 		})
 	})
 
 	// Reset button state when the modal is hidden
 	$('#cropperModal').on('hidden.bs.modal', function () {
-		$('#saveCroppedImage').prop('disabled', false)
-		$('#savePhotoIcon').removeClass('d-none')
-		$('#savePhotoSpinner').addClass('d-none')
+		$('#uploadBtn').prop('disabled', false)
+		$('#uploadIcon').removeClass('d-none')
+		$('#uploadSpinner').addClass('d-none')
 	})
 
 	// Confirm photo deletion
-	$('#confirmDeletePhoto').on('click', function () {
+	$('#deleteBtn').on('click', function () {
 		if ($(this).prop('disabled')) return
 
 		$(this).prop('disabled', true)
-		$('#deletePhotoIcon').addClass('d-none')
-		$('#deletePhotoSpinner').removeClass('d-none')
+		$('#deleteIcon').addClass('d-none')
+		$('#deleteSpinner').removeClass('d-none')
 
 		const photoFormData = new FormData()
 		photoFormData.append('deletePhoto', 'true')
@@ -189,16 +184,16 @@ $(document).ready(function () {
 				$('#deletePhotoModal').modal('hide')
 			})
 			.finally(() => {
-				$('#deletePhotoIcon').removeClass('d-none')
-				$('#deletePhotoSpinner').addClass('d-none')
+				$('#deleteIcon').removeClass('d-none')
+				$('#deleteSpinner').addClass('d-none')
 			})
 	})
 
 	// Reset button state when the modal is hidden
 	$('#deletePhotoModal').on('hidden.bs.modal', function () {
-		$('#confirmDeletePhoto').prop('disabled', false)
-		$('#deletePhotoIcon').removeClass('d-none')
-		$('#deletePhotoSpinner').addClass('d-none')
+		$('#deleteBtn').prop('disabled', false)
+		$('#deleteIcon').removeClass('d-none')
+		$('#deleteSpinner').addClass('d-none')
 	})
 
 	/************** Profile update logic **************/
@@ -261,7 +256,7 @@ $(document).ready(function () {
 	})
 
 	// Handle profile update form submission
-	$('#editProfileForm').on('submit', async function (event) {
+	$('#profileForm').on('submit', async function (event) {
 		event.preventDefault()
 
 		const firstNameValid = validateProfileFirstName()
@@ -334,9 +329,9 @@ $(document).ready(function () {
 		if (formSubmitted) return
 		formSubmitted = true
 
-		$('#updateProfileBtn').prop('disabled', true)
-		$('#updateProfileSpinner').removeClass('d-none')
-		$('#updateProfileText').addClass('d-none')
+		$('#updateBtn').prop('disabled', true)
+		$('#updateSpinner').removeClass('d-none')
+		$('#updateText').addClass('d-none')
 
 		try {
 			const response = await fetch('/api/profile/update-profile', {
@@ -365,9 +360,9 @@ $(document).ready(function () {
 			showToast('Ocurrió un error inesperado.', 'error')
 			formSubmitted = false
 		} finally {
-			$('#updateProfileBtn').prop('disabled', false)
-			$('#updateProfileSpinner').addClass('d-none')
-			$('#updateProfileText').removeClass('d-none')
+			$('#updateBtn').prop('disabled', false)
+			$('#updateSpinner').addClass('d-none')
+			$('#updateText').removeClass('d-none')
 		}
 	}
 
@@ -399,9 +394,9 @@ $(document).ready(function () {
 		const passwordChanged = newPassword !== '' || currentPassword !== ''
 
 		if (nameChanged || passwordChanged) {
-			$('#editProfileForm button[type=submit]').prop('disabled', false)
+			$('#profileForm button[type=submit]').prop('disabled', false)
 		} else {
-			$('#editProfileForm button[type=submit]').prop('disabled', true)
+			$('#profileForm button[type=submit]').prop('disabled', true)
 		}
 	}
 
