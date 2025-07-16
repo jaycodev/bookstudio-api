@@ -15,7 +15,7 @@ public class LiteraryGenreService {
     private final LiteraryGenreRepository literaryGenreRepository;
 
     public List<LiteraryGenre> getForSelect() {
-        return literaryGenreRepository.findAll();
+        return literaryGenreRepository.findAllByOrderByNameAsc();
     }
 
     public Optional<LiteraryGenre> findById(Long literaryGenreId) {

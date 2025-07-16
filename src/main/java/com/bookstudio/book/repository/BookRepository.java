@@ -30,6 +30,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         FROM Book b
         JOIN b.author a
         JOIN b.publisher p
+        ORDER BY b.id DESC
     """)
     List<BookListProjection> findList();
 

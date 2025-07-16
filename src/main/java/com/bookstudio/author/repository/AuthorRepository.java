@@ -25,6 +25,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
         FROM Author a
         JOIN a.nationality n
         JOIN a.literaryGenre lg
+        ORDER BY a.id DESC
     """)
     List<AuthorListProjection> findList();
 

@@ -29,6 +29,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
         FROM Loan l
         JOIN l.book b
         JOIN l.student s
+        ORDER BY l.id DESC
     """)
     List<LoanListProjection> findList();
 

@@ -25,6 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             u.profilePhotoUrl AS profilePhotoUrl
         FROM User u
         WHERE u.id <> :loggedUserId
+        ORDER BY u.id DESC
     """)
     List<UserViewProjection> findList(@Param("loggedUserId") Long loggedUserId);
 

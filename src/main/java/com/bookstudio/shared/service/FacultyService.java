@@ -15,7 +15,7 @@ public class FacultyService {
     private final FacultyRepository facultyRepository;
 
     public List<Faculty> getForSelect() {
-        return facultyRepository.findAll();
+        return facultyRepository.findAllByOrderByNameAsc();
     }
 
     public Optional<Faculty> findById(Long facultyId) {

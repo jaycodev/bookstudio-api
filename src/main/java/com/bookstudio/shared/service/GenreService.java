@@ -15,7 +15,7 @@ public class GenreService {
     private final GenreRepository genreRepository;
 
     public List<Genre> getForSelect() {
-        return genreRepository.findAll();
+        return genreRepository.findAllByOrderByNameAsc();
     }
 
     public Optional<Genre> findById(Long genreId) {

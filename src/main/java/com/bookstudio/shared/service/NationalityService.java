@@ -15,7 +15,7 @@ public class NationalityService {
     private final NationalityRepository nationalityRepository;
 
     public List<Nationality> getForSelect() {
-        return nationalityRepository.findAll();
+        return nationalityRepository.findAllByOrderByNameAsc();
     }
 
     public Optional<Nationality> findById(Long nationalityid) {

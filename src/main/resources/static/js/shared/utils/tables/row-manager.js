@@ -2,15 +2,15 @@ import { initializeTooltips } from '../ui/index.js'
 
 export function addRowToTable(entity, generateRowFn) {
 	if (typeof generateRowFn !== 'function') {
-		console.error(
-			'Expected generateRowFn to be a function that returns the row HTML.',
-		)
+		console.error('[addRowToTable] generateRowFn debe ser una función.')
 		return
 	}
 
 	const rowHtml = generateRowFn(entity)
 	if (typeof rowHtml !== 'string') {
-		console.error('generateRowFn must return a string containing the row HTML.')
+		console.error(
+			'[addRowToTable] generateRowFn debe retornar un string con HTML.',
+		)
 		return
 	}
 
@@ -18,6 +18,8 @@ export function addRowToTable(entity, generateRowFn) {
 	const $row = $(rowHtml)
 
 	table.row.add($row).draw(false)
+	table.page('first').draw(false)
+
 	initializeTooltips($row)
 }
 

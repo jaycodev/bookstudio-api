@@ -25,6 +25,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
         FROM Publisher p
         JOIN p.nationality n
         JOIN p.literaryGenre lg
+        ORDER BY p.id DESC
     """)
     List<PublisherListProjection> findList();
 

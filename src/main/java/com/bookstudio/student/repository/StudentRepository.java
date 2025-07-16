@@ -27,6 +27,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             s.email AS email,
             s.status AS status
         FROM Student s
+        ORDER BY s.id DESC
     """)
     List<StudentListProjection> findList();
 

@@ -20,6 +20,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             c.description AS description,
             c.status AS status
         FROM Course c
+        ORDER BY c.id DESC
         """)
     List<CourseViewProjection> findList();
 

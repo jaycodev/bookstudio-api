@@ -18,6 +18,7 @@ export function setupDataTable(tableId) {
 		lengthChange: true,
 		paging: true,
 		ordering: true,
+		order: [[0, 'desc']],
 		pageLength: 15,
 		lengthMenu: [
 			[10, 15, 25, -1],
