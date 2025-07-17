@@ -1,10 +1,10 @@
-FROM maven:3.9.6-eclipse-temurin-21 as builder
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 COPY . .
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
-FROM tomcat:8.5-jdk21
-RUN rm -rf /usr/local/tomcat/webapps/*
-COPY --from=builder /app/target/bookstudio-1.0.0.war /usr/local/tomcat/webapps/ROOT.war
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=builder /app/target/bookstudio-*.jar app.jar
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
