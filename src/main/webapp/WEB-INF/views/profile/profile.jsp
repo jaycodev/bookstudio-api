@@ -7,15 +7,15 @@
 	<meta name="description" content="BookStudio es un sistema de biblioteca para gestionar préstamos, libros, autores y otros recursos, facilitando la administración y seguimiento de los préstamos.">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="js/shared/setup/color-modes.js"></script>
-	<script src="js/shared/setup/sidebar-collapse.js"></script>
+	<script src="/js/shared/setup/color-modes.js"></script>
+	<script src="/js/shared/setup/sidebar-collapse.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
-	<link rel="stylesheet" href="css/views/user.css">
+	<link rel="stylesheet" href="/css/views/user.css">
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
@@ -59,9 +59,9 @@
 				        </svg>
 				
 				        <!-- Form for Editing Profile Image -->
-				        <form id="editProfilePhotoForm" enctype="multipart/form-data">     
+				        <form id="profilePhotoForm" enctype="multipart/form-data">     
 				            <!-- Pencil Icon for Edit -->
-				            <label id="photoLabel" for="editProfilePhoto" 
+				            <label id="photoLabel" for="profilePhoto" 
 				                   class="position-absolute rounded-circle d-flex align-items-center justify-content-center pencil-icon border"
 				                   data-bs-toggle="dropdown" 
 				                   aria-expanded="false">
@@ -72,7 +72,7 @@
 				            <ul class="dropdown-menu dropdown-menu-start gap-1 p-2 rounded-3 mx-0 shadow bg-body-secondary" aria-labelledby="photoLabel">
 				                <li>
 				                    <!-- Option to Upload New Profile Image -->
-				                    <label for="editProfilePhoto" class="dropdown-item rounded-2 d-flex align-items-center cursor-pointer">
+				                    <label for="profilePhoto" class="dropdown-item rounded-2 d-flex align-items-center cursor-pointer">
 				                        <i class="bi bi-upload me-2"></i> Subir
 				                    </label>
 				                </li>
@@ -87,7 +87,7 @@
 				            </ul>
 				
 				            <!-- Hidden File Input for Image Upload -->
-				            <input type="file" id="editProfilePhoto" name="editProfilePhoto" class="d-none" accept="image/*">
+				            <input type="file" id="profilePhoto" name="profilePhoto" class="d-none" accept="image/*">
 				        </form>
 				    </figure>
 				</div>
@@ -95,26 +95,26 @@
 		        <!-- Profile Form -->
 		        <article class="d-flex justify-content-center mb-3">
 		            <div class="col-12 col-md-10 col-lg-8">
-		                <form id="editProfileForm" accept-charset="UTF-8">
+		                <form id="profileForm" accept-charset="UTF-8">
 		                    <!-- Form Fields -->
 		                    <fieldset class="row">
 		                        <!-- User and Email Section -->
 		                        <div class="col-12 col-md-6 mb-3">
-		                            <label for="editProfileUsername" class="form-label">Nombre de usuario</label>
+		                            <label for="username" class="form-label">Nombre de usuario</label>
 		                            <input 
 		                                type="text" 
 		                                class="form-control w-100" 
-		                                id="editProfileUsername" 
+		                                id="username" 
 		                                value="${sessionScope.username}" 
 		                                disabled
 		                            >
 		                        </div>
 		                        <div class="col-12 col-md-6 mb-3">
-		                            <label for="editProfileEmail" class="form-label">Correo electrónico</label>
+		                            <label for="email" class="form-label">Correo electrónico</label>
 		                            <input 
 		                                type="email" 
 		                                class="form-control w-100" 
-		                                id="editProfileEmail" 
+		                                id="email" 
 		                                value="${sessionScope.email}" 
 		                                disabled
 		                            >
@@ -122,12 +122,12 @@
 		                                                
 		                        <!-- First Name and Last Name Section -->
 		                        <div class="col-12 col-md-6 mb-3">
-		                            <label for="editProfileFirstName" class="form-label">Nombres</label>
+		                            <label for="firstName" class="form-label">Nombres</label>
 		                            <input 
 		                                type="text" 
 		                                class="form-control w-100" 
-		                                id="editProfileFirstName" 
-		                                name="editProfileFirstName" 
+		                                id="firstName" 
+                                        name="firstName"
 		                                value="${sessionScope.firstname}" 
 		                                placeholder="Actualizar nombres" 
 		                                autocomplete="given-name" 
@@ -137,12 +137,12 @@
 		                            <div class="invalid-feedback"></div>
 		                        </div>
 		                        <div class="col-12 col-md-6 mb-3">
-		                            <label for="editProfileLastName" class="form-label">Apellidos</label>
+		                            <label for="lastName" class="form-label">Apellidos</label>
 		                            <input 
 		                                type="text" 
 		                                class="form-control w-100" 
-		                                id="editProfileLastName" 
-		                                name="editProfileLastName" 
+		                                id="lastName" 
+                                        name="lastName"
 		                                value="${sessionScope.lastname}" 
 		                                placeholder="Actualizar apellidos" 
 		                                autocomplete="family-name" 
@@ -154,13 +154,13 @@
 		                        
 		                        <!-- Password Section -->
 		                        <div class="col-12 col-md-6 mb-4 position-relative">
-		                            <label for="currentProfilePassword" class="form-label">Contraseña actual</label>
+		                            <label for="currentPassword" class="form-label">Contraseña actual</label>
 		                            <div class="input-group">
 		                                <input 
 		                                    type="password" 
 		                                    class="form-control password-field" 
-		                                    id="currentProfilePassword" 
-		                                    name="currentProfilePassword" 
+		                                    id="currentPassword" 
+                                            name="currentPassword"
 		                                    data-toggle-id="1" 
 		                                    placeholder="Contraseña actual" 
 		                                    autocomplete="current-password"
@@ -172,13 +172,13 @@
 		                            </div>
 		                        </div>
 		                        <div class="col-12 col-md-6 mb-4 position-relative">
-		                            <label for="editProfilePassword" class="form-label">Nueva contraseña</label>
+		                            <label for="password" class="form-label">Nueva contraseña</label>
 		                            <div class="input-group">       
 		                                <input 
 		                                    type="password" 
 		                                    class="form-control password-field" 
-		                                    id="editProfilePassword" 
-		                                    name="editProfilePassword" 
+		                                    id="password" 
+                                            name="password"
 		                                    data-toggle-id="2" 
 		                                    placeholder="Actualizar contraseña" 
 		                                    autocomplete="new-password"
@@ -194,9 +194,9 @@
 		                    <div class="row justify-content-center">
 		                        <div class="col-12 col-md-4">
 		                        	<!-- Update Button -->
-		                        	<button type="submit" class="btn btn-custom-primary w-100 fs-6" id="updateProfileBtn" disabled>
-					                    <span id="updateProfileSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-					                    <span id="updateProfileText">Actualizar perfil</span>
+		                        	<button type="submit" class="btn btn-custom-primary w-100 fs-6" id="updateBtn" disabled>
+					                    <span id="updateSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+					                    <span id="updateText">Actualizar perfil</span>
 					                </button>
 		                        </div>
 		                    </div>
@@ -230,9 +230,9 @@
 					<button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 					
 					<!-- Upload Button -->
-					<button type="button" class="btn btn-custom-primary d-flex align-items-center" id="saveCroppedImage">
-					    <span id="savePhotoIcon" class="me-2"><i class="bi bi-upload"></i></span>
-					    <span id="savePhotoSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+					<button type="button" class="btn btn-custom-primary d-flex align-items-center" id="uploadBtn">
+					    <span id="uploadIcon" class="me-2"><i class="bi bi-upload"></i></span>
+					    <span id="uploadSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 					    Subir imagen
 					</button>
 				</div>
@@ -261,9 +261,9 @@
 					<button type="button" class="btn btn-custom-secondary d-flex align-items-center" data-bs-dismiss="modal">Cancelar</button>
 					
 					<!-- Delete Button -->
-					<button type="button" class="btn btn-danger d-flex align-items-center" id="confirmDeletePhoto">
-	                    <span id="deletePhotoIcon" class="me-2"><i class="bi bi-trash"></i></span>
-	                    <span id="deletePhotoSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+					<button type="button" class="btn btn-danger d-flex align-items-center" id="deleteBtn">
+	                    <span id="deleteIcon" class="me-2"><i class="bi bi-trash"></i></span>
+	                    <span id="deleteSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Eliminar
 	                </button>
 				</div>
@@ -283,12 +283,11 @@
 	<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js" defer></script>
 
 	<!-- Custom Scripts -->
-	<script src="js/shared/layout/header.js" defer></script>
-	<script src="js/shared/layout/sidebar.js" defer></script>
-	<script src="js/shared/setup/theme-toggle.js" defer></script>
-	<script src="js/shared/utils/ui/password.js" defer></script>
+	<script src="/js/shared/layout/header.js" defer></script>
+	<script src="/js/shared/layout/sidebar.js" defer></script>
+	<script src="/js/shared/setup/theme-toggle.js" defer></script>
 	
 	<!-- Page-Specific Script -->
-	<script type="module" src="js/modules/profile/profile.js" defer></script>
+	<script type="module" src="/js/modules/profile/profile.js" defer></script>
 </body>
 </html>

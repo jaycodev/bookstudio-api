@@ -9,8 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%@ include file="/WEB-INF/includes/styles.jspf" %>
     <title>BookStudio</title>
-    <link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-    <link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+    <link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+    <link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<c:set var="userRole" value="${sessionScope.role}" />
@@ -20,7 +20,7 @@
 
 	<!-- ===================== Sidebar ==================== -->
 	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="authors" />
+		<jsp:param name="currentPage" value="/authors" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->
@@ -57,7 +57,7 @@
 				<c:if test="${userRole == 'administrador'}">
 					<!-- Add Button -->
 					<button class="btn btn-custom-primary d-flex align-items-center"
-						data-bs-toggle="modal" data-bs-target="#addAuthorModal"
+						data-bs-toggle="modal" data-bs-target="#addModal"
 						aria-label="Agregar autor" disabled>
 						<i class="bi bi-plus-circle me-2"></i>
 						Agregar
@@ -77,7 +77,7 @@
 
 				<!-- Table Container -->
 				<section id="tableContainer" class="d-none small">
-					<table id="authorTable" class="table table-sm">
+					<table id="table" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -90,22 +90,20 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyAuthors">
-							<!-- Data will be populated here via JavaScript -->
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</section>
 			</div>
 		</section>
 	</main>
 
-	<!-- Add Author Modal -->
-    <div class="modal fade" id="addAuthorModal" tabindex="-1" aria-labelledby="addAuthorModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Add Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
             	<!-- Modal Header -->
                 <header class="modal-header">
-                    <h5 class="modal-title text-body-emphasis" id="addAuthorModalLabel">
+                    <h5 class="modal-title text-body-emphasis" id="addModalLabel">
                     	<i class="bi bi-plus-circle me-1"></i> 
                     	Agregar un autor
                     </h5>
@@ -114,17 +112,17 @@
                 
                 <!-- Modal Body -->
                 <div class="modal-body">
-                    <form id="addAuthorForm" enctype="multipart/form-data" novalidate>
+                    <form id="addForm" enctype="multipart/form-data" novalidate>
                     	<!-- Personal Information Section -->
                         <div class="row">
-                        	<!-- Author Name Field -->
+                        	<!-- Name Field -->
                             <div class="col-md-6 mb-3">
-	                            <label for="addAuthorName" class="form-label">Nombre <span class="text-danger">*</span></label>
+	                            <label for="addName" class="form-label">Nombre <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addAuthorName" 
-	                                name="addAuthorName" 
+	                                id="addName" 
+                                    name="name"
 	                                pattern="[A-Za-zÀ-ÿ\s.]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s.]/g, '');" 
 	                                placeholder="Ingrese el nombre del autor" 
@@ -135,11 +133,11 @@
                             
                             <!-- Nationality Field -->
                             <div class="col-md-6 mb-3">
-	                            <label for="addAuthorNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
+	                            <label for="addNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addAuthorNationality" 
-	                                name="addAuthorNationality" 
+	                                id="addNationality" 
+                                    name="nationality"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione una nacionalidad" 
@@ -151,7 +149,7 @@
 	                        </div>
                         </div>
                         
-                        <!-- Author Details Section -->
+                        <!-- Details Section -->
 	                    <div class="row">
 	                    	<!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
@@ -159,7 +157,7 @@
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
 	                                id="addLiteraryGenre" 
-	                                name="addLiteraryGenre" 
+                                    name="literaryGenre"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione un género literario" 
@@ -172,12 +170,12 @@
 	                        
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+	                            <label for="addBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
-	                                id="addAuthorBirthDate" 
-	                                name="addAuthorBirthDate" 
+	                                id="addBirthDate" 
+                                    name="birthDate"
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -188,11 +186,11 @@
 	                    <div class="row">
 	                        <!-- Biography Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorBiography" class="form-label">Biografía</label>
+	                            <label for="addBiography" class="form-label">Biografía</label>
 	                            <textarea 
 	                                class="form-control" 
-	                                id="addAuthorBiography" 
-	                                name="addAuthorBiography" 
+	                                id="addBiography" 
+                                    name="biography"
 	                                rows="1" 
 	                                placeholder="Escribe una breve biografía"
 	                            ></textarea>
@@ -200,11 +198,11 @@
 	                        
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addAuthorStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="addStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addAuthorStatus" 
-	                                name="addAuthorStatus" 
+	                                id="addStatus" 
+                                    name="status"
 	                                title="Seleccione un estado" 
 	                                required
 	                            >
@@ -217,12 +215,11 @@
 	                    <!-- Photo Upload Section -->
 	                    <div class="row">
 	                        <div class="col-md-12 mb-3">
-	                            <label for="addAuthorPhoto" class="form-label">Foto</label>
+	                            <label for="addPhoto" class="form-label">Foto</label>
 	                            <input 
 	                                type="file" 
 	                                class="form-control" 
-	                                id="addAuthorPhoto" 
-	                                name="addAuthorPhoto" 
+	                                id="addPhoto" 
 	                                accept="image/*"
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -265,9 +262,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Add Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addAuthorForm" id="addAuthorBtn">
-	                    <span id="addAuthorIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addForm" id="addBtn">
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -275,39 +272,39 @@
 	    </div>
 	</div>
     
-    <!-- Author Details Modal -->
-	<div class="modal fade" id="detailsAuthorModal" tabindex="-1" aria-labelledby="detailsAuthorModalLabel" aria-hidden="true">
+    <!-- Details Modal -->
+	<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsAuthorModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="detailsModalLabel">
 	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del autor 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsAuthorModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="detailsAuthorSpinner" class="text-center my-5">
+	            	<div id="detailsSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsAuthorContent" class="d-none">
+	            	<div id="detailsContent" class="d-none">
 		                <!-- ID and Name Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsAuthorID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nombre</h6>
-		                        <p class="fw-bold" id="detailsAuthorName"></p>
+		                        <p class="fw-bold" id="detailsName"></p>
 		                    </div>
 		                </div>
 		                
@@ -315,12 +312,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nacionalidad</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsAuthorNationality"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsNationality"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Género literario</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsAuthorGenre"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsGenre"></p>
 		                    </div>
 		                </div>
 		                
@@ -328,12 +325,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Fecha de nacimiento</h6>
-		                        <p class="fw-bold" id="detailsAuthorBirthDate"></p>
+		                        <p class="fw-bold" id="detailsBirthDate"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Biografía</h6>
-		                        <p class="fw-bold" id="detailsAuthorBiography"></p>
+		                        <p class="fw-bold" id="detailsBiography"></p>
 		                    </div>
 		                </div>
 		                
@@ -341,16 +338,16 @@
 		                <div class="row">  
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Estado</h6>
-		                        <p id="detailsAuthorStatus"></p>
+		                        <p id="detailsStatus"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="fw-bold">Foto</h6>
-								<svg id="detailsAuthorSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+								<svg id="detailsSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 									<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
 									<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
 					            </svg>
-					            <img id="detailsAuthorImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Autor">
+					            <img id="detailsImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Autor">
 		                    </div>
 		                </div>
 					</div>
@@ -365,39 +362,39 @@
 	    </div>
 	</div>
 	
-	<!-- Edit Author Modal -->
-	<div class="modal fade" id="editAuthorModal" tabindex="-1" aria-labelledby="editAuthorModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Modal -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editAuthorModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="editModalLabel">
 	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar autor 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editAuthorModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editModalID"></span>
 					</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-					<div id="editAuthorSpinner" class="text-center my-5">
+					<div id="editSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 	            	
-	                <form id="editAuthorForm" class="d-none" enctype="multipart/form-data" novalidate>
+	                <form id="editForm" class="d-none" enctype="multipart/form-data" novalidate>
 	                    <!-- Personal Information Section -->
 	                    <div class="row">
-	                        <!-- Author Name Field -->
+	                        <!-- Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorName" class="form-label">Nombre <span class="text-danger">*</span></label>
+	                            <label for="editName" class="form-label">Nombre <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editAuthorName" 
-	                                name="editAuthorName" 
+	                                id="editName" 
+                                    name="name"
 	                                pattern="[A-Za-zÀ-ÿ\s.]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s.]/g, '');" 
 	                                placeholder="Ingrese el nombre del autor" 
@@ -408,11 +405,11 @@
 	                        
 	                        <!-- Nationality Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
+	                            <label for="editNationality" class="form-label">Nacionalidad <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editAuthorNationality" 
-	                                name="editAuthorNationality" 
+	                                id="editNationality" 
+                                    name="nationality"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -423,7 +420,7 @@
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- Author Details Section -->
+	                    <!-- Details Section -->
 	                    <div class="row">
 	                        <!-- Literary Genre Field -->
 	                        <div class="col-md-6 mb-3">
@@ -431,7 +428,7 @@
 	                            <select 
 	                                class="selectpicker form-control" 
 	                                id="editLiteraryGenre" 
-	                                name="editLiteraryGenre" 
+                                    name="literaryGenre"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -443,12 +440,12 @@
 	                        
 	                        <!-- Birth Date Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
+	                            <label for="editBirthDate" class="form-label">Fecha de nacimiento <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="date" 
 	                                class="form-control" 
-	                                id="editAuthorBirthDate" 
-	                                name="editAuthorBirthDate" 
+	                                id="editBirthDate" 
+                                    name="birthDate"
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -459,11 +456,11 @@
 	                    <div class="row">
 	                        <!-- Biography Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorBiography" class="form-label">Biografía</label>
+	                            <label for="editBiography" class="form-label">Biografía</label>
 	                            <textarea 
 	                                class="form-control" 
-	                                id="editAuthorBiography" 
-	                                name="editAuthorBiography" 
+	                                id="editBiography" 
+                                    name="biography"
 	                                rows="1" 
 	                                placeholder="Escribe una breve biografía"
 	                            ></textarea>
@@ -471,11 +468,11 @@
 	                        
 	                        <!-- Status Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editAuthorStatus" class="form-label">Estado <span class="text-danger">*</span></label>
+	                            <label for="editStatus" class="form-label">Estado <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editAuthorStatus" 
-	                                name="editAuthorStatus" 
+	                                id="editStatus" 
+                                    name="status"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -486,12 +483,11 @@
 	                    <!-- Photo Upload Section -->
 	                    <div class="row">
 	                        <div class="col-md-12 mb-3">
-	                            <label for="editAuthorPhoto" class="form-label">Foto</label>
+	                            <label for="editPhoto" class="form-label">Foto</label>
 	                            <input 
 	                            	type="file" 
 	                                class="form-control" 
-	                                id="editAuthorPhoto" 
-	                                name="editAuthorPhoto" 
+	                                id="editPhoto" 
 	                                accept="image/*"
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -531,9 +527,9 @@
 					<button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 
 					<!-- Update Button -->
-					<button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editAuthorForm" id="editAuthorBtn" disabled>
-						<span id="editAuthorIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-						<span id="editAuthorSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+					<button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editForm" id="updateBtn" disabled>
+						<i class="bi bi-floppy me-2"></i>
+						<span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 						Actualizar
 					</button>
 				</footer>

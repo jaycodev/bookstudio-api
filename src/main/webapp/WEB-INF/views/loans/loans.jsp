@@ -9,8 +9,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<%@ include file="/WEB-INF/includes/styles.jspf" %>
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
@@ -18,7 +18,7 @@
 
 	<!-- ===================== Sidebar ==================== -->
 	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="loans" />
+		<jsp:param name="currentPage" value="/loans" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->
@@ -54,7 +54,7 @@
 				
 				<!-- Add Button -->
 				<button class="btn btn-custom-primary d-flex align-items-center"
-					data-bs-toggle="modal" data-bs-target="#addLoanModal"
+					data-bs-toggle="modal" data-bs-target="#addModal"
 					aria-label="Prestar libro" disabled>
 					<i class="bi bi-plus-circle me-2"></i>
 					Prestar
@@ -73,7 +73,7 @@
 
 				<!-- Table Container -->
 				<section id="tableContainer" class="d-none small">
-					<table id="loanTable" class="table table-sm">
+					<table id="table" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -86,22 +86,20 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyLoans">
-							<!-- Data will be populated here via JavaScript -->
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</section>
 			</div>
 		</section>
 	</main>
 
-	<!-- Add Loan Modal -->
-	<div class="modal fade" id="addLoanModal" tabindex="-1" aria-labelledby="addLoanModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Add Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addLoanModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="addModalLabel">
 	                	<i class="bi bi-plus-circle me-1"></i> 
 	                	Agregar un préstamo
 	                </h5>
@@ -110,16 +108,16 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="addLoanForm" accept-charset="UTF-8" novalidate>
+	                <form id="addForm" accept-charset="UTF-8" novalidate>
 	                    <!-- Book and Student Section -->
 	                    <div class="row">
 	                        <!-- Book Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanBook" class="form-label">Libro <span class="text-danger">*</span></label>
+	                            <label for="addBook" class="form-label">Libro <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addLoanBook" 
-	                                name="addLoanBook" 
+	                                id="addBook" 
+                                    name="book" 
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione un libro" 
@@ -132,11 +130,11 @@
 	                        
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
+	                            <label for="addStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addLoanStudent" 
-	                                name="addLoanStudent" 
+	                                id="addStudent" 
+                                    name="student" 
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                title="Seleccione un estudiante" 
@@ -148,9 +146,9 @@
 	                        </div>
 	                    </div>
 	                    
-	                    <!-- Loan Dates Section -->
+	                    <!-- Dates Section -->
 	                    <div class="row">
-	                        <!-- Loan Date Field -->
+	                        <!-- Date Field -->
 	                        <div class="col-md-6 mb-3">
 	                            <label for="addLoanDate" class="form-label">Fecha de préstamo</label>
 	                            <input 
@@ -168,7 +166,7 @@
 	                                type="date" 
 	                                class="form-control" 
 	                                id="addReturnDate" 
-	                                name="addReturnDate" 
+                                    name="returnDate" 
 	                                required
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -179,12 +177,12 @@
 	                    <div class="row">
 	                        <!-- Quantity Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanQuantity" class="form-label">Cantidad <span class="text-danger">*</span></label>
+	                            <label for="addQuantity" class="form-label">Cantidad <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
-	                                id="addLoanQuantity" 
-	                                name="addLoanQuantity" 
+	                                id="addQuantity" 
+                                    name="quantity"
 	                                min="1" 
 	                                placeholder="Ingrese la cantidad" 
 	                                required
@@ -194,11 +192,11 @@
 	                        
 	                        <!-- Observation Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addLoanObservation" class="form-label">Observación</label>
+	                            <label for="addObservation" class="form-label">Observación</label>
 	                            <textarea 
 	                                class="form-control" 
-	                                id="addLoanObservation" 
-	                                name="addLoanObservation" 
+	                                id="addObservation" 
+                                    name="observation"
 	                                rows="1" 
 	                                placeholder="Ingrese cualquier observación opcional"
 	                            ></textarea>
@@ -213,9 +211,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Loan Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addLoanForm" id="addLoanBtn">
-	                    <span id="addLoanIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addForm" id="addBtn">
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Prestar
 	                </button>
 	            </footer>
@@ -223,38 +221,38 @@
 	    </div>
 	</div>
 	
-	<!-- Loan Details Modal -->
-	<div class="modal fade" id="detailsLoanModal" tabindex="-1" aria-labelledby="detailsLoanModalLabel" aria-hidden="true">
+	<!-- Details Modal -->
+	<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsLoanModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="detailsModalLabel">
 	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del préstamo 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsLoanModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="detailsLoanSpinner" class="text-center my-5">
+	            	<div id="detailsSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsLoanContent" class="d-none">
+	            	<div id="detailsContent" class="d-none">
 		                <!-- ID and Book Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsLoanID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsID"></p>
 		                    </div>
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Libro</h6>
-		                        <p class="fw-bold" id="detailsLoanBook"></p>
+		                        <p class="fw-bold" id="detailsBook"></p>
 		                    </div>
 		                </div>
 		                
@@ -262,7 +260,7 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Estudiante</h6>
-		                        <p class="fw-bold" id="detailsLoanStudent"></p>
+		                        <p class="fw-bold" id="detailsStudent"></p>
 		                    </div>
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Fecha de préstamo</h6>
@@ -278,7 +276,7 @@
 		                    </div>
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Cantidad</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsLoanQuantity"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsQuantity"></p>
 		                    </div>
 		                </div>
 		                
@@ -286,11 +284,11 @@
 		                <div class="row">
 		                    <div class="col-md-6">
 		                        <h6 class="small text-muted">Estado</h6>
-		                        <p id="detailsLoanStatus"></p>
+		                        <p id="detailsStatus"></p>
 		                    </div>
 		                    <div class="col-md-6">
 		                        <h6 class="small text-muted">Observación</h6>
-		                        <p class="fw-bold" id="detailsLoanObservation"></p>
+		                        <p class="fw-bold" id="detailsObservation"></p>
 		                    </div>
 		                </div>
 					</div>
@@ -305,15 +303,15 @@
 	    </div>
 	</div>
 	
-	<!-- Return Loan Modal -->
-	<div class="modal fade" id="returnLoanModal" tabindex="-1" aria-labelledby="returnLoanModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Return Modal -->
+	<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
 	        	<!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="returnLoanModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="returnModalLabel">
 	                	Confirmación de préstamo 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="returnLoanModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="returnModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
@@ -329,9 +327,9 @@
 	            	<button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	            	
 	            	<!-- Confirm Button -->
-					<button type="button" class="btn btn-custom-primary d-flex align-items-center" id="confirmReturn">
-	                    <span id="confirmReturnIcon" class="me-2"><i class="bi bi-check2-square"></i></span>
-	                    <span id="confirmReturnSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+					<button type="button" class="btn btn-custom-primary d-flex align-items-center" id="returnBtn">
+	                    <i class="bi bi-check2-square me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Confirmar
 	                </button>
 	            </div>
@@ -339,44 +337,44 @@
 	    </div>
 	</div>
 	
-	<!-- Edit Loan Modal -->
-	<div class="modal fade" id="editLoanModal" tabindex="-1" aria-labelledby="editLoanModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Modal -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editLoanModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="editModalLabel">
 	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar préstamo 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editLoanModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="editLoanSpinner" class="text-center my-5">
+	            	<div id="editSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	                <form id="editLoanForm" class="d-none" accept-charset="UTF-8" novalidate>
+	                <form id="editForm" class="d-none" accept-charset="UTF-8" novalidate>
 	                    <!-- Student and Loan Date Section -->
 	                    <div class="row">
 	                    	<!-- Book Field -->
 	                    	<div class="col-md-6 mb-3">
 	                            <div class="form-label mb-2">Libro</div>
-								<div class="form-control bg-body-tertiary" id="editLoanBook"></div>
+								<div class="form-control bg-body-tertiary" id="editBook"></div>
 	                        </div>
 	                    
 	                        <!-- Student Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
+	                            <label for="editStudent" class="form-label">Estudiante <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editLoanStudent" 
-	                                name="editLoanStudent" 
+	                                id="editStudent" 
+                                    name="student"
 	                                data-live-search="true" 
 	                                data-live-search-placeholder="Buscar..." 
 	                                required
@@ -408,7 +406,7 @@
 	                                type="date" 
 	                                class="form-control" 
 	                                id="editReturnDate" 
-	                                name="editReturnDate" 
+                                    name="returnDate"
 	                                value="" 
 	                                required
 	                            >
@@ -420,22 +418,22 @@
 	                    <div class="row">
 	                    	<!-- Quantity Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editLoanQuantity" class="form-label">Cantidad</label>
+	                            <label for="editQuantity" class="form-label">Cantidad</label>
 	                            <input 
 	                                type="number" 
 	                                class="form-control" 
-	                                id="editLoanQuantity" 
+	                                id="editQuantity" 
 	                                disabled
 	                            >
 	                        </div>
 	                    
 	                    	<!-- Observation Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editloanObservation" class="form-label">Observación</label>
+	                            <label for="editObservation" class="form-label">Observación</label>
 	                            <textarea 
 	                                class="form-control" 
-	                                id="editloanObservation" 
-	                                name="editLoanObservation" 
+	                                id="editObservation" 
+                                    name="observation"
 	                                rows="1" 
 	                                placeholder="Ingrese cualquier observación opcional"
 	                            ></textarea>
@@ -450,9 +448,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editLoanForm" id="editLoanBtn" disabled>
-	                    <span id="editLoanIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editLoanSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editForm" id="updateBtn" disabled>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>

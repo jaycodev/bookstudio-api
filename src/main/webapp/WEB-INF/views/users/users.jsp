@@ -8,8 +8,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<%@ include file="/WEB-INF/includes/styles.jspf" %>
 	<title>BookStudio</title>
-	<link href="images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
-	<link href="images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
+	<link href="/images/logo-dark.png" rel="icon" media="(prefers-color-scheme: light)">
+	<link href="/images/logo-light.png" rel="icon" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 	<!-- ===================== Header ===================== -->
@@ -17,7 +17,7 @@
 
 	<!-- ===================== Sidebar ==================== -->
 	<jsp:include page="/WEB-INF/includes/sidebar.jsp">
-		<jsp:param name="currentPage" value="users" />
+		<jsp:param name="currentPage" value="/users" />
 	</jsp:include>
 
 	<!-- ===================== Main Content ==================== -->
@@ -53,7 +53,7 @@
 
 				<!-- Add Button -->
 				<button class="btn btn-custom-primary d-flex align-items-center"
-					data-bs-toggle="modal" data-bs-target="#addUserModal"
+					data-bs-toggle="modal" data-bs-target="#addModal"
 					aria-label="Agregar usuario" disabled>
 					<i class="bi bi-plus-circle me-2"></i>
 					Agregar
@@ -72,7 +72,7 @@
 
 				<!-- Table Container -->
 				<section id="tableContainer" class="d-none small">
-					<table id="userTable" class="table table-sm">
+					<table id="table" class="table table-sm">
 						<thead>
 							<tr>
 								<th scope="col" class="text-start">Código</th>
@@ -85,22 +85,20 @@
 								<th scope="col" class="text-center"></th>
 							</tr>
 						</thead>
-						<tbody id="bodyUsers">
-							<!-- Data will be populated here via JavaScript -->
-						</tbody>
+						<tbody></tbody>
 					</table>
 				</section>
 			</div>
 		</section>
 	</main>
 
-	<!-- Add User Modal -->
-	<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Add Modal -->
+	<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="addUserModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="addModalLabel">
 	                	<i class="bi bi-plus-circle me-1"></i> 
 	                	Agregar usuario
 	                </h5>
@@ -109,17 +107,17 @@
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	                <form id="addUserForm" enctype="multipart/form-data" novalidate>
+	                <form id="addForm" enctype="multipart/form-data" novalidate>
 	                    <!-- Username and Email Section -->
 	                    <div class="row">
 	                        <!-- Username Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserUsername" class="form-label">Nombre de usuario <span class="text-danger">*</span></label>
+	                            <label for="addUsername" class="form-label">Nombre de usuario <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addUserUsername" 
-	                                name="addUserUsername" 
+	                                id="addUsername" 
+                                    name="username"
 	                                placeholder="Ingrese su nombre de usuario" 
 	                                pattern="[A-Za-zÀ-ÿ0-9_]+" 
 									oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ0-9_]/g, '');" 
@@ -130,12 +128,12 @@
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
+	                            <label for="addEmail" class="form-label">Correo electrónico <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
-	                                id="addUserEmail" 
-	                                name="addUserEmail" 
+	                                id="addEmail" 
+                                    name="email"
 	                                placeholder="ejemplo@correo.com" 
 	                                required
 	                            >
@@ -147,12 +145,12 @@
 	                    <div class="row">
 	                        <!-- First Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
+	                            <label for="addFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addUserFirstName" 
-	                                name="addUserFirstName" 
+	                                id="addFirstName" 
+                                    name="firstName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese sus nombres" 
@@ -163,12 +161,12 @@
 	                        
 	                        <!-- Last Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
+	                            <label for="addLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="addUserLastName" 
-	                                name="addUserLastName" 
+	                                id="addLastName" 
+                                    name="lastName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese sus apellidos" 
@@ -183,14 +181,14 @@
 	                    <div class="row">
 	                        <!-- Password Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
+	                            <label for="addPassword" class="form-label">Contraseña <span class="text-danger">*</span></label>
 	                            <div class="input-group">
 	                                <input 
 	                                    type="password" 
 	                                    class="form-control password-field" 
 	                                    data-toggle-id="1" 
-	                                    id="addUserPassword" 
-	                                    name="addUserPassword" 
+	                                    id="addPassword" 
+                                        name="password"
 	                                    placeholder="Ingrese una contraseña" 
 	                                    autocomplete="new-password" 
 	                                    required
@@ -204,13 +202,13 @@
 	                        
 	                        <!-- Confirm Password Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserConfirmPassword" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
+	                            <label for="addConfirmPassword" class="form-label">Confirmar contraseña <span class="text-danger">*</span></label>
 	                            <div class="input-group">
 	                                <input 
 	                                    type="password" 
 	                                    class="form-control password-field" 
 	                                    data-toggle-id="2" 
-	                                    id="addUserConfirmPassword" 
+	                                    id="addConfirmPassword" 
 	                                    placeholder="Confirme su contraseña" 
 	                                    autocomplete="new-password" 
 	                                    required
@@ -227,11 +225,11 @@
 	                    <div class="row">
 	                        <!-- Role Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserRole" class="form-label">Rol <span class="text-danger">*</span></label>
+	                            <label for="addRole" class="form-label">Rol <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control placeholder-color" 
-	                                id="addUserRole" 
-	                                name="addUserRole" 
+	                                id="addRole" 
+                                    name="role"
 	                                title="Seleccione un rol" 
 	                                required
 	                            >
@@ -242,12 +240,11 @@
 	                        
 	                        <!-- Profile Photo Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="addUserProfilePhoto" class="form-label">Foto de perfil</label>
+	                            <label for="addProfilePhoto" class="form-label">Foto de perfil</label>
 	                            <input 
 	                                type="file" 
 	                                class="form-control" 
-	                                id="addUserProfilePhoto" 
-	                                name="addUserProfilePhoto" 
+	                                id="addProfilePhoto" 
 	                                accept="image/*"
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -290,9 +287,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Add Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addUserForm" id="addUserBtn">
-	                    <span id="addUserIcon" class="me-2"><i class="bi bi-plus-circle"></i></span>
-	                    <span id="addUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="addForm" id="addBtn">
+	                    <i class="bi bi-plus-circle me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Agregar
 	                </button>
 	            </footer>
@@ -300,39 +297,39 @@
 	    </div>
 	</div>
 	
-	<!-- User Details Modal -->
-	<div class="modal fade" id="detailsUserModal" tabindex="-1" aria-labelledby="detailsUserModalLabel" aria-hidden="true">
+	<!-- Details Modal -->
+	<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="detailsUserModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="detailsModalLabel">
 	                	<i class="bi bi-info-circle me-1"></i> 
 	                	Detalles del usuario 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsUserModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="detailsModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="detailsUserSpinner" class="text-center my-5">
+	            	<div id="detailsSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	            	<div id="detailsUserContent" class="d-none">
+	            	<div id="detailsContent" class="d-none">
 		                <!-- ID and Username Section -->
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Código</h6>
-		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsUserID"></p>
+		                        <p class="badge bg-body-tertiary text-body-emphasis border" id="detailsID"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nombre de usuario</h6>
-		                        <p class="fw-bold" id="detailsUserUsername"></p>
+		                        <p class="fw-bold" id="detailsUsername"></p>
 		                    </div>
 		                </div>
 		                
@@ -340,12 +337,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Correo electrónico</h6>
-		                        <p class="fw-bold" id="detailsUserEmail"></p>
+		                        <p class="fw-bold" id="detailsEmail"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Nombres</h6>
-		                        <p class="fw-bold" id="detailsUserFirstName"></p>
+		                        <p class="fw-bold" id="detailsFirstName"></p>
 		                    </div>
 		                </div>
 		                
@@ -353,12 +350,12 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Apellidos</h6>
-		                        <p class="fw-bold" id="detailsUserLastName"></p>
+		                        <p class="fw-bold" id="detailsLastName"></p>
 		                    </div>
 		                    
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Rol</h6>
-		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsUserRole"></p>
+		                        <p class="badge bg-body-secondary text-body-emphasis border" id="detailsRole"></p>
 		                    </div>
 		                </div>
 		                
@@ -366,11 +363,11 @@
 		                <div class="row">
 		                    <div class="col-md-6 mb-3">
 		                        <h6 class="small text-muted">Foto de perfil</h6>
-		                        <svg id="detailsUserSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
+		                        <svg id="detailsSvg" xmlns="http://www.w3.org/2000/svg" width="120" height="120" fill="currentColor" class="bi-person-circle" viewBox="0 0 16 16">
 									<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
 									<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
 					            </svg>
-					            <img id="detailsUserImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Usuario">
+					            <img id="detailsImg" src="" class="img-fluid rounded-circle" style="width: 120px; height: 120px;" alt="Foto del Usuario">
 		                    </div>
 		                </div>
 					</div>
@@ -385,49 +382,49 @@
 	    </div>
 	</div>
 	
-	<!-- Edit User Modal -->
-	<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Edit Modal -->
+	<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog modal-lg">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <header class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="editUserModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="editModalLabel">
 	                	<i class="bi bi-pencil me-1"></i> 
 	                	Editar usuario 
-						<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editUserModalID"></span>
+						<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="editModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </header>
 	            
 	            <!-- Modal Body -->
 	            <div class="modal-body">
-	            	<div id="editUserSpinner" class="text-center my-5">
+	            	<div id="editSpinner" class="text-center my-5">
 						<div class="spinner-border" role="status">
 						  <span class="visually-hidden">Cargando...</span>
 						</div>
 					</div>
 					
-	                <form id="editUserForm" class="d-none" enctype="multipart/form-data" novalidate>
+	                <form id="editForm" class="d-none" enctype="multipart/form-data" novalidate>
 	                    <!-- Username and Email Section -->
 	                    <div class="row">
 	                        <!-- Username Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserUsername" class="form-label">Nombre de usuario</label>
+	                            <label for="editUsername" class="form-label">Nombre de usuario</label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editUserUsername" 
+	                                id="editUsername" 
 	                                disabled
 	                            >
 	                        </div>
 	                        
 	                        <!-- Email Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserEmail" class="form-label">Correo electrónico</label>
+	                            <label for="editEmail" class="form-label">Correo electrónico</label>
 	                            <input 
 	                                type="email" 
 	                                class="form-control" 
-	                                id="editUserEmail" 
+	                                id="editEmail" 
 	                                disabled
 	                            >
 	                        </div>
@@ -437,12 +434,12 @@
 	                    <div class="row">
 	                        <!-- First Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
+	                            <label for="editFirstName" class="form-label">Nombres <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editUserFirstName" 
-	                                name="editUserFirstName" 
+	                                id="editFirstName" 
+                                    name="firstName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese sus nombres" 
@@ -453,12 +450,12 @@
 	                        
 	                        <!-- Last Name Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
+	                            <label for="editLastName" class="form-label">Apellidos <span class="text-danger">*</span></label>
 	                            <input 
 	                                type="text" 
 	                                class="form-control" 
-	                                id="editUserLastName" 
-	                                name="editUserLastName" 
+	                                id="editLastName" 
+                                    name="lastName"
 	                                pattern="[A-Za-zÀ-ÿ\s]+" 
 	                                oninput="this.value = this.value.replace(/[^A-Za-zÀ-ÿ\s]/g, '');" 
 	                                placeholder="Ingrese sus apellidos" 
@@ -473,11 +470,11 @@
 	                    <div class="row">      
 	                        <!-- Role Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserRole" class="form-label">Rol <span class="text-danger">*</span></label>
+	                            <label for="editRole" class="form-label">Rol <span class="text-danger">*</span></label>
 	                            <select 
 	                                class="selectpicker form-control" 
-	                                id="editUserRole" 
-	                                name="editUserRole" 
+	                                id="editRole" 
+                                    name="role"
 	                                required
 	                            >
 	                                <!-- Options will be dynamically populated via JavaScript -->
@@ -486,12 +483,11 @@
 	                        
 	                        <!-- Profile Photo Field -->
 	                        <div class="col-md-6 mb-3">
-	                            <label for="editUserProfilePhoto" class="form-label">Foto de perfil</label>
+	                            <label for="editProfilePhoto" class="form-label">Foto de perfil</label>
 	                            <input 
 	                                type="file" 
 	                                class="form-control" 
-	                                id="editUserProfilePhoto" 
-	                                name="editUserProfilePhoto" 
+	                                id="editProfilePhoto" 
 	                                accept="image/*"
 	                            >
 	                            <div class="invalid-feedback"></div>
@@ -531,9 +527,9 @@
 	                <button type="button" class="btn btn-custom-secondary" data-bs-dismiss="modal">Cancelar</button>
 	                
 	                <!-- Update Button -->
-	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editUserForm" id="editUserBtn" disabled>
-	                    <span id="editUserIcon" class="me-2"><i class="bi bi-floppy"></i></span>
-	                    <span id="editUserSpinnerBtn" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="submit" class="btn btn-custom-primary d-flex align-items-center" form="editForm" id="updateBtn" disabled>
+	                    <i class="bi bi-floppy me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Actualizar
 	                </button>
 	            </footer>
@@ -541,15 +537,15 @@
 	    </div>
 	</div>
 	
-	<!-- Delete User Modal -->
-	<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true" data-bs-backdrop="static">
+	<!-- Delete Modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" data-bs-backdrop="static">
 	    <div class="modal-dialog">
 	        <div class="modal-content">
 	            <!-- Modal Header -->
 	            <div class="modal-header">
-	                <h5 class="modal-title text-body-emphasis" id="deleteUserModalLabel">
+	                <h5 class="modal-title text-body-emphasis" id="deleteModalLabel">
 	                	Confirmación de usuario 
-	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="deleteUserModalID"></span>
+	                	<span class="badge bg-body-tertiary text-body-emphasis border ms-1" id="deleteModalID"></span>
 	                </h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
@@ -567,9 +563,9 @@
 	                </button>
 	                
 	                <!-- Delete Button -->
-	                <button type="button" class="btn btn-danger d-flex align-items-center" id="confirmDeleteUser">
-	                    <span id="confirmDeleteUserIcon" class="me-2"><i class="bi bi-trash"></i></span>
-	                    <span id="confirmDeleteUserSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+	                <button type="button" class="btn btn-danger d-flex align-items-center" id="deleteBtn">
+	                    <i class="bi bi-trash me-2"></i>
+	                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
 	                    Eliminar
 	                </button>
 	            </div>
@@ -585,7 +581,5 @@
 	<jsp:include page="/WEB-INF/includes/scripts.jsp">
 		<jsp:param name="currentPage" value="users" />
 	</jsp:include>
-
-	<script src="js/utils/ui/password.js" defer></script>
 </body>
 </html>

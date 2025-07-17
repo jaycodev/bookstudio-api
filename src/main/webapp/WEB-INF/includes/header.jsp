@@ -1,8 +1,9 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <header class="header position-fixed d-flex align-items-center px-4 bg-body-secondary border-bottom">
     <!-- Menu Button (Visible on Mobile) -->
-    <button class="btn-menu nav-link d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Abrir menú lateral">
+    <button class="btn-menu nav-link d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSidebar" aria-controls="offcanvasSidebar" aria-label="Abrir menï¿½ lateral">
         <i class="bi bi-list header-icon"></i>
     </button>
 
@@ -14,7 +15,7 @@
 
         <!-- Logo -->
 		<a href="./" class="text-center text-decoration-none text-body-emphasis d-flex align-items-center">
-		    <img class="logo me-2" alt="Logo de Bookstudio" src="./images/logo-light.png" width="25">
+		    <img class="logo me-2" alt="Logo de Bookstudio" src="/images/logo-light.png" width="25">
 		    <span class="fs-5 text-logo">BookStudio</span>
 		</a>
 
@@ -33,7 +34,7 @@
 
             <!-- User Dropdown -->
             <div class="dropdown bd-navbar">
-                <button type="button" class="btn btn-link nav-link d-flex align-items-center link-body-emphasis" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Abrir menú de usuario">
+                <button type="button" class="btn btn-link nav-link d-flex align-items-center link-body-emphasis" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Abrir menï¿½ de usuario">
                     <c:choose>
 					    <c:when test="${not empty sessionScope.user_profile_image}">
 					        <img src="${sessionScope.user_profile_image}" alt="Foto" width="24" height="24" class="rounded-circle">
@@ -48,7 +49,7 @@
                 <ul class="dropdown-menu dropdown-menu-end text-small gap-1 p-2 rounded-3 mx-0 shadow bg-body-secondary border">
                     <li>
                     	<!-- Profile Button -->
-                    	<a class="dropdown-item rounded-2 d-flex align-items-center" href="profile">
+                    	<a class="dropdown-item rounded-2 d-flex align-items-center" href="/profile">
                     		<i class="bi bi-person me-2"></i>
                     		Perfil
                     	</a>
@@ -58,7 +59,7 @@
                     	<!-- Logout Button -->
                     	<button class="dropdown-item rounded-2 dropdown-danger text-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
                     		<i class="bi bi-box-arrow-right me-2"></i>
-                    		Cerrar sesión
+                    		Cerrar sesiÃ³n
                     	</button>
                     </li>
                 </ul>
@@ -73,32 +74,27 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h5 class="modal-title text-body-emphasis" id="logoutModalLabel">Confirmar cierre de sesión</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar Sesión"></button>
+                <h5 class="modal-title text-body-emphasis" id="logoutModalLabel">Confirmar cierre de sesiÃ³n</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar SesiÃ³n"></button>
             </div>
-            
+
             <!-- Modal Body -->
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas cerrar tu sesión?</p>
+                <p>Â¿EstÃ¡s seguro de que deseas cerrar tu sesiÃ³n?</p>
             </div>
-            
+
             <!-- Modal Footer -->
             <div class="modal-footer">
                 <!-- Cancel Button -->
                 <button type="button" class="btn btn-custom-secondary d-flex align-items-center" data-bs-dismiss="modal">
-		        	Cancelar
-		        </button>
-		           
-                <!-- Logout Form -->
-                <form action="LoginServlet" method="post">
-                    <input type="hidden" name="type" value="logout"/>
-                    
-                    <!-- Logout Button -->
-                    <button type="submit" class="btn btn-danger d-flex align-items-center">
-                    	<i class="bi bi-box-arrow-right me-2"></i>
-                    	Cerrar sesión
-                    </button>
-                </form>
+                    Cancelar
+                </button>
+
+                <!-- Logout Button (JS-triggered) -->
+                <button id="confirmLogoutBtn" type="button" class="btn btn-danger d-flex align-items-center">
+                    <i class="bi bi-box-arrow-right me-2"></i>
+                    Cerrar sesiÃ³n
+                </button>
             </div>
         </div>
     </div>
@@ -110,12 +106,12 @@
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="sessionExpiredModalLabel">Sesión por expirar</h5>
+                <h5 class="modal-title" id="sessionExpiredModalLabel">SesiÃ³n por expirar</h5>
             </div>
             
             <!-- Modal Body -->
             <div class="modal-body">
-                <p>Tu sesión está a punto de expirar. ¿Deseas continuar con tu sesión?</p>
+                <p>Tu sesiÃ³n estÃ¡ a punto de expirar. Â¿Deseas continuar con tu sesiÃ³n?</p>
             </div>
             
             <!-- Modal Footer -->
@@ -124,13 +120,13 @@
                 <button type="button" class="btn btn-danger d-flex align-items-center" id="logoutBtn">
                     <span id="logoutIcon" class="me-2"><i class="bi bi-box-arrow-right"></i></span>
                     <span id="logoutSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-                    Cerrar sesión
+                    Cerrar sesiÃ³n
                 </button>
                 
                 <!-- Continue Session Button -->
                 <button type="button" class="btn btn-custom-secondary d-flex align-items-center" id="extendSessionBtn" data-bs-dismiss="modal">
                     <i class="bi bi-arrow-clockwise me-2"></i>
-                    Continuar sesión
+                    Continuar sesiÃ³n
                 </button>
             </div>
         </div>

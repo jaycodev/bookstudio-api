@@ -1,150 +1,112 @@
 package com.bookstudio.publisher.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-
-import com.bookstudio.publisher.dao.PublisherDao;
-import com.bookstudio.publisher.dao.PublisherDaoImpl;
+import com.bookstudio.publisher.dto.CreatePublisherDto;
+import com.bookstudio.publisher.dto.PublisherResponseDto;
+import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.model.Publisher;
-import com.bookstudio.shared.dao.LiteraryGenreDao;
-import com.bookstudio.shared.dao.LiteraryGenreDaoImpl;
-import com.bookstudio.shared.dao.NationalityDao;
-import com.bookstudio.shared.dao.NationalityDaoImpl;
+import com.bookstudio.publisher.projection.PublisherInfoProjection;
+import com.bookstudio.publisher.projection.PublisherListProjection;
+import com.bookstudio.publisher.projection.PublisherSelectProjection;
+import com.bookstudio.publisher.repository.PublisherRepository;
+import com.bookstudio.shared.service.LiteraryGenreService;
+import com.bookstudio.shared.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
 public class PublisherService {
-	private PublisherDao publisherDao = new PublisherDaoImpl();
-	private NationalityDao nationalityDao = new NationalityDaoImpl();
-	private LiteraryGenreDao literaryGenreDao = new LiteraryGenreDaoImpl();
 
-	public List<Publisher> listPublishers() throws Exception {
-		List<Publisher> publisherData = publisherDao.listAll();
-		
-		for (Publisher publisher : publisherData) {
-			encodePublisherPhoto(publisher);
-		}
-		
-		return publisherData;
-	}
+    private final PublisherRepository publisherRepository;
 
-	public Publisher getPublisher(String publisherId) throws Exception {
-		Publisher publisher = publisherDao.getById(publisherId);
-		encodePublisherPhoto(publisher);
-		
-		return publisher;
-	}
+    private final NationalityService nationalityService;
+    private final LiteraryGenreService literaryGenreService;
 
-	public Publisher createPublisher(HttpServletRequest request) throws Exception {
-		String name = getUtf8Parameter(request, "addPublisherName");
-		String nationalityId = getUtf8Parameter(request, "addPublisherNationality");
-		String literaryGenreId = getUtf8Parameter(request, "addLiteraryGenre");
-		int foundationYear = Integer.parseInt(getUtf8Parameter(request, "addFoundationYear"));
-		String website = getUtf8Parameter(request, "addPublisherWebsite");
-		String address = getUtf8Parameter(request, "addPublisherAddress");
-		String status = getUtf8Parameter(request, "addPublisherStatus");
+    public List<PublisherListProjection> getList() {
+        return publisherRepository.findList();
+    }
 
-		byte[] photo = readPhoto(request, "addPublisherPhoto");
+    public Optional<Publisher> findById(Long publisherId) {
+        return publisherRepository.findById(publisherId);
+    }
 
-		Publisher publisher = new Publisher();
-		publisher.setName(name);
-		publisher.setNationalityId(nationalityId);
-		publisher.setLiteraryGenreId(literaryGenreId);
-		publisher.setFoundationYear(foundationYear);
-		publisher.setWebsite(website);
-		publisher.setAddress(address);
-		publisher.setStatus(status);
-		publisher.setPhoto(photo);
+    public Optional<PublisherInfoProjection> getInfoById(Long publisherId) {
+        return publisherRepository.findInfoById(publisherId);
+    }
 
-		Publisher createdPublisher = publisherDao.create(publisher);
-		encodePublisherPhoto(createdPublisher);
-		
-		return createdPublisher;
-	}
+    @Transactional
+    public PublisherResponseDto create(CreatePublisherDto dto) {
+        Publisher publisher = new Publisher();
+        publisher.setName(dto.getName());
+        publisher.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nationality not found")));
+        publisher.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Literary genre not found")));
+        publisher.setFoundationYear(dto.getFoundationYear());
+        publisher.setWebsite(dto.getWebsite());
+        publisher.setAddress(dto.getAddress());
+        publisher.setStatus(dto.getStatus());
+        publisher.setPhotoUrl(dto.getPhotoUrl());
 
-	public Publisher updatePublisher(HttpServletRequest request) throws Exception {
-		String publisherId = getUtf8Parameter(request, "publisherId");
-		String name = getUtf8Parameter(request, "editPublisherName");
-		String nationalityId = getUtf8Parameter(request, "editPublisherNationality");
-		String literaryGenreId = getUtf8Parameter(request, "editLiteraryGenre");
-		int foundationYear = Integer.parseInt(getUtf8Parameter(request, "editFoundationYear"));
-		String website = getUtf8Parameter(request, "editPublisherWebsite");
-		String address = getUtf8Parameter(request, "editPublisherAddress");
-		String status = getUtf8Parameter(request, "editPublisherStatus");
-		String deletePhoto = request.getParameter("deletePhoto");
+        Publisher saved = publisherRepository.save(publisher);
 
-		byte[] photo = null;
-		if ("true".equals(deletePhoto)) {
-			photo = null;
-		} else {
-			photo = readPhoto(request, "editPublisherPhoto");
-			if (photo == null) {
-				Publisher currentPublisher = publisherDao.getById(publisherId);
-				photo = currentPublisher.getPhoto();
-			}
-		}
+        return new PublisherResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getWebsite(),
+                saved.getStatus().name(),
+                saved.getPhotoUrl());
+    }
 
-		Publisher publisher = new Publisher();
-		publisher.setPublisherId(publisherId);
-		publisher.setName(name);
-		publisher.setNationalityId(nationalityId);
-		publisher.setLiteraryGenreId(literaryGenreId);
-		publisher.setFoundationYear(foundationYear);
-		publisher.setWebsite(website);
-		publisher.setAddress(address);
-		publisher.setStatus(status);
-		publisher.setPhoto(photo);
+    @Transactional
+    public PublisherResponseDto update(UpdatePublisherDto dto) {
+        Publisher publisher = publisherRepository.findById(dto.getPublisherId())
+                .orElseThrow(() -> new RuntimeException("Editorial no encontrada con ID: " + dto.getPublisherId()));
 
-		return publisherDao.update(publisher);
-	}
+        publisher.setName(dto.getName());
+        publisher.setNationality(nationalityService.findById(dto.getNationalityId())
+                .orElseThrow(() -> new RuntimeException("Nationality not found")));
+        publisher.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
+                .orElseThrow(() -> new RuntimeException("Literary genre not found")));
+        publisher.setFoundationYear(dto.getFoundationYear());
+        publisher.setWebsite(dto.getWebsite());
+        publisher.setAddress(dto.getAddress());
+        publisher.setStatus(dto.getStatus());
 
-	public SelectOptions populateSelects() throws Exception {
-		SelectOptions selectOptions = new SelectOptions();
-		
-		selectOptions.setNationalities(nationalityDao.populateNationalitySelect());
-		
-		selectOptions.setLiteraryGenres(literaryGenreDao.populateLiteraryGenreSelect());
-		
-		return selectOptions;
-	}
+        if (dto.isDeletePhoto()) {
+            publisher.setPhotoUrl(null);
+        } else if (dto.getPhotoUrl() != null && !dto.getPhotoUrl().isBlank()) {
+            publisher.setPhotoUrl(dto.getPhotoUrl());
+        }
 
-	private String getUtf8Parameter(HttpServletRequest request, String fieldName) throws IOException, ServletException {
-		Part part = request.getPart(fieldName);
-		if (part != null) {
-			try (InputStream is = part.getInputStream()) {
-				return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-			}
-		}
-		
-		return "";
-	}
+        Publisher saved = publisherRepository.save(publisher);
 
-	private byte[] readPhoto(HttpServletRequest request, String partName) {
-		try {
-			Part part = request.getPart(partName);
-			if (part != null) {
-				InputStream inputStream = part.getInputStream();
-				if (inputStream.available() > 0) {
-					return inputStream.readAllBytes();
-				}
-			}
-		} catch (Exception e) {
-			System.err.println("Error reading photo from part '" + partName + "': " + e.getMessage());
-		}
-		
-		return null;
-	}
+        return new PublisherResponseDto(
+                saved.getId(),
+                saved.getName(),
+                saved.getNationality().getName(),
+                saved.getLiteraryGenre().getName(),
+                saved.getWebsite(),
+                saved.getStatus().name(),
+                saved.getPhotoUrl());
+    }
 
-	private void encodePublisherPhoto(Publisher publisher) {
-		byte[] photo = publisher.getPhoto();
-		if (photo != null) {
-			String photoBase64 = Base64.getEncoder().encodeToString(photo);
-			publisher.setPhotoBase64("data:image/jpeg;base64," + photoBase64);
-		}
-	}
+    public List<PublisherSelectProjection> getForSelect() {
+        return publisherRepository.findForSelect();
+    }
+
+    public SelectOptions getSelectOptions() {
+        return SelectOptions.builder()
+                .nationalities(nationalityService.getForSelect())
+                .literaryGenres(literaryGenreService.getForSelect())
+                .build();
+    }
 }

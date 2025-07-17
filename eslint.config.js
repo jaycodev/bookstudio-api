@@ -2,7 +2,7 @@ import pluginPrettier from 'eslint-plugin-prettier'
 
 export default [
 	{
-		files: ['src/main/webapp/**/*.js'],
+		files: ['src/main/resources/static/**/*.js'],
 		ignores: [
 			'node_modules/**',
 			'target/**',
