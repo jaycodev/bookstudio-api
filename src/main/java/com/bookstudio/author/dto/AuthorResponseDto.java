@@ -13,7 +13,7 @@ public class AuthorResponseDto {
     private Long authorId;
     private String name;
     private String nationalityName;
-    private String genreName;
+    private String literaryGenreName;
     private LocalDate birthDate;
     private String status;
     private String photoUrl;

@@ -60,7 +60,7 @@ public class UserController {
             UserResponseDto created = userService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (RuntimeException e) {
-            return handleFieldError(e.getMessage(), "addUserEmail", "addUserUsername");
+            return handleFieldError(e.getMessage(), "addEmail", "addUsername");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiError(false, "Server error while creating user.", "server_error", 500));
@@ -73,7 +73,7 @@ public class UserController {
             UserResponseDto updated = userService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
-            return handleFieldError(e.getMessage(), "editUserEmail", "editUserUsername");
+            return handleFieldError(e.getMessage(), "editEmail", "editUsername");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiError(false, "Server error while updating user.", "server_error", 500));

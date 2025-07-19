@@ -52,7 +52,7 @@ public class StudentController {
             StudentResponseDto created = studentService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (RuntimeException e) {
-            return handleFieldError(e.getMessage(), "addStudentEmail", "addStudentDNI");
+            return handleFieldError(e.getMessage(), "addEmail", "addDNI");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiError(false, "Server error while creating student.", "server_error", 500));
@@ -65,7 +65,7 @@ public class StudentController {
             StudentResponseDto updated = studentService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
-            return handleFieldError(e.getMessage(), "editStudentEmail", null);
+            return handleFieldError(e.getMessage(), "editEmail", null);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiError(false, "Server error while updating student.", "server_error", 500));

@@ -2,30 +2,20 @@
 /target/
 build/
 
-# ─── Spring Boot local config ──────
+# ─── Spring Boot local config ─────────────────
 /src/main/resources/application-local.properties
 
 # ─── Logs ─────────────────────────────────────
 *.log
 
-# ─── Class files ──────────────────────────────
+# ─── Compiled class files ─────────────────────
 *.class
 
-# ─── OS generated files ───────────────────────
+# ─── System files ─────────────────────────────
 .DS_Store
 Thumbs.db
 
-# ─── Swap files ───────────────────────────────
-*.swp
-*.swo
-
-# ─── Node/npm ─────────────────────────────────
-/node_modules/
-
-# ─── Maven wrapper ────────────────────────────
-.mvn/wrapper/maven-wrapper.jar
-
-# ─── IDEs ─────────────────────────────────────
+# ─── Editor/IDE files ─────────────────────────
 
 ## IntelliJ
 .idea/
@@ -54,9 +44,17 @@ Thumbs.db
 ## VS Code
 .vscode/
 
-# ─── Others ───────────────────────────────────
-/.metadata/
-/HELP.md
+# ─── Swap/temporary files ─────────────────────
+*.swp
+*.swo
+
+# ─── Maven wrapper ────────────────────────────
+.mvn/wrapper/maven-wrapper.jar
+/mvnw.cmd
+/mvnw
+
+# ─── Node/npm (si frontend va en monorepo) ────
+/node_modules/
 
 # ─── Dotenv files ─────────────────────────────
-.en
+.env

@@ -1,49 +1,28 @@
 {
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "redhat.java",
+  "editor.formatOnSave": true,
 
-	"editor.formatOnSave": true,
+  "[java]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "redhat.java"
+  },
 
-	"eslint.validate": ["javascript"],
-	"eslint.run": "onSave",
+  "editor.detectIndentation": false,
 
-	"[javascript]": {
-		"editor.tabSize": 2,
-		"editor.insertSpaces": false,
-		"editor.formatOnSave": true
-	},
-	"[css]": {
-		"editor.tabSize": 2,
-		"editor.insertSpaces": false,
-		"editor.formatOnSave": true
-	},
-	"[json]": {
-		"editor.tabSize": 2,
-		"editor.insertSpaces": false
-	},
-	"[java]": {
-		"editor.tabSize": 4,
-		"editor.insertSpaces": true,
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "redhat.java"
-	},
+  "files.exclude": {
+    "**/.idea": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/target": true,
+    "**/.mvn": true,
+    "**/mvnw": true,
+    "**/mvnw.cmd": true,
+    "**/src/test": true
+  },
 
-	"prettier.configPath": ".prettierrc.json",
-	"editor.detectIndentation": false,
-
-	"files.exclude": {
-		"**/.idea": true,
-		"**/.vscode": false,
-		"**/node_modules": true,
-		"**/.classpath": true,
-		"**/.project": true,
-		"**/.settings": true,
-		"**/target": true,
-		"**/.mvn": true,
-		"**/mvnw": true,
-		"**/mvnw.cmd": true,
-		"**/src/test": true
-	},
-
-	"java.compile.nullAnalysis.mode": "automatic",
-	"java.configuration.updateBuildConfiguration": "interactive"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
