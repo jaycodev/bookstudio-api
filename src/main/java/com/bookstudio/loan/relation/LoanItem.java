@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "loan_items", schema = "bookstudio_db")
+@Table(name = "loan_items")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,10 +22,12 @@ public class LoanItem {
 
     @ManyToOne
     @MapsId("loanId")
+    @JoinColumn(name = "loan_id")
     private Loan loan;
 
     @ManyToOne
     @MapsId("copyId")
+    @JoinColumn(name = "copy_id")
     private Copy copy;
 
     private LocalDate dueDate;

@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "payment_fines", schema = "bookstudio_db")
+@Table(name = "payment_fines")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,9 +19,11 @@ public class PaymentFine {
 
     @ManyToOne
     @MapsId("paymentId")
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
     @ManyToOne
     @MapsId("fineId")
+    @JoinColumn(name = "fine_id")
     private Fine fine;
 }

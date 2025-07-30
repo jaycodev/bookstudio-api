@@ -11,7 +11,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "books", schema = "bookstudio_db")
+@Table(name = "books")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

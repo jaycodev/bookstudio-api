@@ -8,12 +8,13 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "loans", schema = "bookstudio_db")
+@Table(name = "loans")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Loan {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;

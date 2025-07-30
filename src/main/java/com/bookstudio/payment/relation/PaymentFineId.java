@@ -10,6 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentFineId implements Serializable {
+
+    @Column(name = "payment_id")
     private Long paymentId;
+
+    @Column(name = "fine_id")
     private Long fineId;
 }

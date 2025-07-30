@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "book_authors", schema = "bookstudio_db")
+@Table(name = "book_authors")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,9 +19,11 @@ public class BookAuthor {
 
     @ManyToOne
     @MapsId("bookId")
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @ManyToOne
     @MapsId("authorId")
+    @JoinColumn(name = "author_id")
     private Author author;
 }

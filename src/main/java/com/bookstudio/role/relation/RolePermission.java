@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "role_permissions", schema = "bookstudio_db")
+@Table(name = "role_permissions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,9 +18,11 @@ public class RolePermission {
 
     @ManyToOne
     @MapsId("roleId")
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @ManyToOne
     @MapsId("permissionId")
+    @JoinColumn(name = "permission_id")
     private Permission permission;
 }

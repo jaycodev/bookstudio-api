@@ -10,6 +10,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PublisherGenreId implements Serializable {
+
+    @Column(name = "publisher_id")
     private Long publisherId;
+
+    @Column(name = "genre_id")
     private Long genreId;
 }

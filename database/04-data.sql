@@ -1,4 +1,4 @@
-SET search_path TO bookstudio_db;
+SET search_path TO public;
 
 BEGIN;
 

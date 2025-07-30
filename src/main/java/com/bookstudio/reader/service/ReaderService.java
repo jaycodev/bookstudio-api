@@ -73,7 +73,7 @@ public class ReaderService {
         Reader reader = readerRepository.findById(dto.getReaderId())
                 .orElseThrow(() -> new RuntimeException("Lector no encontrado con ID: " + dto.getReaderId()));
 
-        if (readerRepository.findByEmailAndIdNot(dto.getEmail(), dto.getReaderId()).isPresent()) {
+        if (readerRepository.findByEmailAndReaderIdNot(dto.getEmail(), dto.getReaderId()).isPresent()) {
             throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
         }
 

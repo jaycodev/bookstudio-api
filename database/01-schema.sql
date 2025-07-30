@@ -1,6 +1,4 @@
-DROP SCHEMA IF EXISTS bookstudio_db CASCADE;
-CREATE SCHEMA bookstudio_db;
-SET search_path TO bookstudio_db;
+SET search_path TO public;
 
 BEGIN;
 

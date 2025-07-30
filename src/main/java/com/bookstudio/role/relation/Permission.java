@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "permissions", schema = "bookstudio_db")
+@Table(name = "permissions")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

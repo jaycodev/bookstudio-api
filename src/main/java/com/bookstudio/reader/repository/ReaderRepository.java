@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface ReaderRepository extends JpaRepository<Reader, Long> {
     Optional<Reader> findByDni(String dni);
     Optional<Reader> findByEmail(String email);
-    Optional<Reader> findByEmailAndIdNot(String email, Long excludedId);
+    Optional<Reader> findByEmailAndReaderIdNot(String email, Long excludedId);
 
     @Query("""
         SELECT 

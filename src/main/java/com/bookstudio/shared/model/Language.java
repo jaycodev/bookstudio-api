@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "languages", schema = "bookstudio_db")
+@Table(name = "languages")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

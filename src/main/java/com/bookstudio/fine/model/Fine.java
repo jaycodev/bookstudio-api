@@ -10,7 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "fines", schema = "bookstudio_db")
+@Table(name = "fines")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
