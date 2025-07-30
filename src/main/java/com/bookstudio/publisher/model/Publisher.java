@@ -1,7 +1,8 @@
 package com.bookstudio.publisher.model;
 
+import com.bookstudio.nationality.model.Nationality;
 import com.bookstudio.shared.enums.Status;
-import com.bookstudio.shared.model.Nationality;
+
 import jakarta.persistence.*;
 import lombok.*;
 

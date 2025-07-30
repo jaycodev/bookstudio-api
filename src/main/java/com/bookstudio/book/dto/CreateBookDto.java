@@ -1,6 +1,8 @@
 package com.bookstudio.book.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import com.bookstudio.shared.enums.Status;
 import lombok.Data;
 
@@ -17,4 +19,6 @@ public class CreateBookDto {
     private Long categoryId;
     private LocalDate releaseDate;
     private Status status;
+    private List<Long> authorIds;
+    private List<Long> genreIds;
 }

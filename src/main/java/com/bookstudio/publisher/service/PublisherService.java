@@ -1,5 +1,6 @@
 package com.bookstudio.publisher.service;
 
+import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.publisher.dto.CreatePublisherDto;
 import com.bookstudio.publisher.dto.PublisherResponseDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
@@ -8,7 +9,6 @@ import com.bookstudio.publisher.projection.PublisherInfoProjection;
 import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.projection.PublisherSelectProjection;
 import com.bookstudio.publisher.repository.PublisherRepository;
-import com.bookstudio.shared.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.transaction.Transactional;

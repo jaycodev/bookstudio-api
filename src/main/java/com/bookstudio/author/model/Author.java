@@ -1,7 +1,8 @@
 package com.bookstudio.author.model;
 
+import com.bookstudio.nationality.model.Nationality;
 import com.bookstudio.shared.enums.Status;
-import com.bookstudio.shared.model.Nationality;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,4 +37,8 @@ public class Author {
 
     @Column(length = 512)
     private String photoUrl;
+
+    public Author(Long id) {
+        this.authorId = id;
+    }
 }

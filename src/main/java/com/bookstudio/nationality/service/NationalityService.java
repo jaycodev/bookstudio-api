@@ -1,7 +1,8 @@
-package com.bookstudio.shared.service;
+package com.bookstudio.nationality.service;
 
-import com.bookstudio.shared.model.Nationality;
-import com.bookstudio.shared.repository.NationalityRepository;
+import com.bookstudio.nationality.model.Nationality;
+import com.bookstudio.nationality.repository.NationalityRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

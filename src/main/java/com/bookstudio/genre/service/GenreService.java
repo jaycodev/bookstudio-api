@@ -1,7 +1,7 @@
-package com.bookstudio.shared.service;
+package com.bookstudio.genre.service;
 
-import com.bookstudio.shared.model.Genre;
-import com.bookstudio.shared.repository.GenreRepository;
+import com.bookstudio.genre.model.Genre;
+import com.bookstudio.genre.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

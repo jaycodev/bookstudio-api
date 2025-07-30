@@ -1,9 +1,9 @@
 package com.bookstudio.book.model;
 
 import com.bookstudio.category.model.Category;
+import com.bookstudio.language.model.Language;
 import com.bookstudio.publisher.model.Publisher;
 import com.bookstudio.shared.enums.Status;
-import com.bookstudio.shared.model.Language;
 
 import jakarta.persistence.*;
 import lombok.*;

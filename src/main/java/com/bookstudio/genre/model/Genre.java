@@ -1,4 +1,4 @@
-package com.bookstudio.shared.model;
+package com.bookstudio.genre.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,4 +17,8 @@ public class Genre {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    public Genre(Long id) {
+        this.genreId = id;
+    }
 }

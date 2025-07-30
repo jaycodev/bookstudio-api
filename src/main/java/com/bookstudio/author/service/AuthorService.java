@@ -8,7 +8,7 @@ import com.bookstudio.author.projection.AuthorInfoProjection;
 import com.bookstudio.author.projection.AuthorListProjection;
 import com.bookstudio.author.projection.AuthorSelectProjection;
 import com.bookstudio.author.repository.AuthorRepository;
-import com.bookstudio.shared.service.NationalityService;
+import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.transaction.Transactional;

@@ -1,18 +1,32 @@
 package com.bookstudio.book.service;
 
-import com.bookstudio.book.dto.BookResponseDto;
+import com.bookstudio.author.dto.AuthorDto;
+import com.bookstudio.author.model.Author;
+import com.bookstudio.book.dto.BookDto;
+import com.bookstudio.book.dto.BookListDto;
+import com.bookstudio.book.dto.BookSelectDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
 import com.bookstudio.book.model.Book;
-import com.bookstudio.book.projection.BookInfoProjection;
-import com.bookstudio.book.projection.BookListProjection;
-import com.bookstudio.book.projection.BookSelectProjection;
+import com.bookstudio.book.relation.BookAuthor;
+import com.bookstudio.book.relation.BookAuthorId;
+import com.bookstudio.book.relation.BookGenre;
+import com.bookstudio.book.relation.BookGenreId;
+import com.bookstudio.book.repository.BookAuthorRepository;
+import com.bookstudio.book.repository.BookGenreRepository;
 import com.bookstudio.book.repository.BookRepository;
+import com.bookstudio.category.dto.CategoryDto;
 import com.bookstudio.category.service.CategoryService;
+import com.bookstudio.genre.dto.GenreDto;
+import com.bookstudio.genre.model.Genre;
+import com.bookstudio.language.dto.LanguageDto;
+import com.bookstudio.language.service.LanguageService;
+import com.bookstudio.nationality.dto.NationalityDto;
+import com.bookstudio.publisher.dto.PublisherDto;
 import com.bookstudio.publisher.service.PublisherService;
-import com.bookstudio.shared.service.LanguageService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +39,14 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final BookAuthorRepository bookAuthorRepository;
+    private final BookGenreRepository bookGenreRepository;
 
     private final LanguageService languageService;
     private final PublisherService publisherService;
     private final CategoryService categoryService;
 
-    public List<BookListProjection> getList() {
+    public List<BookListDto> getList() {
         return bookRepository.findList();
     }
 
@@ -38,12 +54,14 @@ public class BookService {
         return bookRepository.findById(bookId);
     }
 
-    public Optional<BookInfoProjection> getInfoById(Long bookId) {
-        return bookRepository.findInfoById(bookId);
+    public BookDto getInfoById(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + bookId));
+        return toDto(book);
     }
 
     @Transactional
-    public BookResponseDto create(CreateBookDto dto) {
+    public BookListDto create(CreateBookDto dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
         book.setIsbn(dto.getIsbn());
@@ -55,28 +73,42 @@ public class BookService {
         book.setStatus(dto.getStatus());
 
         book.setLanguage(languageService.findById(dto.getLanguageId())
-                .orElseThrow(() -> new RuntimeException("Language not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Language not found with ID: " + dto.getLanguageId())));
         book.setPublisher(publisherService.findById(dto.getPublisherId())
-                .orElseThrow(() -> new RuntimeException("Publisher not found")));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Publisher not found with ID: " + dto.getPublisherId())));
         book.setCategory(categoryService.findById(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + dto.getCategoryId())));
 
         Book saved = bookRepository.save(book);
 
-        return new BookResponseDto(
-                saved.getBookId(),
-                saved.getTitle(),
-                saved.getIsbn(),
-                saved.getCoverUrl(),
-                saved.getPublisher().getName(),
-                saved.getCategory().getName(),
-                saved.getStatus().name());
+        if (dto.getAuthorIds() != null) {
+            for (Long authorId : dto.getAuthorIds()) {
+                BookAuthor relation = new BookAuthor();
+                relation.setId(new BookAuthorId(saved.getBookId(), authorId));
+                relation.setBook(saved);
+                relation.setAuthor(new Author(authorId));
+                bookAuthorRepository.save(relation);
+            }
+        }
+
+        if (dto.getGenreIds() != null) {
+            for (Long genreId : dto.getGenreIds()) {
+                BookGenre relation = new BookGenre();
+                relation.setId(new BookGenreId(saved.getBookId(), genreId));
+                relation.setBook(saved);
+                relation.setGenre(new Genre(genreId));
+                bookGenreRepository.save(relation);
+            }
+        }
+
+        return toListDto(saved);
     }
 
     @Transactional
-    public BookResponseDto update(UpdateBookDto dto) {
-        Book book = bookRepository.findById(dto.getBookId())
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + dto.getBookId()));
+    public BookListDto update(UpdateBookDto dto) {
+        Book book = bookRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + dto.getId()));
 
         book.setTitle(dto.getTitle());
         book.setIsbn(dto.getIsbn());
@@ -88,25 +120,44 @@ public class BookService {
         book.setStatus(dto.getStatus());
 
         book.setLanguage(languageService.findById(dto.getLanguageId())
-                .orElseThrow(() -> new RuntimeException("Language not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Language not found with ID: " + dto.getLanguageId())));
         book.setPublisher(publisherService.findById(dto.getPublisherId())
-                .orElseThrow(() -> new RuntimeException("Publisher not found")));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Publisher not found with ID: " + dto.getPublisherId())));
         book.setCategory(categoryService.findById(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + dto.getCategoryId())));
 
         Book saved = bookRepository.save(book);
 
-        return new BookResponseDto(
-                saved.getBookId(),
-                saved.getTitle(),
-                saved.getIsbn(),
-                saved.getCoverUrl(),
-                saved.getPublisher().getName(),
-                saved.getCategory().getName(),
-                saved.getStatus().name());
+        bookAuthorRepository.deleteAllByBook(saved);
+        bookGenreRepository.deleteAllByBook(saved);
+
+        if (dto.getAuthorIds() != null) {
+            for (Long authorId : dto.getAuthorIds()) {
+                BookAuthor relation = BookAuthor.builder()
+                        .id(new BookAuthorId(saved.getBookId(), authorId))
+                        .book(saved)
+                        .author(new Author(authorId))
+                        .build();
+                bookAuthorRepository.save(relation);
+            }
+        }
+
+        if (dto.getGenreIds() != null) {
+            for (Long genreId : dto.getGenreIds()) {
+                BookGenre relation = BookGenre.builder()
+                        .id(new BookGenreId(saved.getBookId(), genreId))
+                        .book(saved)
+                        .genre(new Genre(genreId))
+                        .build();
+                bookGenreRepository.save(relation);
+            }
+        }
+
+        return toListDto(saved);
     }
 
-    public List<BookSelectProjection> getForSelect() {
+    public List<BookSelectDto> getForSelect() {
         return bookRepository.findForSelect();
     }
 
@@ -116,5 +167,68 @@ public class BookService {
                 .publishers(publisherService.getForSelect())
                 .categories(categoryService.getForSelect())
                 .build();
+    }
+
+    private BookDto toDto(Book book) {
+        List<AuthorDto> authors = bookAuthorRepository.findAuthorFlatDtosByBookId(book.getBookId()).stream()
+                .map(flat -> new AuthorDto(
+                        flat.id(), flat.name(), flat.biography(), flat.birthDate(),
+                        flat.photoUrl(), flat.status().name(),
+                        new NationalityDto(flat.nationalityId(), flat.nationalityName())))
+                .toList();
+
+        List<GenreDto> genres = bookGenreRepository.findGenreDtosByBookId(book.getBookId());
+
+        return BookDto.builder()
+                .id(book.getBookId())
+                .title(book.getTitle())
+                .isbn(book.getIsbn())
+                .language(LanguageDto.builder()
+                        .id(book.getLanguage().getLanguageId())
+                        .name(book.getLanguage().getName())
+                        .code(book.getLanguage().getCode())
+                        .build())
+                .edition(book.getEdition())
+                .pages(book.getPages())
+                .description(book.getDescription())
+                .coverUrl(book.getCoverUrl())
+                .publisher(PublisherDto.builder()
+                        .id(book.getPublisher().getPublisherId())
+                        .name(book.getPublisher().getName())
+                        .foundationYear(book.getPublisher().getFoundationYear())
+                        .website(book.getPublisher().getWebsite())
+                        .address(book.getPublisher().getAddress())
+                        .photoUrl(book.getPublisher().getPhotoUrl())
+                        .status(book.getPublisher().getStatus().name())
+                        .nationality(NationalityDto.builder()
+                                .id(book.getPublisher().getNationality().getNationalityId())
+                                .name(book.getPublisher().getNationality().getName())
+                                .build())
+                        .build())
+                .category(CategoryDto.builder()
+                        .id(book.getCategory().getCategoryId())
+                        .name(book.getCategory().getName())
+                        .description(book.getCategory().getDescription())
+                        .level(book.getCategory().getLevel().name())
+                        .status(book.getCategory().getStatus().name())
+                        .build())
+                .releaseDate(book.getReleaseDate())
+                .status(book.getStatus().name())
+                .authors(authors)
+                .genres(genres)
+                .build();
+    }
+
+    private BookListDto toListDto(Book book) {
+        return new BookListDto(
+                book.getCoverUrl(),
+                book.getTitle(),
+                book.getCategory().getName(),
+                book.getPublisher().getName(),
+                book.getLanguage().getCode(),
+                book.getReleaseDate(),
+                book.getStatus(),
+                book.getIsbn(),
+                book.getBookId());
     }
 }

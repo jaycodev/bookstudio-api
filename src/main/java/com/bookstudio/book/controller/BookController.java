@@ -1,15 +1,15 @@
 package com.bookstudio.book.controller;
 
-import com.bookstudio.book.dto.BookResponseDto;
+import com.bookstudio.book.dto.BookDto;
+import com.bookstudio.book.dto.BookListDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
-import com.bookstudio.book.projection.BookInfoProjection;
-import com.bookstudio.book.projection.BookListProjection;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<?> list() {
-        List<BookListProjection> books = bookService.getList();
+        List<BookListDto> books = bookService.getList();
         if (books.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No books found.", "no_content", 204));
@@ -36,18 +36,19 @@ public class BookController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        BookInfoProjection book = bookService.getInfoById(id).orElse(null);
-        if (book == null) {
+        try {
+            BookDto book = bookService.getInfoById(id);
+            return ResponseEntity.ok(book);
+        } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Book not found.", "not_found", 404));
         }
-        return ResponseEntity.ok(book);
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateBookDto dto) {
         try {
-            BookResponseDto created = bookService.create(dto);
+            BookListDto created = bookService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -58,7 +59,7 @@ public class BookController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdateBookDto dto) {
         try {
-            BookResponseDto updated = bookService.update(dto);
+            BookListDto updated = bookService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

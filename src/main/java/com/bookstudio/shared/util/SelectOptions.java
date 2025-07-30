@@ -3,9 +3,12 @@ package com.bookstudio.shared.util;
 import java.util.List;
 
 import com.bookstudio.author.projection.AuthorSelectProjection;
-import com.bookstudio.book.projection.BookSelectProjection;
+import com.bookstudio.book.dto.BookSelectDto;
 import com.bookstudio.category.projection.CategorySelectProjection;
+import com.bookstudio.genre.model.Genre;
+import com.bookstudio.language.model.Language;
 import com.bookstudio.location.model.Shelf;
+import com.bookstudio.nationality.model.Nationality;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -15,16 +18,13 @@ import lombok.Data;
 import com.bookstudio.publisher.projection.PublisherSelectProjection;
 import com.bookstudio.reader.projection.ReaderSelectProjection;
 import com.bookstudio.role.projection.RoleSelectProjection;
-import com.bookstudio.shared.model.Genre;
-import com.bookstudio.shared.model.Language;
-import com.bookstudio.shared.model.Nationality;
 
 @Data
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SelectOptions {
-    private List<BookSelectProjection> books;
+    private List<BookSelectDto> books;
     private List<AuthorSelectProjection> authors;
     private List<PublisherSelectProjection> publishers;
     private List<CategorySelectProjection> categories;

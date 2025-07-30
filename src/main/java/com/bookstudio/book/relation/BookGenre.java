@@ -1,7 +1,7 @@
 package com.bookstudio.book.relation;
 
 import com.bookstudio.book.model.Book;
-import com.bookstudio.shared.model.Genre;
+import com.bookstudio.genre.model.Genre;
 
 import jakarta.persistence.*;
 import lombok.*;

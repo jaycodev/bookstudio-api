@@ -1,4 +1,4 @@
-package com.bookstudio.shared.model;
+package com.bookstudio.language.model;
 
 import jakarta.persistence.*;
 import lombok.*;
