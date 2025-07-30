@@ -1,8 +1,7 @@
-package com.bookstudio.book.model;
-
-import java.io.Serializable;
+package com.bookstudio.book.relation;
 
 import com.bookstudio.author.model.Author;
+import com.bookstudio.book.model.Book;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BookAuthor {
-    
+
     @EmbeddedId
     private BookAuthorId id;
 
@@ -25,13 +24,4 @@ public class BookAuthor {
     @ManyToOne
     @MapsId("authorId")
     private Author author;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class BookAuthorId implements Serializable {
-    private Long bookId;
-    private Long authorId;
 }

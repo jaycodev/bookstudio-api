@@ -1,8 +1,7 @@
-package com.bookstudio.payment.model;
-
-import java.io.Serializable;
+package com.bookstudio.payment.relation;
 
 import com.bookstudio.fine.model.Fine;
+import com.bookstudio.payment.model.Payment;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,13 +24,4 @@ public class PaymentFine {
     @ManyToOne
     @MapsId("fineId")
     private Fine fine;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PaymentFineId implements Serializable {
-    private Long paymentId;
-    private Long fineId;
 }

@@ -1,7 +1,6 @@
-package com.bookstudio.publisher.model;
+package com.bookstudio.publisher.relation;
 
-import java.io.Serializable;
-
+import com.bookstudio.publisher.model.Publisher;
 import com.bookstudio.shared.model.Genre;
 
 import jakarta.persistence.*;
@@ -25,13 +24,4 @@ public class PublisherGenre {
     @ManyToOne
     @MapsId("genreId")
     private Genre genre;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class PublisherGenreId implements Serializable {
-    private Long publisherId;
-    private Long genreId;
 }

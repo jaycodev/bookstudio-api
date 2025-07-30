@@ -1,9 +1,9 @@
-package com.bookstudio.loan.model;
+package com.bookstudio.loan.relation;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.bookstudio.copy.model.Copy;
+import com.bookstudio.loan.model.Loan;
 import com.bookstudio.shared.enums.LoanItemStatus;
 
 import jakarta.persistence.*;
@@ -34,13 +34,4 @@ public class LoanItem {
 
     @Enumerated(EnumType.STRING)
     private LoanItemStatus status;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoanItemId implements Serializable {
-    private Long loanId;
-    private Long copyId;
 }

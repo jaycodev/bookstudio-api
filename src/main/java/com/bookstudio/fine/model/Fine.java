@@ -3,7 +3,7 @@ package com.bookstudio.fine.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.bookstudio.loan.model.LoanItem;
+import com.bookstudio.loan.relation.LoanItem;
 import com.bookstudio.shared.enums.FineStatus;
 
 import jakarta.persistence.*;

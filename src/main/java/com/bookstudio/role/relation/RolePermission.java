@@ -1,6 +1,6 @@
-package com.bookstudio.role.model;
+package com.bookstudio.role.relation;
 
-import java.io.Serializable;
+import com.bookstudio.role.model.Role;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,13 +23,4 @@ public class RolePermission {
     @ManyToOne
     @MapsId("permissionId")
     private Permission permission;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class RolePermissionId implements Serializable {
-    private Long roleId;
-    private Long permissionId;
 }

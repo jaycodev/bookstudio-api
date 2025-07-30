@@ -1,7 +1,6 @@
-package com.bookstudio.book.model;
+package com.bookstudio.book.relation;
 
-import java.io.Serializable;
-
+import com.bookstudio.book.model.Book;
 import com.bookstudio.shared.model.Genre;
 
 import jakarta.persistence.*;
@@ -14,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BookGenre {
-    
+
     @EmbeddedId
     private BookGenreId id;
 
@@ -25,13 +24,4 @@ public class BookGenre {
     @ManyToOne
     @MapsId("genreId")
     private Genre genre;
-}
-
-@Embeddable
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class BookGenreId implements Serializable {
-    private Long bookId;
-    private Long genreId;
 }

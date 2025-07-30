@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.bookstudio.loan.model.LoanItem;
-import com.bookstudio.loan.model.LoanItemId;
+import com.bookstudio.loan.relation.LoanItem;
+import com.bookstudio.loan.relation.LoanItemId;
 import com.bookstudio.loan.repository.LoanItemRepository;
 
 import lombok.RequiredArgsConstructor;
