@@ -8,7 +8,7 @@ import com.bookstudio.fine.projection.FineInfoProjection;
 import com.bookstudio.fine.projection.FineListProjection;
 import com.bookstudio.fine.projection.FineSelectProjection;
 import com.bookstudio.fine.repository.FineRepository;
-import com.bookstudio.shared.service.LoanItemService;
+import com.bookstudio.loan.service.LoanItemService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

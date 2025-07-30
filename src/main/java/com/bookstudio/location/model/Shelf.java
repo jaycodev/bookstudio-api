@@ -1,6 +1,4 @@
-package com.bookstudio.shared.model;
-
-import com.bookstudio.location.model.Location;
+package com.bookstudio.location.model;
 
 import jakarta.persistence.*;
 import lombok.*;

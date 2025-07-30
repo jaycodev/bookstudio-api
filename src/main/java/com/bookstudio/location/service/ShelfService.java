@@ -1,7 +1,7 @@
-package com.bookstudio.shared.service;
+package com.bookstudio.location.service;
 
-import com.bookstudio.shared.model.Shelf;
-import com.bookstudio.shared.repository.ShelfRepository;
+import com.bookstudio.location.model.Shelf;
+import com.bookstudio.location.repository.ShelfRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

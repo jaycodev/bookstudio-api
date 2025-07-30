@@ -5,6 +5,7 @@ import java.util.List;
 import com.bookstudio.author.projection.AuthorSelectProjection;
 import com.bookstudio.book.projection.BookSelectProjection;
 import com.bookstudio.category.projection.CategorySelectProjection;
+import com.bookstudio.location.model.Shelf;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +18,6 @@ import com.bookstudio.role.projection.RoleSelectProjection;
 import com.bookstudio.shared.model.Genre;
 import com.bookstudio.shared.model.Language;
 import com.bookstudio.shared.model.Nationality;
-import com.bookstudio.shared.model.Shelf;
 
 @Data
 @AllArgsConstructor

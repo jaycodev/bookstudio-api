@@ -1,13 +1,13 @@
-package com.bookstudio.shared.service;
+package com.bookstudio.loan.service;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.bookstudio.shared.model.LoanItem;
-import com.bookstudio.shared.model.LoanItemId;
-import com.bookstudio.shared.repository.LoanItemRepository;
+import com.bookstudio.loan.model.LoanItem;
+import com.bookstudio.loan.model.LoanItemId;
+import com.bookstudio.loan.repository.LoanItemRepository;
 
 import lombok.RequiredArgsConstructor;
 

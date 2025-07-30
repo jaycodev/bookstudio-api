@@ -1,9 +1,8 @@
-package com.bookstudio.shared.model;
+package com.bookstudio.payment.model;
 
 import java.io.Serializable;
 
 import com.bookstudio.fine.model.Fine;
-import com.bookstudio.payment.model.Payment;
 
 import jakarta.persistence.*;
 import lombok.*;

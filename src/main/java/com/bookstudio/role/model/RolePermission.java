@@ -1,8 +1,6 @@
-package com.bookstudio.shared.model;
+package com.bookstudio.role.model;
 
 import java.io.Serializable;
-
-import com.bookstudio.role.model.Role;
 
 import jakarta.persistence.*;
 import lombok.*;

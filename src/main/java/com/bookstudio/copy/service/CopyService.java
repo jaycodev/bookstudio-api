@@ -9,7 +9,7 @@ import com.bookstudio.copy.projection.CopyListProjection;
 import com.bookstudio.copy.projection.CopySelectProjection;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.copy.repository.CopyRepository;
-import com.bookstudio.shared.service.ShelfService;
+import com.bookstudio.location.service.ShelfService;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.transaction.Transactional;

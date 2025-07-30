@@ -1,8 +1,8 @@
-package com.bookstudio.shared.model;
+package com.bookstudio.publisher.model;
 
 import java.io.Serializable;
 
-import com.bookstudio.publisher.model.Publisher;
+import com.bookstudio.shared.model.Genre;
 
 import jakarta.persistence.*;
 import lombok.*;

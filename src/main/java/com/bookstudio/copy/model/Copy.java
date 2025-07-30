@@ -1,8 +1,8 @@
 package com.bookstudio.copy.model;
 
 import com.bookstudio.book.model.Book;
+import com.bookstudio.location.model.Shelf;
 import com.bookstudio.shared.enums.Condition;
-import com.bookstudio.shared.model.Shelf;
 
 import jakarta.persistence.*;
 import lombok.*;

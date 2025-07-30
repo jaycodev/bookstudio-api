@@ -1,10 +1,9 @@
-package com.bookstudio.shared.model;
+package com.bookstudio.loan.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 import com.bookstudio.copy.model.Copy;
-import com.bookstudio.loan.model.Loan;
 import com.bookstudio.shared.enums.LoanItemStatus;
 
 import jakarta.persistence.*;
