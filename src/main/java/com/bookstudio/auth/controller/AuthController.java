@@ -6,7 +6,8 @@ import com.bookstudio.auth.service.PasswordResetService;
 import com.bookstudio.auth.util.LoginConstants;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
-import com.bookstudio.user.model.User;
+import com.bookstudio.worker.model.Worker;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,10 +60,10 @@ public class AuthController {
             }
         }
 
-        Optional<User> optionalUser = authService.verifyLogin(username, password);
+        Optional<Worker> optionalUser = authService.verifyLogin(username, password);
 
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            Worker worker = optionalUser.get();
 
             if (blockTimeCookie != null)
                 clearCookie(blockTimeCookie, response);
@@ -72,15 +73,15 @@ public class AuthController {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(SESSION_TIMEOUT_MINUTES * 60);
 
-            session.setAttribute("user", user);
-            session.setAttribute(LoginConstants.ID, String.valueOf(user.getId()));
-            session.setAttribute(LoginConstants.USERNAME, user.getUsername());
-            session.setAttribute(LoginConstants.FIRSTNAME, user.getFirstName());
-            session.setAttribute(LoginConstants.LASTNAME, user.getLastName());
-            session.setAttribute(LoginConstants.EMAIL, user.getEmail());
-            session.setAttribute(LoginConstants.ROLE, user.getRole().name());
+            session.setAttribute("user", worker);
+            session.setAttribute(LoginConstants.ID, String.valueOf(worker.getWorkerId()));
+            session.setAttribute(LoginConstants.USERNAME, worker.getUsername());
+            session.setAttribute(LoginConstants.FIRSTNAME, worker.getFirstName());
+            session.setAttribute(LoginConstants.LASTNAME, worker.getLastName());
+            session.setAttribute(LoginConstants.EMAIL, worker.getEmail());
+            session.setAttribute(LoginConstants.ROLE, worker.getRole().getName());
 
-            String photoUrl = user.getProfilePhotoUrl();
+            String photoUrl = worker.getProfilePhotoUrl();
             if (photoUrl != null && !photoUrl.isBlank()) {
                 session.setAttribute(LoginConstants.USER_PROFILE_IMAGE, photoUrl);
             } else {

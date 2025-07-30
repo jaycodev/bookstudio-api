@@ -1,8 +1,9 @@
 package com.bookstudio.profile.service;
 
 import com.bookstudio.auth.util.PasswordUtils;
-import com.bookstudio.user.model.User;
-import com.bookstudio.user.repository.UserRepository;
+import com.bookstudio.worker.model.Worker;
+import com.bookstudio.worker.repository.WorkerRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProfileService {
 
-	private final UserRepository userRepository;
+	private final WorkerRepository userRepository;
 
 	@Transactional
-	public Optional<User> updateProfile(Long loggedUserId, String firstName, String lastName, String rawPassword) {
+	public Optional<Worker> updateProfile(Long loggedUserId, String firstName, String lastName, String rawPassword) {
 		return userRepository.findById(loggedUserId).map(user -> {
 			user.setFirstName(firstName);
 			user.setLastName(lastName);
@@ -28,7 +29,7 @@ public class ProfileService {
 	}
 
     @Transactional
-    public Optional<User> updatePhoto(Long userId, String newPhoto, boolean deletePhoto) {
+    public Optional<Worker> updatePhoto(Long userId, String newPhoto, boolean deletePhoto) {
         return userRepository.findById(userId).map(user -> {
             if (deletePhoto) {
                 user.setProfilePhotoUrl(null);

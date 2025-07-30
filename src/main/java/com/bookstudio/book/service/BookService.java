@@ -1,6 +1,5 @@
 package com.bookstudio.book.service;
 
-import com.bookstudio.author.service.AuthorService;
 import com.bookstudio.book.dto.BookResponseDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
@@ -9,9 +8,9 @@ import com.bookstudio.book.projection.BookInfoProjection;
 import com.bookstudio.book.projection.BookListProjection;
 import com.bookstudio.book.projection.BookSelectProjection;
 import com.bookstudio.book.repository.BookRepository;
-import com.bookstudio.course.service.CourseService;
+import com.bookstudio.category.service.CategoryService;
 import com.bookstudio.publisher.service.PublisherService;
-import com.bookstudio.shared.service.GenreService;
+import com.bookstudio.shared.service.LanguageService;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.transaction.Transactional;
@@ -27,10 +26,9 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
-    private final AuthorService authorService;
+    private final LanguageService languageService;
     private final PublisherService publisherService;
-    private final CourseService courseService;
-    private final GenreService genreService;
+    private final CategoryService categoryService;
 
     public List<BookListProjection> getList() {
         return bookRepository.findList();
@@ -48,31 +46,30 @@ public class BookService {
     public BookResponseDto create(CreateBookDto dto) {
         Book book = new Book();
         book.setTitle(dto.getTitle());
-        book.setTotalCopies(dto.getTotalCopies());
+        book.setIsbn(dto.getIsbn());
+        book.setEdition(dto.getEdition());
+        book.setPages(dto.getPages());
+        book.setDescription(dto.getDescription());
+        book.setCoverUrl(dto.getCoverUrl());
         book.setReleaseDate(dto.getReleaseDate());
         book.setStatus(dto.getStatus());
-        book.setLoanedCopies(0);
 
-        book.setAuthor(authorService.findById(dto.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Author not found")));
+        book.setLanguage(languageService.findById(dto.getLanguageId())
+                .orElseThrow(() -> new RuntimeException("Language not found")));
         book.setPublisher(publisherService.findById(dto.getPublisherId())
                 .orElseThrow(() -> new RuntimeException("Publisher not found")));
-        book.setCourse(courseService.findById(dto.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Course not found")));
-        book.setGenre(genreService.findById(dto.getGenreId())
-                .orElseThrow(() -> new RuntimeException("Genre not found")));
+        book.setCategory(categoryService.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found")));
 
         Book saved = bookRepository.save(book);
 
         return new BookResponseDto(
-                saved.getId(),
+                saved.getBookId(),
                 saved.getTitle(),
-                saved.getAvailableCopies(),
-                saved.getLoanedCopies(),
-                String.valueOf(saved.getAuthor().getId()),
-                saved.getAuthor().getName(),
-                String.valueOf(saved.getPublisher().getId()),
+                saved.getIsbn(),
+                saved.getCoverUrl(),
                 saved.getPublisher().getName(),
+                saved.getCategory().getName(),
                 saved.getStatus().name());
     }
 
@@ -82,30 +79,30 @@ public class BookService {
                 .orElseThrow(() -> new RuntimeException("Libro no encontrado con ID: " + dto.getBookId()));
 
         book.setTitle(dto.getTitle());
-        book.setTotalCopies(dto.getTotalCopies());
+        book.setIsbn(dto.getIsbn());
+        book.setEdition(dto.getEdition());
+        book.setPages(dto.getPages());
+        book.setDescription(dto.getDescription());
+        book.setCoverUrl(dto.getCoverUrl());
         book.setReleaseDate(dto.getReleaseDate());
         book.setStatus(dto.getStatus());
 
-        book.setAuthor(authorService.findById(dto.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Author not found")));
+        book.setLanguage(languageService.findById(dto.getLanguageId())
+                .orElseThrow(() -> new RuntimeException("Language not found")));
         book.setPublisher(publisherService.findById(dto.getPublisherId())
                 .orElseThrow(() -> new RuntimeException("Publisher not found")));
-        book.setCourse(courseService.findById(dto.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Course not found")));
-        book.setGenre(genreService.findById(dto.getGenreId())
-                .orElseThrow(() -> new RuntimeException("Genre not found")));
+        book.setCategory(categoryService.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found")));
 
         Book saved = bookRepository.save(book);
 
         return new BookResponseDto(
-                saved.getId(),
+                saved.getBookId(),
                 saved.getTitle(),
-                saved.getAvailableCopies(),
-                saved.getLoanedCopies(),
-                String.valueOf(saved.getAuthor().getId()),
-                saved.getAuthor().getName(),
-                String.valueOf(saved.getPublisher().getId()),
+                saved.getIsbn(),
+                saved.getCoverUrl(),
                 saved.getPublisher().getName(),
+                saved.getCategory().getName(),
                 saved.getStatus().name());
     }
 
@@ -115,10 +112,9 @@ public class BookService {
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .authors(authorService.getForSelect())
+                .languages(languageService.getForSelect())
                 .publishers(publisherService.getForSelect())
-                .courses(courseService.getForSelect())
-                .genres(genreService.getForSelect())
+                .categories(categoryService.getForSelect())
                 .build();
     }
 }

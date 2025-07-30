@@ -4,7 +4,7 @@ import com.bookstudio.auth.util.LoginConstants;
 import com.bookstudio.profile.service.ProfileService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
-import com.bookstudio.user.model.User;
+import com.bookstudio.worker.model.Worker;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -35,10 +35,10 @@ public class ProfileController {
 
         try {
             Long loggedId = Long.valueOf(loggedIdObj.toString());
-            Optional<User> updated = profileService.updateProfile(loggedId, firstName, lastName, password);
+            Optional<Worker> updated = profileService.updateProfile(loggedId, firstName, lastName, password);
 
             if (updated.isPresent()) {
-                User user = updated.get();
+                Worker user = updated.get();
                 session.setAttribute(LoginConstants.FIRSTNAME, user.getFirstName());
                 session.setAttribute(LoginConstants.LASTNAME, user.getLastName());
                 return ResponseEntity.ok(new ApiResponse(true, "Perfil actualizado con éxito."));
@@ -67,10 +67,10 @@ public class ProfileController {
 
         try {
             Long loggedId = Long.valueOf(loggedIdObj.toString());
-            Optional<User> updated = profileService.updatePhoto(loggedId, photoUrl, deletePhoto);
+            Optional<Worker> updated = profileService.updatePhoto(loggedId, photoUrl, deletePhoto);
 
             if (updated.isPresent()) {
-                User user = updated.get();
+                Worker user = updated.get();
 
                 if (user.getProfilePhotoUrl() != null && !user.getProfilePhotoUrl().isBlank()) {
                     session.setAttribute(LoginConstants.USER_PROFILE_IMAGE, user.getProfilePhotoUrl());

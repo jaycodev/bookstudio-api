@@ -8,7 +8,6 @@ public class UpdatePublisherDto {
     private Long publisherId;
     private String name;
     private Long nationalityId;
-    private Long literaryGenreId;
     private Integer foundationYear;
     private String website;
     private String address;

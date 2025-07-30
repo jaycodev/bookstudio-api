@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 @RequiredArgsConstructor
 public class BookController {
 
@@ -71,10 +71,9 @@ public class BookController {
         try {
             SelectOptions options = bookService.getSelectOptions();
 
-            if ((options.getAuthors() != null && !options.getAuthors().isEmpty()) ||
+            if ((options.getLanguages() != null && !options.getLanguages().isEmpty()) ||
                     (options.getPublishers() != null && !options.getPublishers().isEmpty()) ||
-                    (options.getCourses() != null && !options.getCourses().isEmpty()) ||
-                    (options.getGenres() != null && !options.getGenres().isEmpty())) {
+                    (options.getCategories() != null && !options.getCategories().isEmpty())) {
 
                 return ResponseEntity.ok(options);
             } else {

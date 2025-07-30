@@ -1,47 +1,33 @@
 package com.bookstudio.loan.model;
 
-import com.bookstudio.book.model.Book;
-import com.bookstudio.shared.enums.LoanStatus;
-import com.bookstudio.student.model.Student;
+import com.bookstudio.reader.model.Reader;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Loans")
+@Table(name = "loans", schema = "bookstudio_db")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Loan {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long loanId;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "LoanID")
-	private Long id;
+    @Column(insertable = false, updatable = false)
+    private String code;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "BookID", nullable = false)
-	private Book book;
+    @ManyToOne
+    @JoinColumn(name = "reader_id", nullable = false)
+    private Reader reader;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "StudentID", nullable = false)
-	private Student student;
+    @Column(nullable = false)
+    private LocalDate loanDate;
 
-	@Column(name = "LoanDate", nullable = false)
-	private LocalDate loanDate;
-
-	@Column(name = "ReturnDate", nullable = false)
-	private LocalDate returnDate;
-
-	@Column(name = "Quantity", nullable = false)
-	private int quantity;
-
-    @Enumerated(EnumType.STRING)
-	@Column(name = "Status", columnDefinition = "ENUM('prestado','devuelto')")
-	private LoanStatus status;
-
-	@Column(name = "Observation", columnDefinition = "TEXT")
-	private String observation;
+    @Column(columnDefinition = "TEXT")
+    private String observation;
 }

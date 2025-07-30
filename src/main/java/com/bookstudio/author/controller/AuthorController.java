@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/authors")
+@RequestMapping("/authors")
 @RequiredArgsConstructor
 public class AuthorController {
 
@@ -69,8 +69,7 @@ public class AuthorController {
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = authorService.getSelectOptions();
-            if ((options.getNationalities() != null && !options.getNationalities().isEmpty()) ||
-                (options.getLiteraryGenres() != null && !options.getLiteraryGenres().isEmpty())) {
+            if ((options.getNationalities() != null && !options.getNationalities().isEmpty())) {
                 return ResponseEntity.ok(options);
             } else {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -81,4 +80,4 @@ public class AuthorController {
                     .body(new ApiError(false, "Error populating select options.", "server_error", 500));
         }
     }
-} 
+}

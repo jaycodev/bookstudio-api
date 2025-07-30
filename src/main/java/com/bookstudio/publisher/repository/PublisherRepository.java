@@ -15,31 +15,25 @@ import java.util.Optional;
 public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     @Query("""
         SELECT 
-            p.id AS publisherId,
+            p.publisherId AS publisherId,
             p.name AS name,
             n.name AS nationalityName,
-            lg.name AS literaryGenreName,
             p.website AS website,
             p.status AS status,
             p.photoUrl AS photoUrl
         FROM Publisher p
         JOIN p.nationality n
-        JOIN p.literaryGenre lg
-        ORDER BY p.id DESC
+        ORDER BY p.publisherId DESC
     """)
     List<PublisherListProjection> findList();
 
+
     @Query("""
         SELECT 
-            p.id AS publisherId,
+            p.publisherId AS publisherId,
             p.name AS name,
-
             n.nationalityId AS nationalityId,
             n.name AS nationalityName,
-
-            lg.literaryGenreId AS literaryGenreId,
-            lg.name AS literaryGenreName,
-
             p.foundationYear AS foundationYear,
             p.website AS website,
             p.address AS address,
@@ -47,11 +41,10 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
             p.photoUrl AS photoUrl
         FROM Publisher p
         JOIN p.nationality n
-        JOIN p.literaryGenre lg
-        WHERE p.id = :id
+        WHERE p.publisherId = :id
     """)
     Optional<PublisherInfoProjection> findInfoById(@Param("id") Long id);
 
-    @Query("SELECT p.id as publisherId, p.name as name FROM Publisher p WHERE p.status = 'activo'")
+    @Query("SELECT p.publisherId AS publisherId, p.name AS name FROM Publisher p WHERE p.status = 'activo'")
     List<PublisherSelectProjection> findForSelect();
 }

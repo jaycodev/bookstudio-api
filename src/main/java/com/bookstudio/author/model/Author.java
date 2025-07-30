@@ -1,7 +1,6 @@
 package com.bookstudio.author.model;
 
 import com.bookstudio.shared.enums.Status;
-import com.bookstudio.shared.model.LiteraryGenre;
 import com.bookstudio.shared.model.Nationality;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,39 +8,32 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Authors")
+@Table(name = "authors", schema = "bookstudio_db")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Author {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AuthorID")
-    private Long id;
+    private Long authorId;
 
-    @Column(name = "Name", nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "NationalityID", nullable = false)
+    @JoinColumn(name = "nationality_id", nullable = false)
     private Nationality nationality;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LiteraryGenreID", nullable = false)
-    private LiteraryGenre literaryGenre;
-
-    @Column(name = "BirthDate", nullable = false)
+    @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "Biography", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String biography;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "Status", columnDefinition = "ENUM('activo','inactivo')")
     private Status status;
 
-    @Column(name = "PhotoUrl", length = 512)
+    @Column(length = 512)
     private String photoUrl;
 }

@@ -15,42 +15,34 @@ import java.util.Optional;
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("""
         SELECT 
-            a.id AS authorId,
+            a.authorId AS authorId,
             a.name AS name,
             n.name AS nationalityName,
-            lg.name AS literaryGenreName,
             a.birthDate AS birthDate,
             a.status AS status,
             a.photoUrl AS photoUrl
         FROM Author a
         JOIN a.nationality n
-        JOIN a.literaryGenre lg
-        ORDER BY a.id DESC
+        ORDER BY a.authorId DESC
     """)
     List<AuthorListProjection> findList();
 
     @Query("""
         SELECT
-            a.id AS authorId,
+            a.authorId AS authorId,
             a.name AS name,
-
             n.nationalityId AS nationalityId,
             n.name AS nationalityName,
-
-            lg.literaryGenreId AS literaryGenreId,
-            lg.name AS literaryGenreName,
-
             a.birthDate AS birthDate,
             a.biography AS biography,
             a.status AS status,
             a.photoUrl AS photoUrl
         FROM Author a
         JOIN a.nationality n
-        JOIN a.literaryGenre lg
-        WHERE a.id = :id
+        WHERE a.authorId = :id
     """)
     Optional<AuthorInfoProjection> findInfoById(@Param("id") Long id);
 
-    @Query("SELECT a.id AS authorId, a.name AS name FROM Author a WHERE a.status = 'activo'")
+    @Query("SELECT a.authorId AS authorId, a.name AS name FROM Author a WHERE a.status = 'activo'")
     List<AuthorSelectProjection> findForSelect();
 }

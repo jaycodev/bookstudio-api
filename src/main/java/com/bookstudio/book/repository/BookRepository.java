@@ -15,62 +15,48 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
         SELECT
-            b.id AS bookId,
+            b.bookId AS bookId,
             b.title AS title,
-            (b.totalCopies - b.loanedCopies) AS availableCopies,
-            b.loanedCopies AS loanedCopies,
-
-            a.id AS authorId,
-            a.name AS authorName,
-            
-            p.id AS publisherId,
+            b.isbn AS isbn,
+            b.coverUrl AS coverUrl,
             p.name AS publisherName,
-            
+            c.name AS categoryName,
             b.status AS status
         FROM Book b
-        JOIN b.author a
         JOIN b.publisher p
-        ORDER BY b.id DESC
+        JOIN b.category c
+        ORDER BY b.bookId DESC
     """)
     List<BookListProjection> findList();
 
     @Query("""
         SELECT
-            b.id AS bookId,
+            b.bookId AS bookId,
             b.title AS title,
-            b.totalCopies AS totalCopies,
-            (b.totalCopies - b.loanedCopies) as availableCopies,
-            b.loanedCopies AS loanedCopies,
-            b.releaseDate AS releaseDate,
-            b.status AS status,
-
-            a.id AS authorId,
-            a.name AS authorName,
-
-            p.id AS publisherId,
+            b.isbn AS isbn,
+            b.language.code AS languageCode,
+            b.edition AS edition,
+            b.pages AS pages,
+            b.description AS description,
+            b.coverUrl AS coverUrl,
             p.name AS publisherName,
-
-            c.id AS courseId,
-            c.name AS courseName,
-
-            g.id AS genreId,
-            g.name AS genreName
+            c.name AS categoryName,
+            b.releaseDate AS releaseDate,
+            b.status AS status
         FROM Book b
-        JOIN b.author a
+        JOIN b.language l
         JOIN b.publisher p
-        JOIN b.course c
-        JOIN b.genre g
-        WHERE b.id = :id
+        JOIN b.category c
+        WHERE b.bookId = :id
     """)
     Optional<BookInfoProjection> findInfoById(@Param("id") Long id);
 
     @Query("""
         SELECT 
-            b.id AS bookId, 
-            b.title AS title, 
-            (b.totalCopies - b.loanedCopies) AS availableCopies
+            b.bookId AS bookId, 
+            b.title AS title
         FROM Book b 
-        WHERE b.status = 'activo' AND b.totalCopies > b.loanedCopies
+        WHERE b.status = 'activo'
     """)
     List<BookSelectProjection> findForSelect();
 }

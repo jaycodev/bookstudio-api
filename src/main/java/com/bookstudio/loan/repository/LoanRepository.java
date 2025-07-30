@@ -14,44 +14,34 @@ import org.springframework.data.repository.query.Param;
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     @Query("""
         SELECT 
-            l.id AS loanId,
+            l.loanId AS loanId,
+            l.code AS code,
 
-            b.id AS bookId,
-            b.title AS bookTitle,
+            r.readerId AS readerId,
+            r.code AS readerCode,
+            CONCAT(r.firstName, ' ', r.lastName) AS readerFullName,
 
-            s.id AS studentId,
-            CONCAT(s.firstName, ' ', s.lastName) AS studentFullName,
-
-            l.loanDate AS loanDate,
-            l.returnDate AS returnDate,
-            l.quantity AS quantity,
-            l.status AS status
+            l.loanDate AS loanDate
         FROM Loan l
-        JOIN l.book b
-        JOIN l.student s
-        ORDER BY l.id DESC
+        JOIN l.reader r
+        ORDER BY l.loanId DESC
     """)
     List<LoanListProjection> findList();
 
     @Query("""
         SELECT 
-            l.id AS loanId,
+            l.loanId AS loanId,
+            l.code AS code,
 
-            b.id AS bookId,
-            b.title AS bookTitle,
-
-            s.id AS studentId,
-            CONCAT(s.firstName, ' ', s.lastName) AS studentFullName,
+            r.readerId AS readerId,
+            r.code AS readerCode,
+            CONCAT(r.firstName, ' ', r.lastName) AS readerFullName,
 
             l.loanDate AS loanDate,
-            l.returnDate AS returnDate,
-            l.quantity AS quantity,
-            l.observation AS observation,
-            l.status AS status
+            l.observation AS observation
         FROM Loan l
-        JOIN l.book b
-        JOIN l.student s
-        WHERE l.id = :id
+        JOIN l.reader r
+        WHERE l.loanId = :id
     """)
     Optional<LoanInfoProjection> findInfoById(@Param("id") Long id);
 }

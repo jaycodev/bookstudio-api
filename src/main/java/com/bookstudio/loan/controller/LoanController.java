@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/loans")
+@RequestMapping("/loans")
 @RequiredArgsConstructor
 public class LoanController {
 
@@ -62,21 +62,6 @@ public class LoanController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND)
 					.body(new ApiError(false, e.getMessage(), "update_failed", 404));
-		}
-	}
-
-	@PatchMapping("/{id}/return")
-	public ResponseEntity<?> markAsReturned(@PathVariable Long id) {
-		try {
-			int result = loanService.markAsReturned(id);
-			if (result == 0) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body(new ApiError(false, "Loan already returned or not found.", "invalid_operation", 400));
-			}
-			return ResponseEntity.ok(new ApiResponse(true, id));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(new ApiError(false, "Server error while returning loan status.", "server_error", 500));
 		}
 	}
 

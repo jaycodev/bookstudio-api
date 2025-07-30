@@ -2,31 +2,13 @@ package com.bookstudio.loan.projection;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.util.IdFormatter;
-
 public interface LoanListProjection {
     Long getLoanId();
+    String getCode();
 
-    String getBookId();
-    String getBookTitle();
-
-    String getStudentId();
-    String getStudentFullName();
+    String getReaderId();
+    String getReaderCode();
+    String getReaderFullName();
 
     LocalDate getLoanDate();
-    LocalDate getReturnDate();
-    Integer getQuantity();    
-    String getStatus();
-
-    default String getFormattedLoanId() {
-        return IdFormatter.formatId(String.valueOf(getLoanId()), "P");
-    }
-
-    default String getFormattedBookId() {
-        return IdFormatter.formatId(String.valueOf(getBookId()), "L");
-    }
-
-    default String getFormattedStudentId() {
-        return IdFormatter.formatId(String.valueOf(getStudentId()), "ES");
-    }
 }

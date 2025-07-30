@@ -8,7 +8,6 @@ import com.bookstudio.publisher.projection.PublisherInfoProjection;
 import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.projection.PublisherSelectProjection;
 import com.bookstudio.publisher.repository.PublisherRepository;
-import com.bookstudio.shared.service.LiteraryGenreService;
 import com.bookstudio.shared.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -26,7 +25,6 @@ public class PublisherService {
     private final PublisherRepository publisherRepository;
 
     private final NationalityService nationalityService;
-    private final LiteraryGenreService literaryGenreService;
 
     public List<PublisherListProjection> getList() {
         return publisherRepository.findList();
@@ -46,8 +44,6 @@ public class PublisherService {
         publisher.setName(dto.getName());
         publisher.setNationality(nationalityService.findById(dto.getNationalityId())
                 .orElseThrow(() -> new RuntimeException("Nationality not found")));
-        publisher.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
-                .orElseThrow(() -> new RuntimeException("Literary genre not found")));
         publisher.setFoundationYear(dto.getFoundationYear());
         publisher.setWebsite(dto.getWebsite());
         publisher.setAddress(dto.getAddress());
@@ -57,10 +53,9 @@ public class PublisherService {
         Publisher saved = publisherRepository.save(publisher);
 
         return new PublisherResponseDto(
-                saved.getId(),
+                saved.getPublisherId(),
                 saved.getName(),
                 saved.getNationality().getName(),
-                saved.getLiteraryGenre().getName(),
                 saved.getWebsite(),
                 saved.getStatus().name(),
                 saved.getPhotoUrl());
@@ -74,8 +69,6 @@ public class PublisherService {
         publisher.setName(dto.getName());
         publisher.setNationality(nationalityService.findById(dto.getNationalityId())
                 .orElseThrow(() -> new RuntimeException("Nationality not found")));
-        publisher.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
-                .orElseThrow(() -> new RuntimeException("Literary genre not found")));
         publisher.setFoundationYear(dto.getFoundationYear());
         publisher.setWebsite(dto.getWebsite());
         publisher.setAddress(dto.getAddress());
@@ -90,10 +83,9 @@ public class PublisherService {
         Publisher saved = publisherRepository.save(publisher);
 
         return new PublisherResponseDto(
-                saved.getId(),
+                saved.getPublisherId(),
                 saved.getName(),
                 saved.getNationality().getName(),
-                saved.getLiteraryGenre().getName(),
                 saved.getWebsite(),
                 saved.getStatus().name(),
                 saved.getPhotoUrl());
@@ -106,7 +98,6 @@ public class PublisherService {
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
                 .nationalities(nationalityService.getForSelect())
-                .literaryGenres(literaryGenreService.getForSelect())
                 .build();
     }
 }

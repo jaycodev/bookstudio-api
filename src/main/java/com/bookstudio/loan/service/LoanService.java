@@ -1,7 +1,5 @@
 package com.bookstudio.loan.service;
 
-import com.bookstudio.book.model.Book;
-import com.bookstudio.book.repository.BookRepository;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.loan.dto.CreateLoanDto;
 import com.bookstudio.loan.dto.LoanResponseDto;
@@ -10,11 +8,10 @@ import com.bookstudio.loan.model.Loan;
 import com.bookstudio.loan.projection.LoanInfoProjection;
 import com.bookstudio.loan.projection.LoanListProjection;
 import com.bookstudio.loan.repository.LoanRepository;
-import com.bookstudio.shared.enums.LoanStatus;
+import com.bookstudio.reader.model.Reader;
+import com.bookstudio.reader.repository.ReaderRepository;
+import com.bookstudio.reader.service.ReaderService;
 import com.bookstudio.shared.util.SelectOptions;
-import com.bookstudio.student.model.Student;
-import com.bookstudio.student.repository.StudentRepository;
-import com.bookstudio.student.service.StudentService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +26,10 @@ import java.util.Optional;
 public class LoanService {
 
     private final LoanRepository loanRepository;
-    private final BookRepository bookRepository;
-    private final StudentRepository studentRepository;
+    private final ReaderRepository readerRepository;
 
     private final BookService bookService;
-    private final StudentService studentService;
+    private final ReaderService readerService;
 
     public List<LoanListProjection> getList() {
         return loanRepository.findList();
@@ -45,35 +41,23 @@ public class LoanService {
 
     @Transactional
     public LoanResponseDto create(CreateLoanDto dto) {
-        Book book = bookRepository.findById(dto.getBookId())
-                .orElseThrow(() -> new RuntimeException("Libro no encontrado"));
-        Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
-
-        book.setLoanedCopies(0);
-        bookRepository.save(book);
+        Reader reader = readerRepository.findById(dto.getReaderId())
+                .orElseThrow(() -> new RuntimeException("Lector no encontrado"));
 
         Loan loan = new Loan();
-        loan.setBook(book);
-        loan.setStudent(student);
+        loan.setReader(reader);
         loan.setLoanDate(LocalDate.now());
-        loan.setReturnDate(dto.getReturnDate());
-        loan.setQuantity(dto.getQuantity());
         loan.setObservation(dto.getObservation());
-        loan.setStatus(LoanStatus.prestado);
 
         Loan saved = loanRepository.save(loan);
 
         return new LoanResponseDto(
-                saved.getId(),
-                String.valueOf(saved.getBook().getId()),
-                saved.getBook().getTitle(),
-                String.valueOf(saved.getStudent().getId()),
-                saved.getStudent().getFullName(),
-                saved.getLoanDate(),
-                saved.getReturnDate(),
-                saved.getQuantity(),
-                saved.getStatus().name());
+                saved.getLoanId(),
+                saved.getCode(),
+                String.valueOf(saved.getReader().getReaderId()),
+                saved.getReader().getCode(),
+                saved.getReader().getFullName(),
+                saved.getLoanDate());
     }
 
     @Transactional
@@ -81,53 +65,27 @@ public class LoanService {
         Loan loan = loanRepository.findById(dto.getLoanId())
                 .orElseThrow(() -> new RuntimeException("Préstamo no encontrado con ID: " + dto.getLoanId()));
 
-        Student student = studentRepository.findById(dto.getStudentId())
-                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+        Reader reader = readerRepository.findById(dto.getReaderId())
+                .orElseThrow(() -> new RuntimeException("Lector no encontrado"));
 
-        loan.setStudent(student);
-        loan.setReturnDate(dto.getReturnDate());
+        loan.setReader(reader);
         loan.setObservation(dto.getObservation());
 
         Loan saved = loanRepository.save(loan);
 
         return new LoanResponseDto(
-                saved.getId(),
-                String.valueOf(saved.getBook().getId()),
-                saved.getBook().getTitle(),
-                String.valueOf(saved.getStudent().getId()),
-                saved.getStudent().getFullName(),
-                saved.getLoanDate(),
-                saved.getReturnDate(),
-                saved.getQuantity(),
-                saved.getStatus().name());
-    }
-
-    @Transactional
-    public int markAsReturned(Long loanId) {
-        Optional<Loan> optionalLoan = loanRepository.findById(loanId);
-
-        if (optionalLoan.isEmpty())
-            return 0;
-
-        Loan loan = optionalLoan.get();
-        if (loan.getStatus() == LoanStatus.devuelto) {
-            return 0;
-        }
-
-        Book book = loan.getBook();
-        book.setLoanedCopies(book.getLoanedCopies() - loan.getQuantity());
-        bookRepository.save(book);
-
-        loan.setStatus(LoanStatus.devuelto);
-        loanRepository.save(loan);
-
-        return 1;
+                saved.getLoanId(),
+                saved.getCode(),
+                String.valueOf(saved.getReader().getReaderId()),
+                saved.getReader().getCode(),
+                saved.getReader().getFullName(),
+                saved.getLoanDate());
     }
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
                 .books(bookService.getForSelect())
-                .students(studentService.getForSelect())
+                .students(readerService.getForSelect())
                 .build();
     }
 }

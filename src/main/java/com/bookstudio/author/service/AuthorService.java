@@ -8,7 +8,6 @@ import com.bookstudio.author.projection.AuthorInfoProjection;
 import com.bookstudio.author.projection.AuthorListProjection;
 import com.bookstudio.author.projection.AuthorSelectProjection;
 import com.bookstudio.author.repository.AuthorRepository;
-import com.bookstudio.shared.service.LiteraryGenreService;
 import com.bookstudio.shared.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -26,7 +25,6 @@ public class AuthorService {
     private final AuthorRepository authorRepository;
 
     private final NationalityService nationalityService;
-    private final LiteraryGenreService literaryGenreService;
 
     public List<AuthorListProjection> getList() {
         return authorRepository.findList();
@@ -46,8 +44,6 @@ public class AuthorService {
         author.setName(dto.getName());
         author.setNationality(nationalityService.findById(dto.getNationalityId())
                 .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
-        author.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
-                .orElseThrow(() -> new RuntimeException("Género literario no encontrado")));
         author.setBirthDate(dto.getBirthDate());
         author.setBiography(dto.getBiography());
         author.setStatus(dto.getStatus());
@@ -56,10 +52,9 @@ public class AuthorService {
         Author saved = authorRepository.save(author);
 
         return new AuthorResponseDto(
-                saved.getId(),
+                saved.getAuthorId(),
                 saved.getName(),
                 saved.getNationality().getName(),
-                saved.getLiteraryGenre().getName(),
                 saved.getBirthDate(),
                 saved.getStatus().name(),
                 saved.getPhotoUrl());
@@ -73,8 +68,6 @@ public class AuthorService {
         author.setName(dto.getName());
         author.setNationality(nationalityService.findById(dto.getNationalityId())
                 .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
-        author.setLiteraryGenre(literaryGenreService.findById(dto.getLiteraryGenreId())
-                .orElseThrow(() -> new RuntimeException("Género literario no encontrado")));
         author.setBirthDate(dto.getBirthDate());
         author.setBiography(dto.getBiography());
         author.setStatus(dto.getStatus());
@@ -88,10 +81,9 @@ public class AuthorService {
         Author saved = authorRepository.save(author);
 
         return new AuthorResponseDto(
-                saved.getId(),
+                saved.getAuthorId(),
                 saved.getName(),
                 saved.getNationality().getName(),
-                saved.getLiteraryGenre().getName(),
                 saved.getBirthDate(),
                 saved.getStatus().name(),
                 saved.getPhotoUrl());
@@ -104,7 +96,6 @@ public class AuthorService {
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
                 .nationalities(nationalityService.getForSelect())
-                .literaryGenres(literaryGenreService.getForSelect())
                 .build();
     }
 }

@@ -1,62 +1,55 @@
 package com.bookstudio.book.model;
 
-import com.bookstudio.author.model.Author;
-import com.bookstudio.course.model.Course;
+import com.bookstudio.category.model.Category;
 import com.bookstudio.publisher.model.Publisher;
 import com.bookstudio.shared.enums.Status;
-import com.bookstudio.shared.model.Genre;
+import com.bookstudio.shared.model.Language;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Books")
+@Table(name = "books", schema = "bookstudio_db")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bookId;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "BookID")
-	private Long id;
+    @Column(nullable = false)
+    private String title;
 
-	@Column(name = "Title", nullable = false)
-	private String title;
+    @Column(unique = true)
+    private String isbn;
 
-	@Column(name = "TotalCopies", nullable = false)
-	private int totalCopies;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id", nullable = false)
+    private Language language;
 
-	@Column(name = "LoanedCopies", nullable = false)
-	private int loanedCopies;
+    private String edition;
 
-	@Column(name = "ReleaseDate", nullable = false)
-	private LocalDate releaseDate;
+    private Integer pages;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    private String coverUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "publisher_id", nullable = false)
+    private Publisher publisher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    private LocalDate releaseDate;
 
     @Enumerated(EnumType.STRING)
-	@Column(name = "Status", columnDefinition = "ENUM('activo', 'inactivo')")
-	private Status status;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "AuthorID", nullable = false)
-	private Author author;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "PublisherID", nullable = false)
-	private Publisher publisher;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "CourseID", nullable = false)
-	private Course course;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "GenreID", nullable = false)
-	private Genre genre;
-
-	@Transient
-	public int getAvailableCopies() {
-		return totalCopies - loanedCopies;
-	}
+    private Status status;
 }

@@ -1,8 +1,9 @@
 package com.bookstudio.auth.service;
 
 import com.bookstudio.auth.util.PasswordUtils;
-import com.bookstudio.user.model.User;
-import com.bookstudio.user.repository.UserRepository;
+import com.bookstudio.worker.model.Worker;
+import com.bookstudio.worker.repository.WorkerRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +13,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final WorkerRepository userRepository;
 
-    public Optional<User> verifyLogin(String username, String plainPassword) {
+    public Optional<Worker> verifyLogin(String username, String plainPassword) {
         return userRepository.findByUsername(username)
                 .filter(user -> PasswordUtils.checkPassword(plainPassword, user.getPassword()));
     }

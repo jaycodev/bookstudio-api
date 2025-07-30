@@ -8,11 +8,14 @@ import lombok.Data;
 public class UpdateBookDto {
     private Long bookId;
     private String title;
-    private int totalCopies;
-    private Long authorId;
+    private String isbn;
+    private Long languageId;
+    private String edition;
+    private Integer pages;
+    private String description;
+    private String coverUrl;
     private Long publisherId;
-    private Long courseId;
-    private Long genreId;
+    private Long categoryId;
     private LocalDate releaseDate;
     private Status status;
 }

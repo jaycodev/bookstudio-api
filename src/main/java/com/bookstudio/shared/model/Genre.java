@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Genres")
+@Table(name = "genres", schema = "bookstudio_db")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,9 +13,8 @@ public class Genre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "GenreID")
     private Long genreId;
 
-    @Column(name = "Name", nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     private String name;
 }
