@@ -1,7 +1,9 @@
 package com.bookstudio.genre.service;
 
+import com.bookstudio.genre.dto.GenreDto;
 import com.bookstudio.genre.model.Genre;
 import com.bookstudio.genre.repository.GenreRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +22,12 @@ public class GenreService {
 
     public Optional<Genre> findById(Long genreId) {
         return genreRepository.findById(genreId);
+    }
+
+    public GenreDto toDto(Genre genre) {
+        return GenreDto.builder()
+                .id(genre.getGenreId())
+                .name(genre.getName())
+                .build();
     }
 }

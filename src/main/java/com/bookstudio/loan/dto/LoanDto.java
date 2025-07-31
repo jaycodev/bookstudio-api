@@ -1,6 +1,7 @@
 package com.bookstudio.loan.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.bookstudio.reader.dto.ReaderDto;
 
@@ -16,4 +17,5 @@ public class LoanDto {
     private ReaderDto reader;
     private LocalDate loanDate;
     private String observation;
+    private List<LoanItemDto> items;
 }

@@ -19,7 +19,6 @@ public class LoanItemService {
 
     private final LoanItemRepository loanItemRepository;
 
-    private final LoanService loanService;
     private final CopyService copyService;
 
     public List<LoanItem> getForSelect() {
@@ -32,8 +31,6 @@ public class LoanItemService {
 
     public LoanItemDto toDto(LoanItem loanItem) {
         return LoanItemDto.builder()
-                .id(loanItem.getId())
-                .loan(loanService.toDto(loanItem.getLoan()))
                 .copy(copyService.toDto(loanItem.getCopy()))
                 .dueDate(loanItem.getDueDate())
                 .returnDate(loanItem.getReturnDate())
