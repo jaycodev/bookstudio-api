@@ -1,15 +1,15 @@
 package com.bookstudio.copy.controller;
 
-import com.bookstudio.copy.dto.CopyResponseDto;
+import com.bookstudio.copy.dto.CopyDto;
+import com.bookstudio.copy.dto.CopyListDto;
 import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
-import com.bookstudio.copy.projection.CopyInfoProjection;
-import com.bookstudio.copy.projection.CopyListProjection;
 import com.bookstudio.copy.service.CopyService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class CopyController {
 
     @GetMapping
     public ResponseEntity<?> list() {
-        List<CopyListProjection> copies = copyService.getList();
+        List<CopyListDto> copies = copyService.getList();
         if (copies.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No copies found.", "no_content", 204));
@@ -36,18 +36,19 @@ public class CopyController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        CopyInfoProjection copy = copyService.getInfoById(id).orElse(null);
-        if (copy == null) {
+        try {
+            CopyDto copy = copyService.getInfoById(id);
+            return ResponseEntity.ok(copy);
+        } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Copy not found.", "not_found", 404));
         }
-        return ResponseEntity.ok(copy);
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateCopyDto dto) {
         try {
-            CopyResponseDto created = copyService.create(dto);
+            CopyListDto created = copyService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -58,9 +59,9 @@ public class CopyController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdateCopyDto dto) {
         try {
-            CopyResponseDto updated = copyService.update(dto);
+            CopyListDto updated = copyService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
-        } catch (RuntimeException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
         }

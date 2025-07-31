@@ -1,7 +1,9 @@
 package com.bookstudio.publisher.service;
 
+import com.bookstudio.nationality.dto.NationalityDto;
 import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.publisher.dto.CreatePublisherDto;
+import com.bookstudio.publisher.dto.PublisherDto;
 import com.bookstudio.publisher.dto.PublisherResponseDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.model.Publisher;
@@ -98,6 +100,21 @@ public class PublisherService {
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
                 .nationalities(nationalityService.getForSelect())
+                .build();
+    }
+
+    public PublisherDto toDto(Publisher publisher) {
+        NationalityDto nationalityDto = nationalityService.toDto(publisher.getNationality());
+
+        return PublisherDto.builder()
+                .id(publisher.getPublisherId())
+                .name(publisher.getName())
+                .nationality(nationalityDto)
+                .foundationYear(publisher.getFoundationYear())
+                .website(publisher.getWebsite())
+                .address(publisher.getAddress())
+                .status(publisher.getStatus())
+                .photoUrl(publisher.getPhotoUrl())
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.bookstudio.nationality.service;
 
+import com.bookstudio.nationality.dto.NationalityDto;
 import com.bookstudio.nationality.model.Nationality;
 import com.bookstudio.nationality.repository.NationalityRepository;
 
@@ -21,5 +22,12 @@ public class NationalityService {
 
     public Optional<Nationality> findById(Long nationalityid) {
         return nationalityRepository.findById(nationalityid);
+    }
+
+    public NationalityDto toDto(Nationality nationality) {
+        return NationalityDto.builder()
+                .id(nationality.getNationalityId())
+                .name(nationality.getName())
+                .build();
     }
 }

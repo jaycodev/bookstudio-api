@@ -47,7 +47,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateCategoryDto dto) {
         try {
-            CategoryDto created = categoryService.create(dto);
+            CategoryListDto created = categoryService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse(true, created));
         } catch (Exception e) {
@@ -59,7 +59,7 @@ public class CategoryController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdateCategoryDto dto) {
         try {
-            CategoryDto updated = categoryService.update(dto);
+            CategoryListDto updated = categoryService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

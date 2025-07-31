@@ -2,6 +2,7 @@ package com.bookstudio.location.service;
 
 import com.bookstudio.location.dto.LocationResponseDto;
 import com.bookstudio.location.dto.CreateLocationDto;
+import com.bookstudio.location.dto.LocationDto;
 import com.bookstudio.location.dto.UpdateLocationDto;
 import com.bookstudio.location.model.Location;
 import com.bookstudio.location.projection.LocationInfoProjection;
@@ -21,7 +22,6 @@ import java.util.Optional;
 public class LocationService {
 
     private final LocationRepository locationRepository;
-
 
     public List<LocationListProjection> getList() {
         return locationRepository.findList();
@@ -67,5 +67,13 @@ public class LocationService {
 
     public List<LocationSelectProjection> getForSelect() {
         return locationRepository.findForSelect();
+    }
+
+    public LocationDto toDto(Location location) {
+        return LocationDto.builder()
+                .id(location.getLocationId())
+                .name(location.getName())
+                .description(location.getDescription())
+                .build();
     }
 }

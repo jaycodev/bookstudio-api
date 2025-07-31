@@ -38,7 +38,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDto create(CreateCategoryDto dto) {
+    public CategoryListDto create(CreateCategoryDto dto) {
         Category category = new Category();
         category.setName(dto.getName());
         category.setLevel(dto.getLevel());
@@ -46,11 +46,11 @@ public class CategoryService {
         category.setStatus(dto.getStatus());
 
         Category saved = categoryRepository.save(category);
-        return toDto(saved);
+        return toListDto(saved);
     }
 
     @Transactional
-    public CategoryDto update(UpdateCategoryDto dto) {
+    public CategoryListDto update(UpdateCategoryDto dto) {
         Category category = categoryRepository.findById(dto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + dto.getId()));
 
@@ -60,19 +60,28 @@ public class CategoryService {
         category.setStatus(dto.getStatus());
 
         Category updated = categoryRepository.save(category);
-        return toDto(updated);
+        return toListDto(updated);
     }
 
     public List<CategorySelectDto> getForSelect() {
         return categoryRepository.findForSelect();
     }
 
-    private CategoryDto toDto(Category category) {
+    public CategoryDto toDto(Category category) {
         return new CategoryDto(
                 category.getCategoryId(),
                 category.getName(),
                 category.getLevel().name(),
                 category.getDescription(),
                 category.getStatus().name());
+    }
+
+    private CategoryListDto toListDto(Category category) {
+        return new CategoryListDto(
+                category.getName(),
+                category.getLevel(),
+                category.getDescription(),
+                category.getStatus(),
+                category.getCategoryId());
     }
 }

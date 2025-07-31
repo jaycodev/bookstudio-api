@@ -92,14 +92,13 @@ public class AuthorService {
                 .build();
     }
 
-    private AuthorDto toDto(Author author) {
+    public AuthorDto toDto(Author author) {
+        NationalityDto nationalityDto = nationalityService.toDto(author.getNationality());
+
         return AuthorDto.builder()
                 .id(author.getAuthorId())
                 .name(author.getName())
-                .nationality(NationalityDto.builder()
-                        .id(author.getNationality().getNationalityId())
-                        .name(author.getNationality().getName())
-                        .build())
+                .nationality(nationalityDto)
                 .birthDate(author.getBirthDate())
                 .biography(author.getBiography())
                 .status(author.getStatus().name())
@@ -116,5 +115,4 @@ public class AuthorService {
                 author.getStatus(),
                 author.getAuthorId());
     }
-
 }

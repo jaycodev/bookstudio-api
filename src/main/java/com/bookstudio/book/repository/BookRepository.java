@@ -37,7 +37,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                 b.title
             )
         FROM Book b 
-        WHERE b.status = 'activo'
+        WHERE b.status = com.bookstudio.shared.enums.Status.activo
+        ORDER BY b.title ASC
     """)
     List<BookSelectDto> findForSelect();
 }

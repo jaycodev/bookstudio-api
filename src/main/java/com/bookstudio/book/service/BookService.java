@@ -169,7 +169,11 @@ public class BookService {
                 .build();
     }
 
-    private BookDto toDto(Book book) {
+    public BookDto toDto(Book book) {
+        LanguageDto languageDto = languageService.toDto(book.getLanguage());
+        PublisherDto publisherDto = publisherService.toDto(book.getPublisher());
+        CategoryDto categoryDto = categoryService.toDto(book.getCategory());
+
         List<AuthorDto> authors = bookAuthorRepository.findAuthorFlatDtosByBookId(book.getBookId()).stream()
                 .map(flat -> new AuthorDto(
                         flat.id(), flat.name(), new NationalityDto(flat.nationalityId(), flat.nationalityName()),
@@ -183,35 +187,13 @@ public class BookService {
                 .id(book.getBookId())
                 .title(book.getTitle())
                 .isbn(book.getIsbn())
-                .language(LanguageDto.builder()
-                        .id(book.getLanguage().getLanguageId())
-                        .name(book.getLanguage().getName())
-                        .code(book.getLanguage().getCode())
-                        .build())
+                .language(languageDto)
                 .edition(book.getEdition())
                 .pages(book.getPages())
                 .description(book.getDescription())
                 .coverUrl(book.getCoverUrl())
-                .publisher(PublisherDto.builder()
-                        .id(book.getPublisher().getPublisherId())
-                        .name(book.getPublisher().getName())
-                        .foundationYear(book.getPublisher().getFoundationYear())
-                        .website(book.getPublisher().getWebsite())
-                        .address(book.getPublisher().getAddress())
-                        .photoUrl(book.getPublisher().getPhotoUrl())
-                        .status(book.getPublisher().getStatus().name())
-                        .nationality(NationalityDto.builder()
-                                .id(book.getPublisher().getNationality().getNationalityId())
-                                .name(book.getPublisher().getNationality().getName())
-                                .build())
-                        .build())
-                .category(CategoryDto.builder()
-                        .id(book.getCategory().getCategoryId())
-                        .name(book.getCategory().getName())
-                        .description(book.getCategory().getDescription())
-                        .level(book.getCategory().getLevel().name())
-                        .status(book.getCategory().getStatus().name())
-                        .build())
+                .publisher(publisherDto)
+                .category(categoryDto)
                 .releaseDate(book.getReleaseDate())
                 .status(book.getStatus().name())
                 .authors(authors)

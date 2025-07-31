@@ -1,17 +1,21 @@
 package com.bookstudio.copy.service;
 
-import com.bookstudio.copy.dto.CopyResponseDto;
+import com.bookstudio.book.dto.BookDto;
+import com.bookstudio.book.service.BookService;
+import com.bookstudio.copy.dto.CopyDto;
+import com.bookstudio.copy.dto.CopyListDto;
+import com.bookstudio.copy.dto.CopySelectDto;
 import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
 import com.bookstudio.copy.model.Copy;
-import com.bookstudio.copy.projection.CopyInfoProjection;
-import com.bookstudio.copy.projection.CopyListProjection;
-import com.bookstudio.copy.projection.CopySelectProjection;
-import com.bookstudio.book.service.BookService;
 import com.bookstudio.copy.repository.CopyRepository;
+import com.bookstudio.location.dto.ShelfDto;
 import com.bookstudio.location.service.ShelfService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,12 +27,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CopyService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final CopyRepository copyRepository;
 
     private final BookService bookService;
     private final ShelfService shelfService;
 
-    public List<CopyListProjection> getList() {
+    public List<CopyListDto> getList() {
         return copyRepository.findList();
     }
 
@@ -36,57 +43,47 @@ public class CopyService {
         return copyRepository.findById(copyId);
     }
 
-    public Optional<CopyInfoProjection> getInfoById(Long copyId) {
-        return copyRepository.findInfoById(copyId);
+    public CopyDto getInfoById(Long copyId) {
+        Copy copy = copyRepository.findById(copyId)
+                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + copyId));
+        return toDto(copy);
     }
 
     @Transactional
-    public CopyResponseDto create(CreateCopyDto dto) {
+    public CopyListDto create(CreateCopyDto dto) {
         Copy copy = new Copy();
         copy.setBarcode(dto.getBarcode());
         copy.setIsAvailable(dto.getIsAvailable());
         copy.setCondition(dto.getCondition());
 
         copy.setBook(bookService.findById(dto.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Book not found")));
         copy.setShelf(shelfService.findById(dto.getShelfId())
-                .orElseThrow(() -> new RuntimeException("Shelf not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Shelf not found")));
 
         Copy saved = copyRepository.save(copy);
+        entityManager.refresh(saved);
 
-        return new CopyResponseDto(
-                saved.getCopyId(),
-                saved.getCode(),
-                saved.getBook().getTitle(),
-                saved.getShelf().getLocation().getName(),
-                saved.getIsAvailable(),
-                saved.getCondition().name());
+        return toListDto(saved);
     }
 
     @Transactional
-    public CopyResponseDto update(UpdateCopyDto dto) {
-        Copy copy = copyRepository.findById(dto.getCopyId())
-                .orElseThrow(() -> new RuntimeException("Ejemplar no encontrado con ID: " + dto.getCopyId()));
+    public CopyListDto update(UpdateCopyDto dto) {
+        Copy copy = copyRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + dto.getId()));
 
         copy.setBarcode(dto.getBarcode());
         copy.setIsAvailable(dto.getIsAvailable());
         copy.setCondition(dto.getCondition());
 
         copy.setShelf(shelfService.findById(dto.getShelfId())
-                .orElseThrow(() -> new RuntimeException("Shelf not found")));
+                .orElseThrow(() -> new EntityNotFoundException("Shelf not found")));
 
         Copy saved = copyRepository.save(copy);
-
-        return new CopyResponseDto(
-                saved.getCopyId(),
-                saved.getCode(),
-                saved.getBook().getTitle(),
-                saved.getShelf().getLocation().getName(),
-                saved.getIsAvailable(),
-                saved.getCondition().name());
+        return toListDto(saved);
     }
 
-    public List<CopySelectProjection> getForSelect() {
+    public List<CopySelectDto> getForSelect() {
         return copyRepository.findForSelect();
     }
 
@@ -95,5 +92,30 @@ public class CopyService {
                 .books(bookService.getForSelect())
                 .shelves(shelfService.getForSelect())
                 .build();
+    }
+
+    public CopyDto toDto(Copy copy) {
+        BookDto bookDto = bookService.toDto(copy.getBook());
+        ShelfDto shelfDto = shelfService.toDto(copy.getShelf());
+
+        return CopyDto.builder()
+                .id(copy.getCopyId())
+                .code(copy.getCode())
+                .book(bookDto)
+                .shelf(shelfDto)
+                .barcode(copy.getBarcode())
+                .isAvailable(copy.getIsAvailable())
+                .condition(copy.getCondition().name())
+                .build();
+    }
+
+    private CopyListDto toListDto(Copy copy) {
+        return new CopyListDto(
+                copy.getCode(),
+                copy.getBook().getTitle(),
+                copy.getShelf().getCode() + " - " + copy.getShelf().getLocation().getName(),
+                copy.getIsAvailable(),
+                copy.getCondition(),
+                copy.getCopyId());
     }
 }

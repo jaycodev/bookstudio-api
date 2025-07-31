@@ -1,6 +1,7 @@
 package com.bookstudio.publisher.dto;
 
 import com.bookstudio.nationality.dto.NationalityDto;
+import com.bookstudio.shared.enums.Status;
 
 import lombok.*;
 
@@ -15,6 +16,6 @@ public class PublisherDto {
     private Integer foundationYear;
     private String website;
     private String address;
-    private String status;
+    private Status status;
     private String photoUrl;
 }
