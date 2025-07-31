@@ -2,47 +2,37 @@ package com.bookstudio.category.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import com.bookstudio.category.dto.CategoryListDto;
+import com.bookstudio.category.dto.CategorySelectDto;
 import com.bookstudio.category.model.Category;
-import com.bookstudio.category.projection.CategorySelectProjection;
-import com.bookstudio.category.projection.CategoryViewProjection;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("""
         SELECT 
-            c.categoryId AS categoryId,
-            c.name AS name,
-            c.level AS level,
-            c.description AS description,
-            c.status AS status
+            new com.bookstudio.category.dto.CategoryListDto(
+                c.name,
+                c.level,
+                c.description,
+                c.status,
+                c.categoryId
+            )
         FROM Category c
         ORDER BY c.categoryId DESC
     """)
-    List<CategoryViewProjection> findList();
+    List<CategoryListDto> findList();
 
     @Query("""
         SELECT 
-            c.categoryId AS categoryId,
-            c.name AS name,
-            c.level AS level,
-            c.description AS description,
-            c.status AS status
+            new com.bookstudio.category.dto.CategorySelectDto(
+                c.categoryId,
+                c.name
+            )
         FROM Category c
-        WHERE c.categoryId = :id
-    """)
-    Optional<CategoryViewProjection> findInfoById(@Param("id") Long id);
-
-    @Query("""
-        SELECT 
-            c.categoryId AS categoryId,
-            c.name AS name
-        FROM Category c
-        WHERE c.status = 'activo'
+        WHERE c.status = com.bookstudio.shared.enums.Status.activo
         ORDER BY c.name ASC
     """)
-    List<CategorySelectProjection> findForSelect();
+    List<CategorySelectDto> findForSelect();
 }

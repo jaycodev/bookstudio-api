@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.bookstudio.author.dto.AuthorSelectDto;
 import com.bookstudio.book.dto.BookSelectDto;
-import com.bookstudio.category.projection.CategorySelectProjection;
+import com.bookstudio.category.dto.CategorySelectDto;
 import com.bookstudio.genre.model.Genre;
 import com.bookstudio.language.model.Language;
 import com.bookstudio.location.model.Shelf;
@@ -27,7 +27,7 @@ public class SelectOptions {
     private List<BookSelectDto> books;
     private List<AuthorSelectDto> authors;
     private List<PublisherSelectProjection> publishers;
-    private List<CategorySelectProjection> categories;
+    private List<CategorySelectDto> categories;
     private List<ReaderSelectProjection> students;
     private List<RoleSelectProjection> roles;
     private List<Language> languages;
