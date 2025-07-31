@@ -2,6 +2,7 @@ package com.bookstudio.loan.service;
 
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.loan.dto.CreateLoanDto;
+import com.bookstudio.loan.dto.LoanDto;
 import com.bookstudio.loan.dto.LoanResponseDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
 import com.bookstudio.loan.model.Loan;
@@ -86,6 +87,16 @@ public class LoanService {
         return SelectOptions.builder()
                 .books(bookService.getForSelect())
                 .students(readerService.getForSelect())
+                .build();
+    }
+
+    public LoanDto toDto(Loan loan) {
+        return LoanDto.builder()
+                .id(loan.getLoanId())
+                .code(loan.getCode())
+                .reader(readerService.toDto(loan.getReader()))
+                .loanDate(loan.getLoanDate())
+                .observation(loan.getObservation())
                 .build();
     }
 }

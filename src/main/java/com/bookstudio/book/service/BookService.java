@@ -15,14 +15,11 @@ import com.bookstudio.book.relation.BookGenreId;
 import com.bookstudio.book.repository.BookAuthorRepository;
 import com.bookstudio.book.repository.BookGenreRepository;
 import com.bookstudio.book.repository.BookRepository;
-import com.bookstudio.category.dto.CategoryDto;
 import com.bookstudio.category.service.CategoryService;
 import com.bookstudio.genre.dto.GenreDto;
 import com.bookstudio.genre.model.Genre;
-import com.bookstudio.language.dto.LanguageDto;
 import com.bookstudio.language.service.LanguageService;
 import com.bookstudio.nationality.dto.NationalityDto;
-import com.bookstudio.publisher.dto.PublisherDto;
 import com.bookstudio.publisher.service.PublisherService;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -170,10 +167,6 @@ public class BookService {
     }
 
     public BookDto toDto(Book book) {
-        LanguageDto languageDto = languageService.toDto(book.getLanguage());
-        PublisherDto publisherDto = publisherService.toDto(book.getPublisher());
-        CategoryDto categoryDto = categoryService.toDto(book.getCategory());
-
         List<AuthorDto> authors = bookAuthorRepository.findAuthorFlatDtosByBookId(book.getBookId()).stream()
                 .map(flat -> new AuthorDto(
                         flat.id(), flat.name(), new NationalityDto(flat.nationalityId(), flat.nationalityName()),
@@ -187,13 +180,13 @@ public class BookService {
                 .id(book.getBookId())
                 .title(book.getTitle())
                 .isbn(book.getIsbn())
-                .language(languageDto)
+                .language(languageService.toDto(book.getLanguage()))
                 .edition(book.getEdition())
                 .pages(book.getPages())
                 .description(book.getDescription())
                 .coverUrl(book.getCoverUrl())
-                .publisher(publisherDto)
-                .category(categoryDto)
+                .publisher(publisherService.toDto(book.getPublisher()))
+                .category(categoryService.toDto(book.getCategory()))
                 .releaseDate(book.getReleaseDate())
                 .status(book.getStatus().name())
                 .authors(authors)

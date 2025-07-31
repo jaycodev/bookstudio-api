@@ -1,6 +1,5 @@
 package com.bookstudio.copy.service;
 
-import com.bookstudio.book.dto.BookDto;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.copy.dto.CopyDto;
 import com.bookstudio.copy.dto.CopyListDto;
@@ -9,7 +8,6 @@ import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
 import com.bookstudio.copy.model.Copy;
 import com.bookstudio.copy.repository.CopyRepository;
-import com.bookstudio.location.dto.ShelfDto;
 import com.bookstudio.location.service.ShelfService;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -95,14 +93,11 @@ public class CopyService {
     }
 
     public CopyDto toDto(Copy copy) {
-        BookDto bookDto = bookService.toDto(copy.getBook());
-        ShelfDto shelfDto = shelfService.toDto(copy.getShelf());
-
         return CopyDto.builder()
                 .id(copy.getCopyId())
                 .code(copy.getCode())
-                .book(bookDto)
-                .shelf(shelfDto)
+                .book(bookService.toDto(copy.getBook()))
+                .shelf(shelfService.toDto(copy.getShelf()))
                 .barcode(copy.getBarcode())
                 .isAvailable(copy.getIsAvailable())
                 .condition(copy.getCondition().name())

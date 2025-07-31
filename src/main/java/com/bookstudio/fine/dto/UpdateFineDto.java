@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class UpdateFineDto {
-    private Long fineId;
+    private Long id;
     private BigDecimal amount;
     private Integer daysLate;
     private FineStatus status;

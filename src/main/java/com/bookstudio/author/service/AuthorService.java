@@ -7,7 +7,6 @@ import com.bookstudio.author.dto.CreateAuthorDto;
 import com.bookstudio.author.dto.UpdateAuthorDto;
 import com.bookstudio.author.model.Author;
 import com.bookstudio.author.repository.AuthorRepository;
-import com.bookstudio.nationality.dto.NationalityDto;
 import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -93,12 +92,10 @@ public class AuthorService {
     }
 
     public AuthorDto toDto(Author author) {
-        NationalityDto nationalityDto = nationalityService.toDto(author.getNationality());
-
         return AuthorDto.builder()
                 .id(author.getAuthorId())
                 .name(author.getName())
-                .nationality(nationalityDto)
+                .nationality(nationalityService.toDto(author.getNationality()))
                 .birthDate(author.getBirthDate())
                 .biography(author.getBiography())
                 .status(author.getStatus().name())

@@ -3,15 +3,18 @@ package com.bookstudio.fine.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.bookstudio.loan.dto.LoanItemDto;
+
+import lombok.*;
 
 @Data
+@Builder
 @AllArgsConstructor
-public class FineResponseDto {
-    private Long fineId;
+@NoArgsConstructor
+public class FineDto {
+    private Long id;
     private String code;
-    private String loanCode;
+    private LoanItemDto loanItem;
     private BigDecimal amount;
     private Integer daysLate;
     private String status;

@@ -1,6 +1,7 @@
 package com.bookstudio.reader.service;
 
 import com.bookstudio.reader.dto.CreateReaderDto;
+import com.bookstudio.reader.dto.ReaderDto;
 import com.bookstudio.reader.dto.ReaderResponseDto;
 import com.bookstudio.reader.dto.UpdateReaderDto;
 import com.bookstudio.reader.model.Reader;
@@ -101,5 +102,22 @@ public class ReaderService {
 
     public List<ReaderSelectProjection> getForSelect() {
         return readerRepository.findForSelect();
+    }
+
+    public ReaderDto toDto(Reader reader) {
+        return ReaderDto.builder()
+                .id(reader.getReaderId())
+                .code(reader.getCode())
+                .dni(reader.getDni())
+                .firstName(reader.getFirstName())
+                .lastName(reader.getLastName())
+                .address(reader.getAddress())
+                .phone(reader.getPhone())
+                .email(reader.getEmail())
+                .birthDate(reader.getBirthDate())
+                .gender(reader.getGender().name())
+                .type(reader.getType().name())
+                .status(reader.getStatus().name())
+                .build();
     }
 }
