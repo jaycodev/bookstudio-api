@@ -30,7 +30,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     """)
     List<BookListDto> findList();
 
-
     @Query("""
         SELECT 
             new com.bookstudio.book.dto.BookSelectDto(

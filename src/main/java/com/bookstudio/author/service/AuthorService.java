@@ -1,16 +1,17 @@
 package com.bookstudio.author.service;
 
-import com.bookstudio.author.dto.AuthorResponseDto;
+import com.bookstudio.author.dto.AuthorDto;
+import com.bookstudio.author.dto.AuthorListDto;
+import com.bookstudio.author.dto.AuthorSelectDto;
 import com.bookstudio.author.dto.CreateAuthorDto;
 import com.bookstudio.author.dto.UpdateAuthorDto;
 import com.bookstudio.author.model.Author;
-import com.bookstudio.author.projection.AuthorInfoProjection;
-import com.bookstudio.author.projection.AuthorListProjection;
-import com.bookstudio.author.projection.AuthorSelectProjection;
 import com.bookstudio.author.repository.AuthorRepository;
+import com.bookstudio.nationality.dto.NationalityDto;
 import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class AuthorService {
 
     private final NationalityService nationalityService;
 
-    public List<AuthorListProjection> getList() {
+    public List<AuthorListDto> getList() {
         return authorRepository.findList();
     }
 
@@ -34,16 +35,19 @@ public class AuthorService {
         return authorRepository.findById(authorId);
     }
 
-    public Optional<AuthorInfoProjection> getInfoById(Long authorId) {
-        return authorRepository.findInfoById(authorId);
+    public AuthorDto getInfoById(Long authorId) {
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new RuntimeException("Author not found with ID: " + authorId));
+        return toDto(author);
     }
 
     @Transactional
-    public AuthorResponseDto create(CreateAuthorDto dto) {
+    public AuthorListDto create(CreateAuthorDto dto) {
         Author author = new Author();
         author.setName(dto.getName());
         author.setNationality(nationalityService.findById(dto.getNationalityId())
-                .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Nationality not found with ID: " + dto.getNationalityId())));
         author.setBirthDate(dto.getBirthDate());
         author.setBiography(dto.getBiography());
         author.setStatus(dto.getStatus());
@@ -51,23 +55,18 @@ public class AuthorService {
 
         Author saved = authorRepository.save(author);
 
-        return new AuthorResponseDto(
-                saved.getAuthorId(),
-                saved.getName(),
-                saved.getNationality().getName(),
-                saved.getBirthDate(),
-                saved.getStatus().name(),
-                saved.getPhotoUrl());
+        return toListDto(saved);
     }
 
     @Transactional
-    public AuthorResponseDto update(UpdateAuthorDto dto) {
-        Author author = authorRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Autor no encontrado con ID: " + dto.getAuthorId()));
+    public AuthorListDto update(UpdateAuthorDto dto) {
+        Author author = authorRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with ID: " + dto.getId()));
 
         author.setName(dto.getName());
         author.setNationality(nationalityService.findById(dto.getNationalityId())
-                .orElseThrow(() -> new RuntimeException("Nacionalidad no encontrada")));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Nationality not found with ID: " + dto.getNationalityId())));
         author.setBirthDate(dto.getBirthDate());
         author.setBiography(dto.getBiography());
         author.setStatus(dto.getStatus());
@@ -80,16 +79,10 @@ public class AuthorService {
 
         Author saved = authorRepository.save(author);
 
-        return new AuthorResponseDto(
-                saved.getAuthorId(),
-                saved.getName(),
-                saved.getNationality().getName(),
-                saved.getBirthDate(),
-                saved.getStatus().name(),
-                saved.getPhotoUrl());
+        return toListDto(saved);
     }
 
-    public List<AuthorSelectProjection> getForSelect() {
+    public List<AuthorSelectDto> getForSelect() {
         return authorRepository.findForSelect();
     }
 
@@ -98,4 +91,30 @@ public class AuthorService {
                 .nationalities(nationalityService.getForSelect())
                 .build();
     }
+
+    private AuthorDto toDto(Author author) {
+        return AuthorDto.builder()
+                .id(author.getAuthorId())
+                .name(author.getName())
+                .nationality(NationalityDto.builder()
+                        .id(author.getNationality().getNationalityId())
+                        .name(author.getNationality().getName())
+                        .build())
+                .birthDate(author.getBirthDate())
+                .biography(author.getBiography())
+                .status(author.getStatus().name())
+                .photoUrl(author.getPhotoUrl())
+                .build();
+    }
+
+    private AuthorListDto toListDto(Author author) {
+        return new AuthorListDto(
+                author.getPhotoUrl(),
+                author.getName(),
+                author.getNationality().getName(),
+                author.getBirthDate(),
+                author.getStatus(),
+                author.getAuthorId());
+    }
+
 }

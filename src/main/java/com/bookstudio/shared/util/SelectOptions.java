@@ -2,7 +2,7 @@ package com.bookstudio.shared.util;
 
 import java.util.List;
 
-import com.bookstudio.author.projection.AuthorSelectProjection;
+import com.bookstudio.author.dto.AuthorSelectDto;
 import com.bookstudio.book.dto.BookSelectDto;
 import com.bookstudio.category.projection.CategorySelectProjection;
 import com.bookstudio.genre.model.Genre;
@@ -25,7 +25,7 @@ import com.bookstudio.role.projection.RoleSelectProjection;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SelectOptions {
     private List<BookSelectDto> books;
-    private List<AuthorSelectProjection> authors;
+    private List<AuthorSelectDto> authors;
     private List<PublisherSelectProjection> publishers;
     private List<CategorySelectProjection> categories;
     private List<ReaderSelectProjection> students;

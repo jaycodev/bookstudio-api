@@ -1,48 +1,39 @@
 package com.bookstudio.author.repository;
 
+import com.bookstudio.author.dto.AuthorListDto;
+import com.bookstudio.author.dto.AuthorSelectDto;
 import com.bookstudio.author.model.Author;
-import com.bookstudio.author.projection.AuthorInfoProjection;
-import com.bookstudio.author.projection.AuthorListProjection;
-import com.bookstudio.author.projection.AuthorSelectProjection;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("""
         SELECT 
-            a.authorId AS authorId,
-            a.name AS name,
-            n.name AS nationalityName,
-            a.birthDate AS birthDate,
-            a.status AS status,
-            a.photoUrl AS photoUrl
+            new com.bookstudio.author.dto.AuthorListDto(
+                a.photoUrl,
+                a.name,
+                n.name,
+                a.birthDate,
+                a.status,
+                a.authorId
+            )
         FROM Author a
         JOIN a.nationality n
         ORDER BY a.authorId DESC
     """)
-    List<AuthorListProjection> findList();
+    List<AuthorListDto> findList();
 
     @Query("""
-        SELECT
-            a.authorId AS authorId,
-            a.name AS name,
-            n.nationalityId AS nationalityId,
-            n.name AS nationalityName,
-            a.birthDate AS birthDate,
-            a.biography AS biography,
-            a.status AS status,
-            a.photoUrl AS photoUrl
+        SELECT 
+            new com.bookstudio.author.dto.AuthorSelectDto(
+                a.authorId,
+                a.name
+            )
         FROM Author a
-        JOIN a.nationality n
-        WHERE a.authorId = :id
+        WHERE a.status = 'activo'
     """)
-    Optional<AuthorInfoProjection> findInfoById(@Param("id") Long id);
-
-    @Query("SELECT a.authorId AS authorId, a.name AS name FROM Author a WHERE a.status = 'activo'")
-    List<AuthorSelectProjection> findForSelect();
+    List<AuthorSelectDto> findForSelect();
 }

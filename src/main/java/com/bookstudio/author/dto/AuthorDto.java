@@ -13,9 +13,9 @@ import lombok.*;
 public class AuthorDto {
     private Long id;
     private String name;
-    private String biography;
-    private LocalDate birthDate;
-    private String photoUrl;
-    private String status;
     private NationalityDto nationality;
+    private LocalDate birthDate;
+    private String biography;
+    private String status;
+    private String photoUrl;
 }

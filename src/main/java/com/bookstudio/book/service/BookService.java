@@ -172,9 +172,9 @@ public class BookService {
     private BookDto toDto(Book book) {
         List<AuthorDto> authors = bookAuthorRepository.findAuthorFlatDtosByBookId(book.getBookId()).stream()
                 .map(flat -> new AuthorDto(
-                        flat.id(), flat.name(), flat.biography(), flat.birthDate(),
-                        flat.photoUrl(), flat.status().name(),
-                        new NationalityDto(flat.nationalityId(), flat.nationalityName())))
+                        flat.id(), flat.name(), new NationalityDto(flat.nationalityId(), flat.nationalityName()),
+                        flat.birthDate(), flat.biography(),
+                        flat.status().name(), flat.photoUrl()))
                 .toList();
 
         List<GenreDto> genres = bookGenreRepository.findGenreDtosByBookId(book.getBookId());
