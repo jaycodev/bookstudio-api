@@ -325,6 +325,6 @@ INSERT INTO payments (reader_id, amount, payment_date, method) VALUES
 (1, 10.00, '2024-07-15', 'efectivo'); -- Ana García pagó multas anteriores
 
 -- 23. RELACIÓN PAGOS-MULTAS (ejemplo de pago anterior)
--- INSERT INTO payment_fines (payment_id, fine_id) VALUES (1, 1); -- Descomenta si hay multas pagadas
+INSERT INTO payment_fines (payment_id, fine_id) VALUES (1, 1);
 
 COMMIT;

@@ -153,7 +153,7 @@ public class LoanService {
         return new LoanListDto(
                 loan.getCode(),
                 loan.getReader().getCode(),
-                loan.getReader().getFirstName() + " " + loan.getReader().getLastName(),
+                loan.getReader().getFullName(),
                 loan.getLoanDate(),
                 loan.getObservation(),
                 loan.getLoanId());

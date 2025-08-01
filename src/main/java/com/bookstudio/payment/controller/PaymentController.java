@@ -1,14 +1,14 @@
 package com.bookstudio.payment.controller;
 
 import com.bookstudio.payment.dto.CreatePaymentDto;
+import com.bookstudio.payment.dto.PaymentDto;
+import com.bookstudio.payment.dto.PaymentListDto;
 import com.bookstudio.payment.dto.UpdatePaymentDto;
-import com.bookstudio.payment.dto.PaymentResponseDto;
-import com.bookstudio.payment.projection.PaymentInfoProjection;
-import com.bookstudio.payment.projection.PaymentListProjection;
 import com.bookstudio.payment.service.PaymentService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class PaymentController {
 
     @GetMapping
     public ResponseEntity<?> list() {
-        List<PaymentListProjection> payments = paymentService.getList();
+        List<PaymentListDto> payments = paymentService.getList();
         if (payments.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No payments found.", "no_content", 204));
@@ -35,18 +35,19 @@ public class PaymentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        PaymentInfoProjection payment = paymentService.getInfoById(id).orElse(null);
-        if (payment == null) {
+        try {
+            PaymentDto payment = paymentService.getInfoById(id);
+            return ResponseEntity.ok(payment);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Payment not found.", "not_found", 404));
         }
-        return ResponseEntity.ok(payment);
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreatePaymentDto dto) {
         try {
-            PaymentResponseDto created = paymentService.create(dto);
+            PaymentListDto created = paymentService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -57,9 +58,9 @@ public class PaymentController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdatePaymentDto dto) {
         try {
-            PaymentResponseDto updated = paymentService.update(dto);
+            PaymentListDto updated = paymentService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
-        } catch (RuntimeException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
         }

@@ -1,14 +1,26 @@
 package com.bookstudio.payment.service;
 
+import com.bookstudio.copy.dto.CopyDto;
+import com.bookstudio.fine.dto.FineDto;
+import com.bookstudio.fine.model.Fine;
+import com.bookstudio.fine.repository.FineRepository;
+import com.bookstudio.fine.service.FineService;
+import com.bookstudio.loan.dto.LoanItemDto;
 import com.bookstudio.payment.dto.CreatePaymentDto;
-import com.bookstudio.payment.dto.PaymentResponseDto;
+import com.bookstudio.payment.dto.PaymentDto;
+import com.bookstudio.payment.dto.PaymentListDto;
 import com.bookstudio.payment.dto.UpdatePaymentDto;
 import com.bookstudio.payment.model.Payment;
-import com.bookstudio.payment.projection.PaymentInfoProjection;
-import com.bookstudio.payment.projection.PaymentListProjection;
+import com.bookstudio.payment.relation.PaymentFine;
+import com.bookstudio.payment.relation.PaymentFineId;
+import com.bookstudio.payment.repository.PaymentFineRepository;
 import com.bookstudio.payment.repository.PaymentRepository;
 import com.bookstudio.reader.service.ReaderService;
+import com.bookstudio.shared.enums.FineStatus;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,24 +32,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    private final PaymentRepository paymentRepository;
-    
-    private final ReaderService readerService;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public List<PaymentListProjection> getList() {
+    private final PaymentRepository paymentRepository;
+    private final FineRepository fineRepository;
+    private final PaymentFineRepository paymentFineRepository;
+
+    private final ReaderService readerService;
+    private final FineService fineService;
+
+    public List<PaymentListDto> getList() {
         return paymentRepository.findList();
     }
 
-    public Optional<Payment> findById(Long id) {
-        return paymentRepository.findById(id);
+    public Optional<Payment> findById(Long paymentId) {
+        return paymentRepository.findById(paymentId);
     }
 
-    public Optional<PaymentInfoProjection> getInfoById(Long id) {
-        return paymentRepository.findInfoById(id);
+    public PaymentDto getInfoById(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new EntityNotFoundException("Payment not found with ID: " + paymentId));
+        return toDto(payment);
     }
 
     @Transactional
-    public PaymentResponseDto create(CreatePaymentDto dto) {
+    public PaymentListDto create(CreatePaymentDto dto) {
         Payment payment = Payment.builder()
                 .reader(readerService.findById(dto.getReaderId())
                         .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + dto.getReaderId())))
@@ -47,21 +67,33 @@ public class PaymentService {
                 .build();
 
         Payment saved = paymentRepository.save(payment);
+        entityManager.refresh(saved);
 
-        return new PaymentResponseDto(
-                saved.getPaymentId(),
-                saved.getCode(),
-                saved.getReader().getFirstName() + " " + saved.getReader().getLastName(),
-                saved.getAmount(),
-                saved.getPaymentDate(),
-                saved.getMethod().name()
-        );
+        if (dto.getFineIds() != null) {
+            for (Long fineId : dto.getFineIds()) {
+                Fine fine = fineService.findById(fineId)
+                        .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
+
+                PaymentFine relation = PaymentFine.builder()
+                        .id(new PaymentFineId(saved.getPaymentId(), fine.getFineId()))
+                        .payment(saved)
+                        .fine(fine)
+                        .build();
+
+                paymentFineRepository.save(relation);
+
+                fine.setStatus(FineStatus.pagado);
+                fineRepository.save(fine);
+            }
+        }
+
+        return toListDto(saved);
     }
 
     @Transactional
-    public PaymentResponseDto update(UpdatePaymentDto dto) {
-        Payment payment = paymentRepository.findById(dto.getPaymentId())
-                .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + dto.getPaymentId()));
+    public PaymentListDto update(UpdatePaymentDto dto) {
+        Payment payment = paymentRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + dto.getId()));
 
         payment.setReader(readerService.findById(dto.getReaderId())
                 .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + dto.getReaderId())));
@@ -71,13 +103,67 @@ public class PaymentService {
 
         Payment saved = paymentRepository.save(payment);
 
-        return new PaymentResponseDto(
-                saved.getPaymentId(),
-                saved.getCode(),
-                saved.getReader().getFirstName() + " " + saved.getReader().getLastName(),
-                saved.getAmount(),
-                saved.getPaymentDate(),
-                saved.getMethod().name()
-        );
+        paymentFineRepository.deleteAllByPayment(saved);
+
+        if (dto.getFineIds() != null) {
+            for (Long fineId : dto.getFineIds()) {
+                Fine fine = fineService.findById(fineId)
+                        .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
+
+                PaymentFine relation = PaymentFine.builder()
+                        .id(new PaymentFineId(saved.getPaymentId(), fine.getFineId()))
+                        .payment(saved)
+                        .fine(fine)
+                        .build();
+
+                paymentFineRepository.save(relation);
+
+                fine.setStatus(FineStatus.pagado);
+                fineRepository.save(fine);
+            }
+        }
+
+        return toListDto(saved);
+    }
+
+    public PaymentDto toDto(Payment payment) {
+        List<FineDto> fines = paymentFineRepository.findFineFlatDtosByPaymentId(payment.getPaymentId()).stream()
+                .map(flat -> FineDto.builder()
+                        .id(flat.id())
+                        .code(flat.code())
+                        .loanItem(LoanItemDto.builder()
+                                .copy(CopyDto.builder()
+                                        .code(flat.copyCode())
+                                        .build())
+                                .dueDate(flat.dueDate())
+                                .returnDate(flat.returnDate())
+                                .status(flat.loanItemStatus().name())
+                                .build())
+                        .amount(flat.amount())
+                        .daysLate(flat.daysLate())
+                        .status(flat.status().name())
+                        .issuedAt(flat.issuedAt())
+                        .build())
+                .toList();
+
+        return PaymentDto.builder()
+                .id(payment.getPaymentId())
+                .code(payment.getCode())
+                .reader(readerService.toDto(payment.getReader()))
+                .amount(payment.getAmount())
+                .paymentDate(payment.getPaymentDate())
+                .method(payment.getMethod().name())
+                .fines(fines)
+                .build();
+    }
+
+    private PaymentListDto toListDto(Payment payment) {
+        return new PaymentListDto(
+                payment.getCode(),
+                payment.getReader().getFullName(),
+                payment.getAmount(),
+                payment.getPaymentDate(),
+                payment.getMethod(),
+                payment.getPaymentId());
     }
 }
