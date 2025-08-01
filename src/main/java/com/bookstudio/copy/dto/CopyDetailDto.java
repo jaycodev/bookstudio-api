@@ -1,7 +1,7 @@
 package com.bookstudio.copy.dto;
 
-import com.bookstudio.book.dto.BookDto;
-import com.bookstudio.location.dto.ShelfDto;
+import com.bookstudio.book.dto.BookSummaryDto;
+import com.bookstudio.location.dto.ShelfSummaryDto;
 
 import lombok.*;
 
@@ -9,11 +9,11 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CopyDto {
+public class CopyDetailDto {
     private Long id;
     private String code;
-    private BookDto book;
-    private ShelfDto shelf;
+    private BookSummaryDto book;
+    private ShelfSummaryDto shelf;
     private String barcode;
     private Boolean isAvailable;
     private String condition;

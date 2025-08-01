@@ -1,6 +1,6 @@
 package com.bookstudio.publisher.dto;
 
-import com.bookstudio.nationality.dto.NationalityDto;
+import com.bookstudio.nationality.dto.NationalitySummaryDto;
 import com.bookstudio.shared.enums.Status;
 
 import lombok.*;
@@ -9,10 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PublisherDto {
+public class PublisherDetailDto {
     private Long id;
     private String name;
-    private NationalityDto nationality;
+    private NationalitySummaryDto nationality;
     private Integer foundationYear;
     private String website;
     private String address;

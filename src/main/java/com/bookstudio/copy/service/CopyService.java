@@ -1,9 +1,10 @@
 package com.bookstudio.copy.service;
 
 import com.bookstudio.book.service.BookService;
-import com.bookstudio.copy.dto.CopyDto;
+import com.bookstudio.copy.dto.CopyDetailDto;
 import com.bookstudio.copy.dto.CopyListDto;
 import com.bookstudio.copy.dto.CopySelectDto;
+import com.bookstudio.copy.dto.CopySummaryDto;
 import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
 import com.bookstudio.copy.model.Copy;
@@ -41,10 +42,19 @@ public class CopyService {
         return copyRepository.findById(copyId);
     }
 
-    public CopyDto getInfoById(Long copyId) {
+    public CopyDetailDto getInfoById(Long copyId) {
         Copy copy = copyRepository.findById(copyId)
                 .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + copyId));
-        return toDto(copy);
+
+        return CopyDetailDto.builder()
+                .id(copy.getCopyId())
+                .code(copy.getCode())
+                .book(bookService.toSummaryDto(copy.getBook()))
+                .shelf(shelfService.toSummaryDto(copy.getShelf()))
+                .barcode(copy.getBarcode())
+                .isAvailable(copy.getIsAvailable())
+                .condition(copy.getCondition().name())
+                .build();
     }
 
     @Transactional
@@ -92,15 +102,12 @@ public class CopyService {
                 .build();
     }
 
-    public CopyDto toDto(Copy copy) {
-        return CopyDto.builder()
+    public CopySummaryDto toSummaryDto(Copy copy) {
+        return CopySummaryDto.builder()
                 .id(copy.getCopyId())
                 .code(copy.getCode())
-                .book(bookService.toDto(copy.getBook()))
-                .shelf(shelfService.toDto(copy.getShelf()))
                 .barcode(copy.getBarcode())
                 .isAvailable(copy.getIsAvailable())
-                .condition(copy.getCondition().name())
                 .build();
     }
 

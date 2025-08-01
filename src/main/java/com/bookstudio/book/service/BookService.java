@@ -1,10 +1,10 @@
 package com.bookstudio.book.service;
 
-import com.bookstudio.author.dto.AuthorDto;
 import com.bookstudio.author.model.Author;
-import com.bookstudio.book.dto.BookDto;
+import com.bookstudio.book.dto.BookDetailDto;
 import com.bookstudio.book.dto.BookListDto;
 import com.bookstudio.book.dto.BookSelectDto;
+import com.bookstudio.book.dto.BookSummaryDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
 import com.bookstudio.book.model.Book;
@@ -16,10 +16,8 @@ import com.bookstudio.book.repository.BookAuthorRepository;
 import com.bookstudio.book.repository.BookGenreRepository;
 import com.bookstudio.book.repository.BookRepository;
 import com.bookstudio.category.service.CategoryService;
-import com.bookstudio.genre.dto.GenreDto;
 import com.bookstudio.genre.model.Genre;
 import com.bookstudio.language.service.LanguageService;
-import com.bookstudio.nationality.dto.NationalityDto;
 import com.bookstudio.publisher.service.PublisherService;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -51,10 +49,26 @@ public class BookService {
         return bookRepository.findById(bookId);
     }
 
-    public BookDto getInfoById(Long bookId) {
+    public BookDetailDto getInfoById(Long bookId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + bookId));
-        return toDto(book);
+
+        return BookDetailDto.builder()
+                .id(book.getBookId())
+                .title(book.getTitle())
+                .isbn(book.getIsbn())
+                .language(languageService.toSummaryDto(book.getLanguage()))
+                .edition(book.getEdition())
+                .pages(book.getPages())
+                .description(book.getDescription())
+                .coverUrl(book.getCoverUrl())
+                .publisher(publisherService.toSummaryDto(book.getPublisher()))
+                .category(categoryService.toSummaryDto(book.getCategory()))
+                .releaseDate(book.getReleaseDate())
+                .status(book.getStatus().name())
+                .authors(bookAuthorRepository.findAuthorSummariesByBookId(book.getBookId()))
+                .genres(bookGenreRepository.findGenreSummariesByBookId(book.getBookId()))
+                .build();
     }
 
     @Transactional
@@ -166,31 +180,11 @@ public class BookService {
                 .build();
     }
 
-    public BookDto toDto(Book book) {
-        List<AuthorDto> authors = bookAuthorRepository.findAuthorFlatDtosByBookId(book.getBookId()).stream()
-                .map(flat -> new AuthorDto(
-                        flat.id(), flat.name(), new NationalityDto(flat.nationalityId(), flat.nationalityName()),
-                        flat.birthDate(), flat.biography(),
-                        flat.status().name(), flat.photoUrl()))
-                .toList();
-
-        List<GenreDto> genres = bookGenreRepository.findGenreDtosByBookId(book.getBookId());
-
-        return BookDto.builder()
+    public BookSummaryDto toSummaryDto(Book book) {
+        return BookSummaryDto.builder()
                 .id(book.getBookId())
                 .title(book.getTitle())
                 .isbn(book.getIsbn())
-                .language(languageService.toDto(book.getLanguage()))
-                .edition(book.getEdition())
-                .pages(book.getPages())
-                .description(book.getDescription())
-                .coverUrl(book.getCoverUrl())
-                .publisher(publisherService.toDto(book.getPublisher()))
-                .category(categoryService.toDto(book.getCategory()))
-                .releaseDate(book.getReleaseDate())
-                .status(book.getStatus().name())
-                .authors(authors)
-                .genres(genres)
                 .build();
     }
 

@@ -1,8 +1,9 @@
 package com.bookstudio.author.service;
 
-import com.bookstudio.author.dto.AuthorDto;
+import com.bookstudio.author.dto.AuthorDetailDto;
 import com.bookstudio.author.dto.AuthorListDto;
 import com.bookstudio.author.dto.AuthorSelectDto;
+import com.bookstudio.author.dto.AuthorSummaryDto;
 import com.bookstudio.author.dto.CreateAuthorDto;
 import com.bookstudio.author.dto.UpdateAuthorDto;
 import com.bookstudio.author.model.Author;
@@ -34,10 +35,19 @@ public class AuthorService {
         return authorRepository.findById(authorId);
     }
 
-    public AuthorDto getInfoById(Long authorId) {
+    public AuthorDetailDto getInfoById(Long authorId) {
         Author author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new RuntimeException("Author not found with ID: " + authorId));
-        return toDto(author);
+
+        return AuthorDetailDto.builder()
+                .id(author.getAuthorId())
+                .name(author.getName())
+                .nationality(nationalityService.toSummaryDto(author.getNationality()))
+                .birthDate(author.getBirthDate())
+                .biography(author.getBiography())
+                .status(author.getStatus().name())
+                .photoUrl(author.getPhotoUrl())
+                .build();
     }
 
     @Transactional
@@ -91,15 +101,10 @@ public class AuthorService {
                 .build();
     }
 
-    public AuthorDto toDto(Author author) {
-        return AuthorDto.builder()
+    public AuthorSummaryDto toSummaryDto(Author author) {
+        return AuthorSummaryDto.builder()
                 .id(author.getAuthorId())
                 .name(author.getName())
-                .nationality(nationalityService.toDto(author.getNationality()))
-                .birthDate(author.getBirthDate())
-                .biography(author.getBiography())
-                .status(author.getStatus().name())
-                .photoUrl(author.getPhotoUrl())
                 .build();
     }
 

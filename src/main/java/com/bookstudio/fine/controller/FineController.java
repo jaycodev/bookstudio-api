@@ -1,6 +1,6 @@
 package com.bookstudio.fine.controller;
 
-import com.bookstudio.fine.dto.FineDto;
+import com.bookstudio.fine.dto.FineDetailDto;
 import com.bookstudio.fine.dto.CreateFineDto;
 import com.bookstudio.fine.dto.UpdateFineDto;
 import com.bookstudio.fine.dto.FineListDto;
@@ -36,7 +36,7 @@ public class FineController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            FineDto fine = fineService.getInfoById(id);
+            FineDetailDto fine = fineService.getInfoById(id);
             return ResponseEntity.ok(fine);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

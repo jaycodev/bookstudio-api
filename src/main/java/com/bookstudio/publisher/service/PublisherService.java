@@ -1,18 +1,18 @@
 package com.bookstudio.publisher.service;
 
-import com.bookstudio.nationality.dto.NationalityDto;
 import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.publisher.dto.CreatePublisherDto;
-import com.bookstudio.publisher.dto.PublisherDto;
+import com.bookstudio.publisher.dto.PublisherDetailDto;
 import com.bookstudio.publisher.dto.PublisherResponseDto;
+import com.bookstudio.publisher.dto.PublisherSummaryDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.model.Publisher;
-import com.bookstudio.publisher.projection.PublisherInfoProjection;
 import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.projection.PublisherSelectProjection;
 import com.bookstudio.publisher.repository.PublisherRepository;
 import com.bookstudio.shared.util.SelectOptions;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,8 +36,20 @@ public class PublisherService {
         return publisherRepository.findById(publisherId);
     }
 
-    public Optional<PublisherInfoProjection> getInfoById(Long publisherId) {
-        return publisherRepository.findInfoById(publisherId);
+    public PublisherDetailDto getInfoById(Long publisherId) {
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + publisherId));
+
+        return PublisherDetailDto.builder()
+                .id(publisher.getPublisherId())
+                .name(publisher.getName())
+                .nationality(nationalityService.toSummaryDto(publisher.getNationality()))
+                .foundationYear(publisher.getFoundationYear())
+                .website(publisher.getWebsite())
+                .address(publisher.getAddress())
+                .status(publisher.getStatus())
+                .photoUrl(publisher.getPhotoUrl())
+                .build();
     }
 
     @Transactional
@@ -103,18 +115,10 @@ public class PublisherService {
                 .build();
     }
 
-    public PublisherDto toDto(Publisher publisher) {
-        NationalityDto nationalityDto = nationalityService.toDto(publisher.getNationality());
-
-        return PublisherDto.builder()
+    public PublisherSummaryDto toSummaryDto(Publisher publisher) {
+        return PublisherSummaryDto.builder()
                 .id(publisher.getPublisherId())
                 .name(publisher.getName())
-                .nationality(nationalityDto)
-                .foundationYear(publisher.getFoundationYear())
-                .website(publisher.getWebsite())
-                .address(publisher.getAddress())
-                .status(publisher.getStatus())
-                .photoUrl(publisher.getPhotoUrl())
                 .build();
     }
 }

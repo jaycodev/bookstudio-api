@@ -1,6 +1,6 @@
 package com.bookstudio.copy.controller;
 
-import com.bookstudio.copy.dto.CopyDto;
+import com.bookstudio.copy.dto.CopyDetailDto;
 import com.bookstudio.copy.dto.CopyListDto;
 import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
@@ -37,7 +37,7 @@ public class CopyController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            CopyDto copy = copyService.getInfoById(id);
+            CopyDetailDto copy = copyService.getInfoById(id);
             return ResponseEntity.ok(copy);
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

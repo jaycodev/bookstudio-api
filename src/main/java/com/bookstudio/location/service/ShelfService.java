@@ -1,6 +1,6 @@
 package com.bookstudio.location.service;
 
-import com.bookstudio.location.dto.ShelfDto;
+import com.bookstudio.location.dto.ShelfSummaryDto;
 import com.bookstudio.location.model.Shelf;
 import com.bookstudio.location.repository.ShelfRepository;
 
@@ -24,8 +24,8 @@ public class ShelfService {
         return shelfRepository.findById(shelfId);
     }
 
-    public ShelfDto toDto(Shelf shelf) {
-        return ShelfDto.builder()
+    public ShelfSummaryDto toSummaryDto(Shelf shelf) {
+        return ShelfSummaryDto.builder()
                 .id(shelf.getShelfId())
                 .code(shelf.getCode())
                 .floor(shelf.getFloor())

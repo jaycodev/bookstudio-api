@@ -1,6 +1,6 @@
 package com.bookstudio.genre.service;
 
-import com.bookstudio.genre.dto.GenreDto;
+import com.bookstudio.genre.dto.GenreSummaryDto;
 import com.bookstudio.genre.model.Genre;
 import com.bookstudio.genre.repository.GenreRepository;
 
@@ -24,8 +24,8 @@ public class GenreService {
         return genreRepository.findById(genreId);
     }
 
-    public GenreDto toDto(Genre genre) {
-        return GenreDto.builder()
+    public GenreSummaryDto toSummaryDto(Genre genre) {
+        return GenreSummaryDto.builder()
                 .id(genre.getGenreId())
                 .name(genre.getName())
                 .build();

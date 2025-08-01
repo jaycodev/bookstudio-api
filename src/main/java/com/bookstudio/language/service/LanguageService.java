@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.bookstudio.language.dto.LanguageDto;
+import com.bookstudio.language.dto.LanguageSummaryDto;
 import com.bookstudio.language.model.Language;
 import com.bookstudio.language.repository.LanguageRepository;
 
@@ -25,8 +25,8 @@ public class LanguageService {
         return languageRepository.findById(languageId);
     }
 
-    public LanguageDto toDto(Language language) {
-        return LanguageDto.builder()
+    public LanguageSummaryDto toSummaryDto(Language language) {
+        return LanguageSummaryDto.builder()
                 .id(language.getLanguageId())
                 .name(language.getName())
                 .code(language.getCode())

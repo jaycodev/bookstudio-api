@@ -1,6 +1,6 @@
 package com.bookstudio.author.controller;
 
-import com.bookstudio.author.dto.AuthorDto;
+import com.bookstudio.author.dto.AuthorDetailDto;
 import com.bookstudio.author.dto.AuthorListDto;
 import com.bookstudio.author.dto.CreateAuthorDto;
 import com.bookstudio.author.dto.UpdateAuthorDto;
@@ -37,7 +37,7 @@ public class AuthorController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            AuthorDto author = authorService.getInfoById(id);
+            AuthorDetailDto author = authorService.getInfoById(id);
             return ResponseEntity.ok(author);
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -1,7 +1,7 @@
 package com.bookstudio.location.controller;
 
 import com.bookstudio.location.dto.CreateLocationDto;
-import com.bookstudio.location.dto.LocationDto;
+import com.bookstudio.location.dto.LocationDetailDto;
 import com.bookstudio.location.dto.LocationListDto;
 import com.bookstudio.location.dto.UpdateLocationDto;
 import com.bookstudio.location.service.LocationService;
@@ -36,7 +36,7 @@ public class LocationController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            LocationDto location = locationService.getInfoById(id);
+            LocationDetailDto location = locationService.getInfoById(id);
             return ResponseEntity.ok(location);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -1,14 +1,12 @@
 package com.bookstudio.payment.service;
 
-import com.bookstudio.copy.dto.CopyDto;
-import com.bookstudio.fine.dto.FineDto;
 import com.bookstudio.fine.model.Fine;
 import com.bookstudio.fine.repository.FineRepository;
 import com.bookstudio.fine.service.FineService;
-import com.bookstudio.loan.dto.LoanItemDto;
 import com.bookstudio.payment.dto.CreatePaymentDto;
-import com.bookstudio.payment.dto.PaymentDto;
+import com.bookstudio.payment.dto.PaymentDetailDto;
 import com.bookstudio.payment.dto.PaymentListDto;
+import com.bookstudio.payment.dto.PaymentSummaryDto;
 import com.bookstudio.payment.dto.UpdatePaymentDto;
 import com.bookstudio.payment.model.Payment;
 import com.bookstudio.payment.relation.PaymentFine;
@@ -50,10 +48,19 @@ public class PaymentService {
         return paymentRepository.findById(paymentId);
     }
 
-    public PaymentDto getInfoById(Long paymentId) {
+    public PaymentDetailDto getInfoById(Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new EntityNotFoundException("Payment not found with ID: " + paymentId));
-        return toDto(payment);
+
+        return PaymentDetailDto.builder()
+                .id(payment.getPaymentId())
+                .code(payment.getCode())
+                .reader(readerService.toSummaryDto(payment.getReader()))
+                .amount(payment.getAmount())
+                .paymentDate(payment.getPaymentDate())
+                .method(payment.getMethod().name())
+                .fines(paymentFineRepository.findFineSummariesByPaymentId(payment.getPaymentId()))
+                .build();
     }
 
     @Transactional
@@ -126,34 +133,13 @@ public class PaymentService {
         return toListDto(saved);
     }
 
-    public PaymentDto toDto(Payment payment) {
-        List<FineDto> fines = paymentFineRepository.findFineFlatDtosByPaymentId(payment.getPaymentId()).stream()
-                .map(flat -> FineDto.builder()
-                        .id(flat.id())
-                        .code(flat.code())
-                        .loanItem(LoanItemDto.builder()
-                                .copy(CopyDto.builder()
-                                        .code(flat.copyCode())
-                                        .build())
-                                .dueDate(flat.dueDate())
-                                .returnDate(flat.returnDate())
-                                .status(flat.loanItemStatus().name())
-                                .build())
-                        .amount(flat.amount())
-                        .daysLate(flat.daysLate())
-                        .status(flat.status().name())
-                        .issuedAt(flat.issuedAt())
-                        .build())
-                .toList();
-
-        return PaymentDto.builder()
+    public PaymentSummaryDto toSummary(Payment payment) {
+        return PaymentSummaryDto.builder()
                 .id(payment.getPaymentId())
                 .code(payment.getCode())
-                .reader(readerService.toDto(payment.getReader()))
                 .amount(payment.getAmount())
                 .paymentDate(payment.getPaymentDate())
                 .method(payment.getMethod().name())
-                .fines(fines)
                 .build();
     }
 

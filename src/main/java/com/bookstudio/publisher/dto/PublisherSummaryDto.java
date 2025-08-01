@@ -1,13 +1,12 @@
-package com.bookstudio.language.dto;
+package com.bookstudio.publisher.dto;
 
 import lombok.*;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LanguageDto {
+@Builder
+public class PublisherSummaryDto {
     private Long id;
     private String name;
-    private String code;
 }

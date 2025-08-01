@@ -1,7 +1,7 @@
 package com.bookstudio.payment.controller;
 
 import com.bookstudio.payment.dto.CreatePaymentDto;
-import com.bookstudio.payment.dto.PaymentDto;
+import com.bookstudio.payment.dto.PaymentDetailDto;
 import com.bookstudio.payment.dto.PaymentListDto;
 import com.bookstudio.payment.dto.UpdatePaymentDto;
 import com.bookstudio.payment.service.PaymentService;
@@ -36,7 +36,7 @@ public class PaymentController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            PaymentDto payment = paymentService.getInfoById(id);
+            PaymentDetailDto payment = paymentService.getInfoById(id);
             return ResponseEntity.ok(payment);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

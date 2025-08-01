@@ -3,7 +3,7 @@ package com.bookstudio.fine.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.bookstudio.loan.dto.LoanItemDto;
+import com.bookstudio.loan.dto.LoanItemSummaryDto;
 
 import lombok.*;
 
@@ -11,10 +11,10 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FineDto {
+public class FineDetailDto {
     private Long id;
     private String code;
-    private LoanItemDto loanItem;
+    private LoanItemSummaryDto loanItem;
     private BigDecimal amount;
     private Integer daysLate;
     private String status;

@@ -1,21 +1,17 @@
 package com.bookstudio.loan.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 
-import com.bookstudio.reader.dto.ReaderDto;
-
+import com.bookstudio.reader.dto.ReaderSummaryDto;
 import lombok.*;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanDto {
+public class LoanSummaryDto {
     private Long id;
     private String code;
-    private ReaderDto reader;
+    private ReaderSummaryDto reader;
     private LocalDate loanDate;
-    private String observation;
-    private List<LoanItemDto> items;
 }

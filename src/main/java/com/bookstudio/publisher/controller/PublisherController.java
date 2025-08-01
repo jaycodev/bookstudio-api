@@ -1,14 +1,16 @@
 package com.bookstudio.publisher.controller;
 
 import com.bookstudio.publisher.dto.CreatePublisherDto;
+import com.bookstudio.publisher.dto.PublisherDetailDto;
 import com.bookstudio.publisher.dto.PublisherResponseDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
-import com.bookstudio.publisher.projection.PublisherInfoProjection;
 import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.service.PublisherService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
 import com.bookstudio.shared.util.SelectOptions;
+
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +37,13 @@ public class PublisherController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        PublisherInfoProjection publisher = publisherService.getInfoById(id).orElse(null);
-        if (publisher == null) {
+        try {
+            PublisherDetailDto publisher = publisherService.getInfoById(id);
+            return ResponseEntity.ok(publisher);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, "Publisher not found.", "not_found", 404));
         }
-        return ResponseEntity.ok(publisher);
     }
 
     @PostMapping

@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReaderDto {
+public class ReaderDetailDto {
     private Long id;
     private String code;
     private String dni;

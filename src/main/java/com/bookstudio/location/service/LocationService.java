@@ -2,10 +2,10 @@ package com.bookstudio.location.service;
 
 import com.bookstudio.location.dto.CreateLocationDto;
 import com.bookstudio.location.dto.CreateShelfDto;
-import com.bookstudio.location.dto.LocationDto;
+import com.bookstudio.location.dto.LocationDetailDto;
 import com.bookstudio.location.dto.LocationListDto;
 import com.bookstudio.location.dto.LocationSelectDto;
-import com.bookstudio.location.dto.ShelfDto;
+import com.bookstudio.location.dto.LocationSummaryDto;
 import com.bookstudio.location.dto.UpdateLocationDto;
 import com.bookstudio.location.dto.UpdateShelfDto;
 import com.bookstudio.location.model.Location;
@@ -41,10 +41,16 @@ public class LocationService {
         return locationRepository.findById(locationId);
     }
 
-    public LocationDto getInfoById(Long locationId) {
+    public LocationDetailDto getInfoById(Long locationId) {
         Location location = locationRepository.findById(locationId)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + locationId));
-        return toDto(location);
+
+        return LocationDetailDto.builder()
+                .id(location.getLocationId())
+                .name(location.getName())
+                .description(location.getDescription())
+                .shelves(shelfRepository.findShelfSummariesByLocationId(location.getLocationId()))
+                .build();
     }
 
     @Transactional
@@ -110,14 +116,10 @@ public class LocationService {
         return locationRepository.findForSelect();
     }
 
-    public LocationDto toDto(Location location) {
-        List<ShelfDto> shelves = shelfRepository.findShelfDtosByLocationId(location.getLocationId());
-
-        return LocationDto.builder()
+    public LocationSummaryDto toSummaryDto(Location location) {
+        return LocationSummaryDto.builder()
                 .id(location.getLocationId())
                 .name(location.getName())
-                .description(location.getDescription())
-                .shelves(shelves)
                 .build();
     }
 

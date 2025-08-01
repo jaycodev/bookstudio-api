@@ -1,8 +1,9 @@
 package com.bookstudio.category.service;
 
-import com.bookstudio.category.dto.CategoryDto;
+import com.bookstudio.category.dto.CategoryDetailDto;
 import com.bookstudio.category.dto.CategoryListDto;
 import com.bookstudio.category.dto.CategorySelectDto;
+import com.bookstudio.category.dto.CategorySummaryDto;
 import com.bookstudio.category.dto.CreateCategoryDto;
 import com.bookstudio.category.dto.UpdateCategoryDto;
 import com.bookstudio.category.model.Category;
@@ -30,11 +31,16 @@ public class CategoryService {
         return categoryRepository.findById(categoryId);
     }
 
-    public CategoryDto getInfoById(Long categoryId) {
+    public CategoryDetailDto getInfoById(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + categoryId));
 
-        return toDto(category);
+        return new CategoryDetailDto(
+                category.getCategoryId(),
+                category.getName(),
+                category.getLevel().name(),
+                category.getDescription(),
+                category.getStatus().name());
     }
 
     @Transactional
@@ -67,13 +73,11 @@ public class CategoryService {
         return categoryRepository.findForSelect();
     }
 
-    public CategoryDto toDto(Category category) {
-        return new CategoryDto(
-                category.getCategoryId(),
-                category.getName(),
-                category.getLevel().name(),
-                category.getDescription(),
-                category.getStatus().name());
+    public CategorySummaryDto toSummaryDto(Category category) {
+        return CategorySummaryDto.builder()
+                .id(category.getCategoryId())
+                .name(category.getName())
+                .build();
     }
 
     private CategoryListDto toListDto(Category category) {

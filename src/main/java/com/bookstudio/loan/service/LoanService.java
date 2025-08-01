@@ -5,9 +5,9 @@ import com.bookstudio.copy.model.Copy;
 import com.bookstudio.copy.service.CopyService;
 import com.bookstudio.loan.dto.CreateLoanDto;
 import com.bookstudio.loan.dto.CreateLoanItemDto;
-import com.bookstudio.loan.dto.LoanDto;
-import com.bookstudio.loan.dto.LoanItemDto;
+import com.bookstudio.loan.dto.LoanDetailDto;
 import com.bookstudio.loan.dto.LoanListDto;
+import com.bookstudio.loan.dto.LoanSummaryDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
 import com.bookstudio.loan.dto.UpdateLoanItemDto;
 import com.bookstudio.loan.model.Loan;
@@ -47,10 +47,18 @@ public class LoanService {
         return loanRepository.findList();
     }
 
-    public LoanDto getInfoById(Long loanId) {
+    public LoanDetailDto getInfoById(Long loanId) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
-        return toDto(loan);
+
+        return LoanDetailDto.builder()
+                .id(loan.getLoanId())
+                .code(loan.getCode())
+                .reader(readerService.toSummaryDto(loan.getReader()))
+                .loanDate(loan.getLoanDate())
+                .observation(loan.getObservation())
+                .items(loanItemRepository.findLoanItemSummariesByLoanId(loan.getLoanId()))
+                .build();
     }
 
     @Transactional
@@ -128,24 +136,12 @@ public class LoanService {
                 .build();
     }
 
-    public LoanDto toDto(Loan loan) {
-        List<LoanItemDto> items = loanItemRepository.findByLoan(loan).stream()
-                .map(item -> {
-                    return LoanItemDto.builder()
-                            .copy(copyService.toDto(item.getCopy()))
-                            .dueDate(item.getDueDate())
-                            .returnDate(item.getReturnDate())
-                            .status(item.getStatus().name())
-                            .build();
-                }).toList();
-
-        return LoanDto.builder()
+    public LoanSummaryDto toSummaryDto(Loan loan) {
+        return LoanSummaryDto.builder()
                 .id(loan.getLoanId())
                 .code(loan.getCode())
-                .reader(readerService.toDto(loan.getReader()))
+                .reader(readerService.toSummaryDto(loan.getReader()))
                 .loanDate(loan.getLoanDate())
-                .observation(loan.getObservation())
-                .items(items)
                 .build();
     }
 

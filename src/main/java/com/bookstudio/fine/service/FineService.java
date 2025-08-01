@@ -1,8 +1,9 @@
 package com.bookstudio.fine.service;
 
 import com.bookstudio.fine.dto.FineSelectDto;
+import com.bookstudio.fine.dto.FineSummaryDto;
 import com.bookstudio.fine.dto.CreateFineDto;
-import com.bookstudio.fine.dto.FineDto;
+import com.bookstudio.fine.dto.FineDetailDto;
 import com.bookstudio.fine.dto.FineListDto;
 import com.bookstudio.fine.dto.UpdateFineDto;
 import com.bookstudio.fine.model.Fine;
@@ -38,10 +39,19 @@ public class FineService {
         return fineRepository.findById(fineId);
     }
 
-    public FineDto getInfoById(Long fineId) {
+    public FineDetailDto getInfoById(Long fineId) {
         Fine fine = fineRepository.findById(fineId)
                 .orElseThrow(() -> new EntityNotFoundException("Fine not found with ID: " + fineId));
-        return toDto(fine);
+
+        return FineDetailDto.builder()
+                .id(fine.getFineId())
+                .code(fine.getCode())
+                .loanItem(loanItemService.toSummaryDto(fine.getLoanItem()))
+                .amount(fine.getAmount())
+                .daysLate(fine.getDaysLate())
+                .status(fine.getStatus().name())
+                .issuedAt(fine.getIssuedAt())
+                .build();
     }
 
     @Transactional
@@ -79,15 +89,12 @@ public class FineService {
         return fineRepository.findForSelect();
     }
 
-    public FineDto toDto(Fine fine) {
-        return FineDto.builder()
+    public FineSummaryDto toSummaryDto(Fine fine) {
+        return FineSummaryDto.builder()
                 .id(fine.getFineId())
                 .code(fine.getCode())
-                .loanItem(loanItemService.toDto(fine.getLoanItem()))
                 .amount(fine.getAmount())
-                .daysLate(fine.getDaysLate())
-                .status(fine.getStatus().name())
-                .issuedAt(fine.getIssuedAt())
+                .status(fine.getStatus())
                 .build();
     }
 

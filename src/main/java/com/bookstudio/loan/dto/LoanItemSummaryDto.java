@@ -2,7 +2,8 @@ package com.bookstudio.loan.dto;
 
 import java.time.LocalDate;
 
-import com.bookstudio.copy.dto.CopyDto;
+import com.bookstudio.copy.dto.CopySummaryDto;
+import com.bookstudio.shared.enums.LoanItemStatus;
 
 import lombok.*;
 
@@ -10,9 +11,9 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoanItemDto {
-    private CopyDto copy;
+public class LoanItemSummaryDto {
+    private CopySummaryDto copy;
     private LocalDate dueDate;
     private LocalDate returnDate;
-    private String status;
+    private LoanItemStatus status;
 }

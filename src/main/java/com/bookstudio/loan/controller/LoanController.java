@@ -1,7 +1,7 @@
 package com.bookstudio.loan.controller;
 
 import com.bookstudio.loan.dto.CreateLoanDto;
-import com.bookstudio.loan.dto.LoanDto;
+import com.bookstudio.loan.dto.LoanDetailDto;
 import com.bookstudio.loan.dto.LoanListDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
 import com.bookstudio.loan.service.LoanService;
@@ -37,7 +37,7 @@ public class LoanController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            LoanDto loan = loanService.getInfoById(id);
+            LoanDetailDto loan = loanService.getInfoById(id);
             return ResponseEntity.ok(loan);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

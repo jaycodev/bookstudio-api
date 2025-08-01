@@ -6,10 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryDto {
+public class CategorySummaryDto {
     private Long id;
     private String name;
-    private String level;
-    private String description;
-    private String status;
 }

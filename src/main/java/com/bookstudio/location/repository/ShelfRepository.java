@@ -6,13 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.bookstudio.location.dto.ShelfDto;
+import com.bookstudio.location.dto.ShelfSummaryDto;
 import com.bookstudio.location.model.Location;
 import com.bookstudio.location.model.Shelf;
 
 public interface ShelfRepository extends JpaRepository<Shelf, Long> {
     @Query("""
-        SELECT new com.bookstudio.location.dto.ShelfDto(
+        SELECT new com.bookstudio.location.dto.ShelfSummaryDto(
             s.shelfId,
             s.code,
             s.floor,
@@ -21,7 +21,7 @@ public interface ShelfRepository extends JpaRepository<Shelf, Long> {
         FROM Shelf s
         WHERE s.location.locationId = :locationId
     """)
-    List<ShelfDto> findShelfDtosByLocationId(@Param("locationId") Long locationId);
+    List<ShelfSummaryDto> findShelfSummariesByLocationId(@Param("locationId") Long locationId);
 
     void deleteAllByLocation(Location location);
 

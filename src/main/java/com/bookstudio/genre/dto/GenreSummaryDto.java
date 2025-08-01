@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GenreDto {
+public class GenreSummaryDto {
     private Long id;
     private String name;
 }

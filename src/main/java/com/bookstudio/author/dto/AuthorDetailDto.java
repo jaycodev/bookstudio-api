@@ -2,7 +2,7 @@ package com.bookstudio.author.dto;
 
 import java.time.LocalDate;
 
-import com.bookstudio.nationality.dto.NationalityDto;
+import com.bookstudio.nationality.dto.NationalitySummaryDto;
 
 import lombok.*;
 
@@ -10,10 +10,10 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorDto {
+public class AuthorDetailDto {
     private Long id;
     private String name;
-    private NationalityDto nationality;
+    private NationalitySummaryDto nationality;
     private LocalDate birthDate;
     private String biography;
     private String status;

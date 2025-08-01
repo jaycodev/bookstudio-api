@@ -1,6 +1,6 @@
 package com.bookstudio.category.controller;
 
-import com.bookstudio.category.dto.CategoryDto;
+import com.bookstudio.category.dto.CategoryDetailDto;
 import com.bookstudio.category.dto.CategoryListDto;
 import com.bookstudio.category.dto.CreateCategoryDto;
 import com.bookstudio.category.dto.UpdateCategoryDto;
@@ -36,7 +36,7 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
-            CategoryDto category = categoryService.getInfoById(id);
+            CategoryDetailDto category = categoryService.getInfoById(id);
             return ResponseEntity.ok(category);
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

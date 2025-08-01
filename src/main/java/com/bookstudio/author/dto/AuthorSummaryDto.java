@@ -1,4 +1,4 @@
-package com.bookstudio.nationality.dto;
+package com.bookstudio.author.dto;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NationalityDto {
+public class AuthorSummaryDto {
     private Long id;
     private String name;
 }

@@ -9,11 +9,11 @@ import org.springframework.data.repository.query.Param;
 import com.bookstudio.book.model.Book;
 import com.bookstudio.book.relation.BookGenre;
 import com.bookstudio.book.relation.BookGenreId;
-import com.bookstudio.genre.dto.GenreDto;
+import com.bookstudio.genre.dto.GenreSummaryDto;
 
 public interface BookGenreRepository extends JpaRepository<BookGenre, BookGenreId> {
     @Query("""
-        SELECT new com.bookstudio.genre.dto.GenreDto(
+        SELECT new com.bookstudio.genre.dto.GenreSummaryDto(
             g.genreId,
             g.name
         )
@@ -21,7 +21,7 @@ public interface BookGenreRepository extends JpaRepository<BookGenre, BookGenreI
         JOIN bg.genre g
         WHERE bg.book.bookId = :bookId
     """)
-    List<GenreDto> findGenreDtosByBookId(@Param("bookId") Long bookId);
+    List<GenreSummaryDto> findGenreSummariesByBookId(@Param("bookId") Long bookId);
 
     void deleteAllByBook(Book book);
 }
