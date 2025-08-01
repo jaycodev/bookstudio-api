@@ -1,16 +1,12 @@
 package com.bookstudio.reader.service;
 
-import com.bookstudio.reader.dto.CreateReaderDto;
-import com.bookstudio.reader.dto.ReaderDetailDto;
-import com.bookstudio.reader.dto.ReaderResponseDto;
-import com.bookstudio.reader.dto.ReaderSummaryDto;
-import com.bookstudio.reader.dto.UpdateReaderDto;
+import com.bookstudio.reader.dto.*;
 import com.bookstudio.reader.model.Reader;
-import com.bookstudio.reader.projection.ReaderInfoProjection;
-import com.bookstudio.reader.projection.ReaderListProjection;
-import com.bookstudio.reader.projection.ReaderSelectProjection;
 import com.bookstudio.reader.repository.ReaderRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,9 +18,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReaderService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final ReaderRepository readerRepository;
 
-    public List<ReaderListProjection> getList() {
+    public List<ReaderListDto> getList() {
         return readerRepository.findList();
     }
 
@@ -32,80 +31,10 @@ public class ReaderService {
         return readerRepository.findById(readerId);
     }
 
-    public Optional<ReaderInfoProjection> getInfoById(Long readerId) {
-        return readerRepository.findInfoById(readerId);
-    }
+    public ReaderDetailDto getInfoById(Long readerId) {
+        Reader reader = readerRepository.findById(readerId)
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + readerId));
 
-    @Transactional
-    public ReaderResponseDto create(CreateReaderDto dto) {
-        if (readerRepository.findByDni(dto.getDni()).isPresent()) {
-            throw new RuntimeException("El DNI ingresado ya ha sido registrado.");
-        }
-
-        if (readerRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
-        }
-
-        Reader reader = new Reader();
-        reader.setDni(dto.getDni());
-        reader.setFirstName(dto.getFirstName());
-        reader.setLastName(dto.getLastName());
-        reader.setAddress(dto.getAddress());
-        reader.setPhone(dto.getPhone());
-        reader.setEmail(dto.getEmail());
-        reader.setBirthDate(dto.getBirthDate());
-        reader.setGender(dto.getGender());
-        reader.setStatus(dto.getStatus());
-
-        Reader saved = readerRepository.save(reader);
-
-        return new ReaderResponseDto(
-                saved.getReaderId(),
-                saved.getCode(),
-                saved.getDni(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getPhone(),
-                saved.getEmail(),
-                saved.getStatus().name());
-    }
-
-    @Transactional
-    public ReaderResponseDto update(UpdateReaderDto dto) {
-        Reader reader = readerRepository.findById(dto.getReaderId())
-                .orElseThrow(() -> new RuntimeException("Lector no encontrado con ID: " + dto.getReaderId()));
-
-        if (readerRepository.findByEmailAndReaderIdNot(dto.getEmail(), dto.getReaderId()).isPresent()) {
-            throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
-        }
-
-        reader.setFirstName(dto.getFirstName());
-        reader.setLastName(dto.getLastName());
-        reader.setAddress(dto.getAddress());
-        reader.setPhone(dto.getPhone());
-        reader.setEmail(dto.getEmail());
-        reader.setBirthDate(dto.getBirthDate());
-        reader.setGender(dto.getGender());
-        reader.setStatus(dto.getStatus());
-
-        Reader saved = readerRepository.save(reader);
-
-        return new ReaderResponseDto(
-                saved.getReaderId(),
-                saved.getCode(),
-                saved.getDni(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getPhone(),
-                saved.getEmail(),
-                saved.getStatus().name());
-    }
-
-    public List<ReaderSelectProjection> getForSelect() {
-        return readerRepository.findForSelect();
-    }
-
-    public ReaderDetailDto toDto(Reader reader) {
         return ReaderDetailDto.builder()
                 .id(reader.getReaderId())
                 .code(reader.getCode())
@@ -122,6 +51,62 @@ public class ReaderService {
                 .build();
     }
 
+    @Transactional
+    public ReaderListDto create(CreateReaderDto dto) {
+        if (readerRepository.findByDni(dto.getDni()).isPresent()) {
+            throw new IllegalArgumentException("The provided DNI is already registered.");
+        }
+
+        if (readerRepository.findByEmail(dto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("The provided email address is already registered.");
+        }
+
+        Reader reader = Reader.builder()
+                .dni(dto.getDni())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .address(dto.getAddress())
+                .phone(dto.getPhone())
+                .email(dto.getEmail())
+                .birthDate(dto.getBirthDate())
+                .gender(dto.getGender())
+                .type(dto.getType())
+                .status(dto.getStatus())
+                .build();
+
+        Reader saved = readerRepository.save(reader);
+        entityManager.refresh(saved);
+
+        return toListDto(saved);
+    }
+
+    @Transactional
+    public ReaderListDto update(UpdateReaderDto dto) {
+        Reader reader = readerRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + dto.getId()));
+
+        if (readerRepository.findByEmailAndReaderIdNot(dto.getEmail(), dto.getId()).isPresent()) {
+            throw new IllegalArgumentException("The provided email address is already registered.");
+        }
+
+        reader.setFirstName(dto.getFirstName());
+        reader.setLastName(dto.getLastName());
+        reader.setAddress(dto.getAddress());
+        reader.setPhone(dto.getPhone());
+        reader.setEmail(dto.getEmail());
+        reader.setBirthDate(dto.getBirthDate());
+        reader.setGender(dto.getGender());
+        reader.setType(dto.getType());
+        reader.setStatus(dto.getStatus());
+
+        Reader saved = readerRepository.save(reader);
+        return toListDto(saved);
+    }
+
+    public List<ReaderSelectDto> getForSelect() {
+        return readerRepository.findForSelect();
+    }
+
     public ReaderSummaryDto toSummaryDto(Reader reader) {
         return ReaderSummaryDto.builder()
                 .id(reader.getReaderId())
@@ -129,5 +114,17 @@ public class ReaderService {
                 .firstName(reader.getFirstName())
                 .lastName(reader.getLastName())
                 .build();
+    }
+
+    private ReaderListDto toListDto(Reader reader) {
+        return new ReaderListDto(
+                reader.getCode(),
+                reader.getFullName(),
+                reader.getDni(),
+                reader.getPhone(),
+                reader.getEmail(),
+                reader.getType(),
+                reader.getStatus(),
+                reader.getReaderId());
     }
 }

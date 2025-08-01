@@ -2,12 +2,10 @@ package com.bookstudio.reader.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import com.bookstudio.reader.dto.ReaderListDto;
+import com.bookstudio.reader.dto.ReaderSelectDto;
 import com.bookstudio.reader.model.Reader;
-import com.bookstudio.reader.projection.ReaderInfoProjection;
-import com.bookstudio.reader.projection.ReaderListProjection;
-import com.bookstudio.reader.projection.ReaderSelectProjection;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,46 +14,31 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
     Optional<Reader> findByDni(String dni);
     Optional<Reader> findByEmail(String email);
     Optional<Reader> findByEmailAndReaderIdNot(String email, Long excludedId);
-
+    
     @Query("""
-        SELECT 
-            r.readerId AS readerId,
-            r.code AS code,
-            r.dni AS dni,
-            r.firstName AS firstName,
-            r.lastName AS lastName,
-            r.phone AS phone,
-            r.email AS email,
-            r.status AS status
+        SELECT new com.bookstudio.reader.dto.ReaderListDto(
+            r.code,
+            CONCAT(r.firstName, ' ', r.lastName),
+            r.dni,
+            r.phone,
+            r.email,
+            r.type,
+            r.status,
+            r.readerId
+        )
         FROM Reader r
         ORDER BY r.readerId DESC
     """)
-    List<ReaderListProjection> findList();
+    List<ReaderListDto> findList();
 
     @Query("""
-        SELECT 
-            r.readerId AS readerId,
-            r.code AS code,
-            r.dni AS dni,
-            r.firstName AS firstName,
-            r.lastName AS lastName,
-            r.address AS address,
-            r.phone AS phone,
-            r.email AS email,
-            r.birthDate AS birthDate,
-            r.gender AS gender,
-            r.status AS status
+        SELECT new com.bookstudio.reader.dto.ReaderSelectDto(
+            r.readerId,
+            CONCAT(r.firstName, ' ', r.lastName)
+        )
         FROM Reader r
-        WHERE r.readerId = :id
+        WHERE r.status = com.bookstudio.shared.enums.Status.activo
+        ORDER BY r.firstName, r.lastName
     """)
-    Optional<ReaderInfoProjection> findInfoById(@Param("id") Long id);
-
-    @Query("""
-        SELECT 
-            r.readerId AS readerId,
-            CONCAT(r.firstName, ' ', r.lastName) AS fullName
-        FROM Reader r
-        WHERE r.status = 'activo'
-    """)
-    List<ReaderSelectProjection> findForSelect();
+    List<ReaderSelectDto> findForSelect();
 }

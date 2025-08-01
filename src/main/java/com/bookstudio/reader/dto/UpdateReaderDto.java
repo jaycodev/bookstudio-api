@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class UpdateReaderDto {
-    private Long readerId;
+    private Long id;
     private String firstName;
     private String lastName;
     private String address;
