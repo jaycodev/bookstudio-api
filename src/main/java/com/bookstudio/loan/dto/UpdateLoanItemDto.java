@@ -7,7 +7,7 @@ import com.bookstudio.shared.enums.LoanItemStatus;
 import lombok.Data;
 
 @Data
-public class LoanItemInputDto {
+public class UpdateLoanItemDto {
     private Long copyId;
     private LocalDate dueDate;
     private LoanItemStatus status;

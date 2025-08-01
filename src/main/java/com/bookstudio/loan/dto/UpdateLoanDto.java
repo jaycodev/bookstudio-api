@@ -9,5 +9,5 @@ public class UpdateLoanDto {
     private Long id;
     private Long readerId;
     private String observation;
-    private List<LoanItemInputDto> items;
+    private List<UpdateLoanItemDto> items;
 }

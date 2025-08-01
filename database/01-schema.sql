@@ -51,7 +51,7 @@ CREATE TABLE publishers (
 
 CREATE TABLE readers (
     reader_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(20) UNIQUE,
+	code VARCHAR(50) UNIQUE,
     dni VARCHAR(8) UNIQUE NOT NULL CHECK (dni ~ '^[0-9]{8}$'),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,

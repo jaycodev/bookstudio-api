@@ -1,5 +1,7 @@
 package com.bookstudio.location.dto;
 
+import java.util.List;
+
 import lombok.*;
 
 @Data
@@ -10,4 +12,5 @@ public class LocationDto {
     private Long id;
     private String name;
     private String description;
+    private List<ShelfDto> shelves;
 }

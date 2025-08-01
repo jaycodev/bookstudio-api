@@ -1,15 +1,21 @@
 package com.bookstudio.location.service;
 
-import com.bookstudio.location.dto.LocationResponseDto;
 import com.bookstudio.location.dto.CreateLocationDto;
+import com.bookstudio.location.dto.CreateShelfDto;
 import com.bookstudio.location.dto.LocationDto;
+import com.bookstudio.location.dto.LocationListDto;
+import com.bookstudio.location.dto.LocationSelectDto;
+import com.bookstudio.location.dto.ShelfDto;
 import com.bookstudio.location.dto.UpdateLocationDto;
+import com.bookstudio.location.dto.UpdateShelfDto;
 import com.bookstudio.location.model.Location;
-import com.bookstudio.location.projection.LocationInfoProjection;
-import com.bookstudio.location.projection.LocationListProjection;
-import com.bookstudio.location.projection.LocationSelectProjection;
+import com.bookstudio.location.model.Shelf;
 import com.bookstudio.location.repository.LocationRepository;
+import com.bookstudio.location.repository.ShelfRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +27,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LocationService {
 
-    private final LocationRepository locationRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public List<LocationListProjection> getList() {
+    private final LocationRepository locationRepository;
+    private final ShelfRepository shelfRepository;
+
+    public List<LocationListDto> getList() {
         return locationRepository.findList();
     }
 
@@ -31,49 +41,90 @@ public class LocationService {
         return locationRepository.findById(locationId);
     }
 
-    public Optional<LocationInfoProjection> getInfoById(Long locationId) {
-        return locationRepository.findInfoById(locationId);
+    public LocationDto getInfoById(Long locationId) {
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + locationId));
+        return toDto(location);
     }
 
     @Transactional
-    public LocationResponseDto create(CreateLocationDto dto) {
+    public LocationListDto create(CreateLocationDto dto) {
         Location location = new Location();
         location.setName(dto.getName());
         location.setDescription(dto.getDescription());
 
         Location saved = locationRepository.save(location);
+        entityManager.refresh(saved);
 
-        return new LocationResponseDto(
-                saved.getLocationId(),
-                saved.getName(),
-                saved.getDescription());
+        if (dto.getShelves() != null) {
+            for (CreateShelfDto shelfDto : dto.getShelves()) {
+                Shelf shelf = Shelf.builder()
+                        .code(shelfDto.getCode())
+                        .floor(shelfDto.getFloor())
+                        .description(shelfDto.getDescription())
+                        .location(saved)
+                        .build();
+                shelfRepository.save(shelf);
+            }
+        }
+
+        return toListDto(saved);
     }
 
     @Transactional
-    public LocationResponseDto update(UpdateLocationDto dto) {
-        Location location = locationRepository.findById(dto.getLocationId())
-                .orElseThrow(() -> new RuntimeException("Ubicación no encontrada con ID: " + dto.getLocationId()));
+    public LocationListDto update(UpdateLocationDto dto) {
+        Location location = locationRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + dto.getId()));
 
         location.setName(dto.getName());
         location.setDescription(dto.getDescription());
+        locationRepository.save(location);
 
-        Location saved = locationRepository.save(location);
+        if (dto.getShelves() != null) {
+            for (UpdateShelfDto shelfDto : dto.getShelves()) {
+                if (shelfDto.getId() != null) {
+                    Shelf shelf = shelfRepository.findById(shelfDto.getId())
+                            .orElseThrow(
+                                    () -> new EntityNotFoundException("Shelf not found with ID: " + shelfDto.getId()));
 
-        return new LocationResponseDto(
-                saved.getLocationId(),
-                saved.getName(),
-                saved.getDescription());
+                    shelf.setCode(shelfDto.getCode());
+                    shelf.setFloor(shelfDto.getFloor());
+                    shelf.setDescription(shelfDto.getDescription());
+                    shelfRepository.save(shelf);
+                } else {
+                    Shelf shelf = Shelf.builder()
+                            .code(shelfDto.getCode())
+                            .floor(shelfDto.getFloor())
+                            .description(shelfDto.getDescription())
+                            .location(location)
+                            .build();
+                    shelfRepository.save(shelf);
+                }
+            }
+        }
+
+        return toListDto(location);
     }
 
-    public List<LocationSelectProjection> getForSelect() {
+    public List<LocationSelectDto> getForSelect() {
         return locationRepository.findForSelect();
     }
 
     public LocationDto toDto(Location location) {
+        List<ShelfDto> shelves = shelfRepository.findShelfDtosByLocationId(location.getLocationId());
+
         return LocationDto.builder()
                 .id(location.getLocationId())
                 .name(location.getName())
                 .description(location.getDescription())
+                .shelves(shelves)
                 .build();
+    }
+
+    private LocationListDto toListDto(Location location) {
+        return new LocationListDto(
+                location.getName(),
+                location.getDescription(),
+                location.getLocationId());
     }
 }

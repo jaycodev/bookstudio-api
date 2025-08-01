@@ -1,14 +1,14 @@
 package com.bookstudio.location.controller;
 
-import com.bookstudio.location.dto.LocationResponseDto;
 import com.bookstudio.location.dto.CreateLocationDto;
+import com.bookstudio.location.dto.LocationDto;
+import com.bookstudio.location.dto.LocationListDto;
 import com.bookstudio.location.dto.UpdateLocationDto;
-import com.bookstudio.location.projection.LocationInfoProjection;
-import com.bookstudio.location.projection.LocationListProjection;
 import com.bookstudio.location.service.LocationService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class LocationController {
 
     @GetMapping
     public ResponseEntity<?> list() {
-        List<LocationListProjection> locations = locationService.getList();
+        List<LocationListDto> locations = locationService.getList();
         if (locations.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No locations found.", "no_content", 204));
@@ -35,18 +35,19 @@ public class LocationController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> get(@PathVariable Long id) {
-        LocationInfoProjection location = locationService.getInfoById(id).orElse(null);
-        if (location == null) {
+        try {
+            LocationDto location = locationService.getInfoById(id);
+            return ResponseEntity.ok(location);
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiError(false, "Location not found.", "not_found", 404));
+                    .body(new ApiError(false, e.getMessage(), "not_found", 404));
         }
-        return ResponseEntity.ok(location);
     }
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreateLocationDto dto) {
         try {
-            LocationResponseDto created = locationService.create(dto);
+            LocationListDto created = locationService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -57,9 +58,9 @@ public class LocationController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdateLocationDto dto) {
         try {
-            LocationResponseDto updated = locationService.update(dto);
+            LocationListDto updated = locationService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
-        } catch (RuntimeException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
         }

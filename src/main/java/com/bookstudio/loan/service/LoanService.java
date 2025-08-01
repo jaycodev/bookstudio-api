@@ -4,11 +4,12 @@ import com.bookstudio.book.service.BookService;
 import com.bookstudio.copy.model.Copy;
 import com.bookstudio.copy.service.CopyService;
 import com.bookstudio.loan.dto.CreateLoanDto;
+import com.bookstudio.loan.dto.CreateLoanItemDto;
 import com.bookstudio.loan.dto.LoanDto;
 import com.bookstudio.loan.dto.LoanItemDto;
-import com.bookstudio.loan.dto.LoanItemInputDto;
 import com.bookstudio.loan.dto.LoanListDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
+import com.bookstudio.loan.dto.UpdateLoanItemDto;
 import com.bookstudio.loan.model.Loan;
 import com.bookstudio.loan.relation.LoanItem;
 import com.bookstudio.loan.relation.LoanItemId;
@@ -65,7 +66,7 @@ public class LoanService {
         entityManager.refresh(saved);
 
         if (dto.getItems() != null) {
-            for (LoanItemInputDto itemDto : dto.getItems()) {
+            for (CreateLoanItemDto itemDto : dto.getItems()) {
                 Copy copy = copyService.findById(itemDto.getCopyId())
                         .orElseThrow(
                                 () -> new EntityNotFoundException("Copy not found with ID: " + itemDto.getCopyId()));
@@ -100,7 +101,7 @@ public class LoanService {
         loanItemRepository.deleteAllByLoan(saved);
 
         if (dto.getItems() != null) {
-            for (LoanItemInputDto itemDto : dto.getItems()) {
+            for (UpdateLoanItemDto itemDto : dto.getItems()) {
                 Copy copy = copyService.findById(itemDto.getCopyId())
                         .orElseThrow(() -> new EntityNotFoundException(
                                 "Copy not found with ID: " + itemDto.getCopyId()));

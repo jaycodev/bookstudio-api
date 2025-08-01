@@ -1,6 +1,5 @@
 package com.bookstudio.location.service;
 
-import com.bookstudio.location.dto.LocationDto;
 import com.bookstudio.location.dto.ShelfDto;
 import com.bookstudio.location.model.Shelf;
 import com.bookstudio.location.repository.ShelfRepository;
@@ -17,8 +16,6 @@ public class ShelfService {
 
     private final ShelfRepository shelfRepository;
 
-    private final LocationService locationService;
-
     public List<Shelf> getForSelect() {
         return shelfRepository.findAllByOrderByShelfIdDesc();
     }
@@ -28,11 +25,8 @@ public class ShelfService {
     }
 
     public ShelfDto toDto(Shelf shelf) {
-        LocationDto locationDto = locationService.toDto(shelf.getLocation());
-
         return ShelfDto.builder()
                 .id(shelf.getShelfId())
-                .location(locationDto)
                 .code(shelf.getCode())
                 .floor(shelf.getFloor())
                 .description(shelf.getDescription())

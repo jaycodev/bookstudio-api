@@ -8,5 +8,5 @@ import lombok.Data;
 public class CreateLoanDto {
     private Long readerId;
     private String observation;
-    private List<LoanItemInputDto> items;
+    private List<CreateLoanItemDto> items;
 }

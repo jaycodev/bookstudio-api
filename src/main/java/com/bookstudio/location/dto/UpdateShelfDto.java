@@ -1,12 +1,9 @@
 package com.bookstudio.location.dto;
 
-import lombok.*;
+import lombok.Data;
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class ShelfDto {
+public class UpdateShelfDto {
     private Long id;
     private String code;
     private String floor;
