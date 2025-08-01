@@ -1,5 +1,7 @@
 package com.bookstudio.publisher.dto;
 
+import java.util.List;
+
 import com.bookstudio.shared.enums.Status;
 import lombok.Data;
 
@@ -12,4 +14,5 @@ public class CreatePublisherDto {
     private String address;
     private Status status;
     private String photoUrl;
+    private List<Long> genreIds;
 }

@@ -1,5 +1,8 @@
 package com.bookstudio.publisher.dto;
 
+import java.util.List;
+
+import com.bookstudio.genre.dto.GenreSummaryDto;
 import com.bookstudio.nationality.dto.NationalitySummaryDto;
 import com.bookstudio.shared.enums.Status;
 
@@ -18,4 +21,5 @@ public class PublisherDetailDto {
     private String address;
     private Status status;
     private String photoUrl;
+    private List<GenreSummaryDto> genres;
 }

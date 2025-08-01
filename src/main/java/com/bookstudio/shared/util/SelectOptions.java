@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import com.bookstudio.publisher.projection.PublisherSelectProjection;
+import com.bookstudio.publisher.dto.PublisherSelectDto;
 import com.bookstudio.reader.projection.ReaderSelectProjection;
 import com.bookstudio.role.projection.RoleSelectProjection;
 
@@ -26,7 +26,7 @@ import com.bookstudio.role.projection.RoleSelectProjection;
 public class SelectOptions {
     private List<BookSelectDto> books;
     private List<AuthorSelectDto> authors;
-    private List<PublisherSelectProjection> publishers;
+    private List<PublisherSelectDto> publishers;
     private List<CategorySelectDto> categories;
     private List<ReaderSelectProjection> students;
     private List<RoleSelectProjection> roles;

@@ -2,9 +2,8 @@ package com.bookstudio.publisher.controller;
 
 import com.bookstudio.publisher.dto.CreatePublisherDto;
 import com.bookstudio.publisher.dto.PublisherDetailDto;
-import com.bookstudio.publisher.dto.PublisherResponseDto;
+import com.bookstudio.publisher.dto.PublisherListDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
-import com.bookstudio.publisher.projection.PublisherListProjection;
 import com.bookstudio.publisher.service.PublisherService;
 import com.bookstudio.shared.util.ApiError;
 import com.bookstudio.shared.util.ApiResponse;
@@ -27,7 +26,7 @@ public class PublisherController {
 
     @GetMapping
     public ResponseEntity<?> list() {
-        List<PublisherListProjection> publishers = publisherService.getList();
+        List<PublisherListDto> publishers = publisherService.getList();
         if (publishers.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .body(new ApiError(false, "No publishers found.", "no_content", 204));
@@ -49,7 +48,7 @@ public class PublisherController {
     @PostMapping
     public ResponseEntity<?> create(@RequestBody CreatePublisherDto dto) {
         try {
-            PublisherResponseDto created = publisherService.create(dto);
+            PublisherListDto created = publisherService.create(dto);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new ApiResponse(true, created));
         } catch (Exception e) {
@@ -61,7 +60,7 @@ public class PublisherController {
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UpdatePublisherDto dto) {
         try {
-            PublisherResponseDto updated = publisherService.update(dto);
+            PublisherListDto updated = publisherService.update(dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

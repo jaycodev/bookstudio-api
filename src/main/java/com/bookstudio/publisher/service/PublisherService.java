@@ -1,14 +1,17 @@
 package com.bookstudio.publisher.service;
 
+import com.bookstudio.genre.model.Genre;
 import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.publisher.dto.CreatePublisherDto;
 import com.bookstudio.publisher.dto.PublisherDetailDto;
-import com.bookstudio.publisher.dto.PublisherResponseDto;
+import com.bookstudio.publisher.dto.PublisherListDto;
+import com.bookstudio.publisher.dto.PublisherSelectDto;
 import com.bookstudio.publisher.dto.PublisherSummaryDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.model.Publisher;
-import com.bookstudio.publisher.projection.PublisherListProjection;
-import com.bookstudio.publisher.projection.PublisherSelectProjection;
+import com.bookstudio.publisher.relation.PublisherGenre;
+import com.bookstudio.publisher.relation.PublisherGenreId;
+import com.bookstudio.publisher.repository.PublisherGenreRepository;
 import com.bookstudio.publisher.repository.PublisherRepository;
 import com.bookstudio.shared.util.SelectOptions;
 
@@ -25,10 +28,11 @@ import java.util.Optional;
 public class PublisherService {
 
     private final PublisherRepository publisherRepository;
+    private final PublisherGenreRepository publisherGenreRepository;
 
     private final NationalityService nationalityService;
 
-    public List<PublisherListProjection> getList() {
+    public List<PublisherListDto> getList() {
         return publisherRepository.findList();
     }
 
@@ -49,15 +53,17 @@ public class PublisherService {
                 .address(publisher.getAddress())
                 .status(publisher.getStatus())
                 .photoUrl(publisher.getPhotoUrl())
+                .genres(publisherGenreRepository.findGenreSummariesByPublisherId(publisherId))
                 .build();
     }
 
     @Transactional
-    public PublisherResponseDto create(CreatePublisherDto dto) {
+    public PublisherListDto create(CreatePublisherDto dto) {
         Publisher publisher = new Publisher();
         publisher.setName(dto.getName());
         publisher.setNationality(nationalityService.findById(dto.getNationalityId())
-                .orElseThrow(() -> new RuntimeException("Nationality not found")));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Nationality not found with ID: " + dto.getNationalityId())));
         publisher.setFoundationYear(dto.getFoundationYear());
         publisher.setWebsite(dto.getWebsite());
         publisher.setAddress(dto.getAddress());
@@ -66,46 +72,58 @@ public class PublisherService {
 
         Publisher saved = publisherRepository.save(publisher);
 
-        return new PublisherResponseDto(
-                saved.getPublisherId(),
-                saved.getName(),
-                saved.getNationality().getName(),
-                saved.getWebsite(),
-                saved.getStatus().name(),
-                saved.getPhotoUrl());
+        if (dto.getGenreIds() != null) {
+            for (Long genreId : dto.getGenreIds()) {
+                PublisherGenre relation = new PublisherGenre();
+                relation.setId(new PublisherGenreId(saved.getPublisherId(), genreId));
+                relation.setPublisher(saved);
+                relation.setGenre(new Genre(genreId));
+                publisherGenreRepository.save(relation);
+            }
+        }
+
+        return toListDto(saved);
     }
 
     @Transactional
-    public PublisherResponseDto update(UpdatePublisherDto dto) {
-        Publisher publisher = publisherRepository.findById(dto.getPublisherId())
-                .orElseThrow(() -> new RuntimeException("Editorial no encontrada con ID: " + dto.getPublisherId()));
+    public PublisherListDto update(UpdatePublisherDto dto) {
+        Publisher publisher = publisherRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + dto.getId()));
 
         publisher.setName(dto.getName());
         publisher.setNationality(nationalityService.findById(dto.getNationalityId())
-                .orElseThrow(() -> new RuntimeException("Nationality not found")));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Nationality not found with ID: " + dto.getNationalityId())));
         publisher.setFoundationYear(dto.getFoundationYear());
         publisher.setWebsite(dto.getWebsite());
         publisher.setAddress(dto.getAddress());
         publisher.setStatus(dto.getStatus());
 
-        if (dto.isDeletePhoto()) {
+        if (dto.getPhotoUrl() == null || dto.getPhotoUrl().isBlank()) {
             publisher.setPhotoUrl(null);
-        } else if (dto.getPhotoUrl() != null && !dto.getPhotoUrl().isBlank()) {
+        } else {
             publisher.setPhotoUrl(dto.getPhotoUrl());
         }
 
         Publisher saved = publisherRepository.save(publisher);
 
-        return new PublisherResponseDto(
-                saved.getPublisherId(),
-                saved.getName(),
-                saved.getNationality().getName(),
-                saved.getWebsite(),
-                saved.getStatus().name(),
-                saved.getPhotoUrl());
+        publisherGenreRepository.deleteAllByPublisher(saved);
+
+        if (dto.getGenreIds() != null) {
+            for (Long genreId : dto.getGenreIds()) {
+                PublisherGenre relation = PublisherGenre.builder()
+                        .id(new PublisherGenreId(saved.getPublisherId(), genreId))
+                        .publisher(saved)
+                        .genre(new Genre(genreId))
+                        .build();
+                publisherGenreRepository.save(relation);
+            }
+        }
+
+        return toListDto(saved);
     }
 
-    public List<PublisherSelectProjection> getForSelect() {
+    public List<PublisherSelectDto> getForSelect() {
         return publisherRepository.findForSelect();
     }
 
@@ -120,5 +138,15 @@ public class PublisherService {
                 .id(publisher.getPublisherId())
                 .name(publisher.getName())
                 .build();
+    }
+
+    private PublisherListDto toListDto(Publisher publisher) {
+        return new PublisherListDto(
+                publisher.getPhotoUrl(),
+                publisher.getName(),
+                publisher.getNationality().getName(),
+                publisher.getWebsite(),
+                publisher.getStatus(),
+                publisher.getPublisherId());
     }
 }
