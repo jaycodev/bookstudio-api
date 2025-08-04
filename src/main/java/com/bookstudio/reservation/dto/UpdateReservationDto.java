@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class UpdateReservationDto {
-    private Long reservationId;
+    private Long id;
     private Long readerId;
     private Long copyId;
     private LocalDate reservationDate;

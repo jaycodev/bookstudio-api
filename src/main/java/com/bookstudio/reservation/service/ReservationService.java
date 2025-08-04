@@ -1,15 +1,17 @@
 package com.bookstudio.reservation.service;
 
 import com.bookstudio.reservation.dto.CreateReservationDto;
-import com.bookstudio.reservation.dto.ReservationResponseDto;
+import com.bookstudio.reservation.dto.ReservationDetailDto;
+import com.bookstudio.reservation.dto.ReservationListDto;
 import com.bookstudio.reservation.dto.UpdateReservationDto;
 import com.bookstudio.reservation.model.Reservation;
-import com.bookstudio.reservation.projection.ReservationInfoProjection;
-import com.bookstudio.reservation.projection.ReservationListProjection;
 import com.bookstudio.reservation.repository.ReservationRepository;
 import com.bookstudio.reader.service.ReaderService;
 import com.bookstudio.copy.service.CopyService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReservationService {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final ReservationRepository reservationRepository;
     private final ReaderService readerService;
     private final CopyService copyService;
 
-    public List<ReservationListProjection> getList() {
+    public List<ReservationListDto> getList() {
         return reservationRepository.findList();
     }
 
@@ -33,54 +38,61 @@ public class ReservationService {
         return reservationRepository.findById(reservationId);
     }
 
-    public Optional<ReservationInfoProjection> getInfoById(Long reservationId) {
-        return reservationRepository.findInfoById(reservationId);
+    public ReservationDetailDto getInfoById(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + reservationId));
+
+        return ReservationDetailDto.builder()
+                .id(reservation.getReservationId())
+                .code(reservation.getCode())
+                .reader(readerService.toSummaryDto(reservation.getReader()))
+                .copy(copyService.toSummaryDto(reservation.getCopy()))
+                .reservationDate(reservation.getReservationDate())
+                .status(reservation.getStatus().name())
+                .build();
     }
 
     @Transactional
-    public ReservationResponseDto create(CreateReservationDto dto) {
+    public ReservationListDto create(CreateReservationDto dto) {
         Reservation reservation = Reservation.builder()
                 .reader(readerService.findById(dto.getReaderId())
-                        .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + dto.getReaderId())))
+                        .orElseThrow(
+                                () -> new EntityNotFoundException("Reader not found with ID: " + dto.getReaderId())))
                 .copy(copyService.findById(dto.getCopyId())
-                        .orElseThrow(() -> new RuntimeException("Copy not found with ID: " + dto.getCopyId())))
+                        .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + dto.getCopyId())))
                 .reservationDate(dto.getReservationDate())
                 .status(dto.getStatus())
                 .build();
 
         Reservation saved = reservationRepository.save(reservation);
+        entityManager.refresh(saved);
 
-        return new ReservationResponseDto(
-                saved.getReservationId(),
-                saved.getCode(),
-                saved.getReader().getFirstName() + " " + saved.getReader().getLastName(),
-                saved.getCopy().getCode(),
-                saved.getReservationDate(),
-                saved.getStatus().name()
-        );
+        return toListDto(saved);
     }
 
     @Transactional
-    public ReservationResponseDto update(UpdateReservationDto dto) {
-        Reservation reservation = reservationRepository.findById(dto.getReservationId())
-                .orElseThrow(() -> new RuntimeException("Reservation not found with ID: " + dto.getReservationId()));
+    public ReservationListDto update(UpdateReservationDto dto) {
+        Reservation reservation = reservationRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + dto.getId()));
 
         reservation.setReader(readerService.findById(dto.getReaderId())
-                .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + dto.getReaderId())));
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + dto.getReaderId())));
         reservation.setCopy(copyService.findById(dto.getCopyId())
-                .orElseThrow(() -> new RuntimeException("Copy not found with ID: " + dto.getCopyId())));
+                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + dto.getCopyId())));
         reservation.setReservationDate(dto.getReservationDate());
         reservation.setStatus(dto.getStatus());
 
         Reservation saved = reservationRepository.save(reservation);
+        return toListDto(saved);
+    }
 
-        return new ReservationResponseDto(
-                saved.getReservationId(),
-                saved.getCode(),
-                saved.getReader().getFirstName() + " " + saved.getReader().getLastName(),
-                saved.getCopy().getCode(),
-                saved.getReservationDate(),
-                saved.getStatus().name()
-        );
+    private ReservationListDto toListDto(Reservation reservation) {
+        return new ReservationListDto(
+                reservation.getCode(),
+                reservation.getReader().getFullName(),
+                reservation.getCopy().getCode(),
+                reservation.getReservationDate(),
+                reservation.getStatus(),
+                reservation.getReservationId());
     }
 }
