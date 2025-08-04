@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Permission {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long permissionId;
@@ -20,4 +20,8 @@ public class Permission {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    public Permission(Long id) {
+        this.permissionId = id;
+    }
 }

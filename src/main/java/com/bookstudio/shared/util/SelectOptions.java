@@ -17,7 +17,7 @@ import lombok.Data;
 
 import com.bookstudio.publisher.dto.PublisherSelectDto;
 import com.bookstudio.reader.dto.ReaderSelectDto;
-import com.bookstudio.role.projection.RoleSelectProjection;
+import com.bookstudio.role.dto.RoleSelectDto;
 
 @Data
 @AllArgsConstructor
@@ -29,7 +29,7 @@ public class SelectOptions {
     private List<PublisherSelectDto> publishers;
     private List<CategorySelectDto> categories;
     private List<ReaderSelectDto> students;
-    private List<RoleSelectProjection> roles;
+    private List<RoleSelectDto> roles;
     private List<Language> languages;
     private List<Genre> genres;
     private List<Nationality> nationalities;
