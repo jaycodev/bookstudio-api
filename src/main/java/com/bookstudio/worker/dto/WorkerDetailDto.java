@@ -1,17 +1,20 @@
 package com.bookstudio.worker.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.bookstudio.role.dto.RoleSummaryDto;
+
+import lombok.*;
 
 @Data
+@Builder
 @AllArgsConstructor
-public class WorkerResponseDto {
-    private Long workerId;
+@NoArgsConstructor
+public class WorkerDetailDto {
+    private Long id;
     private String username;
     private String email;
     private String firstName;
     private String lastName;
-    private String role;
+    private RoleSummaryDto role;
     private String profilePhotoUrl;
     private String status;
 }

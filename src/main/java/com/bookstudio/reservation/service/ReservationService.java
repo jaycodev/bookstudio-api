@@ -79,6 +79,7 @@ public class ReservationService {
                 .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + dto.getReaderId())));
         reservation.setCopy(copyService.findById(dto.getCopyId())
                 .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + dto.getCopyId())));
+
         reservation.setReservationDate(dto.getReservationDate());
         reservation.setStatus(dto.getStatus());
 

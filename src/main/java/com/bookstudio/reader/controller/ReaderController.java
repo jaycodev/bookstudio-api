@@ -69,6 +69,9 @@ public class ReaderController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiError(false, e.getMessage(), "validation_error", 400));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, "Server error while updating reader.", "server_error", 500));
         }
     }
 }

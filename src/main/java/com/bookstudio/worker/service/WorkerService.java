@@ -5,11 +5,12 @@ import com.bookstudio.role.service.RoleService;
 import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.worker.dto.CreateWorkerDto;
 import com.bookstudio.worker.dto.UpdateWorkerDto;
-import com.bookstudio.worker.dto.WorkerResponseDto;
+import com.bookstudio.worker.dto.WorkerDetailDto;
+import com.bookstudio.worker.dto.WorkerListDto;
 import com.bookstudio.worker.model.Worker;
-import com.bookstudio.worker.projection.WorkerViewProjection;
 import com.bookstudio.worker.repository.WorkerRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class WorkerService {
 
     private final RoleService roleService;
 
-    public List<WorkerViewProjection> getList(Long loggedWorkerId) {
+    public List<WorkerListDto> getList(Long loggedWorkerId) {
         return workerRepository.findList(loggedWorkerId);
     }
 
@@ -33,50 +34,59 @@ public class WorkerService {
         return workerRepository.findById(workerId);
     }
 
-    public Optional<WorkerViewProjection> getInfoById(Long workerId) {
-        return workerRepository.findInfoById(workerId);
+    public WorkerDetailDto getInfoById(Long workerId) {
+        Worker worker = workerRepository.findById(workerId)
+                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + workerId));
+
+        return WorkerDetailDto.builder()
+                .id(worker.getWorkerId())
+                .username(worker.getUsername())
+                .email(worker.getEmail())
+                .firstName(worker.getFirstName())
+                .lastName(worker.getLastName())
+                .profilePhotoUrl(worker.getProfilePhotoUrl())
+                .status(worker.getStatus().name())
+                .role(roleService.toSummaryDto(worker.getRole()))
+                .build();
     }
 
     @Transactional
-    public WorkerResponseDto create(CreateWorkerDto dto) {
+    public WorkerListDto create(CreateWorkerDto dto) {
         if (workerRepository.findByUsername(dto.getUsername()).isPresent()) {
-            throw new RuntimeException("El nombre de usuario ingresado ya ha sido registrado.");
+            throw new IllegalArgumentException("The provided username is already registered.");
         }
 
         if (workerRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("El correo electrónico ingresado ya ha sido registrado.");
+            throw new IllegalArgumentException("The provided email address is already registered.");
         }
 
-        Worker user = new Worker();
-        user.setUsername(dto.getUsername());
-        user.setEmail(dto.getEmail());
-        user.setFirstName(dto.getFirstName());
-        user.setLastName(dto.getLastName());
-        user.setPassword(PasswordUtils.hashPassword(dto.getPassword()));
-        user.setRole(dto.getRole());
-        user.setProfilePhotoUrl(dto.getProfilePhotoUrl());
+        Worker worker = Worker.builder()
+                .username(dto.getUsername())
+                .email(dto.getEmail())
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .password(PasswordUtils.hashPassword(dto.getPassword()))
+                .role(roleService.findById(dto.getRoleId())
+                        .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + dto.getRoleId())))
+                .profilePhotoUrl(dto.getProfilePhotoUrl())
+                .status(dto.getStatus())
+                .build();
 
-        Worker saved = workerRepository.save(user);
-
-        return new WorkerResponseDto(
-                saved.getWorkerId(),
-                saved.getUsername(),
-                saved.getEmail(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getRole().getName(),
-                saved.getProfilePhotoUrl(),
-                saved.getStatus().name());
+        Worker saved = workerRepository.save(worker);
+        return toListDto(saved);
     }
 
     @Transactional
-    public WorkerResponseDto update(UpdateWorkerDto dto) {
-        Worker worker = workerRepository.findById(dto.getWorkerId())
-                .orElseThrow(() -> new RuntimeException("Trabajador no encontrado con ID: " + dto.getWorkerId()));
+    public WorkerListDto update(UpdateWorkerDto dto) {
+        Worker worker = workerRepository.findById(dto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + dto.getId()));
+
+        worker.setRole(roleService.findById(dto.getRoleId())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + dto.getRoleId())));
 
         worker.setFirstName(dto.getFirstName());
         worker.setLastName(dto.getLastName());
-        worker.setRole(dto.getRole());
+        worker.setStatus(dto.getStatus());
 
         if (dto.isDeletePhoto()) {
             worker.setProfilePhotoUrl(null);
@@ -85,29 +95,24 @@ public class WorkerService {
         }
 
         Worker saved = workerRepository.save(worker);
-
-        return new WorkerResponseDto(
-                saved.getWorkerId(),
-                saved.getUsername(),
-                saved.getEmail(),
-                saved.getFirstName(),
-                saved.getLastName(),
-                saved.getRole().getName(),
-                saved.getProfilePhotoUrl(),
-                saved.getStatus().name());
-    }
-
-    @Transactional
-    public boolean delete(Long workerId) {
-        if (!workerRepository.existsById(workerId))
-            return false;
-        workerRepository.deleteById(workerId);
-        return true;
+        return toListDto(saved);
     }
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
                 .roles(roleService.getForSelect())
                 .build();
+    }
+
+    private WorkerListDto toListDto(Worker worker) {
+        return new WorkerListDto(
+                worker.getProfilePhotoUrl(),
+                worker.getUsername(),
+                worker.getEmail(),
+                worker.getFirstName(),
+                worker.getLastName(),
+                worker.getRole().getName(),
+                worker.getStatus(),
+                worker.getWorkerId());
     }
 }

@@ -1,6 +1,5 @@
 package com.bookstudio.worker.dto;
 
-import com.bookstudio.role.model.Role;
 import com.bookstudio.shared.enums.Status;
 
 import lombok.Data;
@@ -12,7 +11,7 @@ public class CreateWorkerDto {
     private String firstName;
     private String lastName;
     private String password;
-    private Role role;
+    private Long roleId;
     private String profilePhotoUrl;
     private Status status;
 }
