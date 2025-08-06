@@ -146,6 +146,8 @@ public class PaymentService {
     private PaymentListDto toListDto(Payment payment) {
         return new PaymentListDto(
                 payment.getCode(),
+                paymentFineRepository.countByPayment(payment),
+                payment.getReader().getCode(),
                 payment.getReader().getFullName(),
                 payment.getAmount(),
                 payment.getPaymentDate(),

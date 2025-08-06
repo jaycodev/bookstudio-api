@@ -12,6 +12,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface PaymentFineRepository extends JpaRepository<PaymentFine, PaymentFineId> {
+    Long countByPayment(Payment payment);
+
     @Query("""
         SELECT new com.bookstudio.fine.dto.FineSummaryDto(
             f.fineId, f.code, f.amount, f.status

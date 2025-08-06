@@ -7,6 +7,8 @@ import com.bookstudio.shared.enums.PaymentMethod;
 
 public record PaymentListDto(
     String code,
+    Long fineCount,
+    String readerCode,
     String readerFullName,
     BigDecimal amount,
     LocalDate paymentDate,
