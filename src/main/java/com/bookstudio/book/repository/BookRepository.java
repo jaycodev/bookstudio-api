@@ -12,14 +12,15 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
         SELECT new com.bookstudio.book.dto.BookListDto(
+            b.isbn,
             b.coverUrl,
             b.title,
             c.name,
             p.name,
             l.code,
+            l.name,
             b.releaseDate,
             b.status,
-            b.isbn,
             b.bookId
         )
         FROM Book b

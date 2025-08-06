@@ -190,14 +190,15 @@ public class BookService {
 
     private BookListDto toListDto(Book book) {
         return new BookListDto(
+                book.getIsbn(),
                 book.getCoverUrl(),
                 book.getTitle(),
                 book.getCategory().getName(),
                 book.getPublisher().getName(),
                 book.getLanguage().getCode(),
+                book.getLanguage().getName(),
                 book.getReleaseDate(),
                 book.getStatus(),
-                book.getIsbn(),
                 book.getBookId());
     }
 }
