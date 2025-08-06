@@ -1,11 +1,14 @@
 package com.bookstudio.loan.model;
 
+import com.bookstudio.loan.relation.LoanItem;
 import com.bookstudio.reader.model.Reader;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "loans")
@@ -14,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Loan {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long loanId;
@@ -31,4 +34,8 @@ public class Loan {
 
     @Column(columnDefinition = "TEXT")
     private String observation;
+
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<LoanItem> loanItems = new ArrayList<>();
 }

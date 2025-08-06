@@ -10,6 +10,7 @@ import com.bookstudio.loan.dto.LoanListDto;
 import com.bookstudio.loan.dto.LoanSummaryDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
 import com.bookstudio.loan.dto.UpdateLoanItemDto;
+import com.bookstudio.loan.mapper.LoanMapper;
 import com.bookstudio.loan.model.Loan;
 import com.bookstudio.loan.relation.LoanItem;
 import com.bookstudio.loan.relation.LoanItemId;
@@ -44,7 +45,9 @@ public class LoanService {
     private final CopyService copyService;
 
     public List<LoanListDto> getList() {
-        return loanRepository.findList();
+        return loanRepository.findRawList().stream()
+                .map(LoanMapper::fromRaw)
+                .toList();
     }
 
     public LoanDetailDto getInfoById(Long loanId) {
@@ -91,7 +94,7 @@ public class LoanService {
             }
         }
 
-        return toListDto(saved);
+        return LoanMapper.fromRaw(loanRepository.findRawById(saved.getLoanId()));
     }
 
     @Transactional
@@ -126,7 +129,7 @@ public class LoanService {
             }
         }
 
-        return toListDto(saved);
+        return LoanMapper.fromRaw(loanRepository.findRawById(saved.getLoanId()));
     }
 
     public SelectOptions getSelectOptions() {
@@ -143,15 +146,5 @@ public class LoanService {
                 .reader(readerService.toSummaryDto(loan.getReader()))
                 .loanDate(loan.getLoanDate())
                 .build();
-    }
-
-    private LoanListDto toListDto(Loan loan) {
-        return new LoanListDto(
-                loan.getCode(),
-                loan.getReader().getCode(),
-                loan.getReader().getFullName(),
-                loan.getLoanDate(),
-                loan.getObservation(),
-                loan.getLoanId());
     }
 }

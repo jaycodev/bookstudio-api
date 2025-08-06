@@ -1,14 +1,16 @@
 package com.bookstudio.loan.dto;
 
 import java.time.LocalDate;
-import java.util.Map;
 
-public record LoanListDto(
+public record LoanListRawDto(
     String code,
     String readerCode,
     String readerFullName,
     LocalDate loanDate,
-    int itemCount,
-    Map<String, Long> statusCounts,
+    Long borrowedCount,
+    Long returnedCount,
+    Long overdueCount,
+    Long lostCount,
+    Long canceledCount,
     Long id
 ) {}
