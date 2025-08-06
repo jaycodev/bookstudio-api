@@ -102,10 +102,11 @@ public class FineService {
         return new FineListDto(
                 fine.getCode(),
                 fine.getLoanItem().getLoan().getCode(),
+                fine.getLoanItem().getCopy().getCode(),
                 fine.getAmount(),
                 fine.getDaysLate(),
-                fine.getStatus(),
                 fine.getIssuedAt(),
+                fine.getStatus(),
                 fine.getFineId());
     }
 }

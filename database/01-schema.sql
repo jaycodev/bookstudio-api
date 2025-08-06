@@ -206,8 +206,8 @@ CREATE TABLE fines (
     copy_id BIGINT NOT NULL,
     amount NUMERIC(10, 2) NOT NULL CHECK (amount >= 0),
     days_late INT NOT NULL CHECK (days_late >= 1),
-    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'pagado')),
     issued_at DATE NOT NULL DEFAULT CURRENT_DATE,
+    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'pagado')),
     FOREIGN KEY (loan_id, copy_id) REFERENCES loan_items(loan_id, copy_id) ON DELETE CASCADE
 );
 

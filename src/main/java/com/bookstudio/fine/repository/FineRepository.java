@@ -14,15 +14,17 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
         SELECT new com.bookstudio.fine.dto.FineListDto(
             f.code,
             l.code,
+            c.code,
             f.amount,
             f.daysLate,
-            f.status,
             f.issuedAt,
+            f.status,
             f.fineId
         )
         FROM Fine f
         JOIN f.loanItem li
         JOIN li.loan l
+        JOIN li.copy c
         ORDER BY f.fineId DESC
     """)
     List<FineListDto> findList();

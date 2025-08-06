@@ -8,9 +8,10 @@ import com.bookstudio.shared.enums.FineStatus;
 public record FineListDto(
     String code,
     String loanCode,
+    String copyCode,
     BigDecimal amount,
     Integer daysLate,
-    FineStatus status,
     LocalDate issuedAt,
+    FineStatus status,
     Long id
 ) {}
