@@ -2,7 +2,7 @@ SET search_path TO public;
 
 BEGIN;
 
--- 1. NACIONALIDADES (expandido)
+-- 1. NACIONALIDADES
 INSERT INTO nationalities (name) VALUES 
 ('Peruana'),
 ('Española'),
@@ -30,7 +30,7 @@ INSERT INTO nationalities (name) VALUES
 ('Polaca'),
 ('Checa');
 
--- 2. GÉNEROS LITERARIOS (expandido)
+-- 2. GÉNEROS LITERARIOS
 INSERT INTO genres (name) VALUES 
 ('Novela'),
 ('Cuento'),
@@ -58,7 +58,7 @@ INSERT INTO genres (name) VALUES
 ('Distopía'),
 ('Utopía');
 
--- 3. IDIOMAS (expandido)
+-- 3. IDIOMAS
 INSERT INTO languages (name, code) VALUES 
 ('Español', 'es'),
 ('Inglés', 'en'),
@@ -81,7 +81,7 @@ INSERT INTO languages (name, code) VALUES
 ('Latín', 'la'),
 ('Hebreo', 'he');
 
--- 4. CATEGORÍAS (expandido)
+-- 4. CATEGORÍAS
 INSERT INTO categories (name, level, description, status) VALUES 
 ('Literatura Clásica', 'superior', 'Obras literarias de reconocido valor universal', 'activo'),
 ('Literatura Contemporánea', 'superior', 'Obras literarias modernas y actuales', 'activo'),
@@ -109,7 +109,7 @@ INSERT INTO categories (name, level, description, status) VALUES
 ('Tecnología', 'superior', 'Informática y nuevas tecnologías', 'activo'),
 ('Religión', 'general', 'Textos religiosos y estudios teológicos', 'activo');
 
--- 5. AUTORES (expandido significativamente)
+-- 5. AUTORES
 INSERT INTO authors (name, nationality_id, birth_date, biography, status, photo_url) VALUES 
 -- Autores peruanos
 ('Mario Vargas Llosa', 1, '1936-03-28', 'Premio Nobel de Literatura 2010, escritor peruano considerado uno de los más importantes novelistas contemporáneos', 'activo', NULL),
@@ -148,7 +148,7 @@ INSERT INTO authors (name, nationality_id, birth_date, biography, status, photo_
 ('Mark Twain', 7, '1835-11-30', 'Escritor estadounidense, autor de Las aventuras de Tom Sawyer', 'activo', NULL),
 ('Edgar Allan Poe', 7, '1809-01-19', 'Escritor estadounidense, maestro del relato corto y la poesía', 'activo', NULL);
 
--- 6. EDITORIALES (expandido)
+-- 6. EDITORIALES
 INSERT INTO publishers (name, nationality_id, foundation_year, website, address, status, photo_url) VALUES 
 ('Planeta', 2, 1949, 'www.planeta.es', 'Av. Diagonal 662-664, Barcelona, España', 'activo', NULL),
 ('Alfaguara', 2, 1964, 'www.alfaguara.com', 'Calle Torrelaguna 60, Madrid, España', 'activo', NULL),
@@ -171,13 +171,13 @@ INSERT INTO publishers (name, nationality_id, foundation_year, website, address,
 ('Alianza Editorial', 2, 1966, 'www.alianzaeditorial.es', 'Madrid, España', 'activo', NULL),
 ('Ediciones B', 2, 1986, 'www.edicionesb.com', 'Barcelona, España', 'activo', NULL);
 
--- 7. ROLES (ya completo)
+-- 7. ROLES
 INSERT INTO roles (name, description) VALUES 
 ('Administrador', 'Acceso completo al sistema, gestión de usuarios y configuración'),
 ('Bibliotecario', 'Gestión de préstamos, devoluciones, multas y catalogación de libros'),
 ('Asistente', 'Apoyo en tareas básicas de biblioteca y atención al público');
 
--- 8. PERMISOS (ya completo)
+-- 8. PERMISOS
 INSERT INTO permissions (code, description) VALUES 
 ('ADMIN_FULL', 'Acceso completo de administrador'),
 ('USER_CREATE', 'Crear usuarios'),
@@ -196,7 +196,7 @@ INSERT INTO permissions (code, description) VALUES
 ('CATALOG_MANAGE', 'Gestionar catálogo'),
 ('RESERVATION_MANAGE', 'Gestionar reservas');
 
--- 9. ASIGNACIÓN DE PERMISOS A ROLES (ya completo)
+-- 9. ASIGNACIÓN DE PERMISOS A ROLES
 INSERT INTO role_permissions (role_id, permission_id) VALUES 
 -- Administrador (todos los permisos)
 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), 
@@ -206,7 +206,7 @@ INSERT INTO role_permissions (role_id, permission_id) VALUES
 -- Asistente (permisos básicos)
 (3, 8), (3, 10), (3, 14), (3, 16);
 
--- 10. TRABAJADORES (expandido)
+-- 10. TRABAJADORES
 INSERT INTO workers (username, email, first_name, last_name, password, role_id, status) VALUES 
 ('admin', 'admin@biblioteca.edu.pe', 'Carlos', 'Mendoza García', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewfzUf0wdG8OuJdm', 1, 'activo'),
 ('bibliotecario1', 'ana.torres@biblioteca.edu.pe', 'Ana María', 'Torres Vásquez', '$2b$12$EixZxQz5UbrYdHqgqHl/JO4nrpxY/PnZsT0YnUGf3rGNrGNrGNrGN', 2, 'activo'),
@@ -229,7 +229,7 @@ INSERT INTO workers (username, email, first_name, last_name, password, role_id, 
 ('bibliotecario9', 'monica.alvarez@biblioteca.edu.pe', 'Mónica', 'Álvarez Tejada', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
 ('asistente10', 'luis.nina@biblioteca.edu.pe', 'Luis Fernando', 'Nina Calla', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo');
 
--- 11. UBICACIONES (expandido)
+-- 11. UBICACIONES
 INSERT INTO locations (name, description) VALUES 
 ('Planta Baja - Sala General', 'Sala principal con literatura general y consulta'),
 ('Primer Piso - Sala de Estudio', 'Área silenciosa para estudio individual'),
@@ -252,7 +252,7 @@ INSERT INTO locations (name, description) VALUES
 ('Primer Piso - Talleres', 'Salas para actividades académicas'),
 ('Segundo Piso - Préstamos Especiales', 'Material audiovisual y multimedia');
 
--- 12. ESTANTES (expandido significativamente)
+-- 12. ESTANTES
 INSERT INTO shelves (location_id, code, floor, description) VALUES 
 -- Planta Baja - Sala General
 (1, 'A01', 'Planta Baja', 'Literatura peruana'),
@@ -307,7 +307,7 @@ INSERT INTO shelves (location_id, code, floor, description) VALUES
 (15, 'N01', 'Segundo Piso', 'Juegos educativos'),
 (14, 'O01', 'Planta Baja', 'Catálogos de exposición');
 
--- 13. LIBROS (expandido significativamente)
+-- 13. LIBROS
 INSERT INTO books (title, isbn, language_id, edition, pages, description, publisher_id, category_id, release_date, status) VALUES 
 -- Literatura peruana
 ('La ciudad y los perros', '978-84-204-8304-7', 1, '1ª edición', 408, 'Primera novela de Mario Vargas Llosa, ambientada en el Colegio Militar Leoncio Prado', 2, 1, '1963-10-15', 'activo'),
@@ -375,7 +375,7 @@ INSERT INTO books (title, isbn, language_id, edition, pages, description, publis
 ('Atlas Mundial', '978-84-376-0532-8', 1, '8ª edición', 350, 'Atlas geográfico mundial actualizado', 4, 16, '2023-02-28', 'activo'),
 ('Manual de Primeros Auxilios', '978-84-376-0533-9', 1, '6ª edición', 280, 'Guía práctica de primeros auxilios', 4, 14, '2022-11-10', 'activo');
 
--- 14. RELACIÓN LIBROS-AUTORES (expandido)
+-- 14. RELACIÓN LIBROS-AUTORES
 INSERT INTO book_authors (book_id, author_id) VALUES 
 -- Literatura peruana
 (1, 1),   -- La ciudad y los perros - Mario Vargas Llosa
@@ -478,7 +478,7 @@ INSERT INTO book_genres (book_id, genre_id) VALUES
 (46, 9), (46, 17),  -- Narnia - Fantasía, Infantil
 (47, 17);   -- Donde viven los monstruos - Infantil
 
--- 16. LECTORES (expandido significativamente)
+-- 16. LECTORES
 INSERT INTO readers (dni, first_name, last_name, address, phone, email, birth_date, gender, type, status) VALUES 
 -- Estudiantes
 ('12345678', 'Ana María', 'García López', 'Av. Universitaria 1234, Lima', '987654321', 'ana.garcia@email.com', '1998-05-15', 'femenino', 'estudiante', 'activo'),
@@ -514,7 +514,7 @@ INSERT INTO readers (dni, first_name, last_name, address, phone, email, birth_da
 ('17171717', 'Pilar Roxana', 'Alvarez Tejada', 'Av. Canadá 234, Lima', '932109876', 'pilar.alvarez@email.com', '1992-10-13', 'femenino', 'externo', 'activo'),
 ('18181818', 'Eduardo César', 'Espinoza Luna', 'Jr. Trujillo 567, Lima', '921098765', 'eduardo.espinoza@email.com', '1989-01-30', 'masculino', 'externo', 'activo');
 
--- 17. EJEMPLARES (COPIAS) - expandido significativamente
+-- 17. EJEMPLARES
 INSERT INTO copies (book_id, shelf_id, barcode, is_available, condition) VALUES 
 -- La ciudad y los perros (5 copias)
 (1, 1, '100001001', TRUE, 'bueno'),
@@ -672,7 +672,7 @@ INSERT INTO copies (book_id, shelf_id, barcode, is_available, condition) VALUES
 (50, 24, '100050001', TRUE, 'nuevo'),
 (50, 24, '100050002', TRUE, 'bueno');
 
--- 18. PRÉSTAMOS (expandido significativamente)
+-- 18. PRÉSTAMOS
 INSERT INTO loans (reader_id, loan_date, observation) VALUES 
 -- Julio 2024
 (1, '2024-07-20', 'Préstamo regular'),
@@ -701,172 +701,217 @@ INSERT INTO loans (reader_id, loan_date, observation) VALUES
 (20, '2024-08-11', 'Material técnico'),
 (21, '2024-08-12', 'Préstamo docente'),
 (22, '2024-08-13', 'Investigación científica'),
-(23, '2024-08-14', 'Préstamo regular'),
-(24, '2024-08-15', 'Material educativo');
+(23, '2024-08-14', 'Préstamo regular');
 
--- 19. ITEMS DE PRÉSTAMO (expandido)
+-- 19. ITEMS DE PRÉSTAMO
 INSERT INTO loan_items (loan_id, copy_id, due_date, return_date, status) VALUES 
--- Préstamo 1 (Ana García) - Devuelto
+-- Préstamo 1 (Ana García) - MIXTO: 2 devueltos, 1 retrasado
 (1, 3, '2024-08-03', '2024-08-01', 'devuelto'),
 (1, 25, '2024-08-03', '2024-08-01', 'devuelto'),
+(1, 47, '2024-08-03', NULL, 'retrasado'),
 
--- Préstamo 2 (Carlos Mendoza) - Activo
+-- Préstamo 2 (Carlos Mendoza) - MIXTO: 1 prestado, 1 retrasado
 (2, 13, '2024-08-04', NULL, 'prestado'),
-(2, 29, '2024-08-04', NULL, 'prestado'),
+(2, 29, '2024-08-04', NULL, 'retrasado'),
 
--- Préstamo 3 (María Rodríguez) - Retrasado
+-- Préstamo 3 (María Rodríguez) - AMBOS retrasados (mantener igual)
 (3, 35, '2024-08-05', NULL, 'retrasado'),
+(3, 52, '2024-08-05', NULL, 'retrasado'),
 
--- Préstamo 4 (José Fernández) - Devuelto
+-- Préstamo 4 (José Fernández) - ÚNICO devuelto (mantener igual)
 (4, 10, '2024-08-06', '2024-08-04', 'devuelto'),
-(4, 18, '2024-08-06', '2024-08-04', 'devuelto'),
 
--- Préstamo 5 (Patricia Vargas) - Activo
-(5, 47, '2024-08-07', NULL, 'prestado'),
-(5, 59, '2024-08-07', NULL, 'prestado'),
+-- Préstamo 5 (Patricia Vargas) - MIXTO: 1 prestado, 1 retrasado, 1 devuelto
+(5, 59, '2024-08-07', '2024-08-06', 'devuelto'),
+(5, 22, '2024-08-07', NULL, 'prestado'),
+(5, 36, '2024-08-07', NULL, 'retrasado'),
 
--- Préstamo 6 (Ana García - segundo) - Activo
-(6, 32, '2024-08-08', NULL, 'prestado'),
+-- Préstamo 6 (Ana García - segundo) - ÚNICO retrasado (mantener igual)
+(6, 32, '2024-08-08', NULL, 'retrasado'),
 
--- Préstamo 7 (Roberto Castro) - Activo
-(7, 51, '2024-08-09', NULL, 'prestado'),
+-- Préstamo 7 (Roberto Castro) - MIXTO: 1 devuelto, 1 prestado
+(7, 51, '2024-08-09', '2024-08-07', 'devuelto'),
 (7, 34, '2024-08-09', NULL, 'prestado'),
 
--- Préstamo 8 (Sofía Quispe) - Devuelto
-(8, 4, '2024-08-10', '2024-08-08', 'devuelto'),
+-- Préstamo 8 (Sofía Quispe) - ÚNICO extraviado (mantener igual)
+(8, 4, '2024-08-10', NULL, 'extraviado'),
 
--- Préstamo 9 (Javier Huamán) - Activo
-(9, 22, '2024-08-11', NULL, 'prestado'),
+-- Préstamo 9 (Javier Huamán) - MIXTO: 1 retrasado, 1 devuelto, 1 cancelado
+(9, 18, '2024-08-11', NULL, 'retrasado'),
+(9, 44, '2024-08-11', '2024-08-10', 'devuelto'),
+(9, 58, '2024-08-11', NULL, 'cancelado'),
 
--- Préstamo 10 (Camila Torres) - Retrasado
-(10, 14, '2024-08-12', NULL, 'retrasado'),
+-- Préstamo 10 (Camila Torres) - MIXTO: 1 devuelto, 1 retrasado
+(10, 14, '2024-08-12', '2024-08-10', 'devuelto'),
 (10, 38, '2024-08-12', NULL, 'retrasado'),
 
--- Préstamo 11 (Mateo Condori) - Activo
+-- Préstamo 11 (Mateo Condori) - ÚNICO prestado (mantener igual)
 (11, 55, '2024-08-14', NULL, 'prestado'),
 
--- Préstamo 12 (Valeria Ramos) - Devuelto
-(12, 7, '2024-08-15', '2024-08-13', 'devuelto'),
-(12, 42, '2024-08-15', '2024-08-13', 'devuelto'),
+-- Préstamo 12 (Valeria Ramos) - MIXTO: 1 retrasado, 1 extraviado
+(12, 7, '2024-08-15', NULL, 'retrasado'),
+(12, 42, '2024-08-15', NULL, 'extraviado'),
 
--- Préstamo 13 (Sebastián Poma) - Activo
-(13, 19, '2024-08-16', NULL, 'prestado'),
+-- Préstamo 13 (Sebastián Poma) - MIXTO: 1 devuelto, 1 prestado
+(13, 19, '2024-08-16', '2024-08-14', 'devuelto'),
 (13, 26, '2024-08-16', NULL, 'prestado'),
 
--- Préstamo 14 (Isabella Nina) - Retrasado
-(14, 41, '2024-08-17', NULL, 'retrasado'),
+-- Préstamo 14 (Isabella Nina) - ÚNICO extraviado (mantener igual)
+(14, 41, '2024-08-17', NULL, 'extraviado'),
 
--- Préstamo 15 (Adrián Choque) - Activo
+-- Préstamo 15 (Adrián Choque) - MIXTO: 1 prestado, 1 cancelado
 (15, 57, '2024-08-18', NULL, 'prestado'),
-(15, 49, '2024-08-18', NULL, 'prestado'),
+(15, 49, '2024-08-18', NULL, 'cancelado'),
 
--- Préstamo 16 (Carmen Herrera - docente) - Devuelto
-(16, 15, '2024-08-19', '2024-08-17', 'devuelto'),
-(16, 33, '2024-08-19', '2024-08-17', 'devuelto'),
+-- Préstamo 16 (Carmen Herrera - docente) - ÚNICO retrasado (mantener igual)
+(16, 15, '2024-08-19', NULL, 'retrasado'),
 
--- Préstamo 17 (Sandra López - administrativa) - Activo
-(17, 20, '2024-08-20', NULL, 'prestado'),
+-- Préstamo 17 (Sandra López - administrativa) - MIXTO: 2 devueltos, 1 prestado
+(17, 20, '2024-08-20', '2024-08-18', 'devuelto'),
+(17, 45, '2024-08-20', '2024-08-18', 'devuelto'),
+(17, 61, '2024-08-20', NULL, 'prestado'),
 
--- Préstamo 18 (Luis Vega - docente) - Activo
-(18, 36, '2024-08-21', NULL, 'prestado'),
-(18, 45, '2024-08-21', NULL, 'prestado'),
+-- Préstamo 18 (Luis Vega - docente) - MIXTO: 1 prestado, 1 retrasado
+(18, 33, '2024-08-21', NULL, 'prestado'),
+(18, 56, '2024-08-21', NULL, 'retrasado'),
 
--- Préstamo 19 (Pilar Alvarez - externa) - Devuelto
-(19, 8, '2024-08-22', '2024-08-20', 'devuelto'),
+-- Préstamo 19 (Pilar Alvarez - externa) - ÚNICO cancelado (mantener igual)
+(19, 8, '2024-08-22', NULL, 'cancelado'),
 
--- Préstamo 20 (Carlos Mendoza - segundo) - Activo
-(20, 61, '2024-08-23', NULL, 'prestado'),
+-- Préstamo 20 (Carlos Mendoza - segundo) - MIXTO: 1 retrasado, 1 extraviado
+(20, 12, '2024-08-23', NULL, 'retrasado'),
+(20, 46, '2024-08-23', NULL, 'extraviado'),
 
--- Préstamo 21 (Eduardo Espinoza - externo) - Activo
-(21, 44, '2024-08-24', NULL, 'prestado'),
-(21, 52, '2024-08-24', NULL, 'prestado'),
+-- Préstamo 21 (Eduardo Espinoza - externo) - ÚNICO devuelto (mantener igual)
+(21, 24, '2024-08-24', '2024-08-22', 'devuelto'),
 
--- Préstamo 22 (Rosa Guerrero - docente) - Retrasado
-(22, 12, '2024-08-25', NULL, 'retrasado'),
+-- Préstamo 22 (Rosa Guerrero - docente) - ÚNICO extraviado (mantener igual)
+(22, 48, '2024-08-25', NULL, 'extraviado'),
 
--- Préstamo 23 (Jorge Medina - docente) - Activo
-(23, 46, '2024-08-26', NULL, 'prestado'),
+-- Préstamo 23 (Jorge Medina - docente) - MIXTO: 1 prestado, 1 devuelto, 1 retrasado
+(23, 9, '2024-08-26', NULL, 'prestado'),
+(23, 27, '2024-08-26', '2024-08-24', 'devuelto'),
+(23, 53, '2024-08-26', NULL, 'retrasado'),
 
--- Préstamo 24 (Ricardo Morales - administrativo) - Devuelto
-(24, 24, '2024-08-27', '2024-08-25', 'devuelto'),
-(24, 56, '2024-08-27', '2024-08-25', 'devuelto'),
+-- Préstamo 24 (Ricardo Morales - administrativo) - MIXTO: 1 retrasado, 1 cancelado
+(24, 16, '2024-08-27', NULL, 'retrasado'),
+(24, 39, '2024-08-27', NULL, 'cancelado'),
 
--- Préstamo 25 (Fernanda Mamani) - Activo
-(25, 58, '2024-08-28', NULL, 'prestado'),
+-- Préstamo 25 (Fernanda Mamani) - ÚNICO devuelto (mantener igual)
+(25, 60, '2024-08-28', '2024-08-26', 'devuelto');
 
--- Préstamo 26 (Manuel Antonio) - Devuelto
-(26, 10, '2024-08-28', '2024-08-28', 'devuelto');
-
--- 20. RESERVAS (expandido)
+-- 20. RESERVAS
 INSERT INTO reservations (reader_id, copy_id, reservation_date, status) VALUES 
-(8, 3, '2024-07-28', 'pendiente'),      -- Sofía espera La ciudad y los perros
-(9, 13, '2024-07-28', 'pendiente'),     -- Javier espera Rayuela
-(10, 32, '2024-07-27', 'pendiente'),    -- Camila espera El cuervo
-(11, 25, '2024-07-29', 'atendida'),     -- Mateo reservó IT (ya retirado)
-(12, 41, '2024-07-30', 'cancelada'),    -- Valeria canceló reserva
-(15, 18, '2024-08-01', 'pendiente'),    -- Adrián espera Romancero Gitano
-(16, 35, '2024-08-02', 'atendida'),     -- Carmen retiró Física
-(17, 22, '2024-08-03', 'pendiente'),    -- Sandra espera Los santos inocentes
-(20, 14, '2024-08-04', 'pendiente'),    -- Eduardo espera Veinte poemas
-(1, 47, '2024-08-05', 'atendida'),      -- Ana retiró El Principito
-(6, 55, '2024-08-06', 'pendiente'),     -- Diego espera Matilda
-(7, 36, '2024-08-07', 'pendiente'),     -- Sofía espera Química Orgánica
-(2, 61, '2024-08-08', 'atendida'),      -- Carlos retiró Psicología
-(14, 49, '2024-08-09', 'cancelada'),    -- Isabella canceló
-(19, 8, '2024-08-10', 'atendida'),      -- Pilar retiró Un mundo para Julius
-(21, 44, '2024-08-11', 'atendida'),     -- Eduardo retiró Matilda
-(22, 12, '2024-08-12', 'atendida'),     -- Rosa retiró La casa de los espíritus
-(23, 46, '2024-08-13', 'atendida'),     -- Jorge retiró Narnia
-(4, 24, '2024-08-14', 'pendiente'),     -- José espera El viejo y el mar
-(5, 56, '2024-08-15', 'pendiente');     -- Patricia espera Orgullo y prejuicio
+-- PENDIENTES (8 reservas)
+(1, 50, '2024-07-28', 'pendiente'),      -- Ana espera Diccionario RAE
+(2, 31, '2024-07-29', 'pendiente'),      -- Carlos espera Las aventuras de Tom Sawyer
+(5, 17, '2024-07-30', 'pendiente'),      -- Patricia espera Don Quijote
+(8, 37, '2024-08-01', 'pendiente'),      -- Sofía espera Biología Molecular
+(11, 21, '2024-08-02', 'pendiente'),     -- Mateo espera La colmena
+(14, 43, '2024-08-03', 'pendiente'),     -- Isabella espera El Principito
+(17, 11, '2024-08-04', 'pendiente'),     -- Sandra espera La casa de los espíritus
+(20, 28, '2024-08-05', 'pendiente'),     -- Eduardo espera 1984
 
--- 21. MULTAS (expandido)
+-- ATENDIDAS (12 reservas) 
+(3, 35, '2024-07-25', 'atendida'),       -- María retiró Física
+(3, 52, '2024-07-25', 'atendida'),       -- María retiró segundo libro
+(6, 32, '2024-07-26', 'atendida'),       -- Roberto retiró El cuervo
+(9, 18, '2024-07-27', 'atendida'),       -- Javier retiró Romancero Gitano
+(9, 44, '2024-07-27', 'atendida'),       -- Javier retiró Matilda
+(9, 58, '2024-07-27', 'atendida'),       -- Javier retiró tercer libro
+(12, 7, '2024-07-28', 'atendida'),       -- Valeria retiró Don Quijote
+(12, 42, '2024-07-28', 'atendida'),       -- Valeria retiró segundo libro
+(16, 15, '2024-07-29', 'atendida'),       -- Carmen retiró La muerte de Artemio Cruz
+(20, 12, '2024-07-30', 'atendida'),       -- Eduardo retiró La casa de los espíritus
+(20, 46, '2024-07-30', 'atendida'),       -- Eduardo retiró segundo libro
+(24, 16, '2024-08-01', 'atendida'),       -- Ricardo retiró El túnel
+
+-- CANCELADAS (5 reservas)
+(4, 40, '2024-07-20', 'cancelada'),       -- José canceló Principios de Economía
+(7, 30, '2024-07-21', 'cancelada'),       -- Roberto canceló Oliver Twist  
+(10, 54, '2024-07-22', 'cancelada'),      -- Camila canceló libro
+(15, 23, '2024-07-23', 'cancelada'),      -- Adrián canceló Romeo y Julieta
+(19, 6, '2024-07-24', 'cancelada');       -- Pilar canceló El mundo es ancho y ajeno
+
+-- 21. MULTAS (25 multas con ambos estados)
 INSERT INTO fines (loan_id, copy_id, amount, days_late, status, issued_at) VALUES 
--- Multas por retrasos
-(3, 35, '5.00', 2, 'pendiente', '2024-08-07'),     -- María debe por Física
-(10, 14, '7.50', 3, 'pendiente', '2024-08-15'),    -- Camila debe por Veinte poemas
-(10, 38, '7.50', 3, 'pendiente', '2024-08-15'),    -- Camila debe por Anatomía
-(14, 41, '10.00', 4, 'pendiente', '2024-08-21'),   -- Isabella debe por Psicología
-(22, 12, '12.50', 5, 'pendiente', '2024-08-30'),   -- Rosa debe por La casa de los espíritus
--- Multas pagadas
-(1, 3, '2.50', 1, 'pagado', '2024-07-25'),         -- Ana pagó multa anterior
-(8, 4, '5.00', 2, 'pagado', '2024-08-03'),         -- Sofía pagó por Trilce
-(12, 7, '2.50', 1, 'pagado', '2024-08-10'),        -- Valeria pagó por Don Quijote
-(16, 15, '5.00', 2, 'pagado', '2024-08-15'),       -- Carmen pagó por La muerte de Artemio Cruz
-(19, 8, '2.50', 1, 'pagado', '2024-08-18'),        -- Pilar pagó por Un mundo para Julius
-(24, 24, '5.00', 2, 'pagado', '2024-08-23');       -- Ricardo pagó por El viejo y el mar
+-- MULTAS PENDIENTES (12 multas)
+(3, 35, '7.50', 3, 'pendiente', '2024-08-08'),     -- María debe por Física
+(3, 52, '7.50', 3, 'pendiente', '2024-08-08'),     -- María debe por segundo libro
+(6, 32, '5.00', 2, 'pendiente', '2024-08-10'),     -- Ana debe por El cuervo
+(9, 18, '10.00', 4, 'pendiente', '2024-08-15'),    -- Javier debe por Romancero Gitano
+(9, 44, '10.00', 4, 'pendiente', '2024-08-15'),    -- Javier debe por Matilda
+(9, 58, '10.00', 4, 'pendiente', '2024-08-15'),    -- Javier debe por tercer libro
+(12, 7, '12.50', 5, 'pendiente', '2024-08-20'),    -- Valeria debe por Don Quijote
+(12, 42, '12.50', 5, 'pendiente', '2024-08-20'),   -- Valeria debe por segundo libro
+(16, 15, '6.25', 2, 'pendiente', '2024-08-21'),    -- Carmen debe por La muerte de Artemio Cruz
+(20, 12, '8.75', 3, 'pendiente', '2024-08-26'),    -- Eduardo debe por La casa de los espíritus
+(20, 46, '8.75', 3, 'pendiente', '2024-08-26'),    -- Eduardo debe por segundo libro
+(24, 16, '11.25', 4, 'pendiente', '2024-08-31'),   -- Ricardo debe por El túnel
 
--- 22. PAGOS (expandido)
+-- MULTAS PAGADAS (13 multas)
+(1, 3, '2.50', 1, 'pagado', '2024-07-25'),         -- Ana pagó por La ciudad y los perros
+(1, 25, '2.50', 1, 'pagado', '2024-07-25'),        -- Ana pagó por IT
+(1, 47, '2.50', 1, 'pagado', '2024-07-25'),        -- Ana pagó por El Principito
+(4, 10, '3.75', 1, 'pagado', '2024-08-05'),        -- José pagó por Ficciones
+(7, 51, '5.00', 2, 'pagado', '2024-08-09'),        -- Roberto pagó por Matilda
+(7, 34, '5.00', 2, 'pagado', '2024-08-09'),        -- Roberto pagó por Matemáticas
+(8, 4, '15.00', 6, 'pagado', '2024-08-16'),        -- Sofía pagó por Trilce (extraviado)
+(13, 19, '3.75', 1, 'pagado', '2024-08-17'),       -- Sebastián pagó por Campos de Castilla
+(13, 26, '3.75', 1, 'pagado', '2024-08-17'),       -- Sebastián pagó por Harry Potter
+(17, 20, '2.50', 1, 'pagado', '2024-08-21'),       -- Sandra pagó por Platero y yo
+(17, 45, '2.50', 1, 'pagado', '2024-08-21'),       -- Sandra pagó por Charlie y la fábrica
+(17, 61, '2.50', 1, 'pagado', '2024-08-21'),       -- Sandra pagó por Psicología
+(21, 24, '3.75', 1, 'pagado', '2024-08-25');       -- Eduardo pagó por El viejo y el mar
+
+-- 22. PAGOS
 INSERT INTO payments (reader_id, amount, payment_date, method) VALUES 
-(1, '10.00', '2024-07-15', 'efectivo'),     -- Ana pagó multas anteriores
-(1, '2.50', '2024-07-25', 'efectivo'),      -- Ana pagó multa reciente
-(7, '5.00', '2024-08-03', 'tarjeta'),       -- Sofía pagó multa
-(5, '2.50', '2024-08-10', 'efectivo'),      -- Valeria pagó multa
-(16, '5.00', '2024-08-15', 'transferencia'), -- Carmen pagó multa
-(19, '2.50', '2024-08-18', 'efectivo'),     -- Pilar pagó multa
-(22, '5.00', '2024-08-23', 'tarjeta'),      -- Ricardo pagó multa
-(2, '15.00', '2024-08-01', 'efectivo'),     -- Carlos pagó multas acumuladas
-(9, '7.50', '2024-07-28', 'tarjeta'),       -- Javier pagó multas
-(11, '12.00', '2024-08-05', 'transferencia'), -- Mateo pagó multas
-(13, '8.50', '2024-08-12', 'efectivo'),     -- Sebastián pagó multas
-(15, '3.00', '2024-08-20', 'tarjeta'),      -- Adrián pagó multa menor
-(6, '6.00', '2024-07-30', 'efectivo'),      -- Diego pagó multas
-(8, '4.50', '2024-08-08', 'tarjeta'),       -- Sofía pagó segunda multa
-(10, '9.00', '2024-08-02', 'transferencia'), -- Camila pagó multas anteriores
-(12, '11.50', '2024-08-18', 'efectivo'),    -- Valeria pagó multas acumuladas
-(14, '5.50', '2024-08-25', 'tarjeta'),      -- Isabella pagó multas parciales
-(17, '3.50', '2024-08-14', 'efectivo'),     -- Sandra pagó multa
-(20, '7.00', '2024-08-22', 'transferencia'), -- Eduardo pagó multas
-(21, '4.00', '2024-08-28', 'efectivo');     -- Eduardo pagó multa reciente
+-- EFECTIVO (6 pagos)
+(1, '7.50', '2024-07-26', 'efectivo'),       -- Ana pagó 3 multas de $2.50 c/u
+(4, '3.75', '2024-08-06', 'efectivo'),       -- José pagó 1 multa
+(17, '7.50', '2024-08-22', 'efectivo'),      -- Sandra pagó 3 multas de $2.50 c/u
+(21, '3.75', '2024-08-26', 'efectivo'),      -- Eduardo pagó 1 multa
+(2, '15.00', '2024-08-28', 'efectivo'),      -- Carlos pago múltiple
+(5, '12.00', '2024-08-29', 'efectivo'),      -- Patricia pago múltiple
 
--- 23. RELACIÓN PAGOS-MULTAS (expandido)
+-- TARJETA (5 pagos)
+(7, '10.00', '2024-08-10', 'tarjeta'),       -- Roberto pagó 2 multas de $5.00 c/u
+(8, '15.00', '2024-08-17', 'tarjeta'),       -- Sofía pagó 1 multa de extravío
+(13, '7.50', '2024-08-18', 'tarjeta'),       -- Sebastián pagó 2 multas de $3.75 c/u
+(11, '18.00', '2024-08-30', 'tarjeta'),      -- Mateo pago múltiple
+(15, '20.00', '2024-09-01', 'tarjeta'),      -- Adrián pago múltiple
+
+-- TRANSFERENCIA (4 pagos)
+(3, '15.00', '2024-08-12', 'transferencia'), -- María pagará 2 multas de $7.50 c/u
+(12, '25.00', '2024-08-25', 'transferencia'), -- Valeria pagará 2 multas de $12.50 c/u
+(16, '6.25', '2024-08-22', 'transferencia'), -- Carmen pagará 1 multa
+(18, '22.00', '2024-09-02', 'transferencia'), -- Luis pago múltiple
+
+-- CHEQUE (4 pagos)
+(9, '30.00', '2024-08-20', 'cheque'),        -- Javier pagará 3 multas de $10.00 c/u
+(20, '17.50', '2024-08-30', 'cheque'),       -- Eduardo pagará 2 multas de $8.75 c/u
+(6, '14.00', '2024-09-03', 'cheque'),        -- Roberto pago múltiple
+(10, '16.50', '2024-09-04', 'cheque'),       -- Camila pago múltiple
+
+-- OTROS (3 pagos)
+(14, '25.00', '2024-08-31', 'otros'),        -- Isabella pago múltiple
+(22, '11.25', '2024-09-05', 'otros'),        -- Rosa pago múltiple
+(24, '13.75', '2024-09-06', 'otros');        -- Ricardo pago múltiple
+
+-- 23. RELACIÓN PAGOS-MULTAS 
 INSERT INTO payment_fines (payment_id, fine_id) VALUES 
-(1, 6),   -- Ana pagó multa anterior
-(2, 6),   -- Ana pagó otra multa
-(3, 7),   -- Sofía pagó multa por Trilce  
-(4, 8),   -- Valeria pagó multa por Don Quijote
-(5, 9),   -- Carmen pagó multa por La muerte de Artemio Cruz
-(6, 10),  -- Pilar pagó multa por Un mundo para Julius
-(7, 11);  -- Ricardo pagó multa por El viejo y el mar
+(1, 13), (1, 14), (1, 15),    -- Ana pagó 3 multas con 1 pago
+(2, 16),                       -- José pagó 1 multa
+(3, 17), (3, 18),             -- Roberto pagó 2 multas con 1 pago  
+(4, 19),                       -- Sofía pagó 1 multa (extravío)
+(5, 20), (5, 21),             -- Sebastián pagó 2 multas con 1 pago
+(6, 22), (6, 23), (6, 24),    -- Sandra pagó 3 multas con 1 pago
+(7, 25),                       -- Eduardo pagó 1 multa
+(8, 1), (8, 2),               -- María pagará 2 multas con 1 pago
+(9, 4), (9, 5), (9, 6),       -- Javier pagará 3 multas con 1 pago
+(10, 7), (10, 8),             -- Valeria pagará 2 multas con 1 pago
+(11, 9),                       -- Carmen pagará 1 multa
+(12, 10), (12, 11),           -- Eduardo pagará 2 multas con 1 pago
+(13, 12);                      -- Ricardo pagará 1 multa
 
 COMMIT;
