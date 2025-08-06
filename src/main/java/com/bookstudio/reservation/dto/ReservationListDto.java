@@ -6,6 +6,7 @@ import com.bookstudio.shared.enums.ReservationStatus;
 
 public record ReservationListDto(
     String code,
+    String readerCode,
     String readerFullName,
     String copyCode,
     LocalDate reservationDate,

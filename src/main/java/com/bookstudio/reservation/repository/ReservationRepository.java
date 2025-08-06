@@ -12,6 +12,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("""
         SELECT new com.bookstudio.reservation.dto.ReservationListDto(
             r.code,
+            rd.code,
             CONCAT(rd.firstName, ' ', rd.lastName),
             c.code,
             r.reservationDate,
