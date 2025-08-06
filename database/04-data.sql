@@ -912,6 +912,15 @@ INSERT INTO payment_fines (payment_id, fine_id) VALUES
 (10, 7), (10, 8),             -- Valeria pagará 2 multas con 1 pago
 (11, 9),                       -- Carmen pagará 1 multa
 (12, 10), (12, 11),           -- Eduardo pagará 2 multas con 1 pago
-(13, 12);                      -- Ricardo pagará 1 multa
+(13, 12),                      -- Ricardo pagará 1 multa
+(14, 3),    -- Carlos (payment_id=14) -> multa pendiente de María (fine_id=3)
+(15, 1),    -- Patricia (payment_id=15) -> multa pendiente de María (fine_id=1) 
+(16, 2),    -- Mateo (payment_id=16) -> multa pendiente de Ana (fine_id=2)
+(17, 4),    -- Adrián (payment_id=17) -> multa pendiente de Javier (fine_id=4)
+(18, 5),    -- Luis (payment_id=18) -> multa pendiente de Javier (fine_id=5)
+(19, 6),    -- Isabella (payment_id=19) -> multa pendiente de Javier (fine_id=6)
+(20, 7),    -- Rosa (payment_id=20) -> multa pendiente de Valeria (fine_id=7)
+(21, 8),    -- Roberto (payment_id=21) -> multa pendiente de Valeria (fine_id=8)
+(22, 9);    -- Camila (payment_id=22) -> multa pendiente de Carmen (fine_id=9)
 
 COMMIT;
