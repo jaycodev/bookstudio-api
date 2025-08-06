@@ -9,9 +9,9 @@ BEGIN
     SELECT COALESCE(MAX(SUBSTRING(code FROM 10)::INT), 0) + 1
     INTO seq
     FROM readers
-    WHERE SUBSTRING(code FROM 5 FOR 4) = TO_CHAR(NEW.birth_date, 'YYYY');
+    WHERE SUBSTRING(code FROM 5 FOR 4) = TO_CHAR(CURRENT_DATE, 'YYYY');
 
-    new_code := 'LEC-' || TO_CHAR(NEW.birth_date, 'YYYY') || '-' || LPAD(seq::TEXT, 5, '0');
+    new_code := 'LEC-' || TO_CHAR(CURRENT_DATE, 'YYYY') || '-' || LPAD(seq::TEXT, 5, '0');
     NEW.code := new_code;
     RETURN NEW;
 END;
