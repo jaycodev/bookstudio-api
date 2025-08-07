@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.bookstudio.book.model.Book;
 import com.bookstudio.copy.dto.CopyListDto;
 import com.bookstudio.copy.dto.CopySelectDto;
 import com.bookstudio.copy.model.Copy;
@@ -39,4 +40,7 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
         WHERE c.isAvailable = true
     """)
     List<CopySelectDto> findForSelect();
+
+    Long countByBookAndIsAvailableFalse(Book book);
+    Long countByBookAndIsAvailableTrue(Book book);
 }

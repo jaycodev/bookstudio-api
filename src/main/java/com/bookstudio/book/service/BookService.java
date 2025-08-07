@@ -16,6 +16,7 @@ import com.bookstudio.book.repository.BookAuthorRepository;
 import com.bookstudio.book.repository.BookGenreRepository;
 import com.bookstudio.book.repository.BookRepository;
 import com.bookstudio.category.service.CategoryService;
+import com.bookstudio.copy.repository.CopyRepository;
 import com.bookstudio.genre.model.Genre;
 import com.bookstudio.language.service.LanguageService;
 import com.bookstudio.publisher.service.PublisherService;
@@ -34,6 +35,7 @@ import java.util.Optional;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final CopyRepository copyRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
 
@@ -198,7 +200,8 @@ public class BookService {
                 book.getPublisher().getName(),
                 book.getLanguage().getCode(),
                 book.getLanguage().getName(),
-                book.getReleaseDate(),
+                copyRepository.countByBookAndIsAvailableFalse(book),
+                copyRepository.countByBookAndIsAvailableTrue(book),
                 book.getStatus(),
                 book.getBookId());
     }

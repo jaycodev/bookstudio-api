@@ -19,7 +19,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             p.name,
             l.code,
             l.name,
-            b.releaseDate,
+            (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.isAvailable = false),
+            (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.isAvailable = true),
             b.status,
             b.bookId
         )

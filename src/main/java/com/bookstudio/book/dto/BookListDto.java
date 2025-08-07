@@ -1,7 +1,5 @@
 package com.bookstudio.book.dto;
 
-import java.time.LocalDate;
-
 import com.bookstudio.shared.enums.Status;
 
 public record BookListDto(
@@ -12,7 +10,8 @@ public record BookListDto(
     String publisherName,
     String languageCode,
     String languageName,
-    LocalDate releaseDate,
+    Long loanedCopies,
+    Long availableCopies,
     Status status,
     Long id
 ) {}
