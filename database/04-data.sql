@@ -112,41 +112,44 @@ INSERT INTO categories (name, level, description, status) VALUES
 -- 5. AUTORES
 INSERT INTO authors (name, nationality_id, birth_date, biography, status, photo_url) VALUES 
 -- Autores peruanos
-('Mario Vargas Llosa', 1, '1936-03-28', 'Premio Nobel de Literatura 2010, escritor peruano considerado uno de los más importantes novelistas contemporáneos', 'activo', NULL),
-('Julio Ramón Ribeyro', 1, '1929-08-31', 'Escritor peruano, maestro del cuento latinoamericano', 'activo', NULL),
-('César Vallejo', 1, '1892-03-16', 'Poeta peruano, considerado uno de los mayores innovadores de la poesía del siglo XX', 'activo', NULL),
-('José María Arguedas', 1, '1911-01-18', 'Escritor y antropólogo peruano, gran conocedor de la cultura andina', 'activo', NULL),
-('Ricardo Palma', 1, '1833-02-07', 'Escritor peruano, creador de las Tradiciones Peruanas', 'activo', NULL),
-('Ciro Alegría', 1, '1909-11-04', 'Novelista peruano, autor de El mundo es ancho y ajeno', 'activo', NULL),
-('José Carlos Mariátegui', 1, '1894-06-14', 'Ensayista y político peruano, fundador del pensamiento marxista en Perú', 'activo', NULL),
-('Alfredo Bryce Echenique', 1, '1939-02-19', 'Escritor peruano contemporáneo, autor de Un mundo para Julius', 'activo', NULL),
+('Mario Vargas Llosa', 1, '1936-03-28', 'Premio Nobel de Literatura 2010, escritor peruano considerado uno de los más importantes novelistas contemporáneos', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1vrnEOMvV7mwmCjPaPQkFluklQO_IdsMvaQ&s'),
+('Julio Ramón Ribeyro', 1, '1929-08-31', 'Escritor peruano, maestro del cuento latinoamericano', 'activo', 'https://portal.andina.pe/EDPfotografia2/Thumbnail/2011/12/03/000171146W.jpg'),
+('César Vallejo', 1, '1892-03-16', 'Poeta peruano, considerado uno de los mayores innovadores de la poesía del siglo XX', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIcaENo1dT84TEQhcP9ypMGTEHSe8zeGz3sQ&s'),
+('José María Arguedas', 1, '1911-01-18', 'Escritor y antropólogo peruano, gran conocedor de la cultura andina', 'activo', 'https://static.wixstatic.com/media/1f8451_ab7e05f2b05b409f97b2a7b8a48265bf~mv2.jpg/v1/fill/w_420,h_607,al_c,lg_1,q_80/1f8451_ab7e05f2b05b409f97b2a7b8a48265bf~mv2.jpg'),
+('Ricardo Palma', 1, '1833-02-07', 'Escritor peruano, creador de las Tradiciones Peruanas', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-5xsn7BPM5X9Wyjfs_5cwWJ7-wUJqlbT9oQ&s'),
+('Ciro Alegría', 1, '1909-11-04', 'Novelista peruano, autor de El mundo es ancho y ajeno', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqyqMpscC4JQHXuuJ_FNep3N6DAU12CijIXQ&s'),
+('José Carlos Mariátegui', 1, '1894-06-14', 'Ensayista y político peruano, fundador del pensamiento marxista en Perú', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRoxReV53nsHY0Z6IDLkUZkZ65SsT4RVLd5yg&s'),
+('Alfredo Bryce Echenique', 1, '1939-02-19', 'Escritor peruano contemporáneo, autor de Un mundo para Julius', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMmUkZHafO_SU9YnccrNc6WH_2U8FREHPAsQ&s'),
+
 -- Autores latinoamericanos
-('Gabriel García Márquez', 5, '1927-03-06', 'Escritor colombiano, Premio Nobel de Literatura 1982, máximo exponente del realismo mágico', 'activo', NULL),
-('Jorge Luis Borges', 3, '1899-08-24', 'Escritor argentino, maestro del cuento fantástico y la literatura universal', 'activo', NULL),
-('Isabel Allende', 6, '1942-08-02', 'Escritora chilena, una de las novelistas más leídas del mundo', 'activo', NULL),
-('Octavio Paz', 4, '1914-03-31', 'Poeta y ensayista mexicano, Premio Nobel de Literatura 1990', 'activo', NULL),
-('Julio Cortázar', 3, '1914-08-26', 'Escritor argentino, maestro del cuento fantástico', 'activo', NULL),
-('Pablo Neruda', 6, '1904-07-12', 'Poeta chileno, Premio Nobel de Literatura 1971', 'activo', NULL),
-('Carlos Fuentes', 4, '1928-11-11', 'Escritor mexicano, figura clave del boom latinoamericano', 'activo', NULL),
-('Ernesto Sabato', 3, '1911-06-24', 'Escritor argentino, autor de El túnel', 'activo', NULL),
+('Gabriel García Márquez', 5, '1927-03-06', 'Escritor colombiano, Premio Nobel de Literatura 1982, máximo exponente del realismo mágico', 'activo', 'https://www.biografiasyvidas.com/reportaje/garcia_marquez/fotos/garcia_marquez_420a.jpg'),
+('Jorge Luis Borges', 3, '1899-08-24', 'Escritor argentino, maestro del cuento fantástico y la literatura universal', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHKIGlaz3swY7Dz4dPvHbS2Vefa4m0auvY2g&s'),
+('Isabel Allende', 3, '1942-08-02', 'Escritora chilena, una de las novelistas más leídas del mundo', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKKHLqOoWoChMh08Mrh6ypo295IMQEzyAUWA&s'),
+('Octavio Paz', 4, '1914-03-31', 'Poeta y ensayista mexicano, Premio Nobel de Literatura 1990', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNh6HAYvG6Nf0eCwhUamJR6DooIhX_f7mqhQ&s'),
+('Julio Cortázar', 3, '1914-08-26', 'Escritor argentino, maestro del cuento fantástico', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAxnGUOOqgregKFvtRdEAlujiGq2PX2MeS5Q&s'),
+('Pablo Neruda', 6, '1904-07-12', 'Poeta chileno, Premio Nobel de Literatura 1971', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTwxSPB9FTat7um_b6KRiCGOHFUyRKbgWSxw&s'),
+('Carlos Fuentes', 4, '1928-11-11', 'Escritor mexicano, figura clave del boom latinoamericano', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB0tz84SUKi8ofB4-PGBO1pawbo8Uk029-Vw&s'),
+('Ernesto Sabato', 3, '1911-06-24', 'Escritor argentino, autor de El túnel', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW3L_tRYM8_zKZxBqmEsecUcz5l1LwAkKBBQ&s'),
+
 -- Autores españoles
-('Miguel de Cervantes', 2, '1547-09-29', 'Escritor español, autor de Don Quijote de la Mancha', 'activo', NULL),
-('Federico García Lorca', 2, '1898-06-05', 'Poeta y dramaturgo español de la Generación del 27', 'activo', NULL),
-('Antonio Machado', 2, '1875-07-26', 'Poeta español de la Generación del 98', 'activo', NULL),
-('Juan Ramón Jiménez', 2, '1881-12-23', 'Poeta español, Premio Nobel de Literatura 1956', 'activo', NULL),
-('Camilo José Cela', 2, '1916-05-11', 'Escritor español, Premio Nobel de Literatura 1989', 'activo', NULL),
-('Miguel Delibes', 2, '1920-10-17', 'Novelista español, autor de Los santos inocentes', 'activo', NULL),
+('Miguel de Cervantes', 2, '1547-09-29', 'Escritor español, autor de Don Quijote de la Mancha', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQptVFHhSDXKQF-Jg04BV9m_ebL46ofOeJqGg&s'),
+('Federico García Lorca', 2, '1898-06-05', 'Poeta y dramaturgo español de la Generación del 27', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxIvPX4QM3R_jz0BLZ8tikBYkoVJ5hCD9jmQ&s'),
+('Antonio Machado', 2, '1875-07-26', 'Poeta español de la Generación del 98', 'activo', 'https://www.cervantesvirtual.com/images/portales/antonio_machado/antonio_machado.jpg'),
+('Juan Ramón Jiménez', 2, '1881-12-23', 'Poeta español, Premio Nobel de Literatura 1956', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2MAHA1q7KckmnQrhJmVxLQDMdcXKYPZ-JVQ&s'),
+('Camilo José Cela', 2, '1916-05-11', 'Escritor español, Premio Nobel de Literatura 1989', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUMhqvroPXoeZqUhFLxGTOQ2NvfYjHClVW_g&s'),
+('Miguel Delibes', 2, '1920-10-17', 'Novelista español, autor de Los santos inocentes', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8XmYugB0jtGO4A6n_T940MEXT9ASYHsHRBA&s'),
+
 -- Autores anglosajones
-('William Shakespeare', 8, '1564-04-26', 'Dramaturgo y poeta inglés, considerado el escritor más importante en lengua inglesa', 'activo', NULL),
-('Ernest Hemingway', 7, '1899-07-21', 'Escritor estadounidense, Premio Nobel de Literatura 1954', 'activo', NULL),
-('Stephen King', 7, '1947-09-21', 'Escritor estadounidense, maestro del terror y suspense', 'activo', NULL),
-('J.K. Rowling', 8, '1965-07-31', 'Escritora británica, autora de la saga Harry Potter', 'activo', NULL),
-('Agatha Christie', 8, '1890-09-15', 'Escritora británica, reina del misterio y la novela policíaca', 'activo', NULL),
-('George Orwell', 8, '1903-06-25', 'Escritor británico, autor de 1984 y Rebelión en la granja', 'activo', NULL),
-('Jane Austen', 8, '1775-12-16', 'Novelista británica, autora de Orgullo y prejuicio', 'activo', NULL),
-('Charles Dickens', 8, '1812-02-07', 'Novelista británico, autor de Oliver Twist', 'activo', NULL),
-('Mark Twain', 7, '1835-11-30', 'Escritor estadounidense, autor de Las aventuras de Tom Sawyer', 'activo', NULL),
-('Edgar Allan Poe', 7, '1809-01-19', 'Escritor estadounidense, maestro del relato corto y la poesía', 'activo', NULL);
+('William Shakespeare', 8, '1564-04-26', 'Dramaturgo y poeta inglés, considerado el escritor más importante en lengua inglesa', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfaNYWLuCHQbKlAe-G7AkVoD76qvBsvwR4Vg&s'),
+('Ernest Hemingway', 7, '1899-07-21', 'Escritor estadounidense, Premio Nobel de Literatura 1954', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQr-h9MaDue5peCMC0nHtjfPd6rK-flGwMq2Q&s'),
+('Stephen King', 7, '1947-09-21', 'Escritor estadounidense, maestro del terror y suspense', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzdidYzM4lPIVjiSBk_zyLYE1JmSCt_NZMFA&s'),
+('J.K. Rowling', 8, '1965-07-31', 'Escritora británica, autora de la saga Harry Potter', 'activo', 'https://m.media-amazon.com/images/S/amzn-author-media-prod/8cigckin175jtpsk3gs361r4ss.jpg'),
+('Agatha Christie', 8, '1890-09-15', 'Escritora británica, reina del misterio y la novela policíaca', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVox9E3jQeH8BFpnBRANQeBBC0bsH9230x6Q&s'),
+('George Orwell', 8, '1903-06-25', 'Escritor británico, autor de 1984 y Rebelión en la granja', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWtPv8flPnqjFjXD4f26XftUHQNg3WvmBBCgqGPDQQmNzZZfTWVgTIk07ioArjBAskgI8'),
+('Jane Austen', 8, '1775-12-16', 'Novelista británica, autora de Orgullo y prejuicio', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa_DJhO_MYLBPWthlaG-T3VS1s9XDajHewYw&s'),
+('Charles Dickens', 8, '1812-02-07', 'Novelista británico, autor de Oliver Twist', 'activo', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Dickens_Gurney_head.jpg/330px-Dickens_Gurney_head.jpg'),
+('Mark Twain', 7, '1835-11-30', 'Escritor estadounidense, autor de Las aventuras de Tom Sawyer', 'activo', 'https://www.biografiasyvidas.com/biografia/t/fotos/twain_mark.jpg'),
+('Edgar Allan Poe', 7, '1809-01-19', 'Escritor estadounidense, maestro del relato corto y la poesía', 'activo', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Edgar_Allan_Poe_portrait.jpg/250px-Edgar_Allan_Poe_portrait.jpg');
 
 -- 6. EDITORIALES
 INSERT INTO publishers (name, nationality_id, foundation_year, website, address, status, photo_url) VALUES 
