@@ -14,7 +14,9 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
         SELECT new com.bookstudio.copy.dto.CopyListDto(
             c.code,
             b.title,
-            CONCAT(s.code, ' - ', l.name),
+            s.code,
+            s.floor,
+            l.name,
             c.isAvailable,
             c.condition,
             c.copyId

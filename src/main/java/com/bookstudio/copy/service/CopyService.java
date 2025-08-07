@@ -115,7 +115,9 @@ public class CopyService {
         return new CopyListDto(
                 copy.getCode(),
                 copy.getBook().getTitle(),
-                copy.getShelf().getCode() + " - " + copy.getShelf().getLocation().getName(),
+                copy.getShelf().getCode(),
+                copy.getShelf().getFloor(),
+                copy.getShelf().getLocation().getName(),
                 copy.getIsAvailable(),
                 copy.getCondition(),
                 copy.getCopyId());

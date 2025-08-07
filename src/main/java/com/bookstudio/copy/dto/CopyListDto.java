@@ -5,7 +5,9 @@ import com.bookstudio.shared.enums.Condition;
 public record CopyListDto(
     String code,
     String bookTitle,
-    String shelfLocation,
+    String shelfCode,
+    String shelfFloor,
+    String locationName,
     Boolean isAvailable,
     Condition condition,
     Long id
