@@ -13,6 +13,7 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
     @Query("""
         SELECT new com.bookstudio.copy.dto.CopyListDto(
             c.code,
+            b.coverUrl,
             b.title,
             s.code,
             s.floor,

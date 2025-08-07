@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 public class BookSummaryDto {
     private Long id;
-    private String title;
     private String isbn;
+    private String coverUrl;
+    private String title;
 }

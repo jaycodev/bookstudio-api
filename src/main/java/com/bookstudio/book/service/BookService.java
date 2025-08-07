@@ -182,9 +182,10 @@ public class BookService {
 
     public BookSummaryDto toSummaryDto(Book book) {
         return BookSummaryDto.builder()
-                .id(book.getBookId())
-                .title(book.getTitle())
                 .isbn(book.getIsbn())
+                .id(book.getBookId())
+                .coverUrl(book.getCoverUrl())
+                .title(book.getTitle())
                 .build();
     }
 
