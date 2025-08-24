@@ -193,6 +193,7 @@ public class BookService {
 
     private BookListDto toListDto(Book book) {
         return new BookListDto(
+                book.getBookId(),
                 book.getIsbn(),
                 book.getCoverUrl(),
                 book.getTitle(),
@@ -202,7 +203,6 @@ public class BookService {
                 book.getLanguage().getName(),
                 copyRepository.countByBookAndIsAvailableFalse(book),
                 copyRepository.countByBookAndIsAvailableTrue(book),
-                book.getStatus(),
-                book.getBookId());
+                book.getStatus());
     }
 }

@@ -11,13 +11,13 @@ import com.bookstudio.reservation.model.Reservation;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("""
         SELECT new com.bookstudio.reservation.dto.ReservationListDto(
+            r.reservationId,
             r.code,
             rd.code,
             CONCAT(rd.firstName, ' ', rd.lastName),
             c.code,
             r.reservationDate,
-            r.status,
-            r.reservationId
+            r.status
         )
         FROM Reservation r
         JOIN r.reader rd

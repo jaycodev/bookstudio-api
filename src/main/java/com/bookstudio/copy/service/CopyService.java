@@ -113,6 +113,7 @@ public class CopyService {
 
     private CopyListDto toListDto(Copy copy) {
         return new CopyListDto(
+                copy.getCopyId(),
                 copy.getCode(),
                 copy.getBook().getCoverUrl(),
                 copy.getBook().getTitle(),
@@ -120,7 +121,6 @@ public class CopyService {
                 copy.getShelf().getFloor(),
                 copy.getShelf().getLocation().getName(),
                 copy.getIsAvailable(),
-                copy.getCondition(),
-                copy.getCopyId());
+                copy.getCondition());
     }
 }

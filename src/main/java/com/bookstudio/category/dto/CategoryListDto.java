@@ -4,9 +4,9 @@ import com.bookstudio.shared.enums.CategoryLevel;
 import com.bookstudio.shared.enums.Status;
 
 public record CategoryListDto(
+    Long id,
     String name,
     CategoryLevel level,
     String description,
-    Status status,
-    Long id
+    Status status
 ) {}

@@ -82,10 +82,10 @@ public class CategoryService {
 
     private CategoryListDto toListDto(Category category) {
         return new CategoryListDto(
+                category.getCategoryId(),
                 category.getName(),
                 category.getLevel(),
                 category.getDescription(),
-                category.getStatus(),
-                category.getCategoryId());
+                category.getStatus());
     }
 }

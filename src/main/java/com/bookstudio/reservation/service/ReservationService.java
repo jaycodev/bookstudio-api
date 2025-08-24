@@ -89,12 +89,12 @@ public class ReservationService {
 
     private ReservationListDto toListDto(Reservation reservation) {
         return new ReservationListDto(
+                reservation.getReservationId(),
                 reservation.getCode(),
                 reservation.getReader().getCode(),
                 reservation.getReader().getFullName(),
                 reservation.getCopy().getCode(),
                 reservation.getReservationDate(),
-                reservation.getStatus(),
-                reservation.getReservationId());
+                reservation.getStatus());
     }
 }

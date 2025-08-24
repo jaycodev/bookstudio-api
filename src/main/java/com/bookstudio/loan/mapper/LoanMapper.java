@@ -22,12 +22,12 @@ public class LoanMapper {
                 "canceled", raw.canceledCount());
 
         return new LoanListDto(
+                raw.id(),
                 raw.code(),
                 raw.readerCode(),
                 raw.readerFullName(),
                 raw.loanDate(),
                 itemCount,
-                statusCounts,
-                raw.id());
+                statusCounts);
     }
 }

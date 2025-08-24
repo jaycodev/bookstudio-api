@@ -110,11 +110,11 @@ public class AuthorService {
 
     private AuthorListDto toListDto(Author author) {
         return new AuthorListDto(
+                author.getAuthorId(),
                 author.getPhotoUrl(),
                 author.getName(),
                 author.getNationality().getName(),
                 author.getBirthDate(),
-                author.getStatus(),
-                author.getAuthorId());
+                author.getStatus());
     }
 }

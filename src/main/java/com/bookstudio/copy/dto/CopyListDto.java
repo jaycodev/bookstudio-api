@@ -3,6 +3,7 @@ package com.bookstudio.copy.dto;
 import com.bookstudio.shared.enums.Condition;
 
 public record CopyListDto(
+    Long id,
     String code,
     String bookCoverUrl,
     String bookTitle,
@@ -10,6 +11,5 @@ public record CopyListDto(
     String shelfFloor,
     String locationName,
     Boolean isAvailable,
-    Condition condition,
-    Long id
+    Condition condition
 ) {}

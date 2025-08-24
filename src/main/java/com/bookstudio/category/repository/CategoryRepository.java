@@ -13,12 +13,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("""
         SELECT 
             new com.bookstudio.category.dto.CategoryListDto(
+                c.categoryId,
                 c.name,
                 c.level,
                 c.description,
-                c.status,
-                c.categoryId
-            )
+                c.status
+                )
         FROM Category c
         ORDER BY c.categoryId DESC
     """)

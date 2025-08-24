@@ -100,13 +100,13 @@ public class FineService {
 
     private FineListDto toListDto(Fine fine) {
         return new FineListDto(
+                fine.getFineId(),
                 fine.getCode(),
                 fine.getLoanItem().getLoan().getCode(),
                 fine.getLoanItem().getCopy().getCode(),
                 fine.getAmount(),
                 fine.getDaysLate(),
                 fine.getIssuedAt(),
-                fine.getStatus(),
-                fine.getFineId());
+                fine.getStatus());
     }
 }

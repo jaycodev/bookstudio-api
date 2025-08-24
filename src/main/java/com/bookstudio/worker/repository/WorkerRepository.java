@@ -16,14 +16,14 @@ public interface WorkerRepository extends JpaRepository<Worker, Long> {
 
     @Query("""
         SELECT new com.bookstudio.worker.dto.WorkerListDto(
+            w.workerId,
             w.profilePhotoUrl,
             w.username,
             w.email,
             w.firstName,
             w.lastName,
             w.role.name,
-            w.status,
-            w.workerId
+            w.status
         )
         FROM Worker w
         WHERE w.workerId <> :loggedWorkerId

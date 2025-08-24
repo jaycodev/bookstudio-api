@@ -118,13 +118,13 @@ public class ReaderService {
 
     private ReaderListDto toListDto(Reader reader) {
         return new ReaderListDto(
+                reader.getReaderId(),
                 reader.getCode(),
                 reader.getFullName(),
                 reader.getDni(),
                 reader.getPhone(),
                 reader.getEmail(),
                 reader.getType(),
-                reader.getStatus(),
-                reader.getReaderId());
+                reader.getStatus());
     }
 }

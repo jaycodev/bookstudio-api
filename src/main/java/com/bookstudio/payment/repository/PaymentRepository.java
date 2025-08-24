@@ -11,14 +11,14 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
         SELECT new com.bookstudio.payment.dto.PaymentListDto(
+            p.paymentId,
             p.code,
             COUNT(f),
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             p.amount,
             p.paymentDate,
-            p.method,
-            p.paymentId 
+            p.method
         )
         FROM Payment p
         JOIN p.reader r

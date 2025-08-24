@@ -13,12 +13,12 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("""
         SELECT 
             new com.bookstudio.author.dto.AuthorListDto(
+                a.authorId,
                 a.photoUrl,
                 a.name,
                 n.name,
                 a.birthDate,
-                a.status,
-                a.authorId
+                a.status
             )
         FROM Author a
         JOIN a.nationality n

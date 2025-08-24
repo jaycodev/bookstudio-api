@@ -17,14 +17,14 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
     
     @Query("""
         SELECT new com.bookstudio.reader.dto.ReaderListDto(
+            r.readerId,
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             r.dni,
             r.phone,
             r.email,
             r.type,
-            r.status,
-            r.readerId
+            r.status
         )
         FROM Reader r
         ORDER BY r.readerId DESC

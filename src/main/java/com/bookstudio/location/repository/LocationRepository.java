@@ -13,9 +13,9 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query("""
         SELECT 
             new com.bookstudio.location.dto.LocationListDto(
+                l.locationId,
                 l.name,
-                l.description,
-                l.locationId
+                l.description
             )
         FROM Location l
         ORDER BY l.locationId DESC

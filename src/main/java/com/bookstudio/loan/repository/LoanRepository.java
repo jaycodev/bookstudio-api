@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     @Query("""
         SELECT new com.bookstudio.loan.dto.LoanListRawDto(
+            l.loanId,
             l.code,
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
@@ -19,8 +20,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             SUM(CASE WHEN li.status = 'devuelto' THEN 1 ELSE 0 END),
             SUM(CASE WHEN li.status = 'retrasado' THEN 1 ELSE 0 END),
             SUM(CASE WHEN li.status = 'extraviado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'cancelado' THEN 1 ELSE 0 END),
-            l.loanId
+            SUM(CASE WHEN li.status = 'cancelado' THEN 1 ELSE 0 END)
         )
         FROM Loan l
         JOIN l.reader r
@@ -32,6 +32,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
 
     @Query("""
         SELECT new com.bookstudio.loan.dto.LoanListRawDto(
+            l.loanId,
             l.code,
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
@@ -40,8 +41,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             SUM(CASE WHEN li.status = 'devuelto' THEN 1 ELSE 0 END),
             SUM(CASE WHEN li.status = 'retrasado' THEN 1 ELSE 0 END),
             SUM(CASE WHEN li.status = 'extraviado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'cancelado' THEN 1 ELSE 0 END),
-            l.loanId
+            SUM(CASE WHEN li.status = 'cancelado' THEN 1 ELSE 0 END)
         )
         FROM Loan l
         JOIN l.reader r

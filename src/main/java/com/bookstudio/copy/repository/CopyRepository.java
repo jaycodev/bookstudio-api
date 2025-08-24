@@ -13,6 +13,7 @@ import com.bookstudio.copy.model.Copy;
 public interface CopyRepository extends JpaRepository<Copy, Long> {
     @Query("""
         SELECT new com.bookstudio.copy.dto.CopyListDto(
+            c.copyId,
             c.code,
             b.coverUrl,
             b.title,
@@ -20,8 +21,7 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
             s.floor,
             l.name,
             c.isAvailable,
-            c.condition,
-            c.copyId
+            c.condition
         )
         FROM Copy c
         JOIN c.book b

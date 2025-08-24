@@ -106,13 +106,13 @@ public class WorkerService {
 
     private WorkerListDto toListDto(Worker worker) {
         return new WorkerListDto(
+                worker.getWorkerId(),
                 worker.getProfilePhotoUrl(),
                 worker.getUsername(),
                 worker.getEmail(),
                 worker.getFirstName(),
                 worker.getLastName(),
                 worker.getRole().getName(),
-                worker.getStatus(),
-                worker.getWorkerId());
+                worker.getStatus());
     }
 }

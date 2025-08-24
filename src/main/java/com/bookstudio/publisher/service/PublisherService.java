@@ -142,11 +142,11 @@ public class PublisherService {
 
     private PublisherListDto toListDto(Publisher publisher) {
         return new PublisherListDto(
+                publisher.getPublisherId(),
                 publisher.getPhotoUrl(),
                 publisher.getName(),
                 publisher.getNationality().getName(),
                 publisher.getWebsite(),
-                publisher.getStatus(),
-                publisher.getPublisherId());
+                publisher.getStatus());
     }
 }

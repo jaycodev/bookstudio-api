@@ -12,6 +12,7 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
         SELECT new com.bookstudio.book.dto.BookListDto(
+            b.bookId,
             b.isbn,
             b.coverUrl,
             b.title,
@@ -21,8 +22,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             l.name,
             (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.isAvailable = false),
             (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.isAvailable = true),
-            b.status,
-            b.bookId
+            b.status
         )
         FROM Book b
         JOIN b.publisher p

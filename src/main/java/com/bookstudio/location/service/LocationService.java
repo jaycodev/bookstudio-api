@@ -125,8 +125,8 @@ public class LocationService {
 
     private LocationListDto toListDto(Location location) {
         return new LocationListDto(
+                location.getLocationId(),
                 location.getName(),
-                location.getDescription(),
-                location.getLocationId());
+                location.getDescription());
     }
 }

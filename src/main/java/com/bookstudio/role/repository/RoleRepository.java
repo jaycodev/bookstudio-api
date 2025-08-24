@@ -12,9 +12,9 @@ import com.bookstudio.role.model.Role;
 public interface RoleRepository extends JpaRepository<Role, Long>{
     @Query("""
         SELECT new com.bookstudio.role.dto.RoleListDto(
+            r.roleId,
             r.name,
-            r.description,
-            r.roleId
+            r.description
         )
         FROM Role r
         ORDER BY r.roleId DESC

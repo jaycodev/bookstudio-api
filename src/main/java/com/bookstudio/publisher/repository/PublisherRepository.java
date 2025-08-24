@@ -12,12 +12,12 @@ import java.util.List;
 public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     @Query("""
         SELECT new com.bookstudio.publisher.dto.PublisherListDto(
+            p.publisherId,
             p.photoUrl,
             p.name,
             n.name,
             p.website,
-            p.status,
-            p.publisherId
+            p.status
         )
         FROM Publisher p
         JOIN p.nationality n

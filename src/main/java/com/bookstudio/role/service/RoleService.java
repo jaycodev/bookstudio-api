@@ -110,8 +110,8 @@ public class RoleService {
 
     private RoleListDto toListDto(Role role) {
         return new RoleListDto(
+                role.getRoleId(),
                 role.getName(),
-                role.getDescription(),
-                role.getRoleId());
+                role.getDescription());
     }
 }
