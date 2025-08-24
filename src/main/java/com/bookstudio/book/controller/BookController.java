@@ -56,10 +56,10 @@ public class BookController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateBookDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateBookDto dto) {
         try {
-            BookListDto updated = bookService.update(dto);
+            BookListDto updated = bookService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

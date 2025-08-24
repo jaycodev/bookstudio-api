@@ -76,9 +76,9 @@ public class CopyService {
     }
 
     @Transactional
-    public CopyListDto update(UpdateCopyDto dto) {
-        Copy copy = copyRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + dto.getId()));
+    public CopyListDto update(Long copyId, UpdateCopyDto dto) {
+        Copy copy = copyRepository.findById(copyId)
+                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + copyId));
 
         copy.setBarcode(dto.getBarcode());
         copy.setIsAvailable(dto.getIsAvailable());

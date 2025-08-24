@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class UpdateWorkerDto {
-    private Long id;
     private String firstName;
     private String lastName;
     private Long roleId;

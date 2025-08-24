@@ -56,10 +56,10 @@ public class LoanController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateLoanDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateLoanDto dto) {
         try {
-            LoanListDto result = loanService.update(dto);
+            LoanListDto result = loanService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, result));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

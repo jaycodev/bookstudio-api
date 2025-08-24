@@ -78,9 +78,9 @@ public class LocationService {
     }
 
     @Transactional
-    public LocationListDto update(UpdateLocationDto dto) {
-        Location location = locationRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + dto.getId()));
+    public LocationListDto update(Long locationId, UpdateLocationDto dto) {
+        Location location = locationRepository.findById(locationId)
+                .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + locationId));
 
         location.setName(dto.getName());
         location.setDescription(dto.getDescription());

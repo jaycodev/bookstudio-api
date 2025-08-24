@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class UpdatePublisherDto {
-    private Long id;
     private String name;
     private Long nationalityId;
     private Integer foundationYear;

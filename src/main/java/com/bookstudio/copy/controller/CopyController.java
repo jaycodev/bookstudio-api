@@ -56,10 +56,10 @@ public class CopyController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateCopyDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateCopyDto dto) {
         try {
-            CopyListDto updated = copyService.update(dto);
+            CopyListDto updated = copyService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

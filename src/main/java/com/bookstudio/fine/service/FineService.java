@@ -72,9 +72,9 @@ public class FineService {
     }
 
     @Transactional
-    public FineListDto update(UpdateFineDto dto) {
-        Fine fine = fineRepository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + dto.getId()));
+    public FineListDto update(Long fineId, UpdateFineDto dto) {
+        Fine fine = fineRepository.findById(fineId)
+                .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
 
         fine.setAmount(dto.getAmount());
         fine.setDaysLate(dto.getDaysLate());

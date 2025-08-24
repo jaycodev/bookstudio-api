@@ -71,10 +71,10 @@ public class WorkerController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateWorkerDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateWorkerDto dto) {
         try {
-            WorkerListDto updated = workerService.update(dto);
+            WorkerListDto updated = workerService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

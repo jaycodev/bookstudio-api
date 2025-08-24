@@ -98,9 +98,9 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentListDto update(UpdatePaymentDto dto) {
-        Payment payment = paymentRepository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + dto.getId()));
+    public PaymentListDto update(Long paymentId, UpdatePaymentDto dto) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + paymentId));
 
         payment.setReader(readerService.findById(dto.getReaderId())
                 .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + dto.getReaderId())));

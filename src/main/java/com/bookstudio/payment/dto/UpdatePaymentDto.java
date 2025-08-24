@@ -9,7 +9,6 @@ import lombok.Data;
 
 @Data
 public class UpdatePaymentDto {
-    private Long id;
     private Long readerId;
     private BigDecimal amount;
     private LocalDate paymentDate;

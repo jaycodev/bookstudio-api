@@ -56,10 +56,10 @@ public class ReservationController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateReservationDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateReservationDto dto) {
         try {
-            ReservationListDto updated = reservationService.update(dto);
+            ReservationListDto updated = reservationService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

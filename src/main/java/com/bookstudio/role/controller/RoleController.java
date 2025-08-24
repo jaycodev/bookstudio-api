@@ -56,10 +56,10 @@ public class RoleController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateRoleDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateRoleDto dto) {
         try {
-            RoleListDto updated = roleService.update(dto);
+            RoleListDto updated = roleService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -98,9 +98,9 @@ public class LoanService {
     }
 
     @Transactional
-    public LoanListDto update(UpdateLoanDto dto) {
-        Loan loan = loanRepository.findById(dto.getId())
-                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + dto.getId()));
+    public LoanListDto update(Long loanId, UpdateLoanDto dto) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId));
 
         loan.setObservation(dto.getObservation());
 

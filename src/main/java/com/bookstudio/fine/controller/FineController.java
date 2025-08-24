@@ -55,10 +55,10 @@ public class FineController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateFineDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateFineDto dto) {
         try {
-            FineListDto updated = fineService.update(dto);
+            FineListDto updated = fineService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

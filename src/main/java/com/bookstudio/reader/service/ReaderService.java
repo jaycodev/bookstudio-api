@@ -81,11 +81,11 @@ public class ReaderService {
     }
 
     @Transactional
-    public ReaderListDto update(UpdateReaderDto dto) {
-        Reader reader = readerRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + dto.getId()));
+    public ReaderListDto update(Long readerId, UpdateReaderDto dto) {
+        Reader reader = readerRepository.findById(readerId)
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + readerId));
 
-        if (readerRepository.findByEmailAndReaderIdNot(dto.getEmail(), dto.getId()).isPresent()) {
+        if (readerRepository.findByEmailAndReaderIdNot(dto.getEmail(), readerId).isPresent()) {
             throw new IllegalArgumentException("The provided email address is already registered.");
         }
 

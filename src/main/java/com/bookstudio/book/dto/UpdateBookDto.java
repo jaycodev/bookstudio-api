@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class UpdateBookDto {
-    private Long id;
     private String title;
     private String isbn;
     private Long languageId;

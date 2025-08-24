@@ -68,9 +68,9 @@ public class AuthorService {
     }
 
     @Transactional
-    public AuthorListDto update(UpdateAuthorDto dto) {
-        Author author = authorRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with ID: " + dto.getId()));
+    public AuthorListDto update(Long authorId, UpdateAuthorDto dto) {
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new EntityNotFoundException("Author not found with ID: " + authorId));
 
         author.setName(dto.getName());
         author.setNationality(nationalityService.findById(dto.getNationalityId())

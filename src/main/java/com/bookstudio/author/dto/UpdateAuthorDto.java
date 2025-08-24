@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class UpdateAuthorDto {
-    private Long id;
     private String name;
     private Long nationalityId;
     private LocalDate birthDate;

@@ -72,9 +72,9 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleListDto update(UpdateRoleDto dto) {
-        Role role = roleRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + dto.getId()));
+    public RoleListDto update(Long roleId, UpdateRoleDto dto) {
+        Role role = roleRepository.findById(roleId)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + roleId));
 
         role.setName(dto.getName());
         role.setDescription(dto.getDescription());

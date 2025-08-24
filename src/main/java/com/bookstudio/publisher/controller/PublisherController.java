@@ -57,10 +57,10 @@ public class PublisherController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdatePublisherDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdatePublisherDto dto) {
         try {
-            PublisherListDto updated = publisherService.update(dto);
+            PublisherListDto updated = publisherService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

@@ -9,7 +9,6 @@ import lombok.Data;
 
 @Data
 public class UpdateReaderDto {
-    private Long id;
     private String firstName;
     private String lastName;
     private String address;

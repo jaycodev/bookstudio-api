@@ -77,9 +77,9 @@ public class WorkerService {
     }
 
     @Transactional
-    public WorkerListDto update(UpdateWorkerDto dto) {
-        Worker worker = workerRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + dto.getId()));
+    public WorkerListDto update(Long workerId, UpdateWorkerDto dto) {
+        Worker worker = workerRepository.findById(workerId)
+                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + workerId));
 
         worker.setRole(roleService.findById(dto.getRoleId())
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + dto.getRoleId())));

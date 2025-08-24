@@ -86,9 +86,9 @@ public class PublisherService {
     }
 
     @Transactional
-    public PublisherListDto update(UpdatePublisherDto dto) {
-        Publisher publisher = publisherRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + dto.getId()));
+    public PublisherListDto update(Long publisherId, UpdatePublisherDto dto) {
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + publisherId));
 
         publisher.setName(dto.getName());
         publisher.setNationality(nationalityService.findById(dto.getNationalityId())

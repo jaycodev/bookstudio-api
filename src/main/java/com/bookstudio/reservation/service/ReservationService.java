@@ -71,9 +71,9 @@ public class ReservationService {
     }
 
     @Transactional
-    public ReservationListDto update(UpdateReservationDto dto) {
-        Reservation reservation = reservationRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + dto.getId()));
+    public ReservationListDto update(Long reservationId, UpdateReservationDto dto) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + reservationId));
 
         reservation.setReader(readerService.findById(dto.getReaderId())
                 .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + dto.getReaderId())));

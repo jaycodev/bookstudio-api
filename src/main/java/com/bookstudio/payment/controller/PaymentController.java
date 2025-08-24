@@ -55,10 +55,10 @@ public class PaymentController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdatePaymentDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdatePaymentDto dto) {
         try {
-            PaymentListDto updated = paymentService.update(dto);
+            PaymentListDto updated = paymentService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

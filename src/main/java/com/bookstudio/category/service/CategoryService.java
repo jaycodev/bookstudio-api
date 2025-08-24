@@ -56,9 +56,9 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryListDto update(UpdateCategoryDto dto) {
-        Category category = categoryRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + dto.getId()));
+    public CategoryListDto update(Long categoryId, UpdateCategoryDto dto) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + categoryId));
 
         category.setName(dto.getName());
         category.setLevel(dto.getLevel());

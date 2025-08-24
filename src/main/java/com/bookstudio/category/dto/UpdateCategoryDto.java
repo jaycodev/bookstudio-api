@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class UpdateCategoryDto {
-    private Long id;
     private String name;
     private CategoryLevel level;
     private String description;

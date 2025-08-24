@@ -119,9 +119,9 @@ public class BookService {
     }
 
     @Transactional
-    public BookListDto update(UpdateBookDto dto) {
-        Book book = bookRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + dto.getId()));
+    public BookListDto update(Long bookId, UpdateBookDto dto) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + bookId));
 
         book.setTitle(dto.getTitle());
         book.setIsbn(dto.getIsbn());

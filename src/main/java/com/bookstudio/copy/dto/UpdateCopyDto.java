@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class UpdateCopyDto {
-    private Long id;
     private Long shelfId;
     private String barcode;
     private Boolean isAvailable;

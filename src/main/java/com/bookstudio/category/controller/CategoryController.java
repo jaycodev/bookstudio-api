@@ -56,10 +56,10 @@ public class CategoryController {
         }
     }
 
-    @PutMapping
-    public ResponseEntity<?> update(@RequestBody UpdateCategoryDto dto) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateCategoryDto dto) {
         try {
-            CategoryListDto updated = categoryService.update(dto);
+            CategoryListDto updated = categoryService.update(id, dto);
             return ResponseEntity.ok(new ApiResponse(true, updated));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
