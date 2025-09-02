@@ -162,17 +162,17 @@ INSERT INTO publishers (name, nationality_id, foundation_year, website, address,
 ('Seix Barral', 2, 1911, 'www.seixbarral.es', 'Barcelona, España', 'activo', NULL),
 ('Cátedra', 2, 1973, 'www.catedra.com', 'Madrid, España', 'activo', NULL),
 ('Tusquets', 2, 1969, 'www.tusquetseditores.com', 'Barcelona, España', 'activo', NULL),
-('Peisa', 1, 1962, 'www.peisa.com.pe', 'Lima, Perú', 'activo', NULL),
-('Editorial Norma', 5, 1960, 'www.norma.com', 'Bogotá, Colombia', 'activo', NULL),
-('Editorial Sudamericana', 3, 1939, 'www.sudamericanalibros.com.ar', 'Buenos Aires, Argentina', 'activo', NULL),
-('Emecé Editores', 3, 1939, 'www.emece.com.ar', 'Buenos Aires, Argentina', 'activo', NULL),
-('Editorial Porrúa', 4, 1900, 'www.porrua.com', 'Ciudad de México, México', 'activo', NULL),
-('Editorial Andrés Bello', 6, 1843, 'www.andresbello.cl', 'Santiago, Chile', 'activo', NULL),
-('Salamandra', 2, 2000, 'www.salamandra.info', 'Barcelona, España', 'activo', NULL),
-('Debolsillo', 2, 1995, 'www.penguinlibros.com', 'Barcelona, España', 'activo', NULL),
-('Crítica', 2, 1976, 'www.ed-critica.es', 'Barcelona, España', 'activo', NULL),
-('Alianza Editorial', 2, 1966, 'www.alianzaeditorial.es', 'Madrid, España', 'activo', NULL),
-('Ediciones B', 2, 1986, 'www.edicionesb.com', 'Barcelona, España', 'activo', NULL);
+('Peisa', 1, 1962, 'www.peisa.com.pe', 'Lima, Perú', 'activo', "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5wYUc7Sdg3cfgS7eKvaaDBX6xpxD2mUEsg&s"),
+('Editorial Norma', 5, 1960, 'www.librerianorma.com', 'Bogotá, Colombia', 'activo', "https://pbs.twimg.com/profile_images/887441240110751744/mwP27QIB_400x400.jpg"),
+('Editorial Sudamericana', 3, 1939, 'www.sudamericanalibros.com.ar', 'Buenos Aires, Argentina', 'activo', "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQijPZ8s7YKGiJUWwnBZqojCS0rfCWUw6d1Tw&s"),
+('Emecé Editores', 3, 1939, 'www.emece.com.ar', 'Buenos Aires, Argentina', 'activo', "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqIiS61_tgWiFOKdEiulmL8jZZkt0f6wbj6Q&s"),
+('Editorial Porrúa', 4, 1900, 'www.porrua.com', 'Ciudad de México, México', 'activo', "https://http2.mlstatic.com/D_NQ_NP_718679-MLM31408428279_072019-O.webp"),
+('Editorial Andrés Bello', 6, 1843, 'www.andresbello.cl', 'Santiago, Chile', 'activo', "https://es.babelio.com/users/EDIG_Andres-Bello_9631.jpg"),
+('Salamandra', 2, 2000, 'www.salamandra.info', 'Barcelona, España', 'activo', "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyiLwCL41nSe1jcHg4uee2dCZyBUGr4HS3bg&s"),
+('Debolsillo', 2, 1995, 'www.penguinlibros.com', 'Barcelona, España', 'activo', "https://hablemos-escritoras-as.s3.us-west-1.amazonaws.com/variants/wgnm367hidp8j4s1pmefduijvyfv/fec9312db351f781c0197cc9c4f9c66013b1e39507ba1aecf24862b67be970f0"),
+('Crítica', 2, 1976, 'www.ed-critica.es', 'Barcelona, España', 'activo', "https://casatomadalibreriacafe.com/wp-content/uploads/2020/09/logo_CRITICA.jpg"),
+('Alianza Editorial', 2, 1966, 'www.alianzaeditorial.es', 'Madrid, España', 'activo', "https://pbs.twimg.com/profile_images/1369193039466553345/bmhVCrT7_400x400.jpg"),
+('Ediciones B', 2, 1986, 'www.edicionesb.com', 'Barcelona, España', 'activo', "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Z5B40zh6694uqvZB6XbpLHkJ5dPbV_TuK0VhPrw5WtwfcNM3eZ1M3agJR6czbcKlz38");
 
 -- 7. ROLES
 INSERT INTO roles (name, description) VALUES 
