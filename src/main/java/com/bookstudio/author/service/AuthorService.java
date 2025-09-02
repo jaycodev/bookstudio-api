@@ -113,6 +113,7 @@ public class AuthorService {
                 author.getAuthorId(),
                 author.getPhotoUrl(),
                 author.getName(),
+                author.getNationality().getCode(),
                 author.getNationality().getName(),
                 author.getBirthDate(),
                 author.getStatus());

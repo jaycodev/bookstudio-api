@@ -16,6 +16,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
                 a.authorId,
                 a.photoUrl,
                 a.name,
+                n.code,
                 n.name,
                 a.birthDate,
                 a.status

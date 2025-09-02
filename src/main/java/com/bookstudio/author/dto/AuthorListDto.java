@@ -8,6 +8,7 @@ public record AuthorListDto(
     Long id,
     String photoUrl,
     String name,
+    String nationalityCode,
     String nationalityName,
     LocalDate birthDate,
     Status status
