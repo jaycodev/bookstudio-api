@@ -3,32 +3,32 @@ SET search_path TO public;
 BEGIN;
 
 -- 1. NACIONALIDADES
-INSERT INTO nationalities (name) VALUES 
-('Peruana'),
-('Española'),
-('Argentina'),
-('Mexicana'),
-('Colombiana'),
-('Chilena'),
-('Estadounidense'),
-('Británica'),
-('Francesa'),
-('Alemana'),
-('Italiana'),
-('Brasileña'),
-('Japonesa'),
-('Rusa'),
-('Canadiense'),
-('Australiana'),
-('Holandesa'),
-('Sueca'),
-('Noruega'),
-('Danesa'),
-('Belga'),
-('Suiza'),
-('Austriaca'),
-('Polaca'),
-('Checa');
+INSERT INTO nationalities (name, code) VALUES
+('Peruana', 'pe'),
+('Española', 'es'),
+('Argentina', 'ar'),
+('Mexicana', 'mx'),
+('Colombiana', 'co'),
+('Chilena', 'cl'),
+('Estadounidense', 'us'),
+('Británica', 'gb'),
+('Francesa', 'fr'),
+('Alemana', 'de'),
+('Italiana', 'it'),
+('Brasileña', 'br'),
+('Japonesa', 'jp'),
+('Rusa', 'ru'),
+('Canadiense', 'ca'),
+('Australiana', 'au'),
+('Holandesa', 'nl'),
+('Sueca', 'se'),
+('Noruega', 'no'),
+('Danesa', 'dk'),
+('Belga', 'be'),
+('Suiza', 'ch'),
+('Austriaca', 'at'),
+('Polaca', 'pl'),
+('Checa', 'cz');
 
 -- 2. GÉNEROS LITERARIOS
 INSERT INTO genres (name) VALUES 

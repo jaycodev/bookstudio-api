@@ -15,8 +15,10 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
             p.publisherId,
             p.photoUrl,
             p.name,
+            n.code,
             n.name,
             p.website,
+            p.address,
             p.status
         )
         FROM Publisher p

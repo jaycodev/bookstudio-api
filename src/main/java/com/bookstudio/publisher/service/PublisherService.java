@@ -145,8 +145,10 @@ public class PublisherService {
                 publisher.getPublisherId(),
                 publisher.getPhotoUrl(),
                 publisher.getName(),
+                publisher.getNationality().getCode(),
                 publisher.getNationality().getName(),
                 publisher.getWebsite(),
+                publisher.getAddress(),
                 publisher.getStatus());
     }
 }
