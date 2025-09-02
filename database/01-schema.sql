@@ -34,7 +34,7 @@ CREATE TABLE authors (
     birth_date DATE NOT NULL CHECK (birth_date >= '1000-01-01' AND birth_date <= CURRENT_DATE),
     biography TEXT,
     status VARCHAR(10) DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo')),
-    photo_url VARCHAR(512),
+    photo_url VARCHAR(1024),
     FOREIGN KEY (nationality_id) REFERENCES nationalities(nationality_id)
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE publishers (
     website VARCHAR(255),
     address VARCHAR(255),
     status VARCHAR(10) DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo')),
-    photo_url VARCHAR(512),
+    photo_url VARCHAR(1024),
     FOREIGN KEY (nationality_id) REFERENCES nationalities(nationality_id)
 );
 
@@ -184,7 +184,7 @@ CREATE TABLE workers (
     last_name VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     role_id BIGINT NOT NULL,
-    profile_photo_url VARCHAR(512),
+    profile_photo_url VARCHAR(1024),
     status VARCHAR(15) DEFAULT 'activo' CHECK (status IN ('activo', 'suspendido', 'eliminado')),
     FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
