@@ -320,27 +320,27 @@ INSERT INTO books (
 ('La palabra del mudo', '978-84-204-8305-4', 1, '1ª edición', 520, 'Cuentos completos de Julio Ramón Ribeyro', 2, 2, '1973-08-15', 'activo', NULL),
 ('Trilce', '978-84-376-0496-1', 1, '4ª edición', 180, 'Poemario revolucionario de César Vallejo', 8, 3, '1922-10-15', 'activo', NULL),
 ('Tradiciones Peruanas', '978-84-376-0497-2', 1, '2ª edición', 450, 'Relatos costumbristas de Ricardo Palma', 10, 7, '1872-05-10', 'activo', 'https://www.elvirrey.com/imagenes/9789972/978997233296.GIF'),
-('El mundo es ancho y ajeno', '978-84-376-0498-3', 1, '1ª edición', 380, 'Novela indigenista de Ciro Alegría', 10, 1, '1941-03-15', 'activo', NULL),
-('7 ensayos de interpretación de la realidad peruana', '978-84-376-0499-4', 1, '5ª edición', 320, 'Obra fundamental de José Carlos Mariátegui', 6, 5, '1928-10-01', 'activo', NULL),
-('Un mundo para Julius', '978-84-376-0500-6', 1, '2ª edición', 520, 'Novela de Alfredo Bryce Echenique', 2, 2, '1970-08-20', 'activo', NULL),
+('El mundo es ancho y ajeno', '978-84-376-0498-3', 1, '1ª edición', 380, 'Novela indigenista de Ciro Alegría', 10, 1, '1941-03-15', 'inactivo', NULL),
+('7 ensayos de interpretación de la realidad peruana', '978-84-376-0499-4', 1, '5ª edición', 320, 'Obra fundamental de José Carlos Mariátegui', 6, 5, '1928-10-01', 'inactivo', NULL),
+('Un mundo para Julius', '978-84-376-0500-6', 1, '2ª edición', 520, 'Novela de Alfredo Bryce Echenique', 2, 2, '1970-08-20', 'inactivo', NULL),
 
 -- Literatura latinoamericana
 ('Cien años de soledad', '978-84-376-0494-7', 1, '2ª edición', 432, 'Obra maestra del realismo mágico de Gabriel García Márquez', 2, 1, '1967-05-30', 'activo', NULL),
 ('Ficciones', '978-84-376-0501-7', 1, '3ª edición', 280, 'Cuentos fantásticos de Jorge Luis Borges', 11, 2, '1944-12-15', 'activo', NULL),
 ('La casa de los espíritus', '978-84-376-0502-8', 1, '1ª edición', 465, 'Primera novela de Isabel Allende', 1, 1, '1982-04-10', 'activo', NULL),
-('El laberinto de la soledad', '978-84-376-0503-9', 1, '4ª edición', 350, 'Ensayo de Octavio Paz sobre la identidad mexicana', 6, 5, '1950-07-15', 'activo', NULL),
+('El laberinto de la soledad', '978-84-376-0503-9', 1, '4ª edición', 350, 'Ensayo de Octavio Paz sobre la identidad mexicana', 6, 5, '1950-07-15', 'inactivo', NULL),
 ('Rayuela', '978-84-376-0504-0', 1, '2ª edición', 635, 'Novela experimental de Julio Cortázar', 2, 1, '1963-06-28', 'activo', 'https://images.cdn3.buscalibre.com/fit-in/360x360/90/53/905322d10841b36aa311dbd5c90d92ed.jpg'),
-('Veinte poemas de amor y una canción desesperada', '978-84-376-0505-1', 1, '6ª edición', 120, 'Poemario de Pablo Neruda', 7, 3, '1924-08-16', 'activo', NULL),
-('La muerte de Artemio Cruz', '978-84-376-0506-2', 1, '1ª edición', 290, 'Novela de Carlos Fuentes', 6, 1, '1962-11-05', 'activo', NULL),
-('El túnel', '978-84-376-0507-3', 1, '3ª edición', 158, 'Novela psicológica de Ernesto Sabato', 12, 1, '1948-09-20', 'activo', NULL),
+('Veinte poemas de amor y una canción desesperada', '978-84-376-0505-1', 1, '6ª edición', 120, 'Poemario de Pablo Neruda', 7, 3, '1924-08-16', 'inactivo', NULL),
+('La muerte de Artemio Cruz', '978-84-376-0506-2', 1, '1ª edición', 290, 'Novela de Carlos Fuentes', 6, 1, '1962-11-05', 'inactivo', NULL),
+('El túnel', '978-84-376-0507-3', 1, '3ª edición', 158, 'Novela psicológica de Ernesto Sabato', 12, 1, '1948-09-20', 'inactivo', NULL),
 
 -- Literatura española
 ('Don Quijote de la Mancha', '978-84-376-0497-8', 1, '5ª edición', 1200, 'Obra cumbre de la literatura española de Miguel de Cervantes', 8, 1, '1605-01-16', 'activo', NULL),
-('Romancero Gitano', '978-84-376-0508-4', 1, '4ª edición', 180, 'Poemario de Federico García Lorca', 8, 3, '1928-07-15', 'activo', NULL),
-('Campos de Castilla', '978-84-376-0509-5', 1, '3ª edición', 220, 'Poesía de Antonio Machado', 8, 3, '1912-04-20', 'activo', NULL),
+('Romancero Gitano', '978-84-376-0508-4', 1, '4ª edición', 180, 'Poemario de Federico García Lorca', 8, 3, '1928-07-15', 'inactivo', NULL),
+('Campos de Castilla', '978-84-376-0509-5', 1, '3ª edición', 220, 'Poesía de Antonio Machado', 8, 3, '1912-04-20', 'inactivo', NULL),
 ('Platero y yo', '978-84-376-0510-6', 1, '7ª edición', 150, 'Prosa poética de Juan Ramón Jiménez', 8, 3, '1914-12-25', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQ23tn2gq2hBnxcbTrFbytZp15_5V6iJ4w2w&s'),
-('La colmena', '978-84-376-0511-7', 1, '2ª edición', 380, 'Novela de Camilo José Cela', 2, 1, '1951-03-15', 'activo', NULL),
-('Los santos inocentes', '978-84-376-0512-8', 1, '1ª edición', 250, 'Novela de Miguel Delibes', 1, 1, '1981-10-12', 'activo', NULL),
+('La colmena', '978-84-376-0511-7', 1, '2ª edición', 380, 'Novela de Camilo José Cela', 2, 1, '1951-03-15', 'inactivo', NULL),
+('Los santos inocentes', '978-84-376-0512-8', 1, '1ª edición', 250, 'Novela de Miguel Delibes', 1, 1, '1981-10-12', 'inactivo', NULL),
 
 -- Literatura universal
 ('Romeo y Julieta', '978-84-376-0498-5', 1, '2ª edición', 280, 'Tragedia romántica de William Shakespeare', 8, 4, '1597-03-20', 'activo', 'https://images.cdn2.buscalibre.com/fit-in/360x360/1b/3d/1b3d13ee1322464e244fbb0b23dc11db.jpg'),
@@ -350,9 +350,9 @@ INSERT INTO books (
 ('Asesinato en el Orient Express', '978-84-376-0501-2', 1, '2ª edición', 256, 'Novela de misterio de Agatha Christie con Hércules Poirot', 1, 10, '1934-01-01', 'activo', NULL),
 ('1984', '978-84-376-0514-0', 1, '4ª edición', 328, 'Distopía clásica de George Orwell', 19, 24, '1949-06-08', 'activo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/b0/39/b039af065268818b7bd3b0e016f8db65.jpg'),
 ('Orgullo y prejuicio', '978-84-376-0515-1', 1, '3ª edición', 432, 'Novela romántica de Jane Austen', 3, 11, '1813-01-28', 'activo', 'https://pendulo.com/imagenes_grandes/9788494/978849441163.GIF'),
-('Oliver Twist', '978-84-376-0516-2', 1, '2ª edición', 380, 'Novela social de Charles Dickens', 3, 1, '1838-02-14', 'activo', NULL),
-('Las aventuras de Tom Sawyer', '978-84-376-0517-3', 1, '1ª edición', 285, 'Novela de aventuras de Mark Twain', 3, 12, '1876-12-10', 'activo', NULL),
-('El cuervo y otros poemas', '978-84-376-0518-4', 1, '2ª edición', 95, 'Poesía de Edgar Allan Poe', 3, 3, '1845-01-29', 'activo', NULL),
+('Oliver Twist', '978-84-376-0516-2', 1, '2ª edición', 380, 'Novela social de Charles Dickens', 3, 1, '1838-02-14', 'inactivo', NULL),
+('Las aventuras de Tom Sawyer', '978-84-376-0517-3', 1, '1ª edición', 285, 'Novela de aventuras de Mark Twain', 3, 12, '1876-12-10', 'inactivo', NULL),
+('El cuervo y otros poemas', '978-84-376-0518-4', 1, '2ª edición', 95, 'Poesía de Edgar Allan Poe', 3, 3, '1845-01-29', 'inactivo', NULL),
 
 -- Libros académicos y técnicos
 ('Historia del Perú Contemporáneo', '978-84-376-0502-9', 1, '1ª edición', 480, 'Historia del Perú desde la independencia hasta la actualidad', 10, 3, '2020-03-15', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTE7JKNvHH9z1dXPXQ1giHsfknDNlNoncsniA&s'),
@@ -361,24 +361,24 @@ INSERT INTO books (
 ('Química Orgánica', '978-84-376-0519-5', 1, '1ª edición', 580, 'Fundamentos de química orgánica para nivel superior', 4, 7, '2021-09-10', 'activo', NULL),
 ('Biología Molecular', '978-84-376-0520-6', 1, '2ª edición', 650, 'Avances en biología molecular y celular', 4, 8, '2020-11-25', 'activo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/45/d2/45d28890f2d269be7a105e4697931eb7.jpg'),
 ('Anatomía Humana', '978-84-376-0521-7', 1, '4ª edición', 780, 'Atlas completo de anatomía humana', 4, 14, '2019-07-18', 'activo', NULL),
-('Código Civil Peruano', '978-84-376-0522-8', 1, '10ª edición', 450, 'Legislación civil vigente en el Perú', 10, 15, '2023-01-01', 'activo', 'https://www.sancristoballibros.com/imagenes/9786125/978612501923.GIF'),
-('Principios de Economía', '978-84-376-0523-9', 1, '3ª edición', 520, 'Fundamentos de teoría económica', 6, 17, '2022-03-14', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlTpoDiln3Va1fIdQix4CfSoT_dljmOsTgHg&s'),
+('Código Civil Peruano', '978-84-376-0522-8', 1, '10ª edición', 450, 'Legislación civil vigente en el Perú', 10, 15, '2023-01-01', 'inactivo', 'https://www.sancristoballibros.com/imagenes/9786125/978612501923.GIF'),
+('Principios de Economía', '978-84-376-0523-9', 1, '3ª edición', 520, 'Fundamentos de teoría económica', 6, 17, '2022-03-14', 'inactivo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlTpoDiln3Va1fIdQix4CfSoT_dljmOsTgHg&s'),
 ('Psicología del Desarrollo', '978-84-376-0524-0', 1, '2ª edición', 390, 'Desarrollo psicológico a lo largo de la vida', 1, 12, '2021-05-20', 'activo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/83/e8/83e81530c5d2ed30544439f0d84b899e.jpg'),
-('Sociología Contemporánea', '978-84-376-0525-1', 1, '1ª edición', 440, 'Teorías sociológicas actuales', 6, 18, '2020-09-30', 'activo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/30/41/3041d48bf887e062392a1cf10e006d5f.jpg'),
+('Sociología Contemporánea', '978-84-376-0525-1', 1, '1ª edición', 440, 'Teorías sociológicas actuales', 6, 18, '2020-09-30', 'inactivo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/30/41/3041d48bf887e062392a1cf10e006d5f.jpg'),
 
 -- Literatura infantil y juvenil
 ('El Principito', '978-84-376-0505-0', 1, '10ª edición', 96, 'Clásico de la literatura infantil y juvenil', 4, 9, '1943-04-06', 'activo', 'https://image.cdn1.buscalibre.com/5b57fc1690f0b5295a8b4567.RS500x500.jpg'),
 ('Matilda', '978-84-376-0526-2', 1, '3ª edición', 240, 'Novela infantil de Roald Dahl', 2, 17, '1988-04-01', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp_ZwohnRa6rntPD2M_AvydOmRyZ3ITtrbRA&s'),
-('Charlie y la fábrica de chocolate', '978-84-376-0527-3', 1, '4ª edición', 180, 'Clásico infantil de Roald Dahl', 2, 17, '1964-09-12', 'activo', 'https://www.crisol.com.pe/media/catalog/product/cache/f6d2c62455a42b0d712f6c919e880845/9/7/9786124349164_4gd8k8wgb0tgpdgl.jpg'),
-('Las crónicas de Narnia: El león, la bruja y el ropero', '978-84-376-0528-4', 1, '2ª edición', 208, 'Primera novela de la saga de C.S. Lewis', 16, 9, '1950-10-16', 'activo', 'https://images.cdn3.buscalibre.com/fit-in/360x360/76/08/7608d458499a573da01c43ebd8de9b22.jpg'),
-('Donde viven los monstruos', '978-84-376-0529-5', 1, '5ª edición', 40, 'Libro ilustrado de Maurice Sendak', 4, 17, '1963-11-13', 'activo', 'https://imgv2-1-f.scribdassets.com/img/document/499209501/original/8b22de0346/1?v=1'),
+('Charlie y la fábrica de chocolate', '978-84-376-0527-3', 1, '4ª edición', 180, 'Clásico infantil de Roald Dahl', 2, 17, '1964-09-12', 'inactivo', 'https://www.crisol.com.pe/media/catalog/product/cache/f6d2c62455a42b0d712f6c919e880845/9/7/9786124349164_4gd8k8wgb0tgpdgl.jpg'),
+('Las crónicas de Narnia: El león, la bruja y el ropero', '978-84-376-0528-4', 1, '2ª edición', 208, 'Primera novela de la saga de C.S. Lewis', 16, 9, '1950-10-16', 'inactivo', 'https://images.cdn3.buscalibre.com/fit-in/360x360/76/08/7608d458499a573da01c43ebd8de9b22.jpg'),
+('Donde viven los monstruos', '978-84-376-0529-5', 1, '5ª edición', 40, 'Libro ilustrado de Maurice Sendak', 4, 17, '1963-11-13', 'inactivo', 'https://imgv2-1-f.scribdassets.com/img/document/499209501/original/8b22de0346/1?v=1'),
 
 -- Enciclopedias y referencias
 ('Enciclopedia Juvenil Oceano', '978-84-376-0506-7', 1, '1ª edición', 800, 'Enciclopedia temática para jóvenes estudiantes', 4, 10, '2021-01-15', 'activo', 'https://biblioteca.asamblea.gob.sv/backendsiab/images/portadas/Enciclopedia%20Juvenil%20Oceano.jpg'),
-('Gran Enciclopedia Larousse', '978-84-376-0530-6', 1, '15ª edición', 1200, 'Enciclopedia universal de consulta', 19, 10, '2023-06-01', 'activo', 'https://librosateneo.com/image/cache/catalog/libros/lote-43/Scan-43-10-550x550.jpg'),
+('Gran Enciclopedia Larousse', '978-84-376-0530-6', 1, '15ª edición', 1200, 'Enciclopedia universal de consulta', 19, 10, '2023-06-01', 'inactivo', 'https://librosateneo.com/image/cache/catalog/libros/lote-43/Scan-43-10-550x550.jpg'),
 ('Diccionario de la Real Academia Española', '978-84-376-0531-7', 1, '23ª edición', 2300, 'Diccionario oficial de la lengua española', 19, 10, '2022-10-15', 'activo', 'https://letras.rae.es/128-thickbox_default/diccionario-de-la-lengua-espanola-23-edicion.jpg'),
-('Atlas Mundial', '978-84-376-0532-8', 1, '8ª edición', 350, 'Atlas geográfico mundial actualizado', 4, 16, '2023-02-28', 'activo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/3c/59/3c59379c54fbdafd5428ed7935d77590.jpg'),
-('Manual de Primeros Auxilios', '978-84-376-0533-9', 1, '6ª edición', 280, 'Guía práctica de primeros auxilios', 4, 14, '2022-11-10', 'activo', 'https://www.udllibros.com/imagenes/9788416/978841640712.JPG');
+('Atlas Mundial', '978-84-376-0532-8', 1, '8ª edición', 350, 'Atlas geográfico mundial actualizado', 4, 16, '2023-02-28', 'inactivo', 'https://images.cdn1.buscalibre.com/fit-in/360x360/3c/59/3c59379c54fbdafd5428ed7935d77590.jpg'),
+('Manual de Primeros Auxilios', '978-84-376-0533-9', 1, '6ª edición', 280, 'Guía práctica de primeros auxilios', 4, 14, '2022-11-10', 'inactivo', 'https://www.udllibros.com/imagenes/9788416/978841640712.JPG');
 
 -- 14. RELACIÓN LIBROS-AUTORES
 INSERT INTO book_authors (book_id, author_id) VALUES 
