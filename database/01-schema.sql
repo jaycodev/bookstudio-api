@@ -2,6 +2,8 @@ SET search_path TO public;
 
 BEGIN;
 
+CREATE TYPE status_enum AS ENUM ('ACTIVO', 'INACTIVO');
+
 CREATE TABLE nationalities (
     nationality_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
@@ -13,12 +15,14 @@ CREATE TABLE genres (
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
+CREATE TYPE category_level_enum AS ENUM ('PRIMARIA', 'SECUNDARIA', 'SUPERIOR', 'GENERAL');
+
 CREATE TABLE categories (
     category_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
-    level VARCHAR(100) CHECK (level IN ('primaria', 'secundaria', 'superior', 'general')),
+    level category_level_enum,
     description TEXT,
-    status VARCHAR(10) DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo'))
+    status status_enum DEFAULT 'ACTIVO'
 );
 
 CREATE TABLE languages (
@@ -33,7 +37,7 @@ CREATE TABLE authors (
     nationality_id BIGINT NOT NULL,
     birth_date DATE NOT NULL CHECK (birth_date >= '1000-01-01' AND birth_date <= CURRENT_DATE),
     biography TEXT,
-    status VARCHAR(10) DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo')),
+    status status_enum DEFAULT 'ACTIVO',
     photo_url VARCHAR(1024),
     FOREIGN KEY (nationality_id) REFERENCES nationalities(nationality_id)
 );
@@ -45,10 +49,14 @@ CREATE TABLE publishers (
     foundation_year INT NOT NULL CHECK (foundation_year >= 1400 AND foundation_year <= DATE_PART('year', CURRENT_DATE)),
     website VARCHAR(255),
     address VARCHAR(255),
-    status VARCHAR(10) DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo')),
+    status status_enum DEFAULT 'ACTIVO',
     photo_url VARCHAR(1024),
     FOREIGN KEY (nationality_id) REFERENCES nationalities(nationality_id)
 );
+
+CREATE TYPE gender_enum AS ENUM ('MASCULINO', 'FEMENINO');
+CREATE TYPE reader_type_enum AS ENUM ('ESTUDIANTE', 'DOCENTE', 'ADMINISTRATIVO', 'EXTERNO');
+CREATE TYPE reader_status_enum AS ENUM ('ACTIVO', 'SUSPENDIDO', 'BLOQUEADO', 'ELIMINADO');
 
 CREATE TABLE readers (
     reader_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -60,9 +68,9 @@ CREATE TABLE readers (
     phone VARCHAR(9) NOT NULL CHECK (phone ~ '^[0-9]{9}$'),
     email VARCHAR(100) UNIQUE NOT NULL,
     birth_date DATE NOT NULL CHECK (birth_date >= '1900-01-01' AND birth_date <= CURRENT_DATE),
-    gender VARCHAR(10) NOT NULL CHECK (gender IN ('masculino', 'femenino')),
-    type VARCHAR(20) NOT NULL CHECK (type IN ('estudiante', 'docente', 'administrativo', 'externo')),
-    status VARCHAR(15) DEFAULT 'activo' CHECK (status IN ('activo', 'suspendido', 'bloqueado', 'eliminado'))
+    gender gender_enum NOT NULL,
+    type reader_type_enum NOT NULL,
+    status reader_status_enum DEFAULT 'ACTIVO'
 );
 
 CREATE TABLE books (
@@ -77,7 +85,7 @@ CREATE TABLE books (
     publisher_id BIGINT NOT NULL,
     category_id BIGINT NOT NULL,
     release_date DATE NOT NULL CHECK (release_date <= CURRENT_DATE),
-    status VARCHAR(10) DEFAULT 'activo' CHECK (status IN ('activo', 'inactivo')),
+    status status_enum DEFAULT 'ACTIVO',
     FOREIGN KEY (language_id) REFERENCES languages(language_id),
     FOREIGN KEY (publisher_id) REFERENCES publishers(publisher_id),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
@@ -123,14 +131,17 @@ CREATE TABLE shelves (
     FOREIGN KEY (location_id) REFERENCES locations(location_id) ON DELETE CASCADE
 );
 
+CREATE TYPE copy_status_enum AS ENUM ('DISPONIBLE', 'PRESTADO', 'RESERVADO', 'EXTRAVIADO', 'MANTENIMIENTO');
+CREATE TYPE copy_condition_enum AS ENUM ('NUEVO', 'BUENO', 'REGULAR', 'MALO', 'DETERIORADO');
+
 CREATE TABLE copies (
     copy_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     code VARCHAR(50) UNIQUE,
     book_id BIGINT NOT NULL,
     shelf_id BIGINT NOT NULL,
     barcode VARCHAR(50) UNIQUE NOT NULL,
-    status VARCHAR(20) DEFAULT 'disponible' CHECK (status IN ('disponible', 'prestado', 'reservado', 'extraviado', 'mantenimiento')),
-    condition VARCHAR(50) DEFAULT 'bueno' CHECK (condition IN ('nuevo', 'bueno', 'regular', 'malo', 'deteriorado')),
+    status copy_status_enum DEFAULT 'DISPONIBLE',
+    condition copy_condition_enum DEFAULT 'BUENO',
     FOREIGN KEY (book_id) REFERENCES books(book_id),
     FOREIGN KEY (shelf_id) REFERENCES shelves(shelf_id)
 );
@@ -144,12 +155,14 @@ CREATE TABLE loans (
     FOREIGN KEY (reader_id) REFERENCES readers(reader_id)
 );
 
+CREATE TYPE loan_item_status_enum AS ENUM ('PRESTADO', 'DEVUELTO', 'RETRASADO', 'EXTRAVIADO', 'CANCELADO');
+
 CREATE TABLE loan_items (
     loan_id BIGINT NOT NULL,
     copy_id BIGINT NOT NULL,
     due_date DATE,
     return_date DATE,
-    status VARCHAR(15) DEFAULT 'prestado' CHECK (status IN ('prestado', 'devuelto', 'retrasado', 'extraviado', 'cancelado')),
+    status loan_item_status_enum DEFAULT 'PRESTADO',
     PRIMARY KEY (loan_id, copy_id),
     FOREIGN KEY (loan_id) REFERENCES loans(loan_id) ON DELETE CASCADE,
     FOREIGN KEY (copy_id) REFERENCES copies(copy_id)
@@ -175,6 +188,8 @@ CREATE TABLE role_permissions (
     FOREIGN KEY (permission_id) REFERENCES permissions(permission_id) ON DELETE CASCADE
 );
 
+CREATE TYPE worker_status_enum AS ENUM ('ACTIVO', 'SUSPENDIDO', 'ELIMINADO');
+
 CREATE TABLE workers (
     worker_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -184,9 +199,11 @@ CREATE TABLE workers (
     password VARCHAR(255) NOT NULL,
     role_id BIGINT NOT NULL,
     profile_photo_url VARCHAR(1024),
-    status VARCHAR(15) DEFAULT 'activo' CHECK (status IN ('activo', 'suspendido', 'eliminado')),
+    status worker_status_enum DEFAULT 'ACTIVO',
     FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
+
+CREATE TYPE reservation_status_enum AS ENUM ('PENDIENTE', 'CANCELADA', 'ATENDIDA', 'EXPIRADA');
 
 CREATE TABLE reservations (
     reservation_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -194,10 +211,12 @@ CREATE TABLE reservations (
     reader_id BIGINT NOT NULL,
     copy_id BIGINT NOT NULL,
     reservation_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'cancelada', 'atendida', 'expirada')),
+    status reservation_status_enum DEFAULT 'PENDIENTE',
     FOREIGN KEY (reader_id) REFERENCES readers(reader_id),
     FOREIGN KEY (copy_id) REFERENCES copies(copy_id)
 );
+
+CREATE TYPE fine_status_enum AS ENUM ('PENDIENTE', 'PAGADO', 'CONDONADO');
 
 CREATE TABLE fines (
     fine_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -207,9 +226,11 @@ CREATE TABLE fines (
     amount NUMERIC(10, 2) NOT NULL CHECK (amount >= 0),
     days_late INT NOT NULL CHECK (days_late >= 1),
     issued_at DATE NOT NULL DEFAULT CURRENT_DATE,
-    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'pagado', 'condonado')),
+    status fine_status_enum DEFAULT 'PENDIENTE',
     FOREIGN KEY (loan_id, copy_id) REFERENCES loan_items(loan_id, copy_id) ON DELETE CASCADE
 );
+
+CREATE TYPE payment_method_enum AS ENUM ('EFECTIVO', 'TARJETA', 'TRANSFERENCIA', 'CHEQUE', 'OTROS');
 
 CREATE TABLE payments (
     payment_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -217,7 +238,7 @@ CREATE TABLE payments (
     reader_id BIGINT NOT NULL,
     amount NUMERIC(10, 2) NOT NULL CHECK (amount > 0),
     payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    method VARCHAR(50) NOT NULL CHECK (method IN ('efectivo', 'tarjeta', 'transferencia', 'cheque', 'otros')),
+    method payment_method_enum NOT NULL,
     FOREIGN KEY (reader_id) REFERENCES readers(reader_id)
 );
 
