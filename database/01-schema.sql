@@ -52,7 +52,7 @@ CREATE TABLE publishers (
 
 CREATE TABLE readers (
     reader_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE,
     dni VARCHAR(8) UNIQUE NOT NULL CHECK (dni ~ '^[0-9]{8}$'),
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE readers (
     birth_date DATE NOT NULL CHECK (birth_date >= '1900-01-01' AND birth_date <= CURRENT_DATE),
     gender VARCHAR(10) NOT NULL CHECK (gender IN ('masculino', 'femenino')),
     type VARCHAR(20) NOT NULL CHECK (type IN ('estudiante', 'docente', 'administrativo', 'externo')),
-    status VARCHAR(15) DEFAULT 'activo' CHECK (status IN ('activo', 'suspendido', 'eliminado'))
+    status VARCHAR(15) DEFAULT 'activo' CHECK (status IN ('activo', 'suspendido', 'bloqueado', 'eliminado'))
 );
 
 CREATE TABLE books (
@@ -125,11 +125,11 @@ CREATE TABLE shelves (
 
 CREATE TABLE copies (
     copy_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE,
     book_id BIGINT NOT NULL,
     shelf_id BIGINT NOT NULL,
     barcode VARCHAR(50) UNIQUE NOT NULL,
-    is_available BOOLEAN DEFAULT TRUE,
+    status VARCHAR(20) DEFAULT 'disponible' CHECK (status IN ('disponible', 'prestado', 'reservado', 'extraviado', 'mantenimiento')),
     condition VARCHAR(50) DEFAULT 'bueno' CHECK (condition IN ('nuevo', 'bueno', 'regular', 'malo', 'deteriorado')),
     FOREIGN KEY (book_id) REFERENCES books(book_id),
     FOREIGN KEY (shelf_id) REFERENCES shelves(shelf_id)
@@ -137,7 +137,7 @@ CREATE TABLE copies (
 
 CREATE TABLE loans (
     loan_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE,
     reader_id BIGINT NOT NULL,
     loan_date DATE NOT NULL,
     observation TEXT,
@@ -149,8 +149,7 @@ CREATE TABLE loan_items (
     copy_id BIGINT NOT NULL,
     due_date DATE,
     return_date DATE,
-    status VARCHAR(15) DEFAULT 'prestado',
-    CHECK (status IN ('prestado', 'devuelto', 'retrasado', 'extraviado', 'cancelado')),
+    status VARCHAR(15) DEFAULT 'prestado' CHECK (status IN ('prestado', 'devuelto', 'retrasado', 'extraviado', 'cancelado')),
     PRIMARY KEY (loan_id, copy_id),
     FOREIGN KEY (loan_id) REFERENCES loans(loan_id) ON DELETE CASCADE,
     FOREIGN KEY (copy_id) REFERENCES copies(copy_id)
@@ -191,30 +190,30 @@ CREATE TABLE workers (
 
 CREATE TABLE reservations (
     reservation_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE,
     reader_id BIGINT NOT NULL,
     copy_id BIGINT NOT NULL,
     reservation_date DATE NOT NULL DEFAULT CURRENT_DATE,
-    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'cancelada', 'atendida')),
+    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'cancelada', 'atendida', 'expirada')),
     FOREIGN KEY (reader_id) REFERENCES readers(reader_id),
     FOREIGN KEY (copy_id) REFERENCES copies(copy_id)
 );
 
 CREATE TABLE fines (
     fine_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE,
     loan_id BIGINT NOT NULL,
     copy_id BIGINT NOT NULL,
     amount NUMERIC(10, 2) NOT NULL CHECK (amount >= 0),
     days_late INT NOT NULL CHECK (days_late >= 1),
     issued_at DATE NOT NULL DEFAULT CURRENT_DATE,
-    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'pagado')),
+    status VARCHAR(20) DEFAULT 'pendiente' CHECK (status IN ('pendiente', 'pagado', 'condonado')),
     FOREIGN KEY (loan_id, copy_id) REFERENCES loan_items(loan_id, copy_id) ON DELETE CASCADE
 );
 
 CREATE TABLE payments (
     payment_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-	code VARCHAR(50) UNIQUE,
+    code VARCHAR(50) UNIQUE,
     reader_id BIGINT NOT NULL,
     amount NUMERIC(10, 2) NOT NULL CHECK (amount > 0),
     payment_date DATE NOT NULL DEFAULT CURRENT_DATE,
