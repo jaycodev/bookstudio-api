@@ -1,5 +1,7 @@
 package com.bookstudio.copy.dto;
 
+import com.bookstudio.copy.model.CopyStatus;
+
 import lombok.*;
 
 @Data
@@ -10,5 +12,5 @@ public class CopySummaryDto {
     private Long id;
     private String code;
     private String barcode;
-    private Boolean isAvailable;
+    private CopyStatus status;
 }

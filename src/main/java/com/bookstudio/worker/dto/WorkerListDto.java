@@ -1,6 +1,6 @@
 package com.bookstudio.worker.dto;
 
-import com.bookstudio.shared.enums.Status;
+import com.bookstudio.worker.model.WorkerStatus;
 
 public record WorkerListDto(
     Long id,
@@ -10,5 +10,5 @@ public record WorkerListDto(
     String firstName,
     String lastName,
     String roleName,
-    Status status
+    WorkerStatus status
 ) {}

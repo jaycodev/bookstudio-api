@@ -20,8 +20,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             p.name,
             l.code,
             l.name,
-            (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.isAvailable = false),
-            (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.isAvailable = true),
+            (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.status <> com.bookstudio.copy.model.CopyStatus.DISPONIBLE),
+            (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.status = com.bookstudio.copy.model.CopyStatus.DISPONIBLE),
             b.status
         )
         FROM Book b
@@ -39,7 +39,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                 b.title
             )
         FROM Book b 
-        WHERE b.status = com.bookstudio.shared.enums.Status.activo
+        WHERE b.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY b.title ASC
     """)
     List<BookSelectDto> findForSelect();

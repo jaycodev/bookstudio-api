@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import com.bookstudio.copy.model.Copy;
 import com.bookstudio.reader.model.Reader;
-import com.bookstudio.shared.enums.ReservationStatus;
 
 import jakarta.persistence.*;
 import lombok.*;

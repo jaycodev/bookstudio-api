@@ -52,7 +52,7 @@ public class CopyService {
                 .book(bookService.toSummaryDto(copy.getBook()))
                 .shelf(shelfService.toSummaryDto(copy.getShelf()))
                 .barcode(copy.getBarcode())
-                .isAvailable(copy.getIsAvailable())
+                .status(copy.getStatus().name())
                 .condition(copy.getCondition().name())
                 .build();
     }
@@ -61,7 +61,7 @@ public class CopyService {
     public CopyListDto create(CreateCopyDto dto) {
         Copy copy = new Copy();
         copy.setBarcode(dto.getBarcode());
-        copy.setIsAvailable(dto.getIsAvailable());
+        copy.setStatus(dto.getStatus());
         copy.setCondition(dto.getCondition());
 
         copy.setBook(bookService.findById(dto.getBookId())
@@ -81,7 +81,7 @@ public class CopyService {
                 .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + copyId));
 
         copy.setBarcode(dto.getBarcode());
-        copy.setIsAvailable(dto.getIsAvailable());
+        copy.setStatus(dto.getStatus());
         copy.setCondition(dto.getCondition());
 
         copy.setShelf(shelfService.findById(dto.getShelfId())
@@ -107,7 +107,7 @@ public class CopyService {
                 .id(copy.getCopyId())
                 .code(copy.getCode())
                 .barcode(copy.getBarcode())
-                .isAvailable(copy.getIsAvailable())
+                .status(copy.getStatus())
                 .build();
     }
 
@@ -120,7 +120,7 @@ public class CopyService {
                 copy.getShelf().getCode(),
                 copy.getShelf().getFloor(),
                 copy.getShelf().getLocation().getName(),
-                copy.getIsAvailable(),
+                copy.getStatus(),
                 copy.getCondition());
     }
 }

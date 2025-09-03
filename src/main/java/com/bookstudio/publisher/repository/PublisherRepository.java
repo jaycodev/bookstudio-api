@@ -33,7 +33,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
             p.name
         )
         FROM Publisher p
-        WHERE p.status = com.bookstudio.shared.enums.Status.activo
+        WHERE p.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY p.name ASC
     """)
     List<PublisherSelectDto> findForSelect();

@@ -2,9 +2,9 @@ package com.bookstudio.reader.dto;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.enums.Gender;
-import com.bookstudio.shared.enums.ReaderType;
-import com.bookstudio.shared.enums.Status;
+import com.bookstudio.reader.model.ReaderGender;
+import com.bookstudio.reader.model.ReaderStatus;
+import com.bookstudio.reader.model.ReaderType;
 import lombok.Data;
 
 @Data
@@ -15,7 +15,7 @@ public class UpdateReaderDto {
     private String phone;
     private String email;
     private LocalDate birthDate;
-    private Gender gender;
+    private ReaderGender gender;
     private ReaderType type;
-    private Status status;
+    private ReaderStatus status;
 }

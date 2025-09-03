@@ -1,7 +1,6 @@
 package com.bookstudio.worker.model;
 
 import com.bookstudio.role.model.Role;
-import com.bookstudio.shared.enums.Status;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,5 +39,5 @@ public class Worker {
     private String profilePhotoUrl;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private WorkerStatus status;
 }

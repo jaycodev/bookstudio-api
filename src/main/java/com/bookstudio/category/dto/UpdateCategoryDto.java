@@ -1,6 +1,6 @@
 package com.bookstudio.category.dto;
 
-import com.bookstudio.shared.enums.CategoryLevel;
+import com.bookstudio.category.model.CategoryLevel;
 import com.bookstudio.shared.enums.Status;
 
 import lombok.Data;

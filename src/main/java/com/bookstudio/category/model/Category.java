@@ -1,6 +1,5 @@
 package com.bookstudio.category.model;
 
-import com.bookstudio.shared.enums.CategoryLevel;
 import com.bookstudio.shared.enums.Status;
 
 import jakarta.persistence.*;

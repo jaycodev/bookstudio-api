@@ -37,7 +37,7 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
             CONCAT(r.firstName, ' ', r.lastName)
         )
         FROM Reader r
-        WHERE r.status = com.bookstudio.shared.enums.Status.activo
+        WHERE r.status = com.bookstudio.reader.model.ReaderStatus.ACTIVO
         ORDER BY r.firstName, r.lastName
     """)
     List<ReaderSelectDto> findForSelect();

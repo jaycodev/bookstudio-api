@@ -14,10 +14,10 @@ import com.bookstudio.loan.mapper.LoanMapper;
 import com.bookstudio.loan.model.Loan;
 import com.bookstudio.loan.relation.LoanItem;
 import com.bookstudio.loan.relation.LoanItemId;
+import com.bookstudio.loan.relation.LoanItemStatus;
 import com.bookstudio.loan.repository.LoanItemRepository;
 import com.bookstudio.loan.repository.LoanRepository;
 import com.bookstudio.reader.service.ReaderService;
-import com.bookstudio.shared.enums.LoanItemStatus;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityManager;
@@ -87,7 +87,7 @@ public class LoanService {
                         .loan(saved)
                         .copy(copy)
                         .dueDate(itemDto.getDueDate())
-                        .status(LoanItemStatus.prestado)
+                        .status(LoanItemStatus.PRESTADO)
                         .build();
 
                 loanItemRepository.save(item);

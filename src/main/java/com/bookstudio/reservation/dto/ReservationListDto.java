@@ -2,7 +2,7 @@ package com.bookstudio.reservation.dto;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.enums.ReservationStatus;
+import com.bookstudio.reservation.model.ReservationStatus;
 
 public record ReservationListDto(
     Long id,

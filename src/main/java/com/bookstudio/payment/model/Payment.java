@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.bookstudio.reader.model.Reader;
-import com.bookstudio.shared.enums.PaymentMethod;
 
 import jakarta.persistence.*;
 import lombok.*;

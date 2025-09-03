@@ -2,7 +2,7 @@ package com.bookstudio.loan.dto;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.enums.LoanItemStatus;
+import com.bookstudio.loan.relation.LoanItemStatus;
 
 import lombok.Data;
 

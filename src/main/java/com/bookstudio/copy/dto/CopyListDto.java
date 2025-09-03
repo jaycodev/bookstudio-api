@@ -1,6 +1,7 @@
 package com.bookstudio.copy.dto;
 
-import com.bookstudio.shared.enums.Condition;
+import com.bookstudio.copy.model.CopyCondition;
+import com.bookstudio.copy.model.CopyStatus;
 
 public record CopyListDto(
     Long id,
@@ -10,6 +11,6 @@ public record CopyListDto(
     String shelfCode,
     String shelfFloor,
     String locationName,
-    Boolean isAvailable,
-    Condition condition
+    CopyStatus status,
+    CopyCondition condition
 ) {}

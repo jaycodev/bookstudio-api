@@ -2,7 +2,8 @@ package com.bookstudio.fine.dto;
 
 import java.math.BigDecimal;
 
-import com.bookstudio.shared.enums.FineStatus;
+import com.bookstudio.fine.model.FineStatus;
+
 import lombok.Data;
 
 @Data

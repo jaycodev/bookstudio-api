@@ -3,7 +3,7 @@ package com.bookstudio.payment.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.bookstudio.shared.enums.PaymentMethod;
+import com.bookstudio.payment.model.PaymentMethod;
 
 public record PaymentListDto(
     Long id,

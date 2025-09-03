@@ -35,7 +35,7 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
             f.code
         )
         FROM Fine f
-        WHERE f.status = com.bookstudio.shared.enums.FineStatus.pendiente
+        WHERE f.status = 'pendiente'
     """)
     List<FineSelectDto> findForSelect();
 }

@@ -9,6 +9,7 @@ import com.bookstudio.book.model.Book;
 import com.bookstudio.copy.dto.CopyListDto;
 import com.bookstudio.copy.dto.CopySelectDto;
 import com.bookstudio.copy.model.Copy;
+import com.bookstudio.copy.model.CopyStatus;
 
 public interface CopyRepository extends JpaRepository<Copy, Long> {
     @Query("""
@@ -20,7 +21,7 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
             s.code,
             s.floor,
             l.name,
-            c.isAvailable,
+            c.status,
             c.condition
         )
         FROM Copy c
@@ -37,10 +38,10 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
             c.code
         )
         FROM Copy c
-        WHERE c.isAvailable = true
+        WHERE c.status = com.bookstudio.copy.model.CopyStatus.DISPONIBLE
     """)
     List<CopySelectDto> findForSelect();
 
-    Long countByBookAndIsAvailableFalse(Book book);
-    Long countByBookAndIsAvailableTrue(Book book);
+    Long countByBookAndStatus(Book book, CopyStatus status);
+    Long countByBookAndStatusNot(Book book, CopyStatus status);
 }

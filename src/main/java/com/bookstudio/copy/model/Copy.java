@@ -2,7 +2,6 @@ package com.bookstudio.copy.model;
 
 import com.bookstudio.book.model.Book;
 import com.bookstudio.location.model.Shelf;
-import com.bookstudio.shared.enums.Condition;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,8 +32,9 @@ public class Copy {
     @Column(nullable = false, unique = true)
     private String barcode;
 
-    private Boolean isAvailable;
+    @Enumerated(EnumType.STRING)
+    private CopyStatus status;
 
     @Enumerated(EnumType.STRING)
-    private Condition condition;
+    private CopyCondition condition;
 }

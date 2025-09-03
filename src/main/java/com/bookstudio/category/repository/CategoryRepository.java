@@ -31,7 +31,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
                 c.name
             )
         FROM Category c
-        WHERE c.status = com.bookstudio.shared.enums.Status.activo
+        WHERE c.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY c.name ASC
     """)
     List<CategorySelectDto> findForSelect();

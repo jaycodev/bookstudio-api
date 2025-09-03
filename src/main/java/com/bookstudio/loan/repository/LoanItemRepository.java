@@ -19,7 +19,7 @@ public interface LoanItemRepository extends JpaRepository<LoanItem, LoanItemId> 
     @Query("""
         SELECT new com.bookstudio.loan.dto.LoanItemSummaryDto(
             new com.bookstudio.copy.dto.CopySummaryDto(
-                c.copyId, c.code, c.barcode, c.isAvailable
+                c.copyId, c.code, c.barcode, c.status
             ),
             li.dueDate,
             li.returnDate,

@@ -2,7 +2,8 @@ package com.bookstudio.reservation.dto;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.enums.ReservationStatus;
+import com.bookstudio.reservation.model.ReservationStatus;
+
 import lombok.Data;
 
 @Data

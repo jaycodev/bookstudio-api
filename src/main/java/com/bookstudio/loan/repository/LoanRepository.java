@@ -16,11 +16,11 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             l.loanDate,
-            SUM(CASE WHEN li.status = 'prestado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'devuelto' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'retrasado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'extraviado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'cancelado' THEN 1 ELSE 0 END)
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.PRESTADO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.DEVUELTO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.RETRASADO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.EXTRAVIADO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.CANCELADO THEN 1 ELSE 0 END)
         )
         FROM Loan l
         JOIN l.reader r
@@ -37,11 +37,11 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             l.loanDate,
-            SUM(CASE WHEN li.status = 'prestado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'devuelto' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'retrasado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'extraviado' THEN 1 ELSE 0 END),
-            SUM(CASE WHEN li.status = 'cancelado' THEN 1 ELSE 0 END)
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.PRESTADO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.DEVUELTO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.RETRASADO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.EXTRAVIADO THEN 1 ELSE 0 END),
+            SUM(CASE WHEN li.status = com.bookstudio.loan.relation.LoanItemStatus.CANCELADO THEN 1 ELSE 0 END)
         )
         FROM Loan l
         JOIN l.reader r

@@ -34,7 +34,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
                 a.name
             )
         FROM Author a
-        WHERE a.status = com.bookstudio.shared.enums.Status.activo
+        WHERE a.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY a.name ASC
     """)
     List<AuthorSelectDto> findForSelect();

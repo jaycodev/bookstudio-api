@@ -1,6 +1,8 @@
 package com.bookstudio.copy.dto;
 
-import com.bookstudio.shared.enums.Condition;
+import com.bookstudio.copy.model.CopyCondition;
+import com.bookstudio.copy.model.CopyStatus;
+
 import lombok.Data;
 
 @Data
@@ -8,6 +10,6 @@ public class CreateCopyDto {
     private Long bookId;
     private Long shelfId;
     private String barcode;
-    private Boolean isAvailable;
-    private Condition condition;
+    private CopyStatus status;
+    private CopyCondition condition;
 }

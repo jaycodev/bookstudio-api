@@ -1,7 +1,7 @@
 package com.bookstudio.reader.dto;
 
-import com.bookstudio.shared.enums.ReaderType;
-import com.bookstudio.shared.enums.Status;
+import com.bookstudio.reader.model.ReaderStatus;
+import com.bookstudio.reader.model.ReaderType;
 
 public record ReaderListDto(
     Long id,
@@ -11,5 +11,5 @@ public record ReaderListDto(
     String phone,
     String email,
     ReaderType type,
-    Status status
+    ReaderStatus status
 ) {}

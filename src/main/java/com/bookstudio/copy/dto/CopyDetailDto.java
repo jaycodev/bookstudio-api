@@ -15,6 +15,6 @@ public class CopyDetailDto {
     private BookSummaryDto book;
     private ShelfSummaryDto shelf;
     private String barcode;
-    private Boolean isAvailable;
+    private String status;
     private String condition;
 }

@@ -201,8 +201,8 @@ public class BookService {
                 book.getPublisher().getName(),
                 book.getLanguage().getCode(),
                 book.getLanguage().getName(),
-                copyRepository.countByBookAndIsAvailableFalse(book),
-                copyRepository.countByBookAndIsAvailableTrue(book),
+                copyRepository.countByBookAndStatusNot(book, com.bookstudio.copy.model.CopyStatus.DISPONIBLE),
+                copyRepository.countByBookAndStatus(book, com.bookstudio.copy.model.CopyStatus.DISPONIBLE),
                 book.getStatus());
     }
 }

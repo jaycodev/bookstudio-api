@@ -1,8 +1,5 @@
 package com.bookstudio.reader.model;
 
-import com.bookstudio.shared.enums.Gender;
-import com.bookstudio.shared.enums.ReaderType;
-import com.bookstudio.shared.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class Reader {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long readerId;
@@ -45,13 +42,13 @@ public class Reader {
     private LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private ReaderGender gender;
 
     @Enumerated(EnumType.STRING)
     private ReaderType type;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private ReaderStatus status;
 
     @Transient
     public String getFullName() {

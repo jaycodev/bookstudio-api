@@ -1,6 +1,7 @@
 package com.bookstudio.payment.service;
 
 import com.bookstudio.fine.model.Fine;
+import com.bookstudio.fine.model.FineStatus;
 import com.bookstudio.fine.repository.FineRepository;
 import com.bookstudio.fine.service.FineService;
 import com.bookstudio.payment.dto.CreatePaymentDto;
@@ -14,7 +15,6 @@ import com.bookstudio.payment.relation.PaymentFineId;
 import com.bookstudio.payment.repository.PaymentFineRepository;
 import com.bookstudio.payment.repository.PaymentRepository;
 import com.bookstudio.reader.service.ReaderService;
-import com.bookstudio.shared.enums.FineStatus;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -89,7 +89,7 @@ public class PaymentService {
 
                 paymentFineRepository.save(relation);
 
-                fine.setStatus(FineStatus.pagado);
+                fine.setStatus(FineStatus.PAGADO);
                 fineRepository.save(fine);
             }
         }
@@ -125,7 +125,7 @@ public class PaymentService {
 
                 paymentFineRepository.save(relation);
 
-                fine.setStatus(FineStatus.pagado);
+                fine.setStatus(FineStatus.PAGADO);
                 fineRepository.save(fine);
             }
         }
