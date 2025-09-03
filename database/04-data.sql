@@ -107,7 +107,29 @@ INSERT INTO categories (name, level, description, status) VALUES
 ('Cocina', 'general', 'Libros de recetas y gastronomía', 'activo'),
 ('Jardinería', 'general', 'Cuidado de plantas y jardines', 'activo'),
 ('Tecnología', 'superior', 'Informática y nuevas tecnologías', 'activo'),
-('Religión', 'general', 'Textos religiosos y estudios teológicos', 'activo');
+('Religión', 'general', 'Textos religiosos y estudios teológicos', 'activo'),
+
+-- CATEGORÍAS CON ESTADO INACTIVO
+('Literatura Fantástica', 'general', 'Novelas de fantasía y ciencia ficción', 'inactivo'),
+('Astronomía', 'secundaria', 'Libros sobre el universo y los astros', 'inactivo'),
+('Política Internacional', 'superior', 'Análisis político y relaciones internacionales', 'inactivo'),
+('Administración', 'superior', 'Gestión empresarial y organizacional', 'inactivo'),
+('Química Orgánica', 'superior', 'Química especializada nivel universitario', 'inactivo'),
+('Pedagogía', 'superior', 'Métodos de enseñanza y educación', 'inactivo'),
+('Teatro Clásico', 'secundaria', 'Obras teatrales tradicionales', 'inactivo'),
+('Antropología Cultural', 'superior', 'Estudios de culturas y sociedades', 'inactivo'),
+('Botánica', 'superior', 'Estudio científico de las plantas', 'inactivo'),
+('Arqueología', 'superior', 'Investigación de civilizaciones antiguas', 'inactivo'),
+('Literatura Juvenil', 'secundaria', 'Libros dirigidos a adolescentes', 'inactivo'),
+('Estadística', 'superior', 'Métodos estadísticos y análisis de datos', 'inactivo'),
+('Criminología', 'superior', 'Estudio del crimen y la justicia penal', 'inactivo'),
+('Nutrición', 'superior', 'Alimentación y salud nutricional', 'inactivo'),
+('Periodismo', 'superior', 'Técnicas de comunicación y medios', 'inactivo'),
+('Turismo', 'superior', 'Gestión turística y hotelera', 'inactivo'),
+('Ecología', 'general', 'Medio ambiente y conservación', 'inactivo'),
+('Folklore', 'general', 'Tradiciones y cultura popular', 'inactivo'),
+('Fotografía', 'general', 'Técnicas fotográficas y composición', 'inactivo'),
+('Ajedrez', 'general', 'Estrategias y técnicas del juego de ajedrez', 'inactivo');
 
 -- 5. AUTORES
 INSERT INTO authors (name, nationality_id, birth_date, biography, status, photo_url) VALUES 
@@ -129,15 +151,15 @@ INSERT INTO authors (name, nationality_id, birth_date, biography, status, photo_
 ('Julio Cortázar', 3, '1914-08-26', 'Escritor argentino, maestro del cuento fantástico', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAxnGUOOqgregKFvtRdEAlujiGq2PX2MeS5Q&s'),
 ('Pablo Neruda', 6, '1904-07-12', 'Poeta chileno, Premio Nobel de Literatura 1971', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTwxSPB9FTat7um_b6KRiCGOHFUyRKbgWSxw&s'),
 ('Carlos Fuentes', 4, '1928-11-11', 'Escritor mexicano, figura clave del boom latinoamericano', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQB0tz84SUKi8ofB4-PGBO1pawbo8Uk029-Vw&s'),
-('Ernesto Sabato', 3, '1911-06-24', 'Escritor argentino, autor de El túnel', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW3L_tRYM8_zKZxBqmEsecUcz5l1LwAkKBBQ&s'),
+('Ernesto Sabato', 3, '1911-06-24', 'Escritor argentino, autor de El túnel', 'inactivo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTW3L_tRYM8_zKZxBqmEsecUcz5l1LwAkKBBQ&s'),
 
 -- Autores españoles
 ('Miguel de Cervantes', 2, '1547-09-29', 'Escritor español, autor de Don Quijote de la Mancha', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQptVFHhSDXKQF-Jg04BV9m_ebL46ofOeJqGg&s'),
 ('Federico García Lorca', 2, '1898-06-05', 'Poeta y dramaturgo español de la Generación del 27', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxIvPX4QM3R_jz0BLZ8tikBYkoVJ5hCD9jmQ&s'),
 ('Antonio Machado', 2, '1875-07-26', 'Poeta español de la Generación del 98', 'activo', 'https://www.cervantesvirtual.com/images/portales/antonio_machado/antonio_machado.jpg'),
 ('Juan Ramón Jiménez', 2, '1881-12-23', 'Poeta español, Premio Nobel de Literatura 1956', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2MAHA1q7KckmnQrhJmVxLQDMdcXKYPZ-JVQ&s'),
-('Camilo José Cela', 2, '1916-05-11', 'Escritor español, Premio Nobel de Literatura 1989', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUMhqvroPXoeZqUhFLxGTOQ2NvfYjHClVW_g&s'),
-('Miguel Delibes', 2, '1920-10-17', 'Novelista español, autor de Los santos inocentes', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8XmYugB0jtGO4A6n_T940MEXT9ASYHsHRBA&s'),
+('Camilo José Cela', 2, '1916-05-11', 'Escritor español, Premio Nobel de Literatura 1989', 'inactivo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUMhqvroPXoeZqUhFLxGTOQ2NvfYjHClVW_g&s'),
+('Miguel Delibes', 2, '1920-10-17', 'Novelista español, autor de Los santos inocentes', 'inactivo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8XmYugB0jtGO4A6n_T940MEXT9ASYHsHRBA&s'),
 
 -- Autores anglosajones
 ('William Shakespeare', 8, '1564-04-26', 'Dramaturgo y poeta inglés, considerado el escritor más importante en lengua inglesa', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSfaNYWLuCHQbKlAe-G7AkVoD76qvBsvwR4Vg&s'),
@@ -157,21 +179,21 @@ INSERT INTO publishers (name, nationality_id, foundation_year, website, address,
 ('Alfaguara', 2, 1964, 'www.alfaguara.com', 'Calle Torrelaguna 60, Madrid, España', 'activo', NULL),
 ('Penguin Random House', 7, 1927, 'www.penguinrandomhouse.com', 'New York, Estados Unidos', 'activo', NULL),
 ('Santillana', 2, 1960, 'www.santillana.com', 'Madrid, España', 'activo', NULL),
-('Anagrama', 2, 1969, 'www.anagrama-ed.es', 'Barcelona, España', 'activo', NULL),
+('Anagrama', 2, 1969, 'www.anagrama-ed.es', 'Barcelona, España', 'inactivo', NULL),
 ('Fondo de Cultura Económica', 4, 1934, 'www.fondodeculturaeconomica.com', 'Ciudad de México, México', 'activo', NULL),
 ('Seix Barral', 2, 1911, 'www.seixbarral.es', 'Barcelona, España', 'activo', NULL),
 ('Cátedra', 2, 1973, 'www.catedra.com', 'Madrid, España', 'activo', NULL),
-('Tusquets', 2, 1969, 'www.tusquetseditores.com', 'Barcelona, España', 'activo', NULL),
+('Tusquets', 2, 1969, 'www.tusquetseditores.com', 'Barcelona, España', 'inactivo', NULL),
 ('Peisa', 1, 1962, 'www.peisa.com.pe', 'Lima, Perú', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL5wYUc7Sdg3cfgS7eKvaaDBX6xpxD2mUEsg&s'),
 ('Editorial Norma', 5, 1960, 'www.librerianorma.com', 'Bogotá, Colombia', 'activo', 'https://pbs.twimg.com/profile_images/887441240110751744/mwP27QIB_400x400.jpg'),
 ('Editorial Sudamericana', 3, 1939, 'www.sudamericanalibros.com.ar', 'Buenos Aires, Argentina', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQijPZ8s7YKGiJUWwnBZqojCS0rfCWUw6d1Tw&s'),
-('Emecé Editores', 3, 1939, 'www.emece.com.ar', 'Buenos Aires, Argentina', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqIiS61_tgWiFOKdEiulmL8jZZkt0f6wbj6Q&s'),
+('Emecé Editores', 3, 1939, 'www.emece.com.ar', 'Buenos Aires, Argentina', 'inactivo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqIiS61_tgWiFOKdEiulmL8jZZkt0f6wbj6Q&s'),
 ('Editorial Porrúa', 4, 1900, 'www.porrua.com', 'Ciudad de México, México', 'activo', 'https://http2.mlstatic.com/D_NQ_NP_718679-MLM31408428279_072019-O.webp'),
 ('Editorial Andrés Bello', 6, 1843, 'www.andresbello.cl', 'Santiago, Chile', 'activo', 'https://es.babelio.com/users/EDIG_Andres-Bello_9631.jpg'),
 ('Salamandra', 2, 2000, 'www.salamandra.info', 'Barcelona, España', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyiLwCL41nSe1jcHg4uee2dCZyBUGr4HS3bg&s'),
 ('Debolsillo', 2, 1995, 'www.penguinlibros.com', 'Barcelona, España', 'activo', 'https://hablemos-escritoras-as.s3.us-west-1.amazonaws.com/variants/wgnm367hidp8j4s1pmefduijvyfv/fec9312db351f781c0197cc9c4f9c66013b1e39507ba1aecf24862b67be970f0'),
 ('Crítica', 2, 1976, 'www.ed-critica.es', 'Barcelona, España', 'activo', 'https://casatomadalibreriacafe.com/wp-content/uploads/2020/09/logo_CRITICA.jpg'),
-('Alianza Editorial', 2, 1966, 'www.alianzaeditorial.es', 'Madrid, España', 'activo', 'https://pbs.twimg.com/profile_images/1369193039466553345/bmhVCrT7_400x400.jpg'),
+('Alianza Editorial', 2, 1966, 'www.alianzaeditorial.es', 'Madrid, España', 'inactivo', 'https://pbs.twimg.com/profile_images/1369193039466553345/bmhVCrT7_400x400.jpg'),
 ('Ediciones B', 2, 1986, 'www.edicionesb.com', 'Barcelona, España', 'activo', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Z5B40zh6694uqvZB6XbpLHkJ5dPbV_TuK0VhPrw5WtwfcNM3eZ1M3agJR6czbcKlz38');
 
 -- 7. ROLES
@@ -214,21 +236,21 @@ INSERT INTO workers (username, email, first_name, last_name, password, role_id, 
 ('admin', 'admin@biblioteca.edu.pe', 'Carlos', 'Mendoza García', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewfzUf0wdG8OuJdm', 1, 'activo'),
 ('bibliotecario1', 'ana.torres@biblioteca.edu.pe', 'Ana María', 'Torres Vásquez', '$2b$12$EixZxQz5UbrYdHqgqHl/JO4nrpxY/PnZsT0YnUGf3rGNrGNrGNrGN', 2, 'activo'),
 ('bibliotecario2', 'jose.ruiz@biblioteca.edu.pe', 'José Luis', 'Ruiz Morales', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
-('bibliotecario3', 'lucia.santos@biblioteca.edu.pe', 'Lucía', 'Santos Rivera', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
+('bibliotecario3', 'lucia.santos@biblioteca.edu.pe', 'Lucía', 'Santos Rivera', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'eliminado'),
 ('bibliotecario4', 'pedro.martinez@biblioteca.edu.pe', 'Pedro', 'Martínez Castillo', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
 ('asistente1', 'maria.lopez@biblioteca.edu.pe', 'María Elena', 'López Fernández', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('asistente2', 'carmen.diaz@biblioteca.edu.pe', 'Carmen Rosa', 'Díaz Huamán', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('asistente3', 'ricardo.flores@biblioteca.edu.pe', 'Ricardo', 'Flores Pérez', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('asistente4', 'sofia.guerrero@biblioteca.edu.pe', 'Sofía', 'Guerrero Vilca', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('asistente5', 'miguel.rojas@biblioteca.edu.pe', 'Miguel', 'Rojas Condori', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
-('bibliotecario5', 'elena.vargas@biblioteca.edu.pe', 'Elena', 'Vargas Medina', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
+('bibliotecario5', 'elena.vargas@biblioteca.edu.pe', 'Elena', 'Vargas Medina', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'suspendido'),
 ('bibliotecario6', 'fernando.silva@biblioteca.edu.pe', 'Fernando', 'Silva Coronado', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
 ('asistente6', 'andrea.mamani@biblioteca.edu.pe', 'Andrea', 'Mamani Quispe', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('asistente7', 'carlos.herrera@biblioteca.edu.pe', 'Carlos Alberto', 'Herrera Luna', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('bibliotecario7', 'patricia.ramos@biblioteca.edu.pe', 'Patricia', 'Ramos Ccahuana', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
 ('asistente8', 'david.choque@biblioteca.edu.pe', 'David', 'Choque Apaza', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
 ('bibliotecario8', 'rosa.morales@biblioteca.edu.pe', 'Rosa María', 'Morales Espinoza', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
-('asistente9', 'jesus.poma@biblioteca.edu.pe', 'Jesús', 'Poma Hancco', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo'),
+('asistente9', 'jesus.poma@biblioteca.edu.pe', 'Jesús', 'Poma Hancco', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'suspendido'),
 ('bibliotecario9', 'monica.alvarez@biblioteca.edu.pe', 'Mónica', 'Álvarez Tejada', '$2b$12$HQqO8vTYmlnKEuTQSrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 2, 'activo'),
 ('asistente10', 'luis.nina@biblioteca.edu.pe', 'Luis Fernando', 'Nina Calla', '$2b$12$QrNfmP5tTYoFEu5QNrToLeyH1aFPv2OfPzTgNfN.kL9vLkNrGNrGN', 3, 'activo');
 
@@ -517,165 +539,205 @@ INSERT INTO readers (dni, first_name, last_name, address, phone, email, birth_da
 -- Externos
 ('89012345', 'Manuel Antonio', 'Sánchez Vega', 'Calle San Martín 654, Lima', '910987654', 'manuel.sanchez@email.com', '1995-04-07', 'masculino', 'externo', 'activo'),
 ('17171717', 'Pilar Roxana', 'Alvarez Tejada', 'Av. Canadá 234, Lima', '932109876', 'pilar.alvarez@email.com', '1992-10-13', 'femenino', 'externo', 'activo'),
-('18181818', 'Eduardo César', 'Espinoza Luna', 'Jr. Trujillo 567, Lima', '921098765', 'eduardo.espinoza@email.com', '1989-01-30', 'masculino', 'externo', 'activo');
+('18181818', 'Eduardo César', 'Espinoza Luna', 'Jr. Trujillo 567, Lima', '921098765', 'eduardo.espinoza@email.com', '1989-01-30', 'masculino', 'externo', 'activo'),
+
+-- LECTORES CON ESTADO SUSPENDIDO
+-- Estudiantes suspendidos
+('19191919', 'Andrea Carolina', 'Vásquez Herrera', 'Av. Angamos 456, Lima', '987456123', 'andrea.vasquez@email.com', '1999-04-12', 'femenino', 'estudiante', 'suspendido'),
+('20202020', 'Miguel Ángel', 'Peña Carrión', 'Jr. Callao 789, Lima', '976321654', 'miguel.pena@email.com', '1998-08-05', 'masculino', 'estudiante', 'suspendido'),
+('21212121', 'Daniela Esperanza', 'Campos Rojas', 'Av. San Luis 123, Lima', '965159753', 'daniela.campos@email.com', '2000-03-18', 'femenino', 'estudiante', 'suspendido'),
+('22212121', 'Franco Alexander', 'Inca Mamani', 'Jr. Huánuco 456, Lima', '954852741', 'franco.inca@email.com', '1997-11-28', 'masculino', 'estudiante', 'suspendido'),
+
+-- Docente suspendido
+('23232323', 'Elena Victoria', 'Castillo Núñez', 'Av. Javier Prado 789, Lima', '943741852', 'elena.castillo@email.com', '1984-09-16', 'femenino', 'docente', 'suspendido'),
+
+-- Externo suspendido
+('24242424', 'Raúl Enrique', 'Pacheco Villar', 'Calle Bolívar 234, Lima', '932654987', 'raul.pacheco@email.com', '1991-05-23', 'masculino', 'externo', 'suspendido'),
+
+-- LECTORES CON ESTADO BLOQUEADO
+-- Estudiantes bloqueados
+('25252525', 'Carla Beatriz', 'Salinas Montenegro', 'Av. Venezuela 345, Lima', '921753684', 'carla.salinas@email.com', '1998-12-09', 'femenino', 'estudiante', 'bloqueado'),
+('26262626', 'Omar Jesús', 'Chávez Cordero', 'Jr. Ancash 567, Lima', '910852963', 'omar.chavez@email.com', '1999-06-14', 'masculino', 'estudiante', 'bloqueado'),
+('27272727', 'Natalia Rocío', 'Bustamante Aguilar', 'Av. Pershing 890, Lima', '998765432', 'natalia.bustamante@email.com', '2001-02-27', 'femenino', 'estudiante', 'bloqueado'),
+
+-- Administrativo bloqueado
+('28282828', 'Víctor Hugo', 'Delgado Ríos', 'Jr. Moquegua 123, Lima', '987321654', 'victor.delgado@email.com', '1986-07-11', 'masculino', 'administrativo', 'bloqueado'),
+
+-- Docente bloqueado
+('29292929', 'Guadalupe Esperanza', 'Silva Paredes', 'Av. Benavides 456, Lima', '976654123', 'guadalupe.silva@email.com', '1981-10-04', 'femenino', 'docente', 'bloqueado'),
+
+-- LECTORES CON ESTADO ELIMINADO
+-- Estudiantes eliminados
+('30303030', 'Ángel Gabriel', 'Romero Huanca', 'Av. República 789, Lima', '965987321', 'angel.romero@email.com', '1996-01-20', 'masculino', 'estudiante', 'eliminado'),
+('31313131', 'Melissa Fiorella', 'Cáceres Jiménez', 'Jr. Madre de Dios 234, Lima', '954123789', 'melissa.caceres@email.com', '1999-09-15', 'femenino', 'estudiante', 'eliminado'),
+('32323232', 'Erick Rolando', 'Huayhua Ccallo', 'Av. México 567, Lima', '943789456', 'erick.huayhua@email.com', '1998-05-03', 'masculino', 'estudiante', 'eliminado'),
+
+-- Docente eliminado
+('33343433', 'Patricia Mercedes', 'Alarcón Vega', 'Jr. Amazonas 890, Lima', '932456789', 'patricia.alarcon@email.com', '1983-12-21', 'femenino', 'docente', 'eliminado'),
+
+-- Administrativo eliminado
+('34343434', 'Fernando José', 'Cárdenas Luna', 'Av. Faucett 123, Lima', '921654987', 'fernando.cardenas@email.com', '1988-03-17', 'masculino', 'administrativo', 'eliminado'),
+
+-- Externo eliminado
+('35353535', 'Roxana Elizabeth', 'Mendoza Cruz', 'Calle Lima 456, Lima', '910321654', 'roxana.mendoza@email.com', '1993-08-08', 'femenino', 'externo', 'eliminado');
 
 -- 17. EJEMPLARES
-INSERT INTO copies (book_id, shelf_id, barcode, is_available, condition) VALUES 
+INSERT INTO copies (book_id, shelf_id, barcode, status, condition) VALUES 
 -- La ciudad y los perros (5 copias)
-(1, 1, '100001001', TRUE, 'bueno'),
-(1, 1, '100001002', TRUE, 'bueno'),
-(1, 1, '100001003', FALSE, 'regular'),
-(1, 1, '100001004', TRUE, 'nuevo'),
-(1, 1, '100001005', TRUE, 'bueno'),
+(1, 1, '100001001', 'disponible', 'bueno'),
+(1, 1, '100001002', 'disponible', 'bueno'),
+(1, 1, '100001003', 'prestado', 'regular'),
+(1, 1, '100001004', 'disponible', 'nuevo'),
+(1, 1, '100001005', 'disponible', 'bueno'),
 
 -- Cien años de soledad (4 copias)
-(9, 2, '100009001', TRUE, 'bueno'),
-(9, 2, '100009002', TRUE, 'nuevo'),
-(9, 2, '100009003', FALSE, 'bueno'),
-(9, 2, '100009004', TRUE, 'regular'),
+(9, 2, '100009001', 'disponible', 'bueno'),
+(9, 2, '100009002', 'disponible', 'nuevo'),
+(9, 2, '100009003', 'reservado', 'bueno'),
+(9, 2, '100009004', 'disponible', 'regular'),
 
 -- Los ríos profundos (3 copias)
-(2, 1, '100002001', TRUE, 'bueno'),
-(2, 1, '100002002', FALSE, 'bueno'),
-(2, 1, '100002003', TRUE, 'nuevo'),
+(2, 1, '100002001', 'disponible', 'bueno'),
+(2, 1, '100002002', 'prestado', 'bueno'),
+(2, 1, '100002003', 'disponible', 'nuevo'),
 
 -- La palabra del mudo (2 copias)
-(3, 1, '100003001', TRUE, 'regular'),
-(3, 1, '100003002', TRUE, 'bueno'),
+(3, 1, '100003001', 'disponible', 'regular'),
+(3, 1, '100003002', 'disponible', 'bueno'),
 
 -- Trilce (2 copias)
-(4, 1, '100004001', TRUE, 'bueno'),
-(4, 1, '100004002', FALSE, 'regular'),
+(4, 1, '100004001', 'disponible', 'bueno'),
+(4, 1, '100004002', 'extraviado', 'regular'),
 
 -- Don Quijote (6 copias)
-(17, 3, '100017001', TRUE, 'bueno'),
-(17, 3, '100017002', TRUE, 'regular'),
-(17, 3, '100017003', FALSE, 'bueno'),
-(17, 3, '100017004', TRUE, 'nuevo'),
-(17, 3, '100017005', TRUE, 'bueno'),
-(17, 3, '100017006', TRUE, 'regular'),
+(17, 3, '100017001', 'disponible', 'bueno'),
+(17, 3, '100017002', 'disponible', 'regular'),
+(17, 3, '100017003', 'mantenimiento', 'bueno'),
+(17, 3, '100017004', 'disponible', 'nuevo'),
+(17, 3, '100017005', 'disponible', 'bueno'),
+(17, 3, '100017006', 'disponible', 'regular'),
 
 -- Romeo y Julieta (3 copias)
-(23, 4, '100023001', TRUE, 'bueno'),
-(23, 4, '100023002', TRUE, 'nuevo'),
-(23, 4, '100023003', FALSE, 'bueno'),
+(23, 4, '100023001', 'disponible', 'bueno'),
+(23, 4, '100023002', 'disponible', 'nuevo'),
+(23, 4, '100023003', 'prestado', 'bueno'),
 
 -- El viejo y el mar (3 copias)
-(24, 4, '100024001', TRUE, 'bueno'),
-(24, 4, '100024002', FALSE, 'bueno'),
-(24, 4, '100024003', TRUE, 'nuevo'),
+(24, 4, '100024001', 'disponible', 'bueno'),
+(24, 4, '100024002', 'reservado', 'bueno'),
+(24, 4, '100024003', 'disponible', 'nuevo'),
 
 -- Harry Potter (6 copias)
-(26, 19, '100026001', TRUE, 'nuevo'),
-(26, 19, '100026002', TRUE, 'bueno'),
-(26, 19, '100026003', FALSE, 'bueno'),
-(26, 19, '100026004', TRUE, 'bueno'),
-(26, 19, '100026005', TRUE, 'regular'),
-(26, 19, '100026006', TRUE, 'nuevo'),
+(26, 19, '100026001', 'disponible', 'nuevo'),
+(26, 19, '100026002', 'disponible', 'bueno'),
+(26, 19, '100026003', 'prestado', 'bueno'),
+(26, 19, '100026004', 'disponible', 'bueno'),
+(26, 19, '100026005', 'disponible', 'regular'),
+(26, 19, '100026006', 'disponible', 'nuevo'),
 
 -- Asesinato en el Orient Express (2 copias)
-(27, 4, '100027001', TRUE, 'bueno'),
-(27, 4, '100027002', FALSE, 'regular'),
+(27, 4, '100027001', 'disponible', 'bueno'),
+(27, 4, '100027002', 'extraviado', 'regular'),
 
 -- Historia del Perú (4 copias)
-(33, 7, '100033001', TRUE, 'nuevo'),
-(33, 7, '100033002', TRUE, 'bueno'),
-(33, 7, '100033003', FALSE, 'bueno'),
-(33, 7, '100033004', TRUE, 'regular'),
+(33, 7, '100033001', 'disponible', 'nuevo'),
+(33, 7, '100033002', 'disponible', 'bueno'),
+(33, 7, '100033003', 'mantenimiento', 'bueno'),
+(33, 7, '100033004', 'disponible', 'regular'),
 
 -- Matemáticas (5 copias)
-(34, 11, '100034001', TRUE, 'bueno'),
-(34, 11, '100034002', FALSE, 'bueno'),
-(34, 11, '100034003', TRUE, 'regular'),
-(34, 11, '100034004', TRUE, 'nuevo'),
-(34, 11, '100034005', TRUE, 'bueno'),
+(34, 11, '100034001', 'disponible', 'bueno'),
+(34, 11, '100034002', 'prestado', 'bueno'),
+(34, 11, '100034003', 'disponible', 'regular'),
+(34, 11, '100034004', 'disponible', 'nuevo'),
+(34, 11, '100034005', 'disponible', 'bueno'),
 
 -- Física (4 copias)
-(35, 11, '100035001', TRUE, 'bueno'),
-(35, 11, '100035002', TRUE, 'nuevo'),
-(35, 11, '100035003', FALSE, 'regular'),
-(35, 11, '100035004', TRUE, 'bueno'),
+(35, 11, '100035001', 'disponible', 'bueno'),
+(35, 11, '100035002', 'disponible', 'nuevo'),
+(35, 11, '100035003', 'reservado', 'regular'),
+(35, 11, '100035004', 'disponible', 'bueno'),
 
 -- El Principito (8 copias)
-(43, 19, '100043001', TRUE, 'bueno'),
-(43, 19, '100043002', TRUE, 'bueno'),
-(43, 19, '100043003', FALSE, 'regular'),
-(43, 19, '100043004', TRUE, 'nuevo'),
-(43, 19, '100043005', TRUE, 'bueno'),
-(43, 19, '100043006', TRUE, 'regular'),
-(43, 19, '100043007', FALSE, 'bueno'),
-(43, 19, '100043008', TRUE, 'nuevo'),
+(43, 19, '100043001', 'disponible', 'bueno'),
+(43, 19, '100043002', 'disponible', 'bueno'),
+(43, 19, '100043003', 'prestado', 'regular'),
+(43, 19, '100043004', 'disponible', 'nuevo'),
+(43, 19, '100043005', 'disponible', 'bueno'),
+(43, 19, '100043006', 'disponible', 'regular'),
+(43, 19, '100043007', 'mantenimiento', 'bueno'),
+(43, 19, '100043008', 'disponible', 'nuevo'),
 
 -- Enciclopedia (3 copias)
-(48, 23, '100048001', TRUE, 'nuevo'),
-(48, 23, '100048002', TRUE, 'bueno'),
-(48, 23, '100048003', TRUE, 'regular'),
+(48, 23, '100048001', 'disponible', 'nuevo'),
+(48, 23, '100048002', 'disponible', 'bueno'),
+(48, 23, '100048003', 'disponible', 'regular'),
 
 -- Ficciones de Borges (3 copias)
-(10, 2, '100010001', TRUE, 'bueno'),
-(10, 2, '100010002', FALSE, 'regular'),
-(10, 2, '100010003', TRUE, 'nuevo'),
+(10, 2, '100010001', 'disponible', 'bueno'),
+(10, 2, '100010002', 'extraviado', 'regular'),
+(10, 2, '100010003', 'disponible', 'nuevo'),
 
 -- La casa de los espíritus (3 copias)
-(11, 2, '100011001', TRUE, 'bueno'),
-(11, 2, '100011002', TRUE, 'nuevo'),
-(11, 2, '100011003', FALSE, 'bueno'),
+(11, 2, '100011001', 'disponible', 'bueno'),
+(11, 2, '100011002', 'disponible', 'nuevo'),
+(11, 2, '100011003', 'prestado', 'bueno'),
 
 -- 1984 de Orwell (4 copias)
-(28, 4, '100028001', TRUE, 'bueno'),
-(28, 4, '100028002', TRUE, 'nuevo'),
-(28, 4, '100028003', FALSE, 'regular'),
-(28, 4, '100028004', TRUE, 'bueno'),
+(28, 4, '100028001', 'disponible', 'bueno'),
+(28, 4, '100028002', 'disponible', 'nuevo'),
+(28, 4, '100028003', 'reservado', 'regular'),
+(28, 4, '100028004', 'disponible', 'bueno'),
 
 -- IT de Stephen King (2 copias)
-(25, 4, '100025001', TRUE, 'bueno'),
-(25, 4, '100025002', FALSE, 'bueno'),
+(25, 4, '100025001', 'disponible', 'bueno'),
+(25, 4, '100025002', 'mantenimiento', 'bueno'),
 
 -- Química Orgánica (3 copias)
-(36, 12, '100036001', TRUE, 'nuevo'),
-(36, 12, '100036002', TRUE, 'bueno'),
-(36, 12, '100036003', FALSE, 'regular'),
+(36, 12, '100036001', 'disponible', 'nuevo'),
+(36, 12, '100036002', 'disponible', 'bueno'),
+(36, 12, '100036003', 'prestado', 'regular'),
 
 -- Anatomía Humana (2 copias)
-(38, 14, '100038001', TRUE, 'nuevo'),
-(38, 14, '100038002', TRUE, 'bueno'),
+(38, 14, '100038001', 'disponible', 'nuevo'),
+(38, 14, '100038002', 'disponible', 'bueno'),
 
 -- Matilda (4 copias)
-(44, 19, '100044001', TRUE, 'bueno'),
-(44, 19, '100044002', TRUE, 'nuevo'),
-(44, 19, '100044003', FALSE, 'regular'),
-(44, 19, '100044004', TRUE, 'bueno'),
+(44, 19, '100044001', 'disponible', 'bueno'),
+(44, 19, '100044002', 'disponible', 'nuevo'),
+(44, 19, '100044003', 'extraviado', 'regular'),
+(44, 19, '100044004', 'disponible', 'bueno'),
 
 -- Rayuela (2 copias)
-(13, 2, '100013001', TRUE, 'bueno'),
-(13, 2, '100013002', FALSE, 'regular'),
+(13, 2, '100013001', 'disponible', 'bueno'),
+(13, 2, '100013002', 'reservado', 'regular'),
 
 -- Orgullo y prejuicio (3 copias)
-(29, 4, '100029001', TRUE, 'bueno'),
-(29, 4, '100029002', TRUE, 'nuevo'),
-(29, 4, '100029003', TRUE, 'regular'),
+(29, 4, '100029001', 'disponible', 'bueno'),
+(29, 4, '100029002', 'disponible', 'nuevo'),
+(29, 4, '100029003', 'disponible', 'regular'),
 
 -- Tradiciones Peruanas (3 copias)
-(5, 1, '100005001', TRUE, 'bueno'),
-(5, 1, '100005002', FALSE, 'regular'),
-(5, 1, '100005003', TRUE, 'nuevo'),
+(5, 1, '100005001', 'disponible', 'bueno'),
+(5, 1, '100005002', 'mantenimiento', 'regular'),
+(5, 1, '100005003', 'disponible', 'nuevo'),
 
 -- Platero y yo (2 copias)
-(20, 3, '100020001', TRUE, 'bueno'),
-(20, 3, '100020002', TRUE, 'regular'),
+(20, 3, '100020001', 'disponible', 'bueno'),
+(20, 3, '100020002', 'disponible', 'regular'),
 
 -- Biología Molecular (2 copias)
-(37, 12, '100037001', TRUE, 'nuevo'),
-(37, 12, '100037002', FALSE, 'bueno'),
+(37, 12, '100037001', 'disponible', 'nuevo'),
+(37, 12, '100037002', 'prestado', 'bueno'),
 
 -- Psicología del Desarrollo (3 copias)
-(41, 17, '100041001', TRUE, 'bueno'),
-(41, 17, '100041002', TRUE, 'nuevo'),
-(41, 17, '100041003', FALSE, 'regular'),
+(41, 17, '100041001', 'disponible', 'bueno'),
+(41, 17, '100041002', 'disponible', 'nuevo'),
+(41, 17, '100041003', 'extraviado', 'regular'),
 
 -- Diccionario RAE (2 copias)
-(50, 24, '100050001', TRUE, 'nuevo'),
-(50, 24, '100050002', TRUE, 'bueno');
+(50, 24, '100050001', 'disponible', 'nuevo'),
+(50, 24, '100050002', 'disponible', 'bueno');
 
 -- 18. PRÉSTAMOS
 INSERT INTO loans (reader_id, loan_date, observation) VALUES 
@@ -831,28 +893,30 @@ INSERT INTO reservations (reader_id, copy_id, reservation_date, status) VALUES
 (20, 46, '2024-07-30', 'atendida'),       -- Eduardo retiró segundo libro
 (24, 16, '2024-08-01', 'atendida'),       -- Ricardo retiró El túnel
 
--- CANCELADAS (5 reservas)
-(4, 40, '2024-07-20', 'cancelada'),       -- José canceló Principios de Economía
+-- CANCELADAS Y EXPIRADAS (5 reservas)
+(4, 40, '2024-07-20', 'expirada'),        -- José - reserva expirada de Principios de Economía
 (7, 30, '2024-07-21', 'cancelada'),       -- Roberto canceló Oliver Twist  
-(10, 54, '2024-07-22', 'cancelada'),      -- Camila canceló libro
+(10, 54, '2024-07-22', 'expirada'),       -- Camila - reserva expirada
 (15, 23, '2024-07-23', 'cancelada'),      -- Adrián canceló Romeo y Julieta
-(19, 6, '2024-07-24', 'cancelada');       -- Pilar canceló El mundo es ancho y ajeno
+(19, 6, '2024-07-24', 'expirada');        -- Pilar - reserva expirada de El mundo es ancho y ajeno
 
--- 21. MULTAS (25 multas con ambos estados)
+-- 21. MULTAS (25 multas con tres estados)
 INSERT INTO fines (loan_id, copy_id, amount, days_late, status, issued_at) VALUES 
--- MULTAS PENDIENTES (12 multas)
+-- MULTAS PENDIENTES (8 multas)
 (3, 35, '7.50', 3, 'pendiente', '2024-08-08'),     -- María debe por Física
-(3, 52, '7.50', 3, 'pendiente', '2024-08-08'),     -- María debe por segundo libro
 (6, 32, '5.00', 2, 'pendiente', '2024-08-10'),     -- Ana debe por El cuervo
 (9, 18, '10.00', 4, 'pendiente', '2024-08-15'),    -- Javier debe por Romancero Gitano
 (9, 44, '10.00', 4, 'pendiente', '2024-08-15'),    -- Javier debe por Matilda
-(9, 58, '10.00', 4, 'pendiente', '2024-08-15'),    -- Javier debe por tercer libro
 (12, 7, '12.50', 5, 'pendiente', '2024-08-20'),    -- Valeria debe por Don Quijote
-(12, 42, '12.50', 5, 'pendiente', '2024-08-20'),   -- Valeria debe por segundo libro
 (16, 15, '6.25', 2, 'pendiente', '2024-08-21'),    -- Carmen debe por La muerte de Artemio Cruz
 (20, 12, '8.75', 3, 'pendiente', '2024-08-26'),    -- Eduardo debe por La casa de los espíritus
-(20, 46, '8.75', 3, 'pendiente', '2024-08-26'),    -- Eduardo debe por segundo libro
 (24, 16, '11.25', 4, 'pendiente', '2024-08-31'),   -- Ricardo debe por El túnel
+
+-- MULTAS CONDONADAS (4 multas)
+(3, 52, '7.50', 3, 'condonado', '2024-08-08'),     -- María - multa condonada por segundo libro
+(9, 58, '10.00', 4, 'condonado', '2024-08-15'),    -- Javier - multa condonada por tercer libro
+(12, 42, '12.50', 5, 'condonado', '2024-08-20'),   -- Valeria - multa condonada por segundo libro
+(20, 46, '8.75', 3, 'condonado', '2024-08-26'),    -- Eduardo - multa condonada por segundo libro
 
 -- MULTAS PAGADAS (13 multas)
 (1, 3, '2.50', 1, 'pagado', '2024-07-25'),         -- Ana pagó por La ciudad y los perros
