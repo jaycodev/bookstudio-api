@@ -3,6 +3,7 @@ package com.bookstudio.reader.controller;
 import com.bookstudio.reader.dto.CreateReaderDto;
 import com.bookstudio.reader.dto.ReaderDetailDto;
 import com.bookstudio.reader.dto.ReaderListDto;
+import com.bookstudio.reader.dto.ReaderOptionDto;
 import com.bookstudio.reader.dto.UpdateReaderDto;
 import com.bookstudio.reader.service.ReaderService;
 import com.bookstudio.shared.util.ApiError;
@@ -72,6 +73,23 @@ public class ReaderController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiError(false, "Server error while updating reader.", "server_error", 500));
+        }
+    }
+
+    @GetMapping("/filter-options")
+    public ResponseEntity<?> filterOptions() {
+        try {
+            List<ReaderOptionDto> readers = readerService.getOptions();
+
+            if (readers.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ApiError(false, "No readers found for filter.", "no_content", 204));
+            }
+
+            return ResponseEntity.ok(readers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, "Error fetching reader filter options.", "server_error", 500));
         }
     }
 }

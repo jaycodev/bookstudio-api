@@ -3,7 +3,7 @@ package com.bookstudio.role.service;
 import com.bookstudio.role.dto.CreateRoleDto;
 import com.bookstudio.role.dto.RoleDetailDto;
 import com.bookstudio.role.dto.RoleListDto;
-import com.bookstudio.role.dto.RoleSelectDto;
+import com.bookstudio.role.dto.RoleOptionDto;
 import com.bookstudio.role.dto.RoleSummaryDto;
 import com.bookstudio.role.dto.UpdateRoleDto;
 import com.bookstudio.role.model.Role;
@@ -97,8 +97,8 @@ public class RoleService {
         return toListDto(saved);
     }
 
-    public List<RoleSelectDto> getForSelect() {
-        return roleRepository.findForSelect();
+    public List<RoleOptionDto> getOptions() {
+        return roleRepository.findForOptions();
     }
 
     public RoleSummaryDto toSummaryDto(Role role) {

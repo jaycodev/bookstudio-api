@@ -1,6 +1,6 @@
 package com.bookstudio.category.dto;
 
-public record CategorySelectDto(
+public record CategoryOptionDto(
     Long id,
     String name
 ) {}

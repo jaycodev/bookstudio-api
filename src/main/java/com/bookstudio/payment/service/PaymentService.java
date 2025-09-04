@@ -148,6 +148,7 @@ public class PaymentService {
                 payment.getPaymentId(),
                 payment.getCode(),
                 paymentFineRepository.countByPayment(payment),
+                payment.getReader().getReaderId(),
                 payment.getReader().getCode(),
                 payment.getReader().getFullName(),
                 payment.getAmount(),

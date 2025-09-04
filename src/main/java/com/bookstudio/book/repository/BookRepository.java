@@ -1,7 +1,7 @@
 package com.bookstudio.book.repository;
 
 import com.bookstudio.book.dto.BookListDto;
-import com.bookstudio.book.dto.BookSelectDto;
+import com.bookstudio.book.dto.BookOptionDto;
 import com.bookstudio.book.model.Book;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,8 +16,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             b.isbn,
             b.coverUrl,
             b.title,
+            c.categoryId,
             c.name,
+            p.publisherId,
             p.name,
+            l.languageId,
             l.code,
             l.name,
             (SELECT COUNT(cpy) FROM Copy cpy WHERE cpy.book = b AND cpy.status <> com.bookstudio.copy.model.CopyStatus.DISPONIBLE),
@@ -34,7 +37,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("""
         SELECT 
-            new com.bookstudio.book.dto.BookSelectDto(
+            new com.bookstudio.book.dto.BookOptionDto(
                 b.bookId, 
                 b.title
             )
@@ -42,5 +45,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         WHERE b.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY b.title ASC
     """)
-    List<BookSelectDto> findForSelect();
+    List<BookOptionDto> findForOptions();
 }

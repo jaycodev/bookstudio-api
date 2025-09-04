@@ -6,6 +6,7 @@ import com.bookstudio.copy.model.CopyStatus;
 public record CopyListDto(
     Long id,
     String code,
+    Long bookId,
     String bookCoverUrl,
     String bookTitle,
     String shelfCode,

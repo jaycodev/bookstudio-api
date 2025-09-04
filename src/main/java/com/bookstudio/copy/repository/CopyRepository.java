@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.bookstudio.book.model.Book;
 import com.bookstudio.copy.dto.CopyListDto;
-import com.bookstudio.copy.dto.CopySelectDto;
+import com.bookstudio.copy.dto.CopyOptionDto;
 import com.bookstudio.copy.model.Copy;
 import com.bookstudio.copy.model.CopyStatus;
 
@@ -16,6 +16,7 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
         SELECT new com.bookstudio.copy.dto.CopyListDto(
             c.copyId,
             c.code,
+            b.bookId,
             b.coverUrl,
             b.title,
             s.code,
@@ -33,14 +34,14 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
     List<CopyListDto> findList();
 
     @Query("""
-        SELECT new com.bookstudio.copy.dto.CopySelectDto(
+        SELECT new com.bookstudio.copy.dto.CopyOptionDto(
             c.copyId,
             c.code
         )
         FROM Copy c
         WHERE c.status = com.bookstudio.copy.model.CopyStatus.DISPONIBLE
     """)
-    List<CopySelectDto> findForSelect();
+    List<CopyOptionDto> findForOptions();
 
     Long countByBookAndStatus(Book book, CopyStatus status);
     Long countByBookAndStatusNot(Book book, CopyStatus status);

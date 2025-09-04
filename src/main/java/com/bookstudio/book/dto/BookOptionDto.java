@@ -1,6 +1,6 @@
 package com.bookstudio.book.dto;
 
-public record BookSelectDto(
+public record BookOptionDto(
     Long id,
     String title
 ) {}

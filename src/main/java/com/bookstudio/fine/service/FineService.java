@@ -1,6 +1,6 @@
 package com.bookstudio.fine.service;
 
-import com.bookstudio.fine.dto.FineSelectDto;
+import com.bookstudio.fine.dto.FineOptionDto;
 import com.bookstudio.fine.dto.FineSummaryDto;
 import com.bookstudio.fine.dto.CreateFineDto;
 import com.bookstudio.fine.dto.FineDetailDto;
@@ -85,8 +85,8 @@ public class FineService {
         return toListDto(saved);
     }
 
-    public List<FineSelectDto> getForSelect() {
-        return fineRepository.findForSelect();
+    public List<FineOptionDto> getOptions() {
+        return fineRepository.findForOptions();
     }
 
     public FineSummaryDto toSummaryDto(Fine fine) {
@@ -102,7 +102,9 @@ public class FineService {
         return new FineListDto(
                 fine.getFineId(),
                 fine.getCode(),
+                fine.getLoanItem().getLoan().getLoanId(),
                 fine.getLoanItem().getLoan().getCode(),
+                fine.getLoanItem().getCopy().getCopyId(),
                 fine.getLoanItem().getCopy().getCode(),
                 fine.getAmount(),
                 fine.getDaysLate(),

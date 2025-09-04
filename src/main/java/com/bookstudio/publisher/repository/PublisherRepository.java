@@ -1,7 +1,7 @@
 package com.bookstudio.publisher.repository;
 
 import com.bookstudio.publisher.dto.PublisherListDto;
-import com.bookstudio.publisher.dto.PublisherSelectDto;
+import com.bookstudio.publisher.dto.PublisherOptionDto;
 import com.bookstudio.publisher.model.Publisher;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +15,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
             p.publisherId,
             p.photoUrl,
             p.name,
+            n.nationalityId,
             n.code,
             n.name,
             p.website,
@@ -28,7 +29,7 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     List<PublisherListDto> findList();
 
     @Query("""
-        SELECT new com.bookstudio.publisher.dto.PublisherSelectDto(
+        SELECT new com.bookstudio.publisher.dto.PublisherOptionDto(
             p.publisherId,
             p.name
         )
@@ -36,5 +37,5 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
         WHERE p.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY p.name ASC
     """)
-    List<PublisherSelectDto> findForSelect();
+    List<PublisherOptionDto> findForOptions();
 }

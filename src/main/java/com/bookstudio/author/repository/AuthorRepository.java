@@ -1,7 +1,7 @@
 package com.bookstudio.author.repository;
 
 import com.bookstudio.author.dto.AuthorListDto;
-import com.bookstudio.author.dto.AuthorSelectDto;
+import com.bookstudio.author.dto.AuthorOptionDto;
 import com.bookstudio.author.model.Author;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,6 +16,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
                 a.authorId,
                 a.photoUrl,
                 a.name,
+                n.nationalityId,
                 n.code,
                 n.name,
                 a.birthDate,
@@ -29,7 +30,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     @Query("""
         SELECT 
-            new com.bookstudio.author.dto.AuthorSelectDto(
+            new com.bookstudio.author.dto.AuthorOptionDto(
                 a.authorId,
                 a.name
             )
@@ -37,5 +38,5 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
         WHERE a.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY a.name ASC
     """)
-    List<AuthorSelectDto> findForSelect();
+    List<AuthorOptionDto> findForOptions();
 }

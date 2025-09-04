@@ -100,7 +100,7 @@ public class WorkerService {
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .roles(roleService.getForSelect())
+                .roles(roleService.getOptions())
                 .build();
     }
 

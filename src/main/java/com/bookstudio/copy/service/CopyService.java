@@ -3,7 +3,7 @@ package com.bookstudio.copy.service;
 import com.bookstudio.book.service.BookService;
 import com.bookstudio.copy.dto.CopyDetailDto;
 import com.bookstudio.copy.dto.CopyListDto;
-import com.bookstudio.copy.dto.CopySelectDto;
+import com.bookstudio.copy.dto.CopyOptionDto;
 import com.bookstudio.copy.dto.CopySummaryDto;
 import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
@@ -91,14 +91,14 @@ public class CopyService {
         return toListDto(saved);
     }
 
-    public List<CopySelectDto> getForSelect() {
-        return copyRepository.findForSelect();
+    public List<CopyOptionDto> getOptions() {
+        return copyRepository.findForOptions();
     }
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .books(bookService.getForSelect())
-                .shelves(shelfService.getForSelect())
+                .books(bookService.getOptions())
+                .shelves(shelfService.getOptions())
                 .build();
     }
 
@@ -115,6 +115,7 @@ public class CopyService {
         return new CopyListDto(
                 copy.getCopyId(),
                 copy.getCode(),
+                copy.getBook().getBookId(),
                 copy.getBook().getCoverUrl(),
                 copy.getBook().getTitle(),
                 copy.getShelf().getCode(),

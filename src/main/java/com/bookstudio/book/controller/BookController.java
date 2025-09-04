@@ -2,6 +2,7 @@ package com.bookstudio.book.controller;
 
 import com.bookstudio.book.dto.BookDetailDto;
 import com.bookstudio.book.dto.BookListDto;
+import com.bookstudio.book.dto.BookOptionDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
 import com.bookstudio.book.service.BookService;
@@ -64,6 +65,23 @@ public class BookController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
+        }
+    }
+
+    @GetMapping("/filter-options")
+    public ResponseEntity<?> filterOptions() {
+        try {
+            List<BookOptionDto> books = bookService.getOptions();
+
+            if (books.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ApiError(false, "No books found for filter.", "no_content", 204));
+            }
+
+            return ResponseEntity.ok(books);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, "Error fetching book filter options.", "server_error", 500));
         }
     }
 

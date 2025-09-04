@@ -1,6 +1,6 @@
 package com.bookstudio.role.dto;
 
-public record RoleSelectDto(
+public record RoleOptionDto(
     Long id,
     String name
 ) {}

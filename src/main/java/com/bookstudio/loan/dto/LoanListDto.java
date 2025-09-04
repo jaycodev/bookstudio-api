@@ -6,6 +6,7 @@ import java.util.Map;
 public record LoanListDto(
     Long id,
     String code,
+    Long readerId,
     String readerCode,
     String readerFullName,
     LocalDate loanDate,

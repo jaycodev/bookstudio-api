@@ -5,7 +5,7 @@ import com.bookstudio.nationality.service.NationalityService;
 import com.bookstudio.publisher.dto.CreatePublisherDto;
 import com.bookstudio.publisher.dto.PublisherDetailDto;
 import com.bookstudio.publisher.dto.PublisherListDto;
-import com.bookstudio.publisher.dto.PublisherSelectDto;
+import com.bookstudio.publisher.dto.PublisherOptionDto;
 import com.bookstudio.publisher.dto.PublisherSummaryDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.model.Publisher;
@@ -123,13 +123,13 @@ public class PublisherService {
         return toListDto(saved);
     }
 
-    public List<PublisherSelectDto> getForSelect() {
-        return publisherRepository.findForSelect();
+    public List<PublisherOptionDto> getOptions() {
+        return publisherRepository.findForOptions();
     }
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .nationalities(nationalityService.getForSelect())
+                .nationalities(nationalityService.getOptions())
                 .build();
     }
 
@@ -145,6 +145,7 @@ public class PublisherService {
                 publisher.getPublisherId(),
                 publisher.getPhotoUrl(),
                 publisher.getName(),
+                publisher.getNationality().getNationalityId(),
                 publisher.getNationality().getCode(),
                 publisher.getNationality().getName(),
                 publisher.getWebsite(),

@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bookstudio.category.dto.CategoryListDto;
-import com.bookstudio.category.dto.CategorySelectDto;
+import com.bookstudio.category.dto.CategoryOptionDto;
 import com.bookstudio.category.model.Category;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("""
         SELECT 
-            new com.bookstudio.category.dto.CategorySelectDto(
+            new com.bookstudio.category.dto.CategoryOptionDto(
                 c.categoryId,
                 c.name
             )
@@ -34,5 +34,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         WHERE c.status = com.bookstudio.shared.enums.Status.ACTIVO
         ORDER BY c.name ASC
     """)
-    List<CategorySelectDto> findForSelect();
+    List<CategoryOptionDto> findForOptions();
 }

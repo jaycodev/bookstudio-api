@@ -3,6 +3,7 @@ package com.bookstudio.publisher.controller;
 import com.bookstudio.publisher.dto.CreatePublisherDto;
 import com.bookstudio.publisher.dto.PublisherDetailDto;
 import com.bookstudio.publisher.dto.PublisherListDto;
+import com.bookstudio.publisher.dto.PublisherOptionDto;
 import com.bookstudio.publisher.dto.UpdatePublisherDto;
 import com.bookstudio.publisher.service.PublisherService;
 import com.bookstudio.shared.util.ApiError;
@@ -65,6 +66,23 @@ public class PublisherController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
+        }
+    }
+
+    @GetMapping("/filter-options")
+    public ResponseEntity<?> filterOptions() {
+        try {
+            List<PublisherOptionDto> publishers = publisherService.getOptions();
+
+            if (publishers.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ApiError(false, "No publishers found for filter.", "no_content", 204));
+            }
+
+            return ResponseEntity.ok(publishers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, "Error fetching publisher filter options.", "server_error", 500));
         }
     }
 

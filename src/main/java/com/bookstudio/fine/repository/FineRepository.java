@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bookstudio.fine.dto.FineListDto;
-import com.bookstudio.fine.dto.FineSelectDto;
+import com.bookstudio.fine.dto.FineOptionDto;
 import com.bookstudio.fine.model.Fine;
 
 public interface FineRepository extends JpaRepository<Fine, Long> {
@@ -14,7 +14,9 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
         SELECT new com.bookstudio.fine.dto.FineListDto(
             f.fineId,
             f.code,
+            l.loanId,
             l.code,
+            c.copyId,
             c.code,
             f.amount,
             f.daysLate,
@@ -30,12 +32,12 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
     List<FineListDto> findList();
 
     @Query("""
-        SELECT new com.bookstudio.fine.dto.FineSelectDto(
+        SELECT new com.bookstudio.fine.dto.FineOptionDto(
             f.fineId,
             f.code
         )
         FROM Fine f
-        WHERE f.status = 'pendiente'
+        WHERE f.status = com.bookstudio.fine.model.FineStatus.PENDIENTE
     """)
-    List<FineSelectDto> findForSelect();
+    List<FineOptionDto> findForOptions();
 }

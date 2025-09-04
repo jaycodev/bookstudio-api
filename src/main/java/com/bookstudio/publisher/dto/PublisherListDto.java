@@ -6,6 +6,7 @@ public record PublisherListDto(
     Long id,
     String photoUrl,
     String name,
+    Long nationalityId,
     String nationalityCode,
     String nationalityName,
     String website,

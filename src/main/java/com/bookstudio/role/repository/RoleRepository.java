@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bookstudio.role.dto.RoleListDto;
-import com.bookstudio.role.dto.RoleSelectDto;
+import com.bookstudio.role.dto.RoleOptionDto;
 import com.bookstudio.role.model.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Long>{
@@ -22,12 +22,12 @@ public interface RoleRepository extends JpaRepository<Role, Long>{
     List<RoleListDto> findList();
 
     @Query("""
-        SELECT new com.bookstudio.role.dto.RoleSelectDto(
+        SELECT new com.bookstudio.role.dto.RoleOptionDto(
             r.roleId,
             r.name
         )
         FROM Role r
         ORDER BY r.name ASC
     """)
-    List<RoleSelectDto> findForSelect();
+    List<RoleOptionDto> findForOptions();
 }

@@ -2,6 +2,7 @@ package com.bookstudio.copy.controller;
 
 import com.bookstudio.copy.dto.CopyDetailDto;
 import com.bookstudio.copy.dto.CopyListDto;
+import com.bookstudio.copy.dto.CopyOptionDto;
 import com.bookstudio.copy.dto.CreateCopyDto;
 import com.bookstudio.copy.dto.UpdateCopyDto;
 import com.bookstudio.copy.service.CopyService;
@@ -64,6 +65,23 @@ public class CopyController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
+        }
+    }
+
+    @GetMapping("/filter-options")
+    public ResponseEntity<?> filterOptions() {
+        try {
+            List<CopyOptionDto> copies = copyService.getOptions();
+
+            if (copies.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ApiError(false, "No copies found for filter.", "no_content", 204));
+            }
+
+            return ResponseEntity.ok(copies);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, "Error fetching copy filter options.", "server_error", 500));
         }
     }
 

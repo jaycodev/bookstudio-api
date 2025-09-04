@@ -91,6 +91,7 @@ public class ReservationService {
         return new ReservationListDto(
                 reservation.getReservationId(),
                 reservation.getCode(),
+                reservation.getReader().getReaderId(),
                 reservation.getReader().getCode(),
                 reservation.getReader().getFullName(),
                 reservation.getCopy().getCode(),

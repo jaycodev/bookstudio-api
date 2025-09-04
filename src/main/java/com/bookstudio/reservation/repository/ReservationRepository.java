@@ -13,6 +13,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         SELECT new com.bookstudio.reservation.dto.ReservationListDto(
             r.reservationId,
             r.code,
+            rd.readerId,
             rd.code,
             CONCAT(rd.firstName, ' ', rd.lastName),
             c.code,

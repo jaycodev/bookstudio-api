@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.bookstudio.location.dto.ShelfOptionDto;
 import com.bookstudio.location.dto.ShelfSummaryDto;
 import com.bookstudio.location.model.Location;
 import com.bookstudio.location.model.Shelf;
@@ -25,5 +26,13 @@ public interface ShelfRepository extends JpaRepository<Shelf, Long> {
 
     void deleteAllByLocation(Location location);
 
-    List<Shelf> findAllByOrderByShelfIdDesc();
+    @Query("""
+        SELECT new com.bookstudio.location.dto.ShelfOptionDto(
+            s.shelfId,
+            CONCAT(s.location.name, ' - ', s.floor)
+        )
+        FROM Shelf s
+        ORDER BY s.location.name ASC, s.floor ASC
+    """)
+    List<ShelfOptionDto> findForOptions();
 }

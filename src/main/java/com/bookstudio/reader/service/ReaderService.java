@@ -103,8 +103,8 @@ public class ReaderService {
         return toListDto(saved);
     }
 
-    public List<ReaderSelectDto> getForSelect() {
-        return readerRepository.findForSelect();
+    public List<ReaderOptionDto> getOptions() {
+        return readerRepository.findForOptions();
     }
 
     public ReaderSummaryDto toSummaryDto(Reader reader) {

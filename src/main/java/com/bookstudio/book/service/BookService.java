@@ -3,7 +3,7 @@ package com.bookstudio.book.service;
 import com.bookstudio.author.model.Author;
 import com.bookstudio.book.dto.BookDetailDto;
 import com.bookstudio.book.dto.BookListDto;
-import com.bookstudio.book.dto.BookSelectDto;
+import com.bookstudio.book.dto.BookOptionDto;
 import com.bookstudio.book.dto.BookSummaryDto;
 import com.bookstudio.book.dto.CreateBookDto;
 import com.bookstudio.book.dto.UpdateBookDto;
@@ -170,15 +170,15 @@ public class BookService {
         return toListDto(saved);
     }
 
-    public List<BookSelectDto> getForSelect() {
-        return bookRepository.findForSelect();
+    public List<BookOptionDto> getOptions() {
+        return bookRepository.findForOptions();
     }
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .languages(languageService.getForSelect())
-                .publishers(publisherService.getForSelect())
-                .categories(categoryService.getForSelect())
+                .languages(languageService.getOptions())
+                .publishers(publisherService.getOptions())
+                .categories(categoryService.getOptions())
                 .build();
     }
 
@@ -197,8 +197,11 @@ public class BookService {
                 book.getIsbn(),
                 book.getCoverUrl(),
                 book.getTitle(),
+                book.getCategory().getCategoryId(),
                 book.getCategory().getName(),
+                book.getPublisher().getPublisherId(),
                 book.getPublisher().getName(),
+                book.getLanguage().getLanguageId(),
                 book.getLanguage().getCode(),
                 book.getLanguage().getName(),
                 copyRepository.countByBookAndStatusNot(book, com.bookstudio.copy.model.CopyStatus.DISPONIBLE),

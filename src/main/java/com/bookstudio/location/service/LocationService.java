@@ -4,7 +4,7 @@ import com.bookstudio.location.dto.CreateLocationDto;
 import com.bookstudio.location.dto.CreateShelfDto;
 import com.bookstudio.location.dto.LocationDetailDto;
 import com.bookstudio.location.dto.LocationListDto;
-import com.bookstudio.location.dto.LocationSelectDto;
+import com.bookstudio.location.dto.LocationOptionDto;
 import com.bookstudio.location.dto.LocationSummaryDto;
 import com.bookstudio.location.dto.UpdateLocationDto;
 import com.bookstudio.location.dto.UpdateShelfDto;
@@ -112,8 +112,8 @@ public class LocationService {
         return toListDto(location);
     }
 
-    public List<LocationSelectDto> getForSelect() {
-        return locationRepository.findForSelect();
+    public List<LocationOptionDto> getOptions() {
+        return locationRepository.findForOptions();
     }
 
     public LocationSummaryDto toSummaryDto(Location location) {

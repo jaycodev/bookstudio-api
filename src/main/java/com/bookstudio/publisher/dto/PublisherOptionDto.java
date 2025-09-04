@@ -1,6 +1,6 @@
 package com.bookstudio.publisher.dto;
 
-public record PublisherSelectDto(
+public record PublisherOptionDto(
     Long id,
     String name
 ) {}

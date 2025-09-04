@@ -1,5 +1,6 @@
 package com.bookstudio.location.service;
 
+import com.bookstudio.location.dto.ShelfOptionDto;
 import com.bookstudio.location.dto.ShelfSummaryDto;
 import com.bookstudio.location.model.Shelf;
 import com.bookstudio.location.repository.ShelfRepository;
@@ -16,8 +17,8 @@ public class ShelfService {
 
     private final ShelfRepository shelfRepository;
 
-    public List<Shelf> getForSelect() {
-        return shelfRepository.findAllByOrderByShelfIdDesc();
+    public List<ShelfOptionDto> getOptions() {
+        return shelfRepository.findForOptions();
     }
 
     public Optional<Shelf> findById(Long shelfId) {

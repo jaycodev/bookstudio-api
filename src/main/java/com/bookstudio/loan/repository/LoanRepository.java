@@ -1,6 +1,7 @@
 package com.bookstudio.loan.repository;
 
 import com.bookstudio.loan.dto.LoanListRawDto;
+import com.bookstudio.loan.dto.LoanOptionDto;
 import com.bookstudio.loan.model.Loan;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
         SELECT new com.bookstudio.loan.dto.LoanListRawDto(
             l.loanId,
             l.code,
+            r.readerId,
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             l.loanDate,
@@ -25,7 +27,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
         FROM Loan l
         JOIN l.reader r
         LEFT JOIN l.loanItems li
-        GROUP BY l.loanId, l.code, r.code, r.firstName, r.lastName, l.loanDate
+        GROUP BY l.loanId, l.code, r.readerId, r.code, r.firstName, r.lastName, l.loanDate
         ORDER BY l.loanId DESC
     """)
     List<LoanListRawDto> findRawList();
@@ -34,6 +36,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
         SELECT new com.bookstudio.loan.dto.LoanListRawDto(
             l.loanId,
             l.code,
+            r.readerId,
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             l.loanDate,
@@ -47,7 +50,17 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
         JOIN l.reader r
         LEFT JOIN l.loanItems li
         WHERE l.loanId = :loanId
-        GROUP BY l.loanId, l.code, r.code, r.firstName, r.lastName, l.loanDate
+        GROUP BY l.loanId, l.code, r.readerId, r.code, r.firstName, r.lastName, l.loanDate
     """)
     LoanListRawDto findRawById(Long loanId);
+
+    @Query("""
+        SELECT new com.bookstudio.loan.dto.LoanOptionDto(
+            l.loanId,
+            l.code
+        )
+        FROM Loan l
+        ORDER BY l.code DESC
+    """)
+    List<LoanOptionDto> findForOptions();
 }

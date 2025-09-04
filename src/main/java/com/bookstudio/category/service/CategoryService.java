@@ -2,7 +2,7 @@ package com.bookstudio.category.service;
 
 import com.bookstudio.category.dto.CategoryDetailDto;
 import com.bookstudio.category.dto.CategoryListDto;
-import com.bookstudio.category.dto.CategorySelectDto;
+import com.bookstudio.category.dto.CategoryOptionDto;
 import com.bookstudio.category.dto.CategorySummaryDto;
 import com.bookstudio.category.dto.CreateCategoryDto;
 import com.bookstudio.category.dto.UpdateCategoryDto;
@@ -69,8 +69,8 @@ public class CategoryService {
         return toListDto(updated);
     }
 
-    public List<CategorySelectDto> getForSelect() {
-        return categoryRepository.findForSelect();
+    public List<CategoryOptionDto> getOptions() {
+        return categoryRepository.findForOptions();
     }
 
     public CategorySummaryDto toSummaryDto(Category category) {

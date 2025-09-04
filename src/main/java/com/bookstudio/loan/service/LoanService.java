@@ -7,6 +7,7 @@ import com.bookstudio.loan.dto.CreateLoanDto;
 import com.bookstudio.loan.dto.CreateLoanItemDto;
 import com.bookstudio.loan.dto.LoanDetailDto;
 import com.bookstudio.loan.dto.LoanListDto;
+import com.bookstudio.loan.dto.LoanOptionDto;
 import com.bookstudio.loan.dto.LoanSummaryDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
 import com.bookstudio.loan.dto.UpdateLoanItemDto;
@@ -132,10 +133,14 @@ public class LoanService {
         return LoanMapper.fromRaw(loanRepository.findRawById(saved.getLoanId()));
     }
 
+    public List<LoanOptionDto> getOptions() {
+        return loanRepository.findForOptions();
+    }
+
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .books(bookService.getForSelect())
-                .students(readerService.getForSelect())
+                .books(bookService.getOptions())
+                .students(readerService.getOptions())
                 .build();
     }
 

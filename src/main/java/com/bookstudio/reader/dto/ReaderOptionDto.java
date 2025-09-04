@@ -1,6 +1,6 @@
 package com.bookstudio.reader.dto;
 
-public record ReaderSelectDto(
+public record ReaderOptionDto(
     Long id,
     String fullName
 ) {}

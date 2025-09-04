@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.bookstudio.language.dto.LanguageOptionDto;
 import com.bookstudio.language.dto.LanguageSummaryDto;
 import com.bookstudio.language.model.Language;
 import com.bookstudio.language.repository.LanguageRepository;
@@ -17,8 +18,8 @@ public class LanguageService {
 
     private final LanguageRepository languageRepository;
 
-    public List<Language> getForSelect() {
-        return languageRepository.findAllByOrderByNameAsc();
+    public List<LanguageOptionDto> getOptions() {
+        return languageRepository.findForOptions();
     }
 
     public Optional<Language> findById(Long languageId) {

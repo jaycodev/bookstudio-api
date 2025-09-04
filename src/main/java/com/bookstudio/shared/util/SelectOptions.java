@@ -2,36 +2,36 @@ package com.bookstudio.shared.util;
 
 import java.util.List;
 
-import com.bookstudio.author.dto.AuthorSelectDto;
-import com.bookstudio.book.dto.BookSelectDto;
-import com.bookstudio.category.dto.CategorySelectDto;
+import com.bookstudio.author.dto.AuthorOptionDto;
+import com.bookstudio.book.dto.BookOptionDto;
+import com.bookstudio.category.dto.CategoryOptionDto;
 import com.bookstudio.genre.model.Genre;
-import com.bookstudio.language.model.Language;
-import com.bookstudio.location.model.Shelf;
-import com.bookstudio.nationality.model.Nationality;
+import com.bookstudio.language.dto.LanguageOptionDto;
+import com.bookstudio.location.dto.ShelfOptionDto;
+import com.bookstudio.nationality.dto.NationalityOptionDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import com.bookstudio.publisher.dto.PublisherSelectDto;
-import com.bookstudio.reader.dto.ReaderSelectDto;
-import com.bookstudio.role.dto.RoleSelectDto;
+import com.bookstudio.publisher.dto.PublisherOptionDto;
+import com.bookstudio.reader.dto.ReaderOptionDto;
+import com.bookstudio.role.dto.RoleOptionDto;
 
 @Data
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SelectOptions {
-    private List<BookSelectDto> books;
-    private List<AuthorSelectDto> authors;
-    private List<PublisherSelectDto> publishers;
-    private List<CategorySelectDto> categories;
-    private List<ReaderSelectDto> students;
-    private List<RoleSelectDto> roles;
-    private List<Language> languages;
+    private List<BookOptionDto> books;
+    private List<AuthorOptionDto> authors;
+    private List<PublisherOptionDto> publishers;
+    private List<CategoryOptionDto> categories;
+    private List<ReaderOptionDto> students;
+    private List<RoleOptionDto> roles;
+    private List<LanguageOptionDto> languages;
     private List<Genre> genres;
-    private List<Nationality> nationalities;
-    private List<Shelf> shelves;
+    private List<NationalityOptionDto> nationalities;
+    private List<ShelfOptionDto> shelves;
 }

@@ -24,6 +24,7 @@ public class LoanMapper {
         return new LoanListDto(
                 raw.id(),
                 raw.code(),
+                raw.readerId(),
                 raw.readerCode(),
                 raw.readerFullName(),
                 raw.loanDate(),

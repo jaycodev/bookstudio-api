@@ -2,7 +2,7 @@ package com.bookstudio.author.service;
 
 import com.bookstudio.author.dto.AuthorDetailDto;
 import com.bookstudio.author.dto.AuthorListDto;
-import com.bookstudio.author.dto.AuthorSelectDto;
+import com.bookstudio.author.dto.AuthorOptionDto;
 import com.bookstudio.author.dto.AuthorSummaryDto;
 import com.bookstudio.author.dto.CreateAuthorDto;
 import com.bookstudio.author.dto.UpdateAuthorDto;
@@ -91,13 +91,13 @@ public class AuthorService {
         return toListDto(saved);
     }
 
-    public List<AuthorSelectDto> getForSelect() {
-        return authorRepository.findForSelect();
+    public List<AuthorOptionDto> getOptions() {
+        return authorRepository.findForOptions();
     }
 
     public SelectOptions getSelectOptions() {
         return SelectOptions.builder()
-                .nationalities(nationalityService.getForSelect())
+                .nationalities(nationalityService.getOptions())
                 .build();
     }
 
@@ -113,6 +113,7 @@ public class AuthorService {
                 author.getAuthorId(),
                 author.getPhotoUrl(),
                 author.getName(),
+                author.getNationality().getNationalityId(),
                 author.getNationality().getCode(),
                 author.getNationality().getName(),
                 author.getBirthDate(),

@@ -14,6 +14,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             p.paymentId,
             p.code,
             COUNT(f),
+            r.readerId,
             r.code,
             CONCAT(r.firstName, ' ', r.lastName),
             p.amount,
@@ -24,7 +25,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
         JOIN p.reader r
         JOIN PaymentFine pf ON pf.payment = p
         JOIN Fine f ON pf.fine = f
-        GROUP BY p.code, r.code, r.firstName, r.lastName, p.amount, p.paymentDate, p.method, p.paymentId
+        GROUP BY p.code, r.readerId, r.code, r.firstName, r.lastName, p.amount, p.paymentDate, p.method, p.paymentId
         ORDER BY p.paymentId DESC
     """)
     List<PaymentListDto> findList();

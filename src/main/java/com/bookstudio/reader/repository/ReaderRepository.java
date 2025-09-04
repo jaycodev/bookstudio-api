@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.bookstudio.reader.dto.ReaderListDto;
-import com.bookstudio.reader.dto.ReaderSelectDto;
+import com.bookstudio.reader.dto.ReaderOptionDto;
 import com.bookstudio.reader.model.Reader;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
     List<ReaderListDto> findList();
 
     @Query("""
-        SELECT new com.bookstudio.reader.dto.ReaderSelectDto(
+        SELECT new com.bookstudio.reader.dto.ReaderOptionDto(
             r.readerId,
             CONCAT(r.firstName, ' ', r.lastName)
         )
@@ -40,5 +40,5 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
         WHERE r.status = com.bookstudio.reader.model.ReaderStatus.ACTIVO
         ORDER BY r.firstName, r.lastName
     """)
-    List<ReaderSelectDto> findForSelect();
+    List<ReaderOptionDto> findForOptions();
 }

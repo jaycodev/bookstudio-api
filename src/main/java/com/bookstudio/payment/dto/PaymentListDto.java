@@ -9,6 +9,7 @@ public record PaymentListDto(
     Long id,
     String code,
     Long fineCount,
+    Long readerId,
     String readerCode,
     String readerFullName,
     BigDecimal amount,

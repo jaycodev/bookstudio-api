@@ -1,5 +1,6 @@
 package com.bookstudio.nationality.service;
 
+import com.bookstudio.nationality.dto.NationalityOptionDto;
 import com.bookstudio.nationality.dto.NationalitySummaryDto;
 import com.bookstudio.nationality.model.Nationality;
 import com.bookstudio.nationality.repository.NationalityRepository;
@@ -16,8 +17,8 @@ public class NationalityService {
 
     private final NationalityRepository nationalityRepository;
 
-    public List<Nationality> getForSelect() {
-        return nationalityRepository.findAllByOrderByNameAsc();
+    public List<NationalityOptionDto> getOptions() {
+        return nationalityRepository.findForOptions();
     }
 
     public Optional<Nationality> findById(Long nationalityid) {

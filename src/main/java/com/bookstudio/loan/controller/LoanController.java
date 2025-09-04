@@ -3,6 +3,7 @@ package com.bookstudio.loan.controller;
 import com.bookstudio.loan.dto.CreateLoanDto;
 import com.bookstudio.loan.dto.LoanDetailDto;
 import com.bookstudio.loan.dto.LoanListDto;
+import com.bookstudio.loan.dto.LoanOptionDto;
 import com.bookstudio.loan.dto.UpdateLoanDto;
 import com.bookstudio.loan.service.LoanService;
 import com.bookstudio.shared.util.ApiError;
@@ -64,6 +65,23 @@ public class LoanController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiError(false, e.getMessage(), "update_failed", 404));
+        }
+    }
+
+    @GetMapping("/filter-options")
+    public ResponseEntity<?> filterOptions() {
+        try {
+            List<LoanOptionDto> loans = loanService.getOptions();
+
+            if (loans.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ApiError(false, "No loans found for filter.", "no_content", 204));
+            }
+
+            return ResponseEntity.ok(loans);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiError(false, "Error fetching loan filter options.", "server_error", 500));
         }
     }
 

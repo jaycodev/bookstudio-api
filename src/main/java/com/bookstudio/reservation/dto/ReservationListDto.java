@@ -7,6 +7,7 @@ import com.bookstudio.reservation.model.ReservationStatus;
 public record ReservationListDto(
     Long id,
     String code,
+    Long readerId,
     String readerCode,
     String readerFullName,
     String copyCode,

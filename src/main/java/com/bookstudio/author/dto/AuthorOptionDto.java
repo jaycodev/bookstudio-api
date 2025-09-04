@@ -1,6 +1,6 @@
 package com.bookstudio.author.dto;
 
-public record AuthorSelectDto(
+public record AuthorOptionDto(
     Long id,
     String name
 ) {}
