@@ -32,8 +32,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                 l.name
             ),
             new com.bookstudio.book.domain.dto.response.BookListResponse$Copies(
-                SUM(CASE WHEN cpy.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END),
-                SUM(CASE WHEN cpy.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END)
+                COALESCE(SUM(CASE WHEN cpy.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN cpy.status =  com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
             ),
             b.status
         )
@@ -94,8 +94,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("""
         SELECT new com.bookstudio.book.domain.dto.response.BookListResponse$Copies(
-            SUM(CASE WHEN c.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END),
-            SUM(CASE WHEN c.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END)
+            COALESCE(SUM(CASE WHEN c.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN c.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
         )
         FROM Copy c
         WHERE c.book.id = :id
