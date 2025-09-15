@@ -1,0 +1,96 @@
+package com.bookstudio.fine.application;
+
+import com.bookstudio.fine.domain.dto.request.CreateFineRequest;
+import com.bookstudio.fine.domain.dto.request.UpdateFineRequest;
+import com.bookstudio.fine.domain.dto.response.FineDetailResponse;
+import com.bookstudio.fine.domain.dto.response.FineListResponse;
+import com.bookstudio.fine.domain.model.Fine;
+import com.bookstudio.fine.infrastructure.repository.FineRepository;
+import com.bookstudio.loan.application.LoanItemService;
+import com.bookstudio.shared.domain.dto.response.OptionResponse;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class FineService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private final FineRepository fineRepository;
+
+    private final LoanItemService loanItemService;
+
+    public List<FineListResponse> getList() {
+        return fineRepository.findList();
+    }
+
+    public List<OptionResponse> getOptions() {
+        return fineRepository.findForOptions();
+    }
+
+    public Optional<Fine> findById(Long id) {
+        return fineRepository.findById(id);
+    }
+
+    public FineDetailResponse getDetailById(Long id) {
+        return fineRepository.findDetailById(id)
+                .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + id));
+    }
+
+    @Transactional
+    public FineListResponse create(CreateFineRequest request) {
+        Fine fine = new Fine();
+        fine.setAmount(request.getAmount());
+        fine.setDaysLate(request.getDaysLate());
+        fine.setStatus(request.getStatus());
+        fine.setIssuedAt(request.getIssuedAt());
+
+        fine.setLoanItem(loanItemService.findById(request.getLoanItemId())
+                .orElseThrow(() -> new RuntimeException("Loan item not found with ID: " + request.getLoanItemId())));
+
+        Fine saved = fineRepository.save(fine);
+        entityManager.refresh(saved);
+
+        return toListResponse(saved);
+    }
+
+    @Transactional
+    public FineListResponse update(Long id, UpdateFineRequest request) {
+        Fine fine = fineRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + id));
+
+        fine.setAmount(request.getAmount());
+        fine.setDaysLate(request.getDaysLate());
+        fine.setStatus(request.getStatus());
+
+        Fine updated = fineRepository.save(fine);
+
+        return toListResponse(updated);
+    }
+
+    private FineListResponse toListResponse(Fine fine) {
+        return new FineListResponse(
+                fine.getId(),
+                fine.getCode(),
+                new FineListResponse.Loan(
+                        fine.getLoanItem().getLoan().getId(),
+                        fine.getLoanItem().getLoan().getCode()),
+                new FineListResponse.Copy(
+                        fine.getLoanItem().getCopy().getId(),
+                        fine.getLoanItem().getCopy().getCode()),
+                fine.getAmount(),
+                fine.getDaysLate(),
+                fine.getIssuedAt(),
+                fine.getStatus());
+    }
+}
