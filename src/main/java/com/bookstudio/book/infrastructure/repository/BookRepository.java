@@ -33,7 +33,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             ),
             new com.bookstudio.book.domain.dto.response.BookListResponse$Copies(
                 COALESCE(SUM(CASE WHEN cpy.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN cpy.status =  com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
+                COALESCE(SUM(CASE WHEN cpy.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
             ),
             b.status
         )
