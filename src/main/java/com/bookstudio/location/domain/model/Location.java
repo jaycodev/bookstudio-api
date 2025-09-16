@@ -1,5 +1,8 @@
 package com.bookstudio.location.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Location {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,4 +23,8 @@ public class Location {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Shelf> shelves = new ArrayList<>();
 }

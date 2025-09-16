@@ -16,8 +16,13 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
         SELECT 
             l.id AS id,
             l.name AS name,
-            l.description AS description
+            l.description AS description,
+            COUNT(DISTINCT s.id) AS shelfCount,
+            COUNT(DISTINCT c.id) AS copyCount
         FROM Location l
+        LEFT JOIN l.shelves s
+        LEFT JOIN s.copies c
+        GROUP BY l.id, l.name, l.description
         ORDER BY l.id DESC
     """)
     List<LocationListResponse> findList();

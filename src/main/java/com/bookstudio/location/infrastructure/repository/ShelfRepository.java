@@ -31,5 +31,6 @@ public interface ShelfRepository extends JpaRepository<Shelf, Long> {
     """)
     List<LocationDetailResponse.ShelfItem> findShelfItemsByLocationId(Long id);
 
+    Long countByLocation(Location location);
     void deleteAllByLocation(Location location);
 }

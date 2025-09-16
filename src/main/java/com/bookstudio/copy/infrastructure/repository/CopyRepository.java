@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.bookstudio.copy.domain.dto.response.CopyDetailResponse;
 import com.bookstudio.copy.domain.dto.response.CopyListResponse;
 import com.bookstudio.copy.domain.model.Copy;
+import com.bookstudio.location.domain.model.Location;
 import com.bookstudio.shared.domain.dto.response.OptionResponse;
 
 public interface CopyRepository extends JpaRepository<Copy, Long> {
@@ -74,4 +75,6 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
         WHERE c.id = :id
     """)
     Optional<CopyDetailResponse> findDetailById(Long id);
+
+    Long countByShelfLocation(Location location);
 }

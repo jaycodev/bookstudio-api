@@ -1,5 +1,10 @@
 package com.bookstudio.location.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.bookstudio.copy.domain.model.Copy;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,4 +31,9 @@ public class Shelf {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @OneToMany(mappedBy = "shelf", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Copy> copies = new ArrayList<>();
+
 }

@@ -1,5 +1,6 @@
 package com.bookstudio.location.application;
 
+import com.bookstudio.copy.infrastructure.repository.CopyRepository;
 import com.bookstudio.location.domain.dto.request.CreateLocationRequest;
 import com.bookstudio.location.domain.dto.request.CreateShelfRequest;
 import com.bookstudio.location.domain.dto.request.UpdateLocationRequest;
@@ -32,6 +33,7 @@ public class LocationService {
 
     private final LocationRepository locationRepository;
     private final ShelfRepository shelfRepository;
+    private final CopyRepository copyRepository;
 
     public List<LocationListResponse> getList() {
         return locationRepository.findList();
@@ -114,6 +116,8 @@ public class LocationService {
         return new LocationListResponse(
                 location.getId(),
                 location.getName(),
-                location.getDescription());
+                location.getDescription(),
+                shelfRepository.countByLocation(location),
+                copyRepository.countByShelfLocation(location));
     }
 }

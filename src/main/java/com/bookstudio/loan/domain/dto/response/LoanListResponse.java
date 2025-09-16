@@ -8,7 +8,7 @@ public record LoanListResponse(
         String code,
         Reader reader,
         LocalDate loanDate,
-        Integer itemCount,
+        Long itemCount,
         Map<String, Long> statusCounts) {
 
     public LoanListResponse(
@@ -43,8 +43,8 @@ public record LoanListResponse(
             Long overdue,
             Long lost,
             Long canceled) {
-        public int total() {
-            return (int) (borrowed + returned + overdue + lost + canceled);
+        public Long total() {
+            return borrowed + returned + overdue + lost + canceled;
         }
     }
 }
