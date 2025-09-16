@@ -35,5 +35,4 @@ public class Shelf {
     @OneToMany(mappedBy = "shelf", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Copy> copies = new ArrayList<>();
-
 }

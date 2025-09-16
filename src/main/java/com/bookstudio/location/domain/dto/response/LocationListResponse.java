@@ -5,5 +5,6 @@ public record LocationListResponse(
         String name,
         String description,
         Long shelfCount,
+        Long bookCount,
         Long copyCount) {
 }

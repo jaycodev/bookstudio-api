@@ -118,6 +118,7 @@ public class LocationService {
                 location.getName(),
                 location.getDescription(),
                 shelfRepository.countByLocation(location),
+                copyRepository.countDistinctBookByShelfLocation(location),
                 copyRepository.countByShelfLocation(location));
     }
 }

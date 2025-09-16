@@ -18,6 +18,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
             l.name AS name,
             l.description AS description,
             COUNT(DISTINCT s.id) AS shelfCount,
+            COUNT(DISTINCT c.book.id) AS bookCount,
             COUNT(DISTINCT c.id) AS copyCount
         FROM Location l
         LEFT JOIN l.shelves s
