@@ -1,4 +1,4 @@
-package com.bookstudio.reader.domain.model;
+package com.bookstudio.reader.domain.model.type;
 
 public enum ReaderType {
     ESTUDIANTE,

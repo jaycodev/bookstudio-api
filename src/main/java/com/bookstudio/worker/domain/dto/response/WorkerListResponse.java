@@ -1,6 +1,6 @@
 package com.bookstudio.worker.domain.dto.response;
 
-import com.bookstudio.worker.domain.model.WorkerStatus;
+import com.bookstudio.worker.domain.model.type.WorkerStatus;
 
 public record WorkerListResponse(
         Long id,

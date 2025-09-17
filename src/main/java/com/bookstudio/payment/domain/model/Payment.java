@@ -3,6 +3,7 @@ package com.bookstudio.payment.domain.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.bookstudio.payment.domain.model.type.PaymentMethod;
 import com.bookstudio.reader.domain.model.Reader;
 
 import jakarta.persistence.*;

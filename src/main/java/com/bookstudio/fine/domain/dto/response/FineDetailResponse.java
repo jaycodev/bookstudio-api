@@ -3,9 +3,9 @@ package com.bookstudio.fine.domain.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.bookstudio.copy.domain.model.CopyStatus;
-import com.bookstudio.fine.domain.model.FineStatus;
-import com.bookstudio.loan.domain.model.LoanItemStatus;
+import com.bookstudio.copy.domain.model.type.CopyStatus;
+import com.bookstudio.fine.domain.model.type.FineStatus;
+import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 
 public record FineDetailResponse(
         Long id,

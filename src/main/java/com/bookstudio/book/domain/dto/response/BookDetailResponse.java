@@ -3,7 +3,7 @@ package com.bookstudio.book.domain.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.shared.domain.model.type.Status;
 
 public record BookDetailResponse(
         Long id,

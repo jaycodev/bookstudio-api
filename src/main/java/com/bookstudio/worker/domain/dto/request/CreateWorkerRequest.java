@@ -1,7 +1,7 @@
 package com.bookstudio.worker.domain.dto.request;
 
 
-import com.bookstudio.worker.domain.model.WorkerStatus;
+import com.bookstudio.worker.domain.model.type.WorkerStatus;
 
 import lombok.Data;
 

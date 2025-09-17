@@ -2,8 +2,8 @@ package com.bookstudio.reservation.domain.dto.response;
 
 import java.time.LocalDate;
 
-import com.bookstudio.copy.domain.model.CopyStatus;
-import com.bookstudio.reservation.domain.model.ReservationStatus;
+import com.bookstudio.copy.domain.model.type.CopyStatus;
+import com.bookstudio.reservation.domain.model.type.ReservationStatus;
 
 public record ReservationDetailResponse(
         Long id,

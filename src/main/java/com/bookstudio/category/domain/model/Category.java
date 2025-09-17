@@ -1,6 +1,7 @@
 package com.bookstudio.category.domain.model;
 
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.category.domain.model.type.CategoryLevel;
+import com.bookstudio.shared.domain.model.type.Status;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Category {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

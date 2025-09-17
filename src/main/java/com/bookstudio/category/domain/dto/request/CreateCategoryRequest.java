@@ -1,7 +1,7 @@
 package com.bookstudio.category.domain.dto.request;
 
-import com.bookstudio.category.domain.model.CategoryLevel;
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.category.domain.model.type.CategoryLevel;
+import com.bookstudio.shared.domain.model.type.Status;
 
 import lombok.Data;
 

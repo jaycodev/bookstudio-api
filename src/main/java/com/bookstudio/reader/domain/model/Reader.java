@@ -5,6 +5,10 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import com.bookstudio.reader.domain.model.type.ReaderGender;
+import com.bookstudio.reader.domain.model.type.ReaderStatus;
+import com.bookstudio.reader.domain.model.type.ReaderType;
+
 @Entity
 @Table(name = "readers")
 @Data

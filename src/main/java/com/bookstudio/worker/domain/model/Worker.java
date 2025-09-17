@@ -1,6 +1,7 @@
 package com.bookstudio.worker.domain.model;
 
 import com.bookstudio.role.domain.model.Role;
+import com.bookstudio.worker.domain.model.type.WorkerStatus;
 
 import jakarta.persistence.*;
 import lombok.*;

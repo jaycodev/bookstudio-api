@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.bookstudio.payment.domain.model.PaymentMethod;
+import com.bookstudio.payment.domain.model.type.PaymentMethod;
 
 import lombok.Data;
 

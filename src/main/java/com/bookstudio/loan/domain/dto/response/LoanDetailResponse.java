@@ -3,8 +3,8 @@ package com.bookstudio.loan.domain.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.bookstudio.copy.domain.model.CopyStatus;
-import com.bookstudio.loan.domain.model.LoanItemStatus;
+import com.bookstudio.copy.domain.model.type.CopyStatus;
+import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 
 public record LoanDetailResponse(
         Long id,

@@ -2,7 +2,7 @@ package com.bookstudio.reservation.domain.dto.request;
 
 import java.time.LocalDate;
 
-import com.bookstudio.reservation.domain.model.ReservationStatus;
+import com.bookstudio.reservation.domain.model.type.ReservationStatus;
 
 import lombok.Data;
 

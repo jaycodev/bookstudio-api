@@ -2,7 +2,7 @@ package com.bookstudio.payment.application;
 
 import com.bookstudio.fine.application.FineService;
 import com.bookstudio.fine.domain.model.Fine;
-import com.bookstudio.fine.domain.model.FineStatus;
+import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.fine.infrastructure.repository.FineRepository;
 import com.bookstudio.payment.domain.dto.request.CreatePaymentRequest;
 import com.bookstudio.payment.domain.dto.request.UpdatePaymentRequest;

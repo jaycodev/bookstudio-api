@@ -1,6 +1,8 @@
 package com.bookstudio.copy.domain.model;
 
 import com.bookstudio.book.domain.model.Book;
+import com.bookstudio.copy.domain.model.type.CopyCondition;
+import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.location.domain.model.Shelf;
 
 import jakarta.persistence.*;

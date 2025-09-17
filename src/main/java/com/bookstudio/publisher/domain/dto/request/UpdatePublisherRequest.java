@@ -2,7 +2,7 @@ package com.bookstudio.publisher.domain.dto.request;
 
 import java.util.List;
 
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.shared.domain.model.type.Status;
 
 import lombok.Data;
 

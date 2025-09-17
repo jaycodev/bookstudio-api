@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.reader.domain.model.Reader;
+import com.bookstudio.reservation.domain.model.type.ReservationStatus;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,4 +1,4 @@
-package com.bookstudio.worker.domain.model;
+package com.bookstudio.worker.domain.model.type;
 
 public enum WorkerStatus {
     ACTIVO,

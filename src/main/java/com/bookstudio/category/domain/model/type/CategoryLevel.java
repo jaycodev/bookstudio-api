@@ -1,4 +1,4 @@
-package com.bookstudio.category.domain.model;
+package com.bookstudio.category.domain.model.type;
 
 public enum CategoryLevel {
     PRIMARIA,

@@ -10,7 +10,6 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class DashboardData {
-
 	private int totalActiveBooks;
 	private int totalActiveAuthors;
 	private int totalActivePublishers;

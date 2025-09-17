@@ -1,4 +1,4 @@
-package com.bookstudio.fine.domain.model;
+package com.bookstudio.fine.domain.model.type;
 
 public enum FineStatus {
     PENDIENTE,

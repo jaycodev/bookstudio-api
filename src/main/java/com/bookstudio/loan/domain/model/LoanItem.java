@@ -3,6 +3,7 @@ package com.bookstudio.loan.domain.model;
 import java.time.LocalDate;
 
 import com.bookstudio.copy.domain.model.Copy;
+import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,7 +1,7 @@
 package com.bookstudio.reader.domain.dto.response;
 
-import com.bookstudio.reader.domain.model.ReaderStatus;
-import com.bookstudio.reader.domain.model.ReaderType;
+import com.bookstudio.reader.domain.model.type.ReaderStatus;
+import com.bookstudio.reader.domain.model.type.ReaderType;
 
 public record ReaderListResponse(
         Long id,

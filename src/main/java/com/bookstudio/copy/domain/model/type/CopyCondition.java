@@ -1,4 +1,4 @@
-package com.bookstudio.copy.domain.model;
+package com.bookstudio.copy.domain.model.type;
 
 public enum CopyCondition {
     NUEVO,

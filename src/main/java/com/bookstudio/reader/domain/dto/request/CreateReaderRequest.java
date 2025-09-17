@@ -2,9 +2,9 @@ package com.bookstudio.reader.domain.dto.request;
 
 import java.time.LocalDate;
 
-import com.bookstudio.reader.domain.model.ReaderGender;
-import com.bookstudio.reader.domain.model.ReaderStatus;
-import com.bookstudio.reader.domain.model.ReaderType;
+import com.bookstudio.reader.domain.model.type.ReaderGender;
+import com.bookstudio.reader.domain.model.type.ReaderStatus;
+import com.bookstudio.reader.domain.model.type.ReaderType;
 
 import lombok.Data;
 

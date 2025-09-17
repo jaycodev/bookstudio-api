@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.bookstudio.fine.domain.model.FineStatus;
-import com.bookstudio.payment.domain.model.PaymentMethod;
+import com.bookstudio.fine.domain.model.type.FineStatus;
+import com.bookstudio.payment.domain.model.type.PaymentMethod;
 
 public record PaymentDetailResponse(
         Long id,

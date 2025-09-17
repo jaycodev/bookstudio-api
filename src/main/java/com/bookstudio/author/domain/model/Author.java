@@ -1,7 +1,7 @@
 package com.bookstudio.author.domain.model;
 
 import com.bookstudio.nationality.domain.model.Nationality;
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.shared.domain.model.type.Status;
 
 import jakarta.persistence.*;
 import lombok.*;

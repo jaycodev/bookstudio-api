@@ -2,7 +2,7 @@ package com.bookstudio.author.domain.dto.response;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.shared.domain.model.type.Status;
 
 public record AuthorListResponse(
         Long id,

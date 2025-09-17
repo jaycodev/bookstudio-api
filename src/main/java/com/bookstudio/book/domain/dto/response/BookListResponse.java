@@ -1,6 +1,6 @@
 package com.bookstudio.book.domain.dto.response;
 
-import com.bookstudio.shared.domain.model.Status;
+import com.bookstudio.shared.domain.model.type.Status;
 
 public record BookListResponse(
         Long id,

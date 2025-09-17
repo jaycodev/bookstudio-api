@@ -1,4 +1,4 @@
-package com.bookstudio.reservation.domain.model;
+package com.bookstudio.reservation.domain.model.type;
 
 public enum ReservationStatus {
     PENDIENTE,

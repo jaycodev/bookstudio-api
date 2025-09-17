@@ -12,7 +12,7 @@ import com.bookstudio.loan.domain.dto.response.LoanListResponse;
 import com.bookstudio.loan.domain.model.Loan;
 import com.bookstudio.loan.domain.model.LoanItem;
 import com.bookstudio.loan.domain.model.LoanItemId;
-import com.bookstudio.loan.domain.model.LoanItemStatus;
+import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 import com.bookstudio.loan.infrastructure.repository.LoanItemRepository;
 import com.bookstudio.loan.infrastructure.repository.LoanRepository;
 import com.bookstudio.reader.application.ReaderService;

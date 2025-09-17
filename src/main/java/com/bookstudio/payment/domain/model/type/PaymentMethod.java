@@ -1,4 +1,4 @@
-package com.bookstudio.payment.domain.model;
+package com.bookstudio.payment.domain.model.type;
 
 public enum PaymentMethod {
     EFECTIVO,
