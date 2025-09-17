@@ -17,8 +17,7 @@ public interface WorkerRepository extends JpaRepository<Worker, Long> {
             w.profilePhotoUrl,
             w.username,
             w.email,
-            w.firstName,
-            w.lastName,
+            CONCAT(w.firstName, ' ', w.lastName),
             new com.bookstudio.worker.domain.dto.response.WorkerListResponse$Role(
                 w.role.name
             ),

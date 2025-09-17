@@ -7,8 +7,7 @@ public record WorkerListResponse(
         String profilePhotoUrl,
         String username,
         String email,
-        String firstName,
-        String lastName,
+        String fullName,
         Role role,
         WorkerStatus status) {
 

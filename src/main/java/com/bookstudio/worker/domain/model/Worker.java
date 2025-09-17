@@ -40,4 +40,9 @@ public class Worker {
 
     @Enumerated(EnumType.STRING)
     private WorkerStatus status;
+
+    @Transient
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

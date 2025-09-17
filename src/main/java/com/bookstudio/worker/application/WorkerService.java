@@ -96,8 +96,7 @@ public class WorkerService {
                 worker.getProfilePhotoUrl(),
                 worker.getUsername(),
                 worker.getEmail(),
-                worker.getFirstName(),
-                worker.getLastName(),
+                worker.getFullName(),
                 new WorkerListResponse.Role(
                         worker.getRole().getName()),
                 worker.getStatus());
