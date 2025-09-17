@@ -12,18 +12,15 @@ import java.util.Optional;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("""
-        SELECT new com.bookstudio.author.application.dto.response.AuthorListResponse(
-            a.id,
-            a.photoUrl,
-            a.name,
-            new com.bookstudio.author.application.dto.response.AuthorListResponse$Nationality(
-                n.id,
-                n.code,
-                n.name
-            ),
-            a.birthDate,
-            a.status
-        )
+        SELECT 
+            a.id AS id,
+            a.photoUrl AS photoUrl,
+            a.name AS name,
+            n.id AS nationalityId,
+            n.code AS nationalityCode,
+            n.name AS nationalityName,
+            a.birthDate AS birthDate,
+            a.status AS status
         FROM Author a
         JOIN a.nationality n
         ORDER BY a.id DESC
@@ -31,19 +28,16 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     List<AuthorListResponse> findList();
 
     @Query("""
-        SELECT new com.bookstudio.author.application.dto.response.AuthorDetailResponse(
-            a.id,
-            a.name,
-            new com.bookstudio.author.application.dto.response.AuthorDetailResponse$Nationality(
-                n.id,
-                n.code,
-                n.name
-            ),
-            a.birthDate,
-            a.biography,
-            a.status,
-            a.photoUrl
-        )
+        SELECT 
+            a.id AS id,
+            a.name AS name,
+            n.id AS nationalityId,
+            n.code AS nationalityCode,
+            n.name AS nationalityName,
+            a.birthDate AS birthDate,
+            a.biography AS biography,
+            a.status AS status,
+            a.photoUrl AS photoUrl
         FROM Author a
         JOIN a.nationality n
         WHERE a.id = :id
