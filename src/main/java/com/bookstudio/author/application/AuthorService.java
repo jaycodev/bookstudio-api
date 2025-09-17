@@ -1,4 +1,4 @@
-package com.bookstudio.author.aplication;
+package com.bookstudio.author.application;
 
 import com.bookstudio.author.domain.dto.request.CreateAuthorRequest;
 import com.bookstudio.author.domain.dto.request.UpdateAuthorRequest;

@@ -1,6 +1,6 @@
 package com.bookstudio.author.presentation;
 
-import com.bookstudio.author.aplication.AuthorService;
+import com.bookstudio.author.application.AuthorService;
 import com.bookstudio.author.domain.dto.request.CreateAuthorRequest;
 import com.bookstudio.author.domain.dto.request.UpdateAuthorRequest;
 import com.bookstudio.author.domain.dto.response.AuthorDetailResponse;
