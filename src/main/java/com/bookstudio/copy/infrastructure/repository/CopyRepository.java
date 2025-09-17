@@ -14,24 +14,21 @@ import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 public interface CopyRepository extends JpaRepository<Copy, Long> {
     @Query("""
-        SELECT new com.bookstudio.copy.application.dto.response.CopyListResponse(
-            c.id,
-            c.code,
-            new com.bookstudio.copy.application.dto.response.CopyListResponse$Book(
-                b.id,
-                b.coverUrl,
-                b.title
-            ),
-            new com.bookstudio.copy.application.dto.response.CopyListResponse$Shelf(
-                s.code,
-                s.floor
-            ),
-            new com.bookstudio.copy.application.dto.response.CopyListResponse$Location(
-                l.name
-            ),
-            c.status,
-            c.condition
-        )
+        SELECT 
+            c.id AS id,
+            c.code AS code,
+
+            b.id AS bookId,
+            b.coverUrl AS bookCoverUrl,
+            b.title AS bookTitle,
+
+            s.code AS shelfCode,
+            s.floor AS shelfFloor,
+
+            l.name AS locationName,
+
+            c.status AS status,
+            c.condition AS condition
         FROM Copy c
         JOIN c.book b
         JOIN c.shelf s
@@ -41,34 +38,32 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
     List<CopyListResponse> findList();
 
     @Query("""
-        SELECT
+        SELECT 
             c.id AS value,
             c.code AS label
         FROM Copy c
-        WHERE c.status = com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE
+        WHERE c.status = 'DISPONIBLE'
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.copy.application.dto.response.CopyDetailResponse(
-            c.id,
-            c.code,
-            new com.bookstudio.copy.application.dto.response.CopyDetailResponse$Book(
-                b.id,
-                b.isbn,
-                b.coverUrl,
-                b.title
-            ),
-            new com.bookstudio.copy.application.dto.response.CopyDetailResponse$Shelf(
-                s.id,
-                s.code,
-                s.floor,
-                s.description
-            ),
-            c.barcode,
-            c.status,
-            c.condition
-        )
+        SELECT 
+            c.id AS id,
+            c.code AS code,
+
+            b.id AS bookId,
+            b.isbn AS bookIsbn,
+            b.coverUrl AS bookCoverUrl,
+            b.title AS bookTitle,
+
+            s.id AS shelfId,
+            s.code AS shelfCode,
+            s.floor AS shelfFloor,
+            s.description AS shelfDescription,
+
+            c.barcode AS barcode,
+            c.status AS status,
+            c.condition AS condition
         FROM Copy c
         JOIN c.book b
         JOIN c.shelf s
