@@ -6,8 +6,8 @@ import com.bookstudio.reader.domain.model.ReaderType;
 public record ReaderListResponse(
     Long id,
     String code,
-    String fullName,
     String dni,
+    String fullName,
     String phone,
     String email,
     ReaderType type,
