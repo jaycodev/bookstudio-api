@@ -99,6 +99,7 @@ public class RoleService {
         return new RoleListResponse(
                 role.getId(),
                 role.getName(),
-                role.getDescription());
+                role.getDescription(),
+                (long) role.getRolePermissions().size());
     }
 }

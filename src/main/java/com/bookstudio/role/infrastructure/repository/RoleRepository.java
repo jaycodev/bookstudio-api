@@ -16,8 +16,11 @@ public interface RoleRepository extends JpaRepository<Role, Long>{
         SELECT 
             r.id AS id,
             r.name AS name,
-            r.description AS description
+            r.description AS description,
+            COUNT(rp.permission.id) AS permissionCount
         FROM Role r
+        LEFT JOIN RolePermission rp ON rp.role = r
+        GROUP BY r.id, r.name, r.description
         ORDER BY r.id DESC
     """)
     List<RoleListResponse> findList();

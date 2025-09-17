@@ -1,5 +1,8 @@
 package com.bookstudio.role.domain.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Role {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,4 +23,8 @@ public class Role {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Builder.Default
+    private List<RolePermission> rolePermissions = new ArrayList<>();
 }
