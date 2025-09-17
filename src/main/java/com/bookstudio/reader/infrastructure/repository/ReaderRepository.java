@@ -16,7 +16,6 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
         SELECT 
             r.id AS id,
             r.code AS code,
-            r.dni AS dni,
             CONCAT(r.firstName, ' ', r.lastName) AS fullName,
             r.phone AS phone,
             r.email AS email,

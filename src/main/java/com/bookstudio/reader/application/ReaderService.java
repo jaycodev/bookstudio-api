@@ -101,7 +101,6 @@ public class ReaderService {
         return new ReaderListResponse(
                 reader.getId(),
                 reader.getCode(),
-                reader.getDni(),
                 reader.getFullName(),
                 reader.getPhone(),
                 reader.getEmail(),
