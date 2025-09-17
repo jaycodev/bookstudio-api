@@ -7,6 +7,7 @@ import com.bookstudio.role.domain.dto.response.RoleDetailResponse;
 import com.bookstudio.role.domain.dto.response.RoleListResponse;
 import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.shared.domain.dto.response.OptionResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,23 @@ public class RoleController {
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiErrorResponse(false, e.getMessage(), "update_failed", 404));
+        }
+    }
+
+    @GetMapping("/filter-options")
+    public ResponseEntity<?> filterOptions() {
+        try {
+            List<OptionResponse> roles = roleService.getOptions();
+
+            if (roles.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new ApiErrorResponse(false, "No roles found for filter.", "no_content", 204));
+            }
+
+            return ResponseEntity.ok(roles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiErrorResponse(false, "Error fetching role filter options.", "server_error", 500));
         }
     }
 }
