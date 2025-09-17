@@ -14,6 +14,7 @@ import com.bookstudio.book.infrastructure.repository.BookAuthorRepository;
 import com.bookstudio.book.infrastructure.repository.BookGenreRepository;
 import com.bookstudio.book.infrastructure.repository.BookRepository;
 import com.bookstudio.category.application.CategoryService;
+import com.bookstudio.copy.infrastructure.repository.CopyRepository;
 import com.bookstudio.genre.domain.model.Genre;
 import com.bookstudio.language.application.LanguageService;
 import com.bookstudio.publisher.application.PublisherService;
@@ -36,6 +37,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
+    private final CopyRepository copyRepository;
 
     private final LanguageService languageService;
     private final PublisherService publisherService;
@@ -177,17 +179,15 @@ public class BookService {
                 book.getIsbn(),
                 book.getCoverUrl(),
                 book.getTitle(),
-                new BookListResponse.Category(
-                        book.getCategory().getId(),
-                        book.getCategory().getName()),
-                new BookListResponse.Publisher(
-                        book.getPublisher().getId(),
-                        book.getPublisher().getName()),
-                new BookListResponse.Language(
-                        book.getLanguage().getId(),
-                        book.getLanguage().getCode(),
-                        book.getLanguage().getName()),
-                bookRepository.findCopyCountsById(book.getId()),
+                book.getCategory().getId(),
+                book.getCategory().getName(),
+                book.getPublisher().getId(),
+                book.getPublisher().getName(),
+                book.getLanguage().getId(),
+                book.getLanguage().getCode(),
+                book.getLanguage().getName(),
+                copyRepository.countLoanedByBookId(book.getId()),
+                copyRepository.countAvailableByBookId(book.getId()),
                 book.getStatus());
     }
 }

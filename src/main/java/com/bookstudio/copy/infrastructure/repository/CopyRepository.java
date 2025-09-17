@@ -89,4 +89,20 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
         WHERE c.shelf.location = :location
     """)
     Long countDistinctBookByShelfLocation(Location location);
+
+    @Query("""
+        SELECT COUNT(c)
+        FROM Copy c
+        WHERE c.book.id = :id
+        AND c.status <> 'DISPONIBLE'
+    """)
+    Long countLoanedByBookId(Long id);
+
+    @Query("""
+        SELECT COUNT(c)
+        FROM Copy c
+        WHERE c.book.id = :id
+        AND c.status = 'DISPONIBLE'
+    """)
+    Long countAvailableByBookId(Long id);
 }

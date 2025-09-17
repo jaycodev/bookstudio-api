@@ -16,9 +16,11 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
             a.id AS id,
             a.photoUrl AS photoUrl,
             a.name AS name,
+            
             n.id AS nationalityId,
             n.code AS nationalityCode,
             n.name AS nationalityName,
+            
             a.birthDate AS birthDate,
             a.status AS status
         FROM Author a
@@ -31,9 +33,11 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
         SELECT 
             a.id AS id,
             a.name AS name,
+            
             n.id AS nationalityId,
             n.code AS nationalityCode,
             n.name AS nationalityName,
+            
             a.birthDate AS birthDate,
             a.biography AS biography,
             a.status AS status,

@@ -13,30 +13,26 @@ import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
-        SELECT new com.bookstudio.book.application.dto.response.BookListResponse(
-            b.id,
-            b.isbn,
-            b.coverUrl,
-            b.title,
-            new com.bookstudio.book.application.dto.response.BookListResponse$Category(
-                c.id,
-                c.name
-            ),
-            new com.bookstudio.book.application.dto.response.BookListResponse$Publisher(
-                p.id,
-                p.name
-            ),
-            new com.bookstudio.book.application.dto.response.BookListResponse$Language(
-                l.id,
-                l.code,
-                l.name
-            ),
-            new com.bookstudio.book.application.dto.response.BookListResponse$Copies(
-                COALESCE(SUM(CASE WHEN cpy.status <> com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN cpy.status = com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
-            ),
-            b.status
-        )
+        SELECT 
+            b.id AS id,
+            b.isbn AS isbn,
+            b.coverUrl AS coverUrl,
+            b.title AS title,
+
+            c.id AS categoryId,
+            c.name AS categoryName,
+
+            p.id AS publisherId,
+            p.name AS publisherName,
+
+            l.id AS languageId,
+            l.code AS languageCode,
+            l.name AS languageName,
+
+            COALESCE(SUM(CASE WHEN cpy.status <> 'DISPONIBLE' THEN 1 ELSE 0 END), 0) AS copiesLoaned,
+            COALESCE(SUM(CASE WHEN cpy.status = 'DISPONIBLE' THEN 1 ELSE 0 END), 0) AS copiesAvailable,
+
+            b.status AS status
         FROM Book b
         JOIN b.publisher p
         JOIN b.category c
@@ -52,38 +48,37 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             b.id AS value,
             b.title AS label
         FROM Book b
-        WHERE b.status = com.bookstudio.shared.domain.model.type.Status.ACTIVO
+        WHERE b.status = 'ACTIVO'
         ORDER BY b.title ASC
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.book.application.dto.response.BookDetailResponse(
-            b.id,
-            b.title,
-            b.isbn,
-            new com.bookstudio.book.application.dto.response.BookDetailResponse$Language(
-                l.id,
-                l.code,
-                l.name
-            ),
-            b.edition,
-            b.pages,
-            b.description,
-            b.coverUrl,
-            new com.bookstudio.book.application.dto.response.BookDetailResponse$Publisher(
-                p.id,
-                p.name
-            ),
-            new com.bookstudio.book.application.dto.response.BookDetailResponse$Category(
-                c.id,
-                c.name
-            ),
-            b.releaseDate,
-            b.status,
+        SELECT 
+            b.id AS id,
+            b.title AS title,
+            b.isbn AS isbn,
+
+            l.id AS languageId,
+            l.code AS languageCode,
+            l.name AS languageName,
+
+            b.edition AS edition,
+            b.pages AS pages,
+            b.description AS description,
+            b.coverUrl AS coverUrl,
+
+            p.id AS publisherId,
+            p.name AS publisherName,
+            
+            c.id AS categoryId,
+            c.name AS categoryName,
+            
+            b.releaseDate AS releaseDate,
+            b.status AS status,
+            
             NULL,
             NULL
-        )
         FROM Book b
         JOIN b.publisher p
         JOIN b.category c
@@ -91,14 +86,4 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         WHERE b.id = :id
     """)
     Optional<BookDetailResponse> findDetailById(Long id);
-
-    @Query("""
-        SELECT new com.bookstudio.book.application.dto.response.BookListResponse$Copies(
-            COALESCE(SUM(CASE WHEN c.status <> com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
-            COALESCE(SUM(CASE WHEN c.status = com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
-        )
-        FROM Copy c
-        WHERE c.book.id = :id
-    """)
-    BookListResponse.Copies findCopyCountsById(Long id);
 }
