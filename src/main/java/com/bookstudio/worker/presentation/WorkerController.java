@@ -1,13 +1,13 @@
 package com.bookstudio.worker.presentation;
 
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.worker.application.WorkerService;
-import com.bookstudio.worker.domain.dto.request.CreateWorkerRequest;
-import com.bookstudio.worker.domain.dto.request.UpdateWorkerRequest;
-import com.bookstudio.worker.domain.dto.response.WorkerDetailResponse;
-import com.bookstudio.worker.domain.dto.response.WorkerListResponse;
+import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
+import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
+import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
+import com.bookstudio.worker.application.dto.response.WorkerListResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;

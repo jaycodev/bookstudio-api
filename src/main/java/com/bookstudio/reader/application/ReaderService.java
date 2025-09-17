@@ -1,12 +1,12 @@
 package com.bookstudio.reader.application;
 
-import com.bookstudio.reader.domain.dto.request.CreateReaderRequest;
-import com.bookstudio.reader.domain.dto.request.UpdateReaderRequest;
-import com.bookstudio.reader.domain.dto.response.ReaderDetailResponse;
-import com.bookstudio.reader.domain.dto.response.ReaderListResponse;
+import com.bookstudio.reader.application.dto.request.CreateReaderRequest;
+import com.bookstudio.reader.application.dto.request.UpdateReaderRequest;
+import com.bookstudio.reader.application.dto.response.ReaderDetailResponse;
+import com.bookstudio.reader.application.dto.response.ReaderListResponse;
 import com.bookstudio.reader.domain.model.Reader;
 import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;

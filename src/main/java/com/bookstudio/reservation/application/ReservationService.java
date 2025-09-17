@@ -1,9 +1,9 @@
 package com.bookstudio.reservation.application;
 
-import com.bookstudio.reservation.domain.dto.request.CreateReservationRequest;
-import com.bookstudio.reservation.domain.dto.request.UpdateReservationRequest;
-import com.bookstudio.reservation.domain.dto.response.ReservationDetailResponse;
-import com.bookstudio.reservation.domain.dto.response.ReservationListResponse;
+import com.bookstudio.reservation.application.dto.request.CreateReservationRequest;
+import com.bookstudio.reservation.application.dto.request.UpdateReservationRequest;
+import com.bookstudio.reservation.application.dto.response.ReservationDetailResponse;
+import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.reservation.domain.model.Reservation;
 import com.bookstudio.reservation.infrastructure.repository.ReservationRepository;
 import com.bookstudio.copy.application.CopyService;

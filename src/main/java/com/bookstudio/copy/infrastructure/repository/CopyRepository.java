@@ -6,27 +6,27 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.copy.domain.dto.response.CopyDetailResponse;
-import com.bookstudio.copy.domain.dto.response.CopyListResponse;
+import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
+import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.location.domain.model.Location;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 public interface CopyRepository extends JpaRepository<Copy, Long> {
     @Query("""
-        SELECT new com.bookstudio.copy.domain.dto.response.CopyListResponse(
+        SELECT new com.bookstudio.copy.application.dto.response.CopyListResponse(
             c.id,
             c.code,
-            new com.bookstudio.copy.domain.dto.response.CopyListResponse$Book(
+            new com.bookstudio.copy.application.dto.response.CopyListResponse$Book(
                 b.id,
                 b.coverUrl,
                 b.title
             ),
-            new com.bookstudio.copy.domain.dto.response.CopyListResponse$Shelf(
+            new com.bookstudio.copy.application.dto.response.CopyListResponse$Shelf(
                 s.code,
                 s.floor
             ),
-            new com.bookstudio.copy.domain.dto.response.CopyListResponse$Location(
+            new com.bookstudio.copy.application.dto.response.CopyListResponse$Location(
                 l.name
             ),
             c.status,
@@ -45,21 +45,21 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
             c.id AS value,
             c.code AS label
         FROM Copy c
-        WHERE c.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE
+        WHERE c.status = com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.copy.domain.dto.response.CopyDetailResponse(
+        SELECT new com.bookstudio.copy.application.dto.response.CopyDetailResponse(
             c.id,
             c.code,
-            new com.bookstudio.copy.domain.dto.response.CopyDetailResponse$Book(
+            new com.bookstudio.copy.application.dto.response.CopyDetailResponse$Book(
                 b.id,
                 b.isbn,
                 b.coverUrl,
                 b.title
             ),
-            new com.bookstudio.copy.domain.dto.response.CopyDetailResponse$Shelf(
+            new com.bookstudio.copy.application.dto.response.CopyDetailResponse$Shelf(
                 s.id,
                 s.code,
                 s.floor,

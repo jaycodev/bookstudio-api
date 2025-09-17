@@ -5,15 +5,15 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.loan.domain.dto.response.LoanDetailResponse;
+import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
 import com.bookstudio.loan.domain.model.Loan;
 import com.bookstudio.loan.domain.model.LoanItem;
 import com.bookstudio.loan.domain.model.LoanItemId;
 
 public interface LoanItemRepository extends JpaRepository<LoanItem, LoanItemId> {
     @Query("""
-        SELECT new com.bookstudio.loan.domain.dto.response.LoanDetailResponse$LoanItem(
-            new com.bookstudio.loan.domain.dto.response.LoanDetailResponse$LoanItem$Copy(
+        SELECT new com.bookstudio.loan.application.dto.response.LoanDetailResponse$LoanItem(
+            new com.bookstudio.loan.application.dto.response.LoanDetailResponse$LoanItem$Copy(
                 c.id,
                 c.code,
                 c.barcode,

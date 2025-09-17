@@ -6,21 +6,21 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.reservation.domain.dto.response.ReservationDetailResponse;
-import com.bookstudio.reservation.domain.dto.response.ReservationListResponse;
+import com.bookstudio.reservation.application.dto.response.ReservationDetailResponse;
+import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.reservation.domain.model.Reservation;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("""
-        SELECT new com.bookstudio.reservation.domain.dto.response.ReservationListResponse(
+        SELECT new com.bookstudio.reservation.application.dto.response.ReservationListResponse(
             r.id,
             r.code,
-            new com.bookstudio.reservation.domain.dto.response.ReservationListResponse$Reader(
+            new com.bookstudio.reservation.application.dto.response.ReservationListResponse$Reader(
                 rd.id,
                 rd.code,
                 CONCAT(rd.firstName, ' ', rd.lastName)
             ),
-            new com.bookstudio.reservation.domain.dto.response.ReservationListResponse$Copy(
+            new com.bookstudio.reservation.application.dto.response.ReservationListResponse$Copy(
                 c.code
             ),
             r.reservationDate,
@@ -34,15 +34,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<ReservationListResponse> findList();
 
     @Query("""
-        SELECT new com.bookstudio.reservation.domain.dto.response.ReservationDetailResponse(
+        SELECT new com.bookstudio.reservation.application.dto.response.ReservationDetailResponse(
             r.id,
             r.code,
-            new com.bookstudio.reservation.domain.dto.response.ReservationDetailResponse$Reader(
+            new com.bookstudio.reservation.application.dto.response.ReservationDetailResponse$Reader(
                 rd.id,
                 rd.code,
                 CONCAT(rd.firstName, ' ', rd.lastName)
             ),
-            new com.bookstudio.reservation.domain.dto.response.ReservationDetailResponse$Copy(
+            new com.bookstudio.reservation.application.dto.response.ReservationDetailResponse$Copy(
                 c.id,
                 c.code,
                 c.barcode,

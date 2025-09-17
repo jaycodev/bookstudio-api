@@ -1,13 +1,13 @@
 package com.bookstudio.copy.presentation;
 
 import com.bookstudio.copy.application.CopyService;
-import com.bookstudio.copy.domain.dto.request.CreateCopyRequest;
-import com.bookstudio.copy.domain.dto.request.UpdateCopyRequest;
-import com.bookstudio.copy.domain.dto.response.CopyDetailResponse;
-import com.bookstudio.copy.domain.dto.response.CopyListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.copy.application.dto.request.CreateCopyRequest;
+import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
+import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
+import com.bookstudio.copy.application.dto.response.CopyListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityNotFoundException;

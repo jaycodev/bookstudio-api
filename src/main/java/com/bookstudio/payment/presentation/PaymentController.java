@@ -1,12 +1,12 @@
 package com.bookstudio.payment.presentation;
 
 import com.bookstudio.payment.application.PaymentService;
-import com.bookstudio.payment.domain.dto.request.CreatePaymentRequest;
-import com.bookstudio.payment.domain.dto.request.UpdatePaymentRequest;
-import com.bookstudio.payment.domain.dto.response.PaymentDetailResponse;
-import com.bookstudio.payment.domain.dto.response.PaymentListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.payment.application.dto.request.CreatePaymentRequest;
+import com.bookstudio.payment.application.dto.request.UpdatePaymentRequest;
+import com.bookstudio.payment.application.dto.response.PaymentDetailResponse;
+import com.bookstudio.payment.application.dto.response.PaymentListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

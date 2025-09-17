@@ -1,7 +1,7 @@
 package com.bookstudio.payment.infrastructure.repository;
 
-import com.bookstudio.payment.domain.dto.response.PaymentDetailResponse;
-import com.bookstudio.payment.domain.dto.response.PaymentListResponse;
+import com.bookstudio.payment.application.dto.response.PaymentDetailResponse;
+import com.bookstudio.payment.application.dto.response.PaymentListResponse;
 import com.bookstudio.payment.domain.model.Payment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
-        SELECT new com.bookstudio.payment.domain.dto.response.PaymentListResponse(
+        SELECT new com.bookstudio.payment.application.dto.response.PaymentListResponse(
             p.id,
             p.code,
             COUNT(f),
-            new com.bookstudio.payment.domain.dto.response.PaymentListResponse$Reader(
+            new com.bookstudio.payment.application.dto.response.PaymentListResponse$Reader(
                 r.id,
                 r.code,
                 CONCAT(r.firstName, ' ', r.lastName)
@@ -35,10 +35,10 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     List<PaymentListResponse> findList();
 
     @Query("""
-        SELECT new com.bookstudio.payment.domain.dto.response.PaymentDetailResponse(
+        SELECT new com.bookstudio.payment.application.dto.response.PaymentDetailResponse(
             p.id,
             p.code,
-            new com.bookstudio.payment.domain.dto.response.PaymentDetailResponse$Reader(
+            new com.bookstudio.payment.application.dto.response.PaymentDetailResponse$Reader(
                 r.id,
                 r.code,
                 CONCAT(r.firstName, ' ', r.lastName)

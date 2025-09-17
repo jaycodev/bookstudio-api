@@ -6,21 +6,21 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.fine.domain.dto.response.FineDetailResponse;
-import com.bookstudio.fine.domain.dto.response.FineListResponse;
+import com.bookstudio.fine.application.dto.response.FineDetailResponse;
+import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.fine.domain.model.Fine;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 public interface FineRepository extends JpaRepository<Fine, Long> {
     @Query("""
-        SELECT new com.bookstudio.fine.domain.dto.response.FineListResponse(
+        SELECT new com.bookstudio.fine.application.dto.response.FineListResponse(
             f.id,
             f.code,
-            new com.bookstudio.fine.domain.dto.response.FineListResponse$Loan(
+            new com.bookstudio.fine.application.dto.response.FineListResponse$Loan(
                 l.id,
                 l.code
             ),
-            new com.bookstudio.fine.domain.dto.response.FineListResponse$Copy(
+            new com.bookstudio.fine.application.dto.response.FineListResponse$Copy(
                 c.id,
                 c.code
             ),
@@ -42,16 +42,16 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
             f.id AS value,
             f.code AS label
         FROM Fine f
-        WHERE f.status = com.bookstudio.fine.domain.model.FineStatus.PENDIENTE
+        WHERE f.status = com.bookstudio.fine.domain.model.type.FineStatus.PENDIENTE
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.fine.domain.dto.response.FineDetailResponse(
+        SELECT new com.bookstudio.fine.application.dto.response.FineDetailResponse(
             f.id,
             f.code,
-            new com.bookstudio.fine.domain.dto.response.FineDetailResponse$LoanItem(
-                new com.bookstudio.fine.domain.dto.response.FineDetailResponse$LoanItem$Copy(
+            new com.bookstudio.fine.application.dto.response.FineDetailResponse$LoanItem(
+                new com.bookstudio.fine.application.dto.response.FineDetailResponse$LoanItem$Copy(
                     c.id,
                     c.code,
                     c.barcode,

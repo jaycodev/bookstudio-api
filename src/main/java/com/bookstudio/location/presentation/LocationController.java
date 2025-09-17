@@ -1,12 +1,12 @@
 package com.bookstudio.location.presentation;
 
 import com.bookstudio.location.application.LocationService;
-import com.bookstudio.location.domain.dto.request.CreateLocationRequest;
-import com.bookstudio.location.domain.dto.request.UpdateLocationRequest;
-import com.bookstudio.location.domain.dto.response.LocationDetailResponse;
-import com.bookstudio.location.domain.dto.response.LocationListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.location.application.dto.request.CreateLocationRequest;
+import com.bookstudio.location.application.dto.request.UpdateLocationRequest;
+import com.bookstudio.location.application.dto.response.LocationDetailResponse;
+import com.bookstudio.location.application.dto.response.LocationListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

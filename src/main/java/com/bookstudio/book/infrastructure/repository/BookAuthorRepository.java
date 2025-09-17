@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.book.domain.dto.response.BookDetailResponse;
+import com.bookstudio.book.application.dto.response.BookDetailResponse;
 import com.bookstudio.book.domain.model.Book;
 import com.bookstudio.book.domain.model.BookAuthor;
 import com.bookstudio.book.domain.model.BookAuthorId;

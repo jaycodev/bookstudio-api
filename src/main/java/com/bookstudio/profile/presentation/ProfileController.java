@@ -2,8 +2,8 @@ package com.bookstudio.profile.presentation;
 
 import com.bookstudio.auth.util.LoginConstants;
 import com.bookstudio.profile.application.ProfileService;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.worker.domain.model.Worker;
 
 import jakarta.servlet.http.HttpSession;

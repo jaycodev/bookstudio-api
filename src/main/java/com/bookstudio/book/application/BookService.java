@@ -1,10 +1,10 @@
 package com.bookstudio.book.application;
 
 import com.bookstudio.author.domain.model.Author;
-import com.bookstudio.book.domain.dto.request.CreateBookRequest;
-import com.bookstudio.book.domain.dto.request.UpdateBookRequest;
-import com.bookstudio.book.domain.dto.response.BookDetailResponse;
-import com.bookstudio.book.domain.dto.response.BookListResponse;
+import com.bookstudio.book.application.dto.request.CreateBookRequest;
+import com.bookstudio.book.application.dto.request.UpdateBookRequest;
+import com.bookstudio.book.application.dto.response.BookDetailResponse;
+import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.domain.model.Book;
 import com.bookstudio.book.domain.model.BookAuthor;
 import com.bookstudio.book.domain.model.BookAuthorId;
@@ -17,7 +17,7 @@ import com.bookstudio.category.application.CategoryService;
 import com.bookstudio.genre.domain.model.Genre;
 import com.bookstudio.language.application.LanguageService;
 import com.bookstudio.publisher.application.PublisherService;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityNotFoundException;

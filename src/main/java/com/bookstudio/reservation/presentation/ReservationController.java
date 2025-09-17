@@ -1,12 +1,12 @@
 package com.bookstudio.reservation.presentation;
 
 import com.bookstudio.reservation.application.ReservationService;
-import com.bookstudio.reservation.domain.dto.request.CreateReservationRequest;
-import com.bookstudio.reservation.domain.dto.request.UpdateReservationRequest;
-import com.bookstudio.reservation.domain.dto.response.ReservationDetailResponse;
-import com.bookstudio.reservation.domain.dto.response.ReservationListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.reservation.application.dto.request.CreateReservationRequest;
+import com.bookstudio.reservation.application.dto.request.UpdateReservationRequest;
+import com.bookstudio.reservation.application.dto.response.ReservationDetailResponse;
+import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

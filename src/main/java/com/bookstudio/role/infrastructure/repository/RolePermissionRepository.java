@@ -1,6 +1,6 @@
 package com.bookstudio.role.infrastructure.repository;
 
-import com.bookstudio.role.domain.dto.response.RoleDetailResponse;
+import com.bookstudio.role.application.dto.response.RoleDetailResponse;
 import com.bookstudio.role.domain.model.Role;
 import com.bookstudio.role.domain.model.RolePermission;
 import com.bookstudio.role.domain.model.RolePermissionId;

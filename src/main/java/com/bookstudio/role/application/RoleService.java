@@ -1,16 +1,16 @@
 package com.bookstudio.role.application;
 
-import com.bookstudio.role.domain.dto.request.CreateRoleRequest;
-import com.bookstudio.role.domain.dto.request.UpdateRoleRequest;
-import com.bookstudio.role.domain.dto.response.RoleDetailResponse;
-import com.bookstudio.role.domain.dto.response.RoleListResponse;
+import com.bookstudio.role.application.dto.request.CreateRoleRequest;
+import com.bookstudio.role.application.dto.request.UpdateRoleRequest;
+import com.bookstudio.role.application.dto.response.RoleDetailResponse;
+import com.bookstudio.role.application.dto.response.RoleListResponse;
 import com.bookstudio.role.domain.model.Permission;
 import com.bookstudio.role.domain.model.Role;
 import com.bookstudio.role.domain.model.RolePermission;
 import com.bookstudio.role.domain.model.RolePermissionId;
 import com.bookstudio.role.infrastructure.repository.RolePermissionRepository;
 import com.bookstudio.role.infrastructure.repository.RoleRepository;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

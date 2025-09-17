@@ -1,13 +1,13 @@
 package com.bookstudio.loan.presentation;
 
 import com.bookstudio.loan.application.LoanService;
-import com.bookstudio.loan.domain.dto.request.CreateLoanRequest;
-import com.bookstudio.loan.domain.dto.request.UpdateLoanRequest;
-import com.bookstudio.loan.domain.dto.response.LoanDetailResponse;
-import com.bookstudio.loan.domain.dto.response.LoanListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.loan.application.dto.request.CreateLoanRequest;
+import com.bookstudio.loan.application.dto.request.UpdateLoanRequest;
+import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
+import com.bookstudio.loan.application.dto.response.LoanListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityNotFoundException;

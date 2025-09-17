@@ -3,10 +3,10 @@ package com.bookstudio.reader.infrastructure.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.reader.domain.dto.response.ReaderDetailResponse;
-import com.bookstudio.reader.domain.dto.response.ReaderListResponse;
+import com.bookstudio.reader.application.dto.response.ReaderDetailResponse;
+import com.bookstudio.reader.application.dto.response.ReaderListResponse;
 import com.bookstudio.reader.domain.model.Reader;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
             r.id AS value,
             CONCAT(r.firstName, ' ', r.lastName) AS label
         FROM Reader r
-        WHERE r.status = com.bookstudio.reader.domain.model.ReaderStatus.ACTIVO
+        WHERE r.status = com.bookstudio.reader.domain.model.type.ReaderStatus.ACTIVO
         ORDER BY r.firstName, r.lastName
     """)
     List<OptionResponse> findForOptions();

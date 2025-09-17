@@ -1,9 +1,9 @@
 package com.bookstudio.book.infrastructure.repository;
 
-import com.bookstudio.book.domain.dto.response.BookDetailResponse;
-import com.bookstudio.book.domain.dto.response.BookListResponse;
+import com.bookstudio.book.application.dto.response.BookDetailResponse;
+import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.domain.model.Book;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,27 +13,27 @@ import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("""
-        SELECT new com.bookstudio.book.domain.dto.response.BookListResponse(
+        SELECT new com.bookstudio.book.application.dto.response.BookListResponse(
             b.id,
             b.isbn,
             b.coverUrl,
             b.title,
-            new com.bookstudio.book.domain.dto.response.BookListResponse$Category(
+            new com.bookstudio.book.application.dto.response.BookListResponse$Category(
                 c.id,
                 c.name
             ),
-            new com.bookstudio.book.domain.dto.response.BookListResponse$Publisher(
+            new com.bookstudio.book.application.dto.response.BookListResponse$Publisher(
                 p.id,
                 p.name
             ),
-            new com.bookstudio.book.domain.dto.response.BookListResponse$Language(
+            new com.bookstudio.book.application.dto.response.BookListResponse$Language(
                 l.id,
                 l.code,
                 l.name
             ),
-            new com.bookstudio.book.domain.dto.response.BookListResponse$Copies(
-                COALESCE(SUM(CASE WHEN cpy.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN cpy.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
+            new com.bookstudio.book.application.dto.response.BookListResponse$Copies(
+                COALESCE(SUM(CASE WHEN cpy.status <> com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN cpy.status = com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
             ),
             b.status
         )
@@ -52,17 +52,17 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             b.id AS value,
             b.title AS label
         FROM Book b
-        WHERE b.status = com.bookstudio.shared.domain.model.Status.ACTIVO
+        WHERE b.status = com.bookstudio.shared.domain.model.type.Status.ACTIVO
         ORDER BY b.title ASC
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.book.domain.dto.response.BookDetailResponse(
+        SELECT new com.bookstudio.book.application.dto.response.BookDetailResponse(
             b.id,
             b.title,
             b.isbn,
-            new com.bookstudio.book.domain.dto.response.BookDetailResponse$Language(
+            new com.bookstudio.book.application.dto.response.BookDetailResponse$Language(
                 l.id,
                 l.code,
                 l.name
@@ -71,11 +71,11 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             b.pages,
             b.description,
             b.coverUrl,
-            new com.bookstudio.book.domain.dto.response.BookDetailResponse$Publisher(
+            new com.bookstudio.book.application.dto.response.BookDetailResponse$Publisher(
                 p.id,
                 p.name
             ),
-            new com.bookstudio.book.domain.dto.response.BookDetailResponse$Category(
+            new com.bookstudio.book.application.dto.response.BookDetailResponse$Category(
                 c.id,
                 c.name
             ),
@@ -93,9 +93,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<BookDetailResponse> findDetailById(Long id);
 
     @Query("""
-        SELECT new com.bookstudio.book.domain.dto.response.BookListResponse$Copies(
-            COALESCE(SUM(CASE WHEN c.status <> com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
-            COALESCE(SUM(CASE WHEN c.status = com.bookstudio.copy.domain.model.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
+        SELECT new com.bookstudio.book.application.dto.response.BookListResponse$Copies(
+            COALESCE(SUM(CASE WHEN c.status <> com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN c.status = com.bookstudio.copy.domain.model.type.CopyStatus.DISPONIBLE THEN 1 ELSE 0 END), 0)
         )
         FROM Copy c
         WHERE c.book.id = :id

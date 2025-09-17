@@ -1,14 +1,14 @@
 package com.bookstudio.copy.application;
 
 import com.bookstudio.book.application.BookService;
-import com.bookstudio.copy.domain.dto.request.CreateCopyRequest;
-import com.bookstudio.copy.domain.dto.request.UpdateCopyRequest;
-import com.bookstudio.copy.domain.dto.response.CopyDetailResponse;
-import com.bookstudio.copy.domain.dto.response.CopyListResponse;
 import com.bookstudio.copy.infrastructure.repository.CopyRepository;
 import com.bookstudio.location.application.ShelfService;
+import com.bookstudio.copy.application.dto.request.CreateCopyRequest;
+import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
+import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
+import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.domain.model.Copy;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityManager;

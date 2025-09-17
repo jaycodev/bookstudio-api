@@ -3,8 +3,8 @@ package com.bookstudio.author.infrastructure.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.author.domain.dto.response.AuthorDetailResponse;
-import com.bookstudio.author.domain.dto.response.AuthorListResponse;
+import com.bookstudio.author.application.dto.response.AuthorDetailResponse;
+import com.bookstudio.author.application.dto.response.AuthorListResponse;
 import com.bookstudio.author.domain.model.Author;
 
 import java.util.List;
@@ -12,11 +12,11 @@ import java.util.Optional;
 
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     @Query("""
-        SELECT new com.bookstudio.author.domain.dto.response.AuthorListResponse(
+        SELECT new com.bookstudio.author.application.dto.response.AuthorListResponse(
             a.id,
             a.photoUrl,
             a.name,
-            new com.bookstudio.author.domain.dto.response.AuthorListResponse$Nationality(
+            new com.bookstudio.author.application.dto.response.AuthorListResponse$Nationality(
                 n.id,
                 n.code,
                 n.name
@@ -31,10 +31,10 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     List<AuthorListResponse> findList();
 
     @Query("""
-        SELECT new com.bookstudio.author.domain.dto.response.AuthorDetailResponse(
+        SELECT new com.bookstudio.author.application.dto.response.AuthorDetailResponse(
             a.id,
             a.name,
-            new com.bookstudio.author.domain.dto.response.AuthorDetailResponse$Nationality(
+            new com.bookstudio.author.application.dto.response.AuthorDetailResponse$Nationality(
                 n.id,
                 n.code,
                 n.name

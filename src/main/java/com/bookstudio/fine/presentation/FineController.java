@@ -1,12 +1,12 @@
 package com.bookstudio.fine.presentation;
 
 import com.bookstudio.fine.application.FineService;
-import com.bookstudio.fine.domain.dto.request.CreateFineRequest;
-import com.bookstudio.fine.domain.dto.request.UpdateFineRequest;
-import com.bookstudio.fine.domain.dto.response.FineDetailResponse;
-import com.bookstudio.fine.domain.dto.response.FineListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
+import com.bookstudio.fine.application.dto.request.CreateFineRequest;
+import com.bookstudio.fine.application.dto.request.UpdateFineRequest;
+import com.bookstudio.fine.application.dto.response.FineDetailResponse;
+import com.bookstudio.fine.application.dto.response.FineListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

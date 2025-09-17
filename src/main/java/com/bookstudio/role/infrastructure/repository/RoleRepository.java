@@ -6,10 +6,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.role.domain.dto.response.RoleDetailResponse;
-import com.bookstudio.role.domain.dto.response.RoleListResponse;
+import com.bookstudio.role.application.dto.response.RoleDetailResponse;
+import com.bookstudio.role.application.dto.response.RoleListResponse;
 import com.bookstudio.role.domain.model.Role;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 public interface RoleRepository extends JpaRepository<Role, Long>{
     @Query("""

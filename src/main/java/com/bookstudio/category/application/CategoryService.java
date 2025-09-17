@@ -1,11 +1,11 @@
 package com.bookstudio.category.application;
 
-import com.bookstudio.category.domain.dto.request.CreateCategoryRequest;
-import com.bookstudio.category.domain.dto.request.UpdateCategoryRequest;
-import com.bookstudio.category.domain.dto.response.CategoryDetailResponse;
-import com.bookstudio.category.domain.dto.response.CategoryListResponse;
 import com.bookstudio.category.infrastructure.repository.CategoryRepository;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.category.application.dto.request.CreateCategoryRequest;
+import com.bookstudio.category.application.dto.request.UpdateCategoryRequest;
+import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
+import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.category.domain.model.Category;
 
 import jakarta.persistence.EntityNotFoundException;

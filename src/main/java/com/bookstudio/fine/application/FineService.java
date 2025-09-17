@@ -1,13 +1,13 @@
 package com.bookstudio.fine.application;
 
-import com.bookstudio.fine.domain.dto.request.CreateFineRequest;
-import com.bookstudio.fine.domain.dto.request.UpdateFineRequest;
-import com.bookstudio.fine.domain.dto.response.FineDetailResponse;
-import com.bookstudio.fine.domain.dto.response.FineListResponse;
+import com.bookstudio.fine.application.dto.request.CreateFineRequest;
+import com.bookstudio.fine.application.dto.request.UpdateFineRequest;
+import com.bookstudio.fine.application.dto.response.FineDetailResponse;
+import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.fine.domain.model.Fine;
 import com.bookstudio.fine.infrastructure.repository.FineRepository;
 import com.bookstudio.loan.application.LoanItemService;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

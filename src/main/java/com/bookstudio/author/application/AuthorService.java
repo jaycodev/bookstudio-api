@@ -1,9 +1,9 @@
 package com.bookstudio.author.application;
 
-import com.bookstudio.author.domain.dto.request.CreateAuthorRequest;
-import com.bookstudio.author.domain.dto.request.UpdateAuthorRequest;
-import com.bookstudio.author.domain.dto.response.AuthorDetailResponse;
-import com.bookstudio.author.domain.dto.response.AuthorListResponse;
+import com.bookstudio.author.application.dto.request.CreateAuthorRequest;
+import com.bookstudio.author.application.dto.request.UpdateAuthorRequest;
+import com.bookstudio.author.application.dto.response.AuthorDetailResponse;
+import com.bookstudio.author.application.dto.response.AuthorListResponse;
 import com.bookstudio.author.domain.model.Author;
 import com.bookstudio.author.infrastructure.repository.AuthorRepository;
 import com.bookstudio.nationality.application.NationalityService;

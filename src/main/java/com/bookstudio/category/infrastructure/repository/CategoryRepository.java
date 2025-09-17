@@ -3,10 +3,10 @@ package com.bookstudio.category.infrastructure.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.bookstudio.category.domain.dto.response.CategoryDetailResponse;
-import com.bookstudio.category.domain.dto.response.CategoryListResponse;
+import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
+import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.category.domain.model.Category;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             c.id AS value,
             c.name AS label
         FROM Category c
-        WHERE c.status = com.bookstudio.shared.domain.model.Status.ACTIVO
+        WHERE c.status = com.bookstudio.shared.domain.model.type.Status.ACTIVO
         ORDER BY c.name ASC
     """)
     List<OptionResponse> findForOptions();

@@ -2,7 +2,7 @@ package com.bookstudio.dashboard.presentation;
 
 import com.bookstudio.dashboard.application.DashboardService;
 import com.bookstudio.dashboard.domain.model.DashboardData;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

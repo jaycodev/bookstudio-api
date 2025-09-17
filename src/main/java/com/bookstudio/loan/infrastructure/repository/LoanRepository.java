@@ -1,9 +1,9 @@
 package com.bookstudio.loan.infrastructure.repository;
 
-import com.bookstudio.loan.domain.dto.response.LoanDetailResponse;
-import com.bookstudio.loan.domain.dto.response.LoanListResponse;
+import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
+import com.bookstudio.loan.application.dto.response.LoanListResponse;
 import com.bookstudio.loan.domain.model.Loan;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,21 +13,21 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface LoanRepository extends JpaRepository<Loan, Long> {
     @Query("""
-        SELECT new com.bookstudio.loan.domain.dto.response.LoanListResponse(
+        SELECT new com.bookstudio.loan.application.dto.response.LoanListResponse(
             l.id,
             l.code,
-            new com.bookstudio.loan.domain.dto.response.LoanListResponse$Reader(
+            new com.bookstudio.loan.application.dto.response.LoanListResponse$Reader(
                 r.id,
                 r.code,
                 CONCAT(r.firstName, ' ', r.lastName)
             ),
             l.loanDate,
-            new com.bookstudio.loan.domain.dto.response.LoanListResponse$ItemCounts(
-                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.PRESTADO THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.DEVUELTO THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.RETRASADO THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.EXTRAVIADO THEN 1 ELSE 0 END), 0),
-                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.CANCELADO THEN 1 ELSE 0 END), 0)
+            new com.bookstudio.loan.application.dto.response.LoanListResponse$ItemCounts(
+                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.PRESTADO THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.DEVUELTO THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.RETRASADO THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.EXTRAVIADO THEN 1 ELSE 0 END), 0),
+                COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.CANCELADO THEN 1 ELSE 0 END), 0)
             )
         )
         FROM Loan l
@@ -48,10 +48,10 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.loan.domain.dto.response.LoanDetailResponse(
+        SELECT new com.bookstudio.loan.application.dto.response.LoanDetailResponse(
             l.id,
             l.code,
-            new com.bookstudio.loan.domain.dto.response.LoanDetailResponse$Reader(
+            new com.bookstudio.loan.application.dto.response.LoanDetailResponse$Reader(
                 r.id,
                 r.code,
                 CONCAT(r.firstName, ' ', r.lastName)
@@ -67,12 +67,12 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
     Optional<LoanDetailResponse> findDetailById(Long id);
 
     @Query("""
-        SELECT new com.bookstudio.loan.domain.dto.response.LoanListResponse$ItemCounts(
-            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.PRESTADO THEN 1 ELSE 0 END), 0),
-            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.DEVUELTO THEN 1 ELSE 0 END), 0),
-            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.RETRASADO THEN 1 ELSE 0 END), 0),
-            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.EXTRAVIADO THEN 1 ELSE 0 END), 0),
-            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.LoanItemStatus.CANCELADO THEN 1 ELSE 0 END), 0)
+        SELECT new com.bookstudio.loan.application.dto.response.LoanListResponse$ItemCounts(
+            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.PRESTADO THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.DEVUELTO THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.RETRASADO THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.EXTRAVIADO THEN 1 ELSE 0 END), 0),
+            COALESCE(SUM(CASE WHEN li.status = com.bookstudio.loan.domain.model.type.LoanItemStatus.CANCELADO THEN 1 ELSE 0 END), 0)
         )
         FROM LoanItem li
         WHERE li.loan.id = :id

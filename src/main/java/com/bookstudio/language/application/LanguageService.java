@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bookstudio.language.domain.model.Language;
 import com.bookstudio.language.infrastructure.repository.LanguageRepository;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,17 +1,17 @@
 package com.bookstudio.location.application;
 
 import com.bookstudio.copy.infrastructure.repository.CopyRepository;
-import com.bookstudio.location.domain.dto.request.CreateLocationRequest;
-import com.bookstudio.location.domain.dto.request.CreateShelfRequest;
-import com.bookstudio.location.domain.dto.request.UpdateLocationRequest;
-import com.bookstudio.location.domain.dto.request.UpdateShelfRequest;
-import com.bookstudio.location.domain.dto.response.LocationDetailResponse;
-import com.bookstudio.location.domain.dto.response.LocationListResponse;
+import com.bookstudio.location.application.dto.request.CreateLocationRequest;
+import com.bookstudio.location.application.dto.request.CreateShelfRequest;
+import com.bookstudio.location.application.dto.request.UpdateLocationRequest;
+import com.bookstudio.location.application.dto.request.UpdateShelfRequest;
+import com.bookstudio.location.application.dto.response.LocationDetailResponse;
+import com.bookstudio.location.application.dto.response.LocationListResponse;
 import com.bookstudio.location.domain.model.Location;
 import com.bookstudio.location.domain.model.Shelf;
 import com.bookstudio.location.infrastructure.repository.LocationRepository;
 import com.bookstudio.location.infrastructure.repository.ShelfRepository;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;

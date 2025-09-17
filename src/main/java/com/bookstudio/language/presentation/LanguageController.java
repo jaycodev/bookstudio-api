@@ -1,8 +1,8 @@
 package com.bookstudio.language.presentation;
 
 import com.bookstudio.language.application.LanguageService;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,13 +1,13 @@
 package com.bookstudio.category.presentation;
 
 import com.bookstudio.category.application.CategoryService;
-import com.bookstudio.category.domain.dto.request.CreateCategoryRequest;
-import com.bookstudio.category.domain.dto.request.UpdateCategoryRequest;
-import com.bookstudio.category.domain.dto.response.CategoryDetailResponse;
-import com.bookstudio.category.domain.dto.response.CategoryListResponse;
-import com.bookstudio.shared.domain.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.domain.dto.response.ApiResponse;
-import com.bookstudio.shared.domain.dto.response.OptionResponse;
+import com.bookstudio.category.application.dto.request.CreateCategoryRequest;
+import com.bookstudio.category.application.dto.request.UpdateCategoryRequest;
+import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
+import com.bookstudio.category.application.dto.response.CategoryListResponse;
+import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
+import com.bookstudio.shared.application.dto.response.ApiResponse;
+import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
