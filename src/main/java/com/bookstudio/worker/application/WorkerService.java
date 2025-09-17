@@ -98,6 +98,7 @@ public class WorkerService {
                 worker.getEmail(),
                 worker.getFullName(),
                 new WorkerListResponse.Role(
+                        worker.getRole().getId(),
                         worker.getRole().getName()),
                 worker.getStatus());
     }

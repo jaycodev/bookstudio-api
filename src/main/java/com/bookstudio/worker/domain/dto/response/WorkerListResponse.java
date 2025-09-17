@@ -12,6 +12,7 @@ public record WorkerListResponse(
         WorkerStatus status) {
 
     public record Role(
+            Long id,
             String name) {
     }
 }
