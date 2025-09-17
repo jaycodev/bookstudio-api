@@ -29,7 +29,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             c.id AS value,
             c.name AS label
         FROM Category c
-        WHERE c.status = com.bookstudio.shared.domain.model.type.Status.ACTIVO
+        WHERE c.status = 'ACTIVO'
         ORDER BY c.name ASC
     """)
     List<OptionResponse> findForOptions();
