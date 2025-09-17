@@ -97,12 +97,16 @@ public class CopyService {
         return new CopyListResponse(
                 copy.getId(),
                 copy.getCode(),
+
                 copy.getBook().getId(),
                 copy.getBook().getCoverUrl(),
                 copy.getBook().getTitle(),
+
                 copy.getShelf().getCode(),
                 copy.getShelf().getFloor(),
+
                 copy.getShelf().getLocation().getName(),
+
                 copy.getStatus(),
                 copy.getCondition());
     }

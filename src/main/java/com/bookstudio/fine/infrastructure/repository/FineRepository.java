@@ -13,22 +13,20 @@ import com.bookstudio.shared.application.dto.response.OptionResponse;
 
 public interface FineRepository extends JpaRepository<Fine, Long> {
     @Query("""
-        SELECT new com.bookstudio.fine.application.dto.response.FineListResponse(
-            f.id,
-            f.code,
-            new com.bookstudio.fine.application.dto.response.FineListResponse$Loan(
-                l.id,
-                l.code
-            ),
-            new com.bookstudio.fine.application.dto.response.FineListResponse$Copy(
-                c.id,
-                c.code
-            ),
-            f.amount,
-            f.daysLate,
-            f.issuedAt,
-            f.status
-        )
+        SELECT 
+            f.id AS id,
+            f.code AS code,
+
+            l.id AS loanId,
+            l.code AS loanCode,
+
+            c.id AS copyId,
+            c.code AS copyCode,
+
+            f.amount AS amount,
+            f.daysLate AS daysLate,
+            f.issuedAt AS issuedAt,
+            f.status AS status
         FROM Fine f
         JOIN f.loanItem li
         JOIN li.loan l
@@ -42,30 +40,28 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
             f.id AS value,
             f.code AS label
         FROM Fine f
-        WHERE f.status = com.bookstudio.fine.domain.model.type.FineStatus.PENDIENTE
+        WHERE f.status = 'PENDIENTE'
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.fine.application.dto.response.FineDetailResponse(
-            f.id,
-            f.code,
-            new com.bookstudio.fine.application.dto.response.FineDetailResponse$LoanItem(
-                new com.bookstudio.fine.application.dto.response.FineDetailResponse$LoanItem$Copy(
-                    c.id,
-                    c.code,
-                    c.barcode,
-                    c.status
-                ),
-                li.dueDate,
-                li.returnDate,
-                li.status
-            ),
-            f.amount,
-            f.daysLate,
-            f.status,
-            f.issuedAt
-        )
+        SELECT 
+            f.id AS id,
+            f.code AS code,
+
+            c.id AS loanItemCopyId,
+            c.code AS loanItemCopyCode,
+            c.barcode AS loanItemCopyBarcode,
+            c.status AS loanItemCopyStatus,
+
+            li.dueDate AS loanItemDueDate,
+            li.returnDate AS loanItemReturnDate,
+            li.status AS loanItemStatus,
+
+            f.amount AS amount,
+            f.daysLate AS daysLate,
+            f.status AS status,
+            f.issuedAt AS issuedAt
         FROM Fine f
         JOIN f.loanItem li
         JOIN li.copy c

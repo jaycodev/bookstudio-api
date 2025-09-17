@@ -82,12 +82,13 @@ public class FineService {
         return new FineListResponse(
                 fine.getId(),
                 fine.getCode(),
-                new FineListResponse.Loan(
-                        fine.getLoanItem().getLoan().getId(),
-                        fine.getLoanItem().getLoan().getCode()),
-                new FineListResponse.Copy(
-                        fine.getLoanItem().getCopy().getId(),
-                        fine.getLoanItem().getCopy().getCode()),
+
+                fine.getLoanItem().getLoan().getId(),
+                fine.getLoanItem().getLoan().getCode(),
+
+                fine.getLoanItem().getCopy().getId(),
+                fine.getLoanItem().getCopy().getCode(),
+
                 fine.getAmount(),
                 fine.getDaysLate(),
                 fine.getIssuedAt(),
