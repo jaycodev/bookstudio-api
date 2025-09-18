@@ -130,10 +130,11 @@ public class PublisherService {
                 publisher.getId(),
                 publisher.getPhotoUrl(),
                 publisher.getName(),
-                new PublisherListResponse.Nationality(
-                        publisher.getNationality().getId(),
-                        publisher.getNationality().getCode(),
-                        publisher.getNationality().getName()),
+
+                publisher.getNationality().getId(),
+                publisher.getNationality().getCode(),
+                publisher.getNationality().getName(),
+
                 publisher.getWebsite(),
                 publisher.getAddress(),
                 publisher.getStatus());

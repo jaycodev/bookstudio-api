@@ -13,52 +13,50 @@ import java.util.Optional;
 
 public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     @Query("""
-        SELECT new com.bookstudio.publisher.application.dto.response.PublisherListResponse(
-            p.id,
-            p.photoUrl,
-            p.name,
-            new com.bookstudio.publisher.application.dto.response.PublisherListResponse$Nationality(
-                n.id,
-                n.code,
-                n.name
-            ),
-            p.website,
-            p.address,
-            p.status
-        )
+        SELECT 
+            p.id AS id,
+            p.photoUrl AS photoUrl,
+            p.name AS name,
+
+            n.id AS nationalityId,
+            n.code AS nationalityCode,
+            n.name AS nationalityName,
+
+            p.website AS website,
+            p.address AS address,
+            p.status AS status
         FROM Publisher p
         JOIN p.nationality n
         ORDER BY p.id DESC
     """)
     List<PublisherListResponse> findList();
 
-
     @Query("""
         SELECT
             p.id AS value,
             p.name AS label
         FROM Publisher p
-        WHERE p.status = com.bookstudio.shared.domain.model.type.Status.ACTIVO
+        WHERE p.status = 'ACTIVO'
         ORDER BY p.name ASC
     """)
     List<OptionResponse> findForOptions();
 
     @Query("""
-        SELECT new com.bookstudio.publisher.application.dto.response.PublisherDetailResponse(
-            p.id,
-            p.name,
-            new com.bookstudio.publisher.application.dto.response.PublisherDetailResponse$Nationality(
-                n.id,
-                n.code,
-                n.name
-            ),
-            p.foundationYear,
-            p.website,
-            p.address,
-            p.status,
-            p.photoUrl,
-            NULL
-        )
+        SELECT 
+            p.id AS id,
+            p.name AS name,
+
+            n.id AS nationalityId,
+            n.code AS nationalityCode,
+            n.name AS nationalityName,
+
+            p.foundationYear AS foundationYear,
+            p.website AS website,
+            p.address AS address,
+            p.status AS status,
+            p.photoUrl AS photoUrl,
+            
+            NULL AS genres
         FROM Publisher p
         JOIN p.nationality n
         WHERE p.id = :id
