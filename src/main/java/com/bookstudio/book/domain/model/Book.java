@@ -58,6 +58,6 @@ public class Book {
     private Status status;
 
     @Builder.Default
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Copy> copies = new ArrayList<>();
 }

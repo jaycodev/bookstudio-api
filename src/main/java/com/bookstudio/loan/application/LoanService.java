@@ -28,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -135,6 +137,11 @@ public class LoanService {
     }
 
     public LoanListResponse toListResponse(Loan loan) {
+        Map<LoanItemStatus, Long> counts = loan.getLoanItems().stream()
+                .collect(Collectors.groupingBy(
+                        LoanItem::getStatus,
+                        Collectors.counting()));
+
         return new LoanListResponse(
                 loan.getId(),
                 loan.getCode(),
@@ -145,10 +152,10 @@ public class LoanService {
 
                 loan.getLoanDate(),
 
-                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.PRESTADO).count(),
-                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.DEVUELTO).count(),
-                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.RETRASADO).count(),
-                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.EXTRAVIADO).count(),
-                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.CANCELADO).count());
+                counts.getOrDefault(LoanItemStatus.PRESTADO, 0L),
+                counts.getOrDefault(LoanItemStatus.DEVUELTO, 0L),
+                counts.getOrDefault(LoanItemStatus.RETRASADO, 0L),
+                counts.getOrDefault(LoanItemStatus.EXTRAVIADO, 0L),
+                counts.getOrDefault(LoanItemStatus.CANCELADO, 0L));
     }
 }

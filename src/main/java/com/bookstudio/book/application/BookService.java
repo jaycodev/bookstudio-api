@@ -14,7 +14,8 @@ import com.bookstudio.book.infrastructure.repository.BookAuthorRepository;
 import com.bookstudio.book.infrastructure.repository.BookGenreRepository;
 import com.bookstudio.book.infrastructure.repository.BookRepository;
 import com.bookstudio.category.application.CategoryService;
-import com.bookstudio.copy.infrastructure.repository.CopyRepository;
+import com.bookstudio.copy.domain.model.Copy;
+import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.genre.domain.model.Genre;
 import com.bookstudio.language.application.LanguageService;
 import com.bookstudio.publisher.application.PublisherService;
@@ -27,7 +28,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,6 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
-    private final CopyRepository copyRepository;
 
     private final LanguageService languageService;
     private final PublisherService publisherService;
@@ -174,6 +176,11 @@ public class BookService {
     }
 
     private BookListResponse toListResponse(Book book) {
+        Map<CopyStatus, Long> counts = book.getCopies().stream()
+                .collect(Collectors.groupingBy(
+                        Copy::getStatus,
+                        Collectors.counting()));
+
         return new BookListResponse(
                 book.getId(),
                 book.getIsbn(),
@@ -190,8 +197,11 @@ public class BookService {
                 book.getLanguage().getCode(),
                 book.getLanguage().getName(),
 
-                copyRepository.countLoanedByBookId(book.getId()),
-                copyRepository.countAvailableByBookId(book.getId()),
+                counts.entrySet().stream()
+                        .filter(entry -> entry.getKey() != CopyStatus.DISPONIBLE)
+                        .mapToLong(Map.Entry::getValue)
+                        .sum(),
+                counts.getOrDefault(CopyStatus.DISPONIBLE, 0L),
 
                 book.getStatus());
     }
