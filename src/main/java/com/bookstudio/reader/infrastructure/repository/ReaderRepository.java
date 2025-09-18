@@ -31,7 +31,7 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
             r.id AS value,
             CONCAT(r.firstName, ' ', r.lastName) AS label
         FROM Reader r
-        WHERE r.status = com.bookstudio.reader.domain.model.type.ReaderStatus.ACTIVO
+        WHERE r.status = 'ACTIVO'
         ORDER BY r.firstName, r.lastName
     """)
     List<OptionResponse> findForOptions();
