@@ -130,10 +130,11 @@ public class PaymentService {
                 payment.getId(),
                 payment.getCode(),
                 paymentFineRepository.countByPayment(payment),
-                new PaymentListResponse.Reader(
-                        payment.getReader().getId(),
-                        payment.getReader().getCode(),
-                        payment.getReader().getFullName()),
+
+                payment.getReader().getId(),
+                payment.getReader().getCode(),
+                payment.getReader().getFullName(),
+
                 payment.getAmount(),
                 payment.getPaymentDate(),
                 payment.getMethod());

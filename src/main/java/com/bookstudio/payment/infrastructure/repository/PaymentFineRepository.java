@@ -12,9 +12,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface PaymentFineRepository extends JpaRepository<PaymentFine, PaymentFineId> {
     @Query("""
-        SELECT new com.bookstudio.payment.application.dto.response.PaymentDetailResponse$FineItem(
-            f.id, f.code, f.amount, f.status
-        )
+        SELECT 
+            f.id AS id,
+            f.code AS code,
+            f.amount AS amount,
+            f.status AS status
         FROM PaymentFine pf
         JOIN pf.fine f
         WHERE pf.payment.id = :id

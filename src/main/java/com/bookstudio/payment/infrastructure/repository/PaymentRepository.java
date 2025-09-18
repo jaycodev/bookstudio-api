@@ -12,19 +12,18 @@ import java.util.Optional;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
-        SELECT new com.bookstudio.payment.application.dto.response.PaymentListResponse(
-            p.id,
-            p.code,
-            COUNT(f),
-            new com.bookstudio.payment.application.dto.response.PaymentListResponse$Reader(
-                r.id,
-                r.code,
-                CONCAT(r.firstName, ' ', r.lastName)
-            ),
-            p.amount,
-            p.paymentDate,
-            p.method
-        )
+        SELECT 
+            p.id AS id,
+            p.code AS code,
+            COUNT(f) AS fineCount,
+
+            r.id AS readerId,
+            r.code AS readerCode,
+            CONCAT(r.firstName, ' ', r.lastName) AS readerFullName,
+
+            p.amount AS amount,
+            p.paymentDate AS paymentDate,
+            p.method AS method
         FROM Payment p
         JOIN p.reader r
         JOIN PaymentFine pf ON pf.payment = p
@@ -34,20 +33,21 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     """)
     List<PaymentListResponse> findList();
 
+
     @Query("""
-        SELECT new com.bookstudio.payment.application.dto.response.PaymentDetailResponse(
-            p.id,
-            p.code,
-            new com.bookstudio.payment.application.dto.response.PaymentDetailResponse$Reader(
-                r.id,
-                r.code,
-                CONCAT(r.firstName, ' ', r.lastName)
-            ),
-            p.amount,
-            p.paymentDate,
-            p.method,
-            NULL
-        )
+        SELECT 
+            p.id AS id,
+            p.code AS code,
+
+            r.id AS readerId,
+            r.code AS readerCode,
+            CONCAT(r.firstName, ' ', r.lastName) AS readerFullName,
+
+            p.amount AS amount,
+            p.paymentDate AS paymentDate,
+            p.method AS method,
+            
+            NULL AS fines
         FROM Payment p
         JOIN p.reader r
         WHERE p.id = :id

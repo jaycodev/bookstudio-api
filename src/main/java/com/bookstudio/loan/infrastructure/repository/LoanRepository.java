@@ -57,7 +57,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             l.loanDate AS loanDate,
             l.observation AS observation,
             
-            NULL
+            NULL AS items
         FROM Loan l
         JOIN l.reader r
         WHERE l.id = :id
