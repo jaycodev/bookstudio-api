@@ -138,11 +138,17 @@ public class LoanService {
         return new LoanListResponse(
                 loan.getId(),
                 loan.getCode(),
-                new LoanListResponse.Reader(
-                        loan.getReader().getId(),
-                        loan.getReader().getCode(),
-                        loan.getReader().getFullName()),
+
+                loan.getReader().getId(),
+                loan.getReader().getCode(),
+                loan.getReader().getFullName(),
+
                 loan.getLoanDate(),
-                loanRepository.findItemCountsById(loan.getId()));
+
+                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.PRESTADO).count(),
+                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.DEVUELTO).count(),
+                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.RETRASADO).count(),
+                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.EXTRAVIADO).count(),
+                loan.getLoanItems().stream().filter(li -> li.getStatus() == LoanItemStatus.CANCELADO).count());
     }
 }

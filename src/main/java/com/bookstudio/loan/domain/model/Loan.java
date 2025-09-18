@@ -34,7 +34,7 @@ public class Loan {
     @Column(columnDefinition = "TEXT")
     private String observation;
 
-    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<LoanItem> loanItems = new ArrayList<>();
 }

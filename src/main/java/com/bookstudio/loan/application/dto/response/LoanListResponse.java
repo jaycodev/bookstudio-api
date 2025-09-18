@@ -1,50 +1,76 @@
 package com.bookstudio.loan.application.dto.response;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({ "id", "code", "reader", "loanDate", "itemCount", "statusCounts" })
 public record LoanListResponse(
         Long id,
         String code,
-        Reader reader,
+
+        @JsonIgnore Long readerId,
+        @JsonIgnore String readerCode,
+        @JsonIgnore String readerFullName,
+
         LocalDate loanDate,
         Long itemCount,
-        Map<String, Long> statusCounts) {
+
+        @JsonIgnore Map<String, Long> statusCounts) {
 
     public LoanListResponse(
             Long id,
             String code,
-            Reader reader,
+
+            Long readerId,
+            String readerCode,
+            String readerFullName,
+
             LocalDate loanDate,
-            ItemCounts counts) {
+
+            Long borrowedCount,
+            Long returnedCount,
+            Long overdueCount,
+            Long lostCount,
+            Long canceledCount) {
+
         this(
                 id,
                 code,
-                reader,
+                readerId,
+                readerCode,
+                readerFullName,
                 loanDate,
-                counts.total(),
-                Map.of(
-                        "borrowed", counts.borrowed(),
-                        "returned", counts.returned(),
-                        "overdue", counts.overdue(),
-                        "lost", counts.lost(),
-                        "canceled", counts.canceled()));
+                borrowedCount + returnedCount + overdueCount + lostCount + canceledCount,
+                buildStatusCounts(borrowedCount, returnedCount, overdueCount, lostCount, canceledCount));
     }
 
-    public record Reader(
-            Long id,
-            String code,
-            String fullName) {
+    private static Map<String, Long> buildStatusCounts(
+            Long borrowed, Long returned, Long overdue, Long lost, Long canceled) {
+        Map<String, Long> map = new LinkedHashMap<>();
+        map.put("borrowed", borrowed);
+        map.put("returned", returned);
+        map.put("overdue", overdue);
+        map.put("lost", lost);
+        map.put("canceled", canceled);
+        return map;
     }
 
-    public record ItemCounts(
-            Long borrowed,
-            Long returned,
-            Long overdue,
-            Long lost,
-            Long canceled) {
-        public Long total() {
-            return borrowed + returned + overdue + lost + canceled;
-        }
+    @JsonGetter("reader")
+    public Map<String, Object> getReader() {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("id", readerId());
+        map.put("code", readerCode());
+        map.put("fullName", readerFullName());
+        return map;
+    }
+
+    @JsonGetter("statusCounts")
+    public Map<String, Long> getStatusCounts() {
+        return statusCounts();
     }
 }

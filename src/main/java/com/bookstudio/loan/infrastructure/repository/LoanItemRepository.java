@@ -12,17 +12,15 @@ import com.bookstudio.loan.domain.model.LoanItemId;
 
 public interface LoanItemRepository extends JpaRepository<LoanItem, LoanItemId> {
     @Query("""
-        SELECT new com.bookstudio.loan.application.dto.response.LoanDetailResponse$LoanItem(
-            new com.bookstudio.loan.application.dto.response.LoanDetailResponse$LoanItem$Copy(
-                c.id,
-                c.code,
-                c.barcode,
-                c.status
-            ),
-            li.dueDate,
-            li.returnDate,
-            li.status
-        )
+        SELECT 
+            c.id AS copyId,
+            c.code AS copyCode,
+            c.barcode AS copyBarcode,
+            c.status AS copyStatus,
+
+            li.dueDate AS dueDate,
+            li.returnDate AS returnDate,
+            li.status AS status
         FROM LoanItem li
         JOIN li.copy c
         WHERE li.loan.id = :id
