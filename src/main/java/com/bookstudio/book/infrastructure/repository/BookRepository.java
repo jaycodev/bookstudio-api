@@ -77,8 +77,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             b.releaseDate AS releaseDate,
             b.status AS status,
             
-            NULL,
-            NULL
+            NULL AS authors,
+            NULL AS genres
         FROM Book b
         JOIN b.publisher p
         JOIN b.category c
