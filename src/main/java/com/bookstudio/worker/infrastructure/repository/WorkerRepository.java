@@ -12,18 +12,17 @@ import java.util.Optional;
 
 public interface WorkerRepository extends JpaRepository<Worker, Long> {
     @Query("""
-        SELECT new com.bookstudio.worker.application.dto.response.WorkerListResponse(
-            w.id,
-            w.profilePhotoUrl,
-            w.username,
-            w.email,
-            CONCAT(w.firstName, ' ', w.lastName),
-            new com.bookstudio.worker.application.dto.response.WorkerListResponse$Role(
-                w.role.id,
-                w.role.name
-            ),
-            w.status
-        )
+        SELECT 
+            w.id AS id,
+            w.profilePhotoUrl AS profilePhotoUrl,
+            w.username AS username,
+            w.email AS email,
+            CONCAT(w.firstName, ' ', w.lastName) AS fullName,
+
+            w.role.id AS roleId,
+            w.role.name AS roleName,
+
+            w.status AS status
         FROM Worker w
         WHERE w.id <> :loggedId
         ORDER BY w.id DESC
@@ -31,19 +30,18 @@ public interface WorkerRepository extends JpaRepository<Worker, Long> {
     List<WorkerListResponse> findList(Long loggedId);
 
     @Query("""
-        SELECT new com.bookstudio.worker.application.dto.response.WorkerDetailResponse(
-            w.id,
-            w.username,
-            w.email,
-            w.firstName,
-            w.lastName,
-            new com.bookstudio.worker.application.dto.response.WorkerDetailResponse$Role(
-                w.role.id,
-                w.role.name
-            ),
-            w.profilePhotoUrl,
-            w.status
-        )
+        SELECT 
+            w.id AS id,
+            w.username AS username,
+            w.email AS email,
+            w.firstName AS firstName,
+            w.lastName AS lastName,
+
+            w.role.id AS roleId,
+            w.role.name AS roleName,
+
+            w.profilePhotoUrl AS profilePhotoUrl,
+            w.status AS status
         FROM Worker w
         WHERE w.id = :id
     """)
