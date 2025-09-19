@@ -85,12 +85,13 @@ public class ReservationService {
         return new ReservationListResponse(
                 reservation.getId(),
                 reservation.getCode(),
-                new ReservationListResponse.Reader(
-                        reservation.getReader().getId(),
-                        reservation.getReader().getCode(),
-                        reservation.getReader().getFullName()),
-                new ReservationListResponse.Copy(
-                        reservation.getCopy().getCode()),
+
+                reservation.getReader().getId(),
+                reservation.getReader().getCode(),
+                reservation.getReader().getFullName(),
+
+                reservation.getCopy().getCode(),
+
                 reservation.getReservationDate(),
                 reservation.getStatus());
     }

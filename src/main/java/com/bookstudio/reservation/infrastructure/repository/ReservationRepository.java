@@ -12,20 +12,18 @@ import com.bookstudio.reservation.domain.model.Reservation;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     @Query("""
-        SELECT new com.bookstudio.reservation.application.dto.response.ReservationListResponse(
-            r.id,
-            r.code,
-            new com.bookstudio.reservation.application.dto.response.ReservationListResponse$Reader(
-                rd.id,
-                rd.code,
-                CONCAT(rd.firstName, ' ', rd.lastName)
-            ),
-            new com.bookstudio.reservation.application.dto.response.ReservationListResponse$Copy(
-                c.code
-            ),
-            r.reservationDate,
-            r.status
-        )
+        SELECT 
+            r.id AS id,
+            r.code AS code,
+
+            rd.id AS readerId,
+            rd.code AS readerCode,
+            CONCAT(rd.firstName, ' ', rd.lastName) AS readerFullName,
+
+            c.code AS copyCode,
+
+            r.reservationDate AS reservationDate,
+            r.status AS status
         FROM Reservation r
         JOIN r.reader rd
         JOIN r.copy c
@@ -34,23 +32,21 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<ReservationListResponse> findList();
 
     @Query("""
-        SELECT new com.bookstudio.reservation.application.dto.response.ReservationDetailResponse(
-            r.id,
-            r.code,
-            new com.bookstudio.reservation.application.dto.response.ReservationDetailResponse$Reader(
-                rd.id,
-                rd.code,
-                CONCAT(rd.firstName, ' ', rd.lastName)
-            ),
-            new com.bookstudio.reservation.application.dto.response.ReservationDetailResponse$Copy(
-                c.id,
-                c.code,
-                c.barcode,
-                c.status
-            ),
-            r.reservationDate,
-            r.status
-        )
+        SELECT 
+            r.id AS id,
+            r.code AS code,
+
+            rd.id AS readerId,
+            rd.code AS readerCode,
+            CONCAT(rd.firstName, ' ', rd.lastName) AS readerFullName,
+
+            c.id AS copyId,
+            c.code AS copyCode,
+            c.barcode AS copyBarcode,
+            c.status AS copyStatus,
+
+            r.reservationDate AS reservationDate,
+            r.status AS status
         FROM Reservation r
         JOIN r.reader rd
         JOIN r.copy c
