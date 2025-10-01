@@ -22,8 +22,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
     ),
     servers = {
         @Server(
-            url = "https://api-bookstudio.onrender.com",
-            description = "Production server"
+            url = "https://api-bookstudio.onrender.com"
         )
     }
 )
