@@ -8,6 +8,9 @@ import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,11 +22,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/fines")
 @RequiredArgsConstructor
+@Tag(name = "Fines", description = "Operations related to fines")
 public class FineController {
 
     private final FineService fineService;
 
     @GetMapping
+    @Operation(summary = "List all fines")
     public ResponseEntity<?> list() {
         List<FineListResponse> fines = fineService.getList();
         if (fines.isEmpty()) {
@@ -34,6 +39,7 @@ public class FineController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a fine by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             FineDetailResponse fine = fineService.getDetailById(id);
@@ -45,6 +51,7 @@ public class FineController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new fine")
     public ResponseEntity<?> create(@RequestBody CreateFineRequest request) {
         try {
             FineListResponse created = fineService.create(request);
@@ -56,6 +63,7 @@ public class FineController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a fine by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateFineRequest request) {
         try {
             FineListResponse updated = fineService.update(id, request);

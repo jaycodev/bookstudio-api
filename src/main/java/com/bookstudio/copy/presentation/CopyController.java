@@ -10,6 +10,9 @@ import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,11 +24,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/copies")
 @RequiredArgsConstructor
+@Tag(name = "Copies", description = "Operations related to copies")
 public class CopyController {
 
     private final CopyService copyService;
 
     @GetMapping
+    @Operation(summary = "List all copies")
     public ResponseEntity<?> list() {
         List<CopyListResponse> copies = copyService.getList();
         if (copies.isEmpty()) {
@@ -36,6 +41,7 @@ public class CopyController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a copy by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             CopyDetailResponse copy = copyService.getDetailById(id);
@@ -47,6 +53,7 @@ public class CopyController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new copy")
     public ResponseEntity<?> create(@RequestBody CreateCopyRequest request) {
         try {
             CopyListResponse created = copyService.create(request);
@@ -58,6 +65,7 @@ public class CopyController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a copy by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateCopyRequest request) {
         try {
             CopyListResponse updated = copyService.update(id, request);
@@ -69,15 +77,14 @@ public class CopyController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get copy filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> copies = copyService.getOptions();
-
             if (copies.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No copies found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(copies);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -86,19 +93,17 @@ public class CopyController {
     }
 
     @GetMapping("/select-options")
+    @Operation(summary = "Get select options for copies")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = copyService.getSelectOptions();
-
             if ((options.getBooks() != null && !options.getBooks().isEmpty()) ||
-                    (options.getShelves() != null && !options.getShelves().isEmpty())) {
-
+                (options.getShelves() != null && !options.getShelves().isEmpty())) {
                 return ResponseEntity.ok(options);
             } else {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No select options found.", "no_content", 204));
             }
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(false, "Error populating select options.", "server_error", 500));

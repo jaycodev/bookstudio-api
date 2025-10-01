@@ -10,6 +10,9 @@ import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,11 +24,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/publishers")
 @RequiredArgsConstructor
+@Tag(name = "Publishers", description = "Operations related to publishers")
 public class PublisherController {
 
     private final PublisherService publisherService;
 
     @GetMapping
+    @Operation(summary = "List all publishers")
     public ResponseEntity<?> list() {
         List<PublisherListResponse> publishers = publisherService.getList();
         if (publishers.isEmpty()) {
@@ -36,6 +41,7 @@ public class PublisherController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a publisher by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             PublisherDetailResponse publisher = publisherService.getDetailById(id);
@@ -47,6 +53,7 @@ public class PublisherController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new publisher")
     public ResponseEntity<?> create(@RequestBody CreatePublisherRequest request) {
         try {
             PublisherListResponse created = publisherService.create(request);
@@ -59,6 +66,7 @@ public class PublisherController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a publisher by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdatePublisherRequest request) {
         try {
             PublisherListResponse updated = publisherService.update(id, request);
@@ -70,15 +78,14 @@ public class PublisherController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get publisher filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> publishers = publisherService.getOptions();
-
             if (publishers.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No publishers found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(publishers);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -87,6 +94,7 @@ public class PublisherController {
     }
 
     @GetMapping("/select-options")
+    @Operation(summary = "Get select options for publishers")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = publisherService.getSelectOptions();

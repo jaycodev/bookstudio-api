@@ -9,6 +9,9 @@ import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/authors")
 @RequiredArgsConstructor
+@Tag(name = "Authors", description = "Operations related to authors")
 public class AuthorController {
 
     private final AuthorService authorService;
 
     @GetMapping
+    @Operation(summary = "List all authors")
     public ResponseEntity<?> list() {
         List<AuthorListResponse> authors = authorService.getList();
         if (authors.isEmpty()) {
@@ -35,6 +40,7 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get an author by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             AuthorDetailResponse author = authorService.getDetailById(id);
@@ -46,6 +52,7 @@ public class AuthorController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new author")
     public ResponseEntity<?> create(@RequestBody CreateAuthorRequest request) {
         try {
             AuthorListResponse created = authorService.create(request);
@@ -57,6 +64,7 @@ public class AuthorController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an author by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateAuthorRequest request) {
         try {
             AuthorListResponse updated = authorService.update(id, request);
@@ -68,6 +76,7 @@ public class AuthorController {
     }
 
     @GetMapping("/select-options")
+    @Operation(summary = "Get select options for authors")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = authorService.getSelectOptions();

@@ -10,6 +10,9 @@ import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,11 +24,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/loans")
 @RequiredArgsConstructor
+@Tag(name = "Loans", description = "Operations related to loans")
 public class LoanController {
 
     private final LoanService loanService;
 
     @GetMapping
+    @Operation(summary = "List all loans")
     public ResponseEntity<?> list() {
         List<LoanListResponse> loans = loanService.getList();
         if (loans.isEmpty()) {
@@ -36,6 +41,7 @@ public class LoanController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a loan by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             LoanDetailResponse loan = loanService.getDetailById(id);
@@ -47,6 +53,7 @@ public class LoanController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new loan")
     public ResponseEntity<?> create(@RequestBody CreateLoanRequest request) {
         try {
             LoanListResponse created = loanService.create(request);
@@ -58,6 +65,7 @@ public class LoanController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a loan by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateLoanRequest request) {
         try {
             LoanListResponse result = loanService.update(id, request);
@@ -69,15 +77,14 @@ public class LoanController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get loan filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> loans = loanService.getOptions();
-
             if (loans.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No loans found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(loans);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -86,6 +93,7 @@ public class LoanController {
     }
 
     @GetMapping("/select-options")
+    @Operation(summary = "Get select options for loans")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = loanService.getSelectOptions();

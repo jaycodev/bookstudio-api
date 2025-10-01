@@ -8,6 +8,9 @@ import com.bookstudio.payment.application.dto.response.PaymentListResponse;
 import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,11 +22,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/payments")
 @RequiredArgsConstructor
+@Tag(name = "Payments", description = "Operations related to payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
 
     @GetMapping
+    @Operation(summary = "List all payments")
     public ResponseEntity<?> list() {
         List<PaymentListResponse> payments = paymentService.getList();
         if (payments.isEmpty()) {
@@ -34,6 +39,7 @@ public class PaymentController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a payment by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             PaymentDetailResponse payment = paymentService.getDetailById(id);
@@ -45,6 +51,7 @@ public class PaymentController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new payment")
     public ResponseEntity<?> create(@RequestBody CreatePaymentRequest request) {
         try {
             PaymentListResponse created = paymentService.create(request);
@@ -56,6 +63,7 @@ public class PaymentController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a payment by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdatePaymentRequest request) {
         try {
             PaymentListResponse updated = paymentService.update(id, request);

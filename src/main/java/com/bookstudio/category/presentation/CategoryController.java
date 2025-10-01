@@ -9,6 +9,9 @@ import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/categories")
 @RequiredArgsConstructor
+@Tag(name = "Categories", description = "Operations related to categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     @GetMapping
+    @Operation(summary = "List all categories")
     public ResponseEntity<?> list() {
         List<CategoryListResponse> categories = categoryService.getList();
         if (categories.isEmpty()) {
@@ -35,6 +40,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a category by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             CategoryDetailResponse category = categoryService.getDetailById(id);
@@ -46,6 +52,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new category")
     public ResponseEntity<?> create(@RequestBody CreateCategoryRequest request) {
         try {
             CategoryListResponse created = categoryService.create(request);
@@ -58,6 +65,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a category by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateCategoryRequest request) {
         try {
             CategoryListResponse updated = categoryService.update(id, request);
@@ -69,15 +77,14 @@ public class CategoryController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get category filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> categories = categoryService.getOptions();
-
             if (categories.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No categories found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(categories);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

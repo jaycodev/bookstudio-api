@@ -8,6 +8,9 @@ import com.bookstudio.location.application.dto.response.LocationListResponse;
 import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,11 +22,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/locations")
 @RequiredArgsConstructor
+@Tag(name = "Locations", description = "Operations related to locations")
 public class LocationController {
 
     private final LocationService locationService;
 
     @GetMapping
+    @Operation(summary = "List all locations")
     public ResponseEntity<?> list() {
         List<LocationListResponse> locations = locationService.getList();
         if (locations.isEmpty()) {
@@ -34,6 +39,7 @@ public class LocationController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a location by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             LocationDetailResponse location = locationService.getDetailById(id);
@@ -45,6 +51,7 @@ public class LocationController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new location")
     public ResponseEntity<?> create(@RequestBody CreateLocationRequest request) {
         try {
             LocationListResponse created = locationService.create(request);
@@ -56,6 +63,7 @@ public class LocationController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a location by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateLocationRequest request) {
         try {
             LocationListResponse updated = locationService.update(id, request);

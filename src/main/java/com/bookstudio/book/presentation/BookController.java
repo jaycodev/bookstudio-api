@@ -10,6 +10,9 @@ import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,11 +24,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/books")
 @RequiredArgsConstructor
+@Tag(name = "Books", description = "Operations related to books")
 public class BookController {
 
     private final BookService bookService;
 
     @GetMapping
+    @Operation(summary = "List all books")
     public ResponseEntity<?> list() {
         List<BookListResponse> books = bookService.getList();
         if (books.isEmpty()) {
@@ -36,6 +41,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a book by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             BookDetailResponse book = bookService.getDetailById(id);
@@ -47,6 +53,7 @@ public class BookController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new book")
     public ResponseEntity<?> create(@RequestBody CreateBookRequest request) {
         try {
             BookListResponse created = bookService.create(request);
@@ -58,6 +65,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a book by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateBookRequest request) {
         try {
             BookListResponse updated = bookService.update(id, request);
@@ -69,15 +77,14 @@ public class BookController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get book filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> books = bookService.getOptions();
-
             if (books.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No books found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(books);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -86,20 +93,18 @@ public class BookController {
     }
 
     @GetMapping("/select-options")
+    @Operation(summary = "Get select options for books")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = bookService.getSelectOptions();
-
             if ((options.getLanguages() != null && !options.getLanguages().isEmpty()) ||
-                    (options.getPublishers() != null && !options.getPublishers().isEmpty()) ||
-                    (options.getCategories() != null && !options.getCategories().isEmpty())) {
-
+                (options.getPublishers() != null && !options.getPublishers().isEmpty()) ||
+                (options.getCategories() != null && !options.getCategories().isEmpty())) {
                 return ResponseEntity.ok(options);
             } else {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No select options found.", "no_content", 204));
             }
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiErrorResponse(false, "Error populating select options.", "server_error", 500));

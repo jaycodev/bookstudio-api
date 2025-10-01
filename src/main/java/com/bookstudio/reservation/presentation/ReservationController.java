@@ -8,6 +8,9 @@ import com.bookstudio.reservation.application.dto.response.ReservationListRespon
 import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,11 +22,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/reservations")
 @RequiredArgsConstructor
+@Tag(name = "Reservations", description = "Operations related to reservations")
 public class ReservationController {
 
     private final ReservationService reservationService;
 
     @GetMapping
+    @Operation(summary = "List all reservations")
     public ResponseEntity<?> list() {
         List<ReservationListResponse> reservations = reservationService.getList();
         if (reservations.isEmpty()) {
@@ -34,6 +39,7 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a reservation by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             ReservationDetailResponse reservation = reservationService.getDetailById(id);
@@ -45,6 +51,7 @@ public class ReservationController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new reservation")
     public ResponseEntity<?> create(@RequestBody CreateReservationRequest request) {
         try {
             ReservationListResponse created = reservationService.create(request);
@@ -57,6 +64,7 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a reservation by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateReservationRequest request) {
         try {
             ReservationListResponse updated = reservationService.update(id, request);

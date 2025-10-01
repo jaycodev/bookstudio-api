@@ -9,6 +9,9 @@ import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/readers")
 @RequiredArgsConstructor
+@Tag(name = "Readers", description = "Operations related to readers")
 public class ReaderController {
 
     private final ReaderService readerService;
 
     @GetMapping
+    @Operation(summary = "List all readers")
     public ResponseEntity<?> list() {
         List<ReaderListResponse> readers = readerService.getList();
         if (readers.isEmpty()) {
@@ -35,6 +40,7 @@ public class ReaderController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a reader by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             ReaderDetailResponse reader = readerService.getDetailById(id);
@@ -46,6 +52,7 @@ public class ReaderController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new reader")
     public ResponseEntity<?> create(@RequestBody CreateReaderRequest request) {
         try {
             ReaderListResponse created = readerService.create(request);
@@ -60,6 +67,7 @@ public class ReaderController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a reader by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateReaderRequest request) {
         try {
             ReaderListResponse updated = readerService.update(id, request);
@@ -77,15 +85,14 @@ public class ReaderController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get reader filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> readers = readerService.getOptions();
-
             if (readers.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No readers found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(readers);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

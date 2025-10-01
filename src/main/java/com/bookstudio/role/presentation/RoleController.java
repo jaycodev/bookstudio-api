@@ -9,6 +9,9 @@ import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
 import com.bookstudio.shared.application.dto.response.ApiResponse;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,11 +23,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/roles")
 @RequiredArgsConstructor
+@Tag(name = "Roles", description = "Operations related to roles")
 public class RoleController {
 
     private final RoleService roleService;
 
     @GetMapping
+    @Operation(summary = "List all roles")
     public ResponseEntity<?> list() {
         List<RoleListResponse> roles = roleService.getList();
         if (roles.isEmpty()) {
@@ -35,6 +40,7 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a role by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             RoleDetailResponse role = roleService.getDetailById(id);
@@ -46,6 +52,7 @@ public class RoleController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new role")
     public ResponseEntity<?> create(@RequestBody CreateRoleRequest request) {
         try {
             RoleListResponse created = roleService.create(request);
@@ -58,6 +65,7 @@ public class RoleController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a role by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateRoleRequest request) {
         try {
             RoleListResponse updated = roleService.update(id, request);
@@ -69,15 +77,14 @@ public class RoleController {
     }
 
     @GetMapping("/filter-options")
+    @Operation(summary = "Get role filter options")
     public ResponseEntity<?> filterOptions() {
         try {
             List<OptionResponse> roles = roleService.getOptions();
-
             if (roles.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT)
                         .body(new ApiErrorResponse(false, "No roles found for filter.", "no_content", 204));
             }
-
             return ResponseEntity.ok(roles);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -9,6 +9,9 @@ import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
 import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
 import com.bookstudio.worker.application.dto.response.WorkerListResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +26,13 @@ import static com.bookstudio.auth.util.LoginConstants.ID;
 @RestController
 @RequestMapping("/workers")
 @RequiredArgsConstructor
+@Tag(name = "Workers", description = "Operations related to workers")
 public class WorkerController {
 
     private final WorkerService workerService;
 
     @GetMapping
+    @Operation(summary = "List all workers")
     public ResponseEntity<?> list(HttpSession session) {
         Object loggedIdObj = session.getAttribute(ID);
         if (loggedIdObj == null) {
@@ -47,6 +52,7 @@ public class WorkerController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a worker by ID")
     public ResponseEntity<?> get(@PathVariable Long id) {
         try {
             WorkerDetailResponse worker = workerService.getDetailById(id);
@@ -58,6 +64,7 @@ public class WorkerController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a new worker")
     public ResponseEntity<?> create(@RequestBody CreateWorkerRequest request) {
         try {
             WorkerListResponse created = workerService.create(request);
@@ -72,6 +79,7 @@ public class WorkerController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a worker by ID")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateWorkerRequest request) {
         try {
             WorkerListResponse updated = workerService.update(id, request);
@@ -89,6 +97,7 @@ public class WorkerController {
     }
 
     @GetMapping("/select-options")
+    @Operation(summary = "Get select options for workers")
     public ResponseEntity<?> selectOptions() {
         try {
             SelectOptions options = workerService.getSelectOptions();
