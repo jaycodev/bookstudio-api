@@ -8,6 +8,29 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 </head>
 
+<style>
+  html {
+    scroll-behavior: smooth;
+  }
+  :root {
+    --scrollbar-thumb-color: hsl(240, 3.7%, 15.9%);
+  }
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-color);
+    border-radius: 5px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-color) transparent;
+  }
+</style>
+
 <body>
     <div id="app"></div>
     <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
