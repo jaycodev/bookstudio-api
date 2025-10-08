@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.servers.Server;
 
 @SpringBootApplication
 @OpenAPIDefinition(
@@ -19,12 +18,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
             email = "bookstudio.library@gmail.com"
         ),
         license = @License(name = "MIT", url = "https://opensource.org/licenses/MIT")
-    ),
-    servers = {
-        @Server(
-            url = "https://api-bookstudio.onrender.com"
-        )
-    }
+    )
 )
 public class BookstudioApplication {
     public static void main(String[] args) {
