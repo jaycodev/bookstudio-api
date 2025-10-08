@@ -25,7 +25,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CopyService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -61,14 +60,14 @@ public class CopyService {
     @Transactional
     public CopyListResponse create(CreateCopyRequest request) {
         Copy copy = new Copy();
-        copy.setBarcode(request.getBarcode());
-        copy.setStatus(request.getStatus());
-        copy.setCondition(request.getCondition());
+        copy.setBook(bookService.findById(request.bookId())
+                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + request.bookId())));
+        copy.setShelf(shelfService.findById(request.shelfId())
+                .orElseThrow(() -> new EntityNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
-        copy.setBook(bookService.findById(request.getBookId())
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + request.getBookId())));
-        copy.setShelf(shelfService.findById(request.getShelfId())
-                .orElseThrow(() -> new EntityNotFoundException("Shelf not found with ID: " + request.getShelfId())));
+        copy.setBarcode(request.barcode());
+        copy.setStatus(request.status());
+        copy.setCondition(request.condition());
 
         Copy saved = copyRepository.save(copy);
         entityManager.refresh(saved);
@@ -81,12 +80,12 @@ public class CopyService {
         Copy copy = copyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + id));
 
-        copy.setBarcode(request.getBarcode());
-        copy.setStatus(request.getStatus());
-        copy.setCondition(request.getCondition());
+        copy.setShelf(shelfService.findById(request.shelfId())
+                .orElseThrow(() -> new EntityNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
-        copy.setShelf(shelfService.findById(request.getShelfId())
-                .orElseThrow(() -> new EntityNotFoundException("Shelf not found with ID: " + request.getShelfId())));
+        copy.setBarcode(request.barcode());
+        copy.setStatus(request.status());
+        copy.setCondition(request.condition());
 
         Copy updated = copyRepository.save(copy);
 

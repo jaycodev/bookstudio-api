@@ -22,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class WorkerService {
-
     private final WorkerRepository workerRepository;
 
     private final RoleService roleService;
@@ -48,26 +47,26 @@ public class WorkerService {
 
     @Transactional
     public WorkerListResponse create(CreateWorkerRequest request) {
-        if (workerRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (workerRepository.findByUsername(request.username()).isPresent()) {
             throw new IllegalArgumentException("The provided username is already registered.");
         }
 
-        if (workerRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (workerRepository.findByEmail(request.email()).isPresent()) {
             throw new IllegalArgumentException("The provided email address is already registered.");
         }
 
-        Worker worker = Worker.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .password(PasswordUtils.hashPassword(request.getPassword()))
-                .role(roleService.findById(request.getRoleId())
-                        .orElseThrow(
-                                () -> new EntityNotFoundException("Role not found with ID: " + request.getRoleId())))
-                .profilePhotoUrl(request.getProfilePhotoUrl())
-                .status(request.getStatus())
-                .build();
+        Worker worker = new Worker();
+        worker.setRole(roleService.findById(request.roleId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Role not found with ID: " + request.roleId())));
+
+        worker.setUsername(request.username());
+        worker.setEmail(request.email());
+        worker.setFirstName(request.firstName());
+        worker.setLastName(request.lastName());
+        worker.setPassword(PasswordUtils.hashPassword(request.password()));
+        worker.setProfilePhotoUrl(request.profilePhotoUrl());
+        worker.setStatus(request.status());
 
         Worker saved = workerRepository.save(worker);
         return toListResponse(saved);
@@ -78,13 +77,13 @@ public class WorkerService {
         Worker worker = workerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + id));
 
-        worker.setRole(roleService.findById(request.getRoleId())
-                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + request.getRoleId())));
+        worker.setRole(roleService.findById(request.roleId())
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + request.roleId())));
 
-        worker.setFirstName(request.getFirstName());
-        worker.setLastName(request.getLastName());
-        worker.setStatus(request.getStatus());
-        worker.setProfilePhotoUrl(request.getProfilePhotoUrl());
+        worker.setFirstName(request.firstName());
+        worker.setLastName(request.lastName());
+        worker.setProfilePhotoUrl(request.profilePhotoUrl());
+        worker.setStatus(request.status());
 
         Worker updated = workerRepository.save(worker);
         return toListResponse(updated);

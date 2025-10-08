@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Permission {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

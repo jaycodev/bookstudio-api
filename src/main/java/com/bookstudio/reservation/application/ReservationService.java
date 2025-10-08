@@ -23,7 +23,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReservationService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -46,17 +45,17 @@ public class ReservationService {
 
     @Transactional
     public ReservationListResponse create(CreateReservationRequest request) {
-        Reservation reservation = Reservation.builder()
-                .reader(readerService.findById(request.getReaderId())
-                        .orElseThrow(
-                                () -> new EntityNotFoundException(
-                                        "Reader not found with ID: " + request.getReaderId())))
-                .copy(copyService.findById(request.getCopyId())
-                        .orElseThrow(
-                                () -> new EntityNotFoundException("Copy not found with ID: " + request.getCopyId())))
-                .reservationDate(request.getReservationDate())
-                .status(request.getStatus())
-                .build();
+        Reservation reservation = new Reservation();
+        reservation.setReader(readerService.findById(request.readerId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException(
+                                "Reader not found with ID: " + request.readerId())));
+        reservation.setCopy(copyService.findById(request.copyId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Copy not found with ID: " + request.copyId())));
+
+        reservation.setReservationDate(request.reservationDate());
+        reservation.setStatus(request.status());
 
         Reservation saved = reservationRepository.save(reservation);
         entityManager.refresh(saved);
@@ -69,13 +68,13 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + id));
 
-        reservation.setReader(readerService.findById(request.getReaderId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.getReaderId())));
-        reservation.setCopy(copyService.findById(request.getCopyId())
-                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + request.getCopyId())));
+        reservation.setReader(readerService.findById(request.readerId())
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.readerId())));
+        reservation.setCopy(copyService.findById(request.copyId())
+                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + request.copyId())));
 
-        reservation.setReservationDate(request.getReservationDate());
-        reservation.setStatus(request.getStatus());
+        reservation.setReservationDate(request.reservationDate());
+        reservation.setStatus(request.status());
 
         Reservation updated = reservationRepository.save(reservation);
         return toListResponse(updated);

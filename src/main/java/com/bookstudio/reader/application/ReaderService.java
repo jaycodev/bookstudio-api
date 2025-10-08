@@ -22,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReaderService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -47,26 +46,25 @@ public class ReaderService {
 
     @Transactional
     public ReaderListResponse create(CreateReaderRequest request) {
-        if (readerRepository.findByDni(request.getDni()).isPresent()) {
+        if (readerRepository.findByDni(request.dni()).isPresent()) {
             throw new IllegalArgumentException("The provided DNI is already registered.");
         }
 
-        if (readerRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (readerRepository.findByEmail(request.email()).isPresent()) {
             throw new IllegalArgumentException("The provided email address is already registered.");
         }
 
-        Reader reader = Reader.builder()
-                .dni(request.getDni())
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
-                .address(request.getAddress())
-                .phone(request.getPhone())
-                .email(request.getEmail())
-                .birthDate(request.getBirthDate())
-                .gender(request.getGender())
-                .type(request.getType())
-                .status(request.getStatus())
-                .build();
+        Reader reader = new Reader();
+        reader.setDni(request.dni());
+        reader.setFirstName(request.firstName());
+        reader.setLastName(request.lastName());
+        reader.setAddress(request.address());
+        reader.setPhone(request.phone());
+        reader.setEmail(request.email());
+        reader.setBirthDate(request.birthDate());
+        reader.setGender(request.gender());
+        reader.setType(request.type());
+        reader.setStatus(request.status());
 
         Reader saved = readerRepository.save(reader);
         entityManager.refresh(saved);
@@ -79,19 +77,19 @@ public class ReaderService {
         Reader reader = readerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + id));
 
-        if (readerRepository.findByEmailAndIdNot(request.getEmail(), id).isPresent()) {
+        if (readerRepository.findByEmailAndIdNot(request.email(), id).isPresent()) {
             throw new IllegalArgumentException("The provided email address is already registered.");
         }
 
-        reader.setFirstName(request.getFirstName());
-        reader.setLastName(request.getLastName());
-        reader.setAddress(request.getAddress());
-        reader.setPhone(request.getPhone());
-        reader.setEmail(request.getEmail());
-        reader.setBirthDate(request.getBirthDate());
-        reader.setGender(request.getGender());
-        reader.setType(request.getType());
-        reader.setStatus(request.getStatus());
+        reader.setFirstName(request.firstName());
+        reader.setLastName(request.lastName());
+        reader.setAddress(request.address());
+        reader.setPhone(request.phone());
+        reader.setEmail(request.email());
+        reader.setBirthDate(request.birthDate());
+        reader.setGender(request.gender());
+        reader.setType(request.type());
+        reader.setStatus(request.status());
 
         Reader updated = readerRepository.save(reader);
         return toListResponse(updated);

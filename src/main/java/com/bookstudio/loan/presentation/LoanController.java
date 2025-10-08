@@ -17,7 +17,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -26,7 +32,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Loans", description = "Operations related to loans")
 public class LoanController {
-
     private final LoanService loanService;
 
     @GetMapping
@@ -95,16 +100,15 @@ public class LoanController {
     @GetMapping("/select-options")
     @Operation(summary = "Get select options for loans")
     public ResponseEntity<?> selectOptions() {
-        try {
-            SelectOptions options = loanService.getSelectOptions();
-            if (options == null || (options.getBooks() == null && options.getStudents() == null)) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new ApiErrorResponse(false, "No select options found.", "no_content", 204));
-            }
+        SelectOptions options = loanService.getSelectOptions();
+
+        boolean hasOptions = !options.books().isEmpty() || !options.students().isEmpty();
+
+        if (hasOptions) {
             return ResponseEntity.ok(options);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Error populating select options.", "server_error", 500));
+        } else {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                    .body(new ApiErrorResponse(false, "No select options found.", "no_content", 204));
         }
     }
 }

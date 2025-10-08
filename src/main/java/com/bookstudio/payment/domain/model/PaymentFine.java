@@ -2,17 +2,20 @@ package com.bookstudio.payment.domain.model;
 
 import com.bookstudio.fine.domain.model.Fine;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
 @Table(name = "payment_fines")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Builder
 public class PaymentFine {
-    
     @EmbeddedId
     private PaymentFineId id;
 

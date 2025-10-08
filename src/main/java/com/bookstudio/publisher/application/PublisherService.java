@@ -26,7 +26,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PublisherService {
-
     private final PublisherRepository publisherRepository;
     private final PublisherGenreRepository publisherGenreRepository;
 
@@ -60,25 +59,27 @@ public class PublisherService {
     @Transactional
     public PublisherListResponse create(CreatePublisherRequest request) {
         Publisher publisher = new Publisher();
-        publisher.setName(request.getName());
-        publisher.setNationality(nationalityService.findById(request.getNationalityId())
+        publisher.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new EntityNotFoundException(
-                                "Nationality not found with ID: " + request.getNationalityId())));
-        publisher.setFoundationYear(request.getFoundationYear());
-        publisher.setWebsite(request.getWebsite());
-        publisher.setAddress(request.getAddress());
-        publisher.setStatus(request.getStatus());
-        publisher.setPhotoUrl(request.getPhotoUrl());
+                                "Nationality not found with ID: " + request.nationalityId())));
+
+        publisher.setName(request.name());
+        publisher.setFoundationYear(request.foundationYear());
+        publisher.setWebsite(request.website());
+        publisher.setAddress(request.address());
+        publisher.setStatus(request.status());
+        publisher.setPhotoUrl(request.photoUrl());
 
         Publisher saved = publisherRepository.save(publisher);
 
-        if (request.getGenreIds() != null) {
-            for (Long genreId : request.getGenreIds()) {
-                PublisherGenre relation = new PublisherGenre();
-                relation.setId(new PublisherGenreId(saved.getId(), genreId));
-                relation.setPublisher(saved);
-                relation.setGenre(new Genre(genreId));
+        if (request.genreIds() != null) {
+            for (Long genreId : request.genreIds()) {
+                PublisherGenre relation = PublisherGenre.builder()
+                        .id(new PublisherGenreId(saved.getId(), genreId))
+                        .publisher(saved)
+                        .genre(new Genre(genreId))
+                        .build();
                 publisherGenreRepository.save(relation);
             }
         }
@@ -91,28 +92,29 @@ public class PublisherService {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + id));
 
-        publisher.setName(request.getName());
-        publisher.setNationality(nationalityService.findById(request.getNationalityId())
+        publisher.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new EntityNotFoundException(
-                                "Nationality not found with ID: " + request.getNationalityId())));
-        publisher.setFoundationYear(request.getFoundationYear());
-        publisher.setWebsite(request.getWebsite());
-        publisher.setAddress(request.getAddress());
-        publisher.setStatus(request.getStatus());
+                                "Nationality not found with ID: " + request.nationalityId())));
 
-        if (request.getPhotoUrl() == null || request.getPhotoUrl().isBlank()) {
+        publisher.setName(request.name());
+        publisher.setFoundationYear(request.foundationYear());
+        publisher.setWebsite(request.website());
+        publisher.setAddress(request.address());
+        publisher.setStatus(request.status());
+
+        if (request.photoUrl() == null || request.photoUrl().isBlank()) {
             publisher.setPhotoUrl(null);
         } else {
-            publisher.setPhotoUrl(request.getPhotoUrl());
+            publisher.setPhotoUrl(request.photoUrl());
         }
 
         Publisher updated = publisherRepository.save(publisher);
 
         publisherGenreRepository.deleteAllByPublisher(updated);
 
-        if (request.getGenreIds() != null) {
-            for (Long genreId : request.getGenreIds()) {
+        if (request.genreIds() != null) {
+            for (Long genreId : request.genreIds()) {
                 PublisherGenre relation = PublisherGenre.builder()
                         .id(new PublisherGenreId(updated.getId(), genreId))
                         .publisher(updated)

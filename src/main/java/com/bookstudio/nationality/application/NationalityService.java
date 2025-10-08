@@ -15,7 +15,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class NationalityService {
-
     private final NationalityRepository nationalityRepository;
 
     public List<OptionResponse> getOptions() {

@@ -21,8 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthorService {
-
     private final AuthorRepository authorRepository;
+
     private final NationalityService nationalityService;
 
     public List<AuthorListResponse> getList() {
@@ -47,15 +47,16 @@ public class AuthorService {
     @Transactional
     public AuthorListResponse create(CreateAuthorRequest request) {
         Author author = new Author();
-        author.setName(request.getName());
-        author.setNationality(nationalityService.findById(request.getNationalityId())
+        author.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new EntityNotFoundException(
-                                "Nationality not found with ID: " + request.getNationalityId())));
-        author.setBirthDate(request.getBirthDate());
-        author.setBiography(request.getBiography());
-        author.setStatus(request.getStatus());
-        author.setPhotoUrl(request.getPhotoUrl());
+                                "Nationality not found with ID: " + request.nationalityId())));
+
+        author.setName(request.name());
+        author.setBirthDate(request.birthDate());
+        author.setBiography(request.biography());
+        author.setStatus(request.status());
+        author.setPhotoUrl(request.photoUrl());
 
         Author saved = authorRepository.save(author);
 
@@ -67,15 +68,16 @@ public class AuthorService {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Author not found with ID: " + id));
 
-        author.setName(request.getName());
-        author.setNationality(nationalityService.findById(request.getNationalityId())
+        author.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new EntityNotFoundException(
-                                "Nationality not found with ID: " + request.getNationalityId())));
-        author.setBirthDate(request.getBirthDate());
-        author.setBiography(request.getBiography());
-        author.setStatus(request.getStatus());
-        author.setPhotoUrl(request.getPhotoUrl());
+                                "Nationality not found with ID: " + request.nationalityId())));
+
+        author.setName(request.name());
+        author.setBirthDate(request.birthDate());
+        author.setBiography(request.biography());
+        author.setStatus(request.status());
+        author.setPhotoUrl(request.photoUrl());
 
         Author updated = authorRepository.save(author);
 
@@ -87,11 +89,11 @@ public class AuthorService {
                 author.getId(),
                 author.getPhotoUrl(),
                 author.getName(),
-                
+
                 author.getNationality().getId(),
                 author.getNationality().getCode(),
                 author.getNationality().getName(),
-                
+
                 author.getBirthDate(),
                 author.getStatus());
     }

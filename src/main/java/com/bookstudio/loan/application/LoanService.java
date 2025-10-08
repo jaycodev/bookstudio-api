@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LoanService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -71,26 +70,26 @@ public class LoanService {
     @Transactional
     public LoanListResponse create(CreateLoanRequest request) {
         Loan loan = new Loan();
-        loan.setLoanDate(LocalDate.now());
-        loan.setObservation(request.getObservation());
+        loan.setReader(readerService.findById(request.readerId())
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.readerId())));
 
-        loan.setReader(readerService.findById(request.getReaderId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.getReaderId())));
+        loan.setLoanDate(LocalDate.now());
+        loan.setObservation(request.observation());
 
         Loan saved = loanRepository.save(loan);
         entityManager.refresh(saved);
 
-        if (request.getItems() != null) {
-            for (CreateLoanItemRequest itemDto : request.getItems()) {
-                Copy copy = copyService.findById(itemDto.getCopyId())
+        if (request.items() != null) {
+            for (CreateLoanItemRequest itemDto : request.items()) {
+                Copy copy = copyService.findById(itemDto.copyId())
                         .orElseThrow(
-                                () -> new EntityNotFoundException("Copy not found with ID: " + itemDto.getCopyId()));
+                                () -> new EntityNotFoundException("Copy not found with ID: " + itemDto.copyId()));
 
                 LoanItem item = LoanItem.builder()
                         .id(new LoanItemId(saved.getId(), copy.getId()))
                         .loan(saved)
                         .copy(copy)
-                        .dueDate(itemDto.getDueDate())
+                        .dueDate(itemDto.dueDate())
                         .status(LoanItemStatus.PRESTADO)
                         .build();
 
@@ -106,27 +105,27 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + id));
 
-        loan.setObservation(request.getObservation());
+        loan.setReader(readerService.findById(request.readerId())
+                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.readerId())));
 
-        loan.setReader(readerService.findById(request.getReaderId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.getReaderId())));
+        loan.setObservation(request.observation());
 
         Loan updated = loanRepository.save(loan);
 
         loanItemRepository.deleteAllByLoan(updated);
 
-        if (request.getItems() != null) {
-            for (UpdateLoanItemRequest itemDto : request.getItems()) {
-                Copy copy = copyService.findById(itemDto.getCopyId())
+        if (request.items() != null) {
+            for (UpdateLoanItemRequest itemDto : request.items()) {
+                Copy copy = copyService.findById(itemDto.copyId())
                         .orElseThrow(() -> new EntityNotFoundException(
-                                "Copy not found with ID: " + itemDto.getCopyId()));
+                                "Copy not found with ID: " + itemDto.copyId()));
 
                 LoanItem item = LoanItem.builder()
                         .id(new LoanItemId(updated.getId(), copy.getId()))
                         .loan(updated)
                         .copy(copy)
-                        .dueDate(itemDto.getDueDate())
-                        .status(itemDto.getStatus())
+                        .dueDate(itemDto.dueDate())
+                        .status(itemDto.status())
                         .build();
 
                 loanItemRepository.save(item);

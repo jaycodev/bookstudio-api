@@ -20,7 +20,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CategoryService {
-
     private final CategoryRepository categoryRepository;
 
     public List<CategoryListResponse> getList() {
@@ -43,10 +42,10 @@ public class CategoryService {
     @Transactional
     public CategoryListResponse create(CreateCategoryRequest request) {
         Category category = new Category();
-        category.setName(request.getName());
-        category.setLevel(request.getLevel());
-        category.setDescription(request.getDescription());
-        category.setStatus(request.getStatus());
+        category.setName(request.name());
+        category.setLevel(request.level());
+        category.setDescription(request.description());
+        category.setStatus(request.status());
 
         Category saved = categoryRepository.save(category);
 
@@ -58,10 +57,10 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + id));
 
-        category.setName(request.getName());
-        category.setLevel(request.getLevel());
-        category.setDescription(request.getDescription());
-        category.setStatus(request.getStatus());
+        category.setName(request.name());
+        category.setLevel(request.level());
+        category.setDescription(request.description());
+        category.setStatus(request.status());
 
         Category updated = categoryRepository.save(category);
 

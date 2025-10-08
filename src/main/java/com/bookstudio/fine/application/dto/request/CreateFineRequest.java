@@ -6,13 +6,10 @@ import java.time.LocalDate;
 import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.loan.domain.model.LoanItemId;
 
-import lombok.Data;
-
-@Data
-public class CreateFineRequest {
-    private LoanItemId loanItemId;
-    private BigDecimal amount;
-    private Integer daysLate;
-    private FineStatus status;
-    private LocalDate issuedAt;
-}
+public record CreateFineRequest(
+    LoanItemId loanItemId,
+    BigDecimal amount,
+    Integer daysLate,
+    FineStatus status,
+    LocalDate issuedAt
+) {}

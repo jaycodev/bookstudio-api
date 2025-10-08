@@ -5,22 +5,18 @@ import java.util.List;
 import com.bookstudio.shared.application.dto.response.OptionResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 
-@Data
-@AllArgsConstructor
-@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SelectOptions {
-    private List<OptionResponse> books;
-    private List<OptionResponse> authors;
-    private List<OptionResponse> publishers;
-    private List<OptionResponse> categories;
-    private List<OptionResponse> students;
-    private List<OptionResponse> roles;
-    private List<OptionResponse> languages;
-    private List<OptionResponse> nationalities;
-    private List<OptionResponse> shelves;
-}
+@Builder
+public record SelectOptions(
+        List<OptionResponse> books,
+        List<OptionResponse> authors,
+        List<OptionResponse> publishers,
+        List<OptionResponse> categories,
+        List<OptionResponse> students,
+        List<OptionResponse> roles,
+        List<OptionResponse> languages,
+        List<OptionResponse> nationalities,
+        List<OptionResponse> shelves
+) {}

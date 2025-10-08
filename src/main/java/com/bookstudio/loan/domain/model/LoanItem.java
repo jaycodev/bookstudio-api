@@ -5,17 +5,22 @@ import java.time.LocalDate;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
 @Table(name = "loan_items")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 @Builder
 public class LoanItem {
-    
     @EmbeddedId
     private LoanItemId id;
 

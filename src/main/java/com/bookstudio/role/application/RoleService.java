@@ -24,7 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class RoleService {
-
     private final RoleRepository roleRepository;
     private final RolePermissionRepository rolePermissionRepository;
 
@@ -50,13 +49,13 @@ public class RoleService {
     @Transactional
     public RoleListResponse create(CreateRoleRequest request) {
         Role role = new Role();
-        role.setName(request.getName());
-        role.setDescription(request.getDescription());
+        role.setName(request.name());
+        role.setDescription(request.description());
 
         Role saved = roleRepository.save(role);
 
-        if (request.getPermissionIds() != null) {
-            for (Long permissionId : request.getPermissionIds()) {
+        if (request.permissionIds() != null) {
+            for (Long permissionId : request.permissionIds()) {
                 RolePermission relation = RolePermission.builder()
                         .id(new RolePermissionId(saved.getId(), permissionId))
                         .role(saved)
@@ -74,15 +73,15 @@ public class RoleService {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
 
-        role.setName(request.getName());
-        role.setDescription(request.getDescription());
+        role.setName(request.name());
+        role.setDescription(request.description());
 
         Role updated = roleRepository.save(role);
 
         rolePermissionRepository.deleteAllByRole(updated);
 
-        if (request.getPermissionIds() != null) {
-            for (Long permissionId : request.getPermissionIds()) {
+        if (request.permissionIds() != null) {
+            for (Long permissionId : request.permissionIds()) {
                 RolePermission relation = RolePermission.builder()
                         .id(new RolePermissionId(updated.getId(), permissionId))
                         .role(updated)

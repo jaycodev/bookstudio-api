@@ -22,7 +22,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class FineService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -50,13 +49,13 @@ public class FineService {
     @Transactional
     public FineListResponse create(CreateFineRequest request) {
         Fine fine = new Fine();
-        fine.setAmount(request.getAmount());
-        fine.setDaysLate(request.getDaysLate());
-        fine.setStatus(request.getStatus());
-        fine.setIssuedAt(request.getIssuedAt());
+        fine.setLoanItem(loanItemService.findById(request.loanItemId())
+                .orElseThrow(() -> new RuntimeException("Loan item not found with ID: " + request.loanItemId())));
 
-        fine.setLoanItem(loanItemService.findById(request.getLoanItemId())
-                .orElseThrow(() -> new RuntimeException("Loan item not found with ID: " + request.getLoanItemId())));
+        fine.setAmount(request.amount());
+        fine.setDaysLate(request.daysLate());
+        fine.setStatus(request.status());
+        fine.setIssuedAt(request.issuedAt());
 
         Fine saved = fineRepository.save(fine);
         entityManager.refresh(saved);
@@ -69,9 +68,9 @@ public class FineService {
         Fine fine = fineRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + id));
 
-        fine.setAmount(request.getAmount());
-        fine.setDaysLate(request.getDaysLate());
-        fine.setStatus(request.getStatus());
+        fine.setAmount(request.amount());
+        fine.setDaysLate(request.daysLate());
+        fine.setStatus(request.status());
 
         Fine updated = fineRepository.save(fine);
 

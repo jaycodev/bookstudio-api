@@ -27,7 +27,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LocationService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -57,20 +56,20 @@ public class LocationService {
     @Transactional
     public LocationListResponse create(CreateLocationRequest request) {
         Location location = new Location();
-        location.setName(request.getName());
-        location.setDescription(request.getDescription());
+        location.setName(request.name());
+        location.setDescription(request.description());
 
         Location saved = locationRepository.save(location);
         entityManager.refresh(saved);
 
-        if (request.getShelves() != null) {
-            for (CreateShelfRequest shelfDto : request.getShelves()) {
-                Shelf shelf = Shelf.builder()
-                        .code(shelfDto.getCode())
-                        .floor(shelfDto.getFloor())
-                        .description(shelfDto.getDescription())
-                        .location(saved)
-                        .build();
+        if (request.shelves() != null) {
+            for (CreateShelfRequest shelfDto : request.shelves()) {
+                Shelf shelf = new Shelf();
+                shelf.setCode(shelfDto.code());
+                shelf.setFloor(shelfDto.floor());
+                shelf.setDescription(shelfDto.description());
+                shelf.setLocation(saved);
+
                 shelfRepository.save(shelf);
             }
         }
@@ -83,27 +82,27 @@ public class LocationService {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + id));
 
-        location.setName(request.getName());
-        location.setDescription(request.getDescription());
+        location.setName(request.name());
+        location.setDescription(request.description());
 
-        if (request.getShelves() != null) {
-            for (UpdateShelfRequest shelfRequest : request.getShelves()) {
-                if (shelfRequest.getId() != null) {
-                    Shelf shelf = shelfRepository.findById(shelfRequest.getId())
+        if (request.shelves() != null) {
+            for (UpdateShelfRequest shelfRequest : request.shelves()) {
+                if (shelfRequest.id() != null) {
+                    Shelf shelf = shelfRepository.findById(shelfRequest.id())
                             .orElseThrow(
                                     () -> new EntityNotFoundException(
-                                            "Shelf not found with ID: " + shelfRequest.getId()));
+                                            "Shelf not found with ID: " + shelfRequest.id()));
 
-                    shelf.setCode(shelfRequest.getCode());
-                    shelf.setFloor(shelfRequest.getFloor());
-                    shelf.setDescription(shelfRequest.getDescription());
+                    shelf.setCode(shelfRequest.code());
+                    shelf.setFloor(shelfRequest.floor());
+                    shelf.setDescription(shelfRequest.description());
                 } else {
-                    Shelf shelf = Shelf.builder()
-                            .code(shelfRequest.getCode())
-                            .floor(shelfRequest.getFloor())
-                            .description(shelfRequest.getDescription())
-                            .location(location)
-                            .build();
+                    Shelf shelf = new Shelf();
+                    shelf.setCode(shelf.getCode());
+                    shelf.setFloor(shelf.getFloor());
+                    shelf.setDescription(shelf.getDescription());
+                    shelf.setLocation(location);
+
                     shelfRepository.save(shelf);
                 }
             }

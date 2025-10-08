@@ -13,7 +13,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GenreService {
-
     private final GenreRepository genreRepository;
 
     public Optional<Genre> findById(Long id) {

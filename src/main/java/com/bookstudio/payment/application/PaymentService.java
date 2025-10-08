@@ -29,7 +29,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PaymentService {
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -57,19 +56,19 @@ public class PaymentService {
 
     @Transactional
     public PaymentListResponse create(CreatePaymentRequest request) {
-        Payment payment = Payment.builder()
-                .reader(readerService.findById(request.getReaderId())
-                        .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + request.getReaderId())))
-                .amount(request.getAmount())
-                .paymentDate(request.getPaymentDate())
-                .method(request.getMethod())
-                .build();
+        Payment payment = new Payment();
+        payment.setReader(readerService.findById(request.readerId())
+                .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + request.readerId())));
+
+        payment.setAmount(request.amount());
+        payment.setPaymentDate(request.paymentDate());
+        payment.setMethod(request.method());
 
         Payment saved = paymentRepository.save(payment);
         entityManager.refresh(saved);
 
-        if (request.getFineIds() != null) {
-            for (Long fineId : request.getFineIds()) {
+        if (request.fineIds() != null) {
+            for (Long fineId : request.fineIds()) {
                 Fine fine = fineService.findById(fineId)
                         .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
 
@@ -94,18 +93,19 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + id));
 
-        payment.setReader(readerService.findById(request.getReaderId())
-                .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + request.getReaderId())));
-        payment.setAmount(request.getAmount());
-        payment.setPaymentDate(request.getPaymentDate());
-        payment.setMethod(request.getMethod());
+        payment.setReader(readerService.findById(request.readerId())
+                .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + request.readerId())));
+
+        payment.setAmount(request.amount());
+        payment.setPaymentDate(request.paymentDate());
+        payment.setMethod(request.method());
 
         Payment updated = paymentRepository.save(payment);
 
         paymentFineRepository.deleteAllByPayment(updated);
 
-        if (request.getFineIds() != null) {
-            for (Long fineId : request.getFineIds()) {
+        if (request.fineIds() != null) {
+            for (Long fineId : request.fineIds()) {
                 Fine fine = fineService.findById(fineId)
                         .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
 

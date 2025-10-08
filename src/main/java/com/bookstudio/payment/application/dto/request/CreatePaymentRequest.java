@@ -6,13 +6,10 @@ import java.util.List;
 
 import com.bookstudio.payment.domain.model.type.PaymentMethod;
 
-import lombok.Data;
-
-@Data
-public class CreatePaymentRequest {
-    private Long readerId;
-    private BigDecimal amount;
-    private LocalDate paymentDate;
-    private PaymentMethod method;
-    private List<Long> fineIds;
-}
+public record CreatePaymentRequest(
+    Long readerId,
+    BigDecimal amount,
+    LocalDate paymentDate,
+    PaymentMethod method,
+    List<Long> fineIds
+) {}

@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LoanItemService {
-
     private final LoanItemRepository loanItemRepository;
 
     public Optional<LoanItem> findById(LoanItemId id) {

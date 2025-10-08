@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class BookService {
-
     private final BookRepository bookRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
@@ -77,43 +76,45 @@ public class BookService {
     @Transactional
     public BookListResponse create(CreateBookRequest request) {
         Book book = new Book();
-        book.setTitle(request.getTitle());
-        book.setIsbn(request.getIsbn());
-        book.setEdition(request.getEdition());
-        book.setPages(request.getPages());
-        book.setDescription(request.getDescription());
-        book.setCoverUrl(request.getCoverUrl());
-        book.setReleaseDate(request.getReleaseDate());
-        book.setStatus(request.getStatus());
+        book.setLanguage(languageService.findById(request.languageId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Language not found with ID: " + request.languageId())));
+        book.setPublisher(publisherService.findById(request.publisherId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Publisher not found with ID: " + request.publisherId())));
+        book.setCategory(categoryService.findById(request.categoryId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Category not found with ID: " + request.categoryId())));
 
-        book.setLanguage(languageService.findById(request.getLanguageId())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Language not found with ID: " + request.getLanguageId())));
-        book.setPublisher(publisherService.findById(request.getPublisherId())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Publisher not found with ID: " + request.getPublisherId())));
-        book.setCategory(categoryService.findById(request.getCategoryId())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Category not found with ID: " + request.getCategoryId())));
+        book.setTitle(request.title());
+        book.setIsbn(request.isbn());
+        book.setEdition(request.edition());
+        book.setPages(request.pages());
+        book.setDescription(request.description());
+        book.setCoverUrl(request.coverUrl());
+        book.setReleaseDate(request.releaseDate());
+        book.setStatus(request.status());
 
         Book saved = bookRepository.save(book);
 
-        if (request.getAuthorIds() != null) {
-            for (Long authorId : request.getAuthorIds()) {
-                BookAuthor relation = new BookAuthor();
-                relation.setId(new BookAuthorId(saved.getId(), authorId));
-                relation.setBook(saved);
-                relation.setAuthor(new Author(authorId));
+        if (request.authorIds() != null) {
+            for (Long authorId : request.authorIds()) {
+                BookAuthor relation = BookAuthor.builder()
+                        .id(new BookAuthorId(saved.getId(), authorId))
+                        .book(saved)
+                        .author(new Author(authorId))
+                        .build();
                 bookAuthorRepository.save(relation);
             }
         }
 
-        if (request.getGenreIds() != null) {
-            for (Long genreId : request.getGenreIds()) {
-                BookGenre relation = new BookGenre();
-                relation.setId(new BookGenreId(saved.getId(), genreId));
-                relation.setBook(saved);
-                relation.setGenre(new Genre(genreId));
+        if (request.genreIds() != null) {
+            for (Long genreId : request.genreIds()) {
+                BookGenre relation = BookGenre.builder()
+                        .id(new BookGenreId(saved.getId(), genreId))
+                        .book(saved)
+                        .genre(new Genre(genreId))
+                        .build();
                 bookGenreRepository.save(relation);
             }
         }
@@ -126,32 +127,32 @@ public class BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + id));
 
-        book.setTitle(request.getTitle());
-        book.setIsbn(request.getIsbn());
-        book.setEdition(request.getEdition());
-        book.setPages(request.getPages());
-        book.setDescription(request.getDescription());
-        book.setCoverUrl(request.getCoverUrl());
-        book.setReleaseDate(request.getReleaseDate());
-        book.setStatus(request.getStatus());
+        book.setLanguage(languageService.findById(request.languageId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Language not found with ID: " + request.languageId())));
+        book.setPublisher(publisherService.findById(request.publisherId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Publisher not found with ID: " + request.publisherId())));
+        book.setCategory(categoryService.findById(request.categoryId())
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Category not found with ID: " + request.categoryId())));
 
-        book.setLanguage(languageService.findById(request.getLanguageId())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Language not found with ID: " + request.getLanguageId())));
-        book.setPublisher(publisherService.findById(request.getPublisherId())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Publisher not found with ID: " + request.getPublisherId())));
-        book.setCategory(categoryService.findById(request.getCategoryId())
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Category not found with ID: " + request.getCategoryId())));
+        book.setTitle(request.title());
+        book.setIsbn(request.isbn());
+        book.setEdition(request.edition());
+        book.setPages(request.pages());
+        book.setDescription(request.description());
+        book.setCoverUrl(request.coverUrl());
+        book.setReleaseDate(request.releaseDate());
+        book.setStatus(request.status());
 
         Book updated = bookRepository.save(book);
 
         bookAuthorRepository.deleteAllByBook(updated);
         bookGenreRepository.deleteAllByBook(updated);
 
-        if (request.getAuthorIds() != null) {
-            for (Long authorId : request.getAuthorIds()) {
+        if (request.authorIds() != null) {
+            for (Long authorId : request.authorIds()) {
                 BookAuthor relation = BookAuthor.builder()
                         .id(new BookAuthorId(updated.getId(), authorId))
                         .book(updated)
@@ -161,8 +162,8 @@ public class BookService {
             }
         }
 
-        if (request.getGenreIds() != null) {
-            for (Long genreId : request.getGenreIds()) {
+        if (request.genreIds() != null) {
+            for (Long genreId : request.genreIds()) {
                 BookGenre relation = BookGenre.builder()
                         .id(new BookGenreId(updated.getId(), genreId))
                         .book(updated)

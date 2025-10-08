@@ -4,11 +4,8 @@ import java.time.LocalDate;
 
 import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 
-import lombok.Data;
-
-@Data
-public class UpdateLoanItemRequest {
-    private Long copyId;
-    private LocalDate dueDate;
-    private LoanItemStatus status;
-}
+public record UpdateLoanItemRequest(
+    Long copyId,
+    LocalDate dueDate,
+    LoanItemStatus status
+) {}

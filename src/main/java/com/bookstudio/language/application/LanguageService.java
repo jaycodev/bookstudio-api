@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LanguageService {
-
     private final LanguageRepository languageRepository;
 
     public List<OptionResponse> getOptions() {

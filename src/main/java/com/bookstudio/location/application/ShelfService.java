@@ -15,7 +15,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ShelfService {
-
     private final ShelfRepository shelfRepository;
 
     public List<OptionResponse> getOptions() {

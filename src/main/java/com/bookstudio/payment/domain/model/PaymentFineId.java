@@ -2,15 +2,15 @@ package com.bookstudio.payment.domain.model;
 
 import java.io.Serializable;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Embeddable
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class PaymentFineId implements Serializable {
-
     @Column(name = "payment_id")
     private Long paymentId;
 
