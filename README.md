@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://bookstudio-site.vercel.app/docs/api">
+  <a href="https://api-bookstudio.onrender.com">
     <img src="./images/readme.jpg" alt="Preview">
   </a>
   <p></p>
