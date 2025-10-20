@@ -3,7 +3,7 @@ package com.bookstudio.book.application.dto.request;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.bookstudio.shared.domain.model.type.Status;
+import com.bookstudio.shared.type.Status;
 
 public record UpdateBookRequest(
     String title,

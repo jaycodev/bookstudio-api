@@ -2,7 +2,7 @@ package com.bookstudio.author.application.dto.request;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.domain.model.type.Status;
+import com.bookstudio.shared.type.Status;
 
 public record CreateAuthorRequest(
     String name,

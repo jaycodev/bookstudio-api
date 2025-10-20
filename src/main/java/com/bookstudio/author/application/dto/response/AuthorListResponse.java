@@ -2,7 +2,7 @@ package com.bookstudio.author.application.dto.response;
 
 import java.time.LocalDate;
 
-import com.bookstudio.shared.domain.model.type.Status;
+import com.bookstudio.shared.type.Status;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

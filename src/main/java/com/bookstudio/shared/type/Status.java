@@ -1,4 +1,4 @@
-package com.bookstudio.shared.domain.model.type;
+package com.bookstudio.shared.type;
 
 public enum Status {
     ACTIVO,

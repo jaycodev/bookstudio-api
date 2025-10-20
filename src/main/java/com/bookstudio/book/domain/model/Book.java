@@ -4,7 +4,7 @@ import com.bookstudio.category.domain.model.Category;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.language.domain.model.Language;
 import com.bookstudio.publisher.domain.model.Publisher;
-import com.bookstudio.shared.domain.model.type.Status;
+import com.bookstudio.shared.type.Status;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

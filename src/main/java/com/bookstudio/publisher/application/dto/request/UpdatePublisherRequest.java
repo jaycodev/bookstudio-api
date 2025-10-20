@@ -2,7 +2,7 @@ package com.bookstudio.publisher.application.dto.request;
 
 import java.util.List;
 
-import com.bookstudio.shared.domain.model.type.Status;
+import com.bookstudio.shared.type.Status;
 
 public record UpdatePublisherRequest(
     String name,

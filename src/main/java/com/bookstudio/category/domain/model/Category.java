@@ -1,7 +1,7 @@
 package com.bookstudio.category.domain.model;
 
 import com.bookstudio.category.domain.model.type.CategoryLevel;
-import com.bookstudio.shared.domain.model.type.Status;
+import com.bookstudio.shared.type.Status;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
