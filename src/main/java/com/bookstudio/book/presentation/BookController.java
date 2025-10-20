@@ -5,10 +5,10 @@ import com.bookstudio.book.application.dto.request.CreateBookRequest;
 import com.bookstudio.book.application.dto.request.UpdateBookRequest;
 import com.bookstudio.book.application.dto.response.BookDetailResponse;
 import com.bookstudio.book.application.dto.response.BookListResponse;
+import com.bookstudio.book.application.dto.response.BookSelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -122,14 +122,14 @@ public class BookController {
             @ApiResponse(responseCode = "204", description = "No select options found"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
-        SelectOptions options = bookService.getSelectOptions();
+    public ResponseEntity<ApiSuccess<BookSelectOptionsResponse>> selectOptions() {
+        BookSelectOptionsResponse options = bookService.getSelectOptions();
 
         boolean hasOptions = !options.languages().isEmpty()
                 || !options.publishers().isEmpty()
                 || !options.categories().isEmpty();
 
-        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+        ApiSuccess<BookSelectOptionsResponse> response = new ApiSuccess<>(
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 

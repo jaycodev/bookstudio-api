@@ -7,10 +7,10 @@ import com.bookstudio.copy.application.dto.request.CreateCopyRequest;
 import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
 import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
+import com.bookstudio.copy.application.dto.response.CopySelectOptionsResponse;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -41,11 +41,10 @@ public class CopyService {
         return copyRepository.findForOptions();
     }
 
-    public SelectOptions getSelectOptions() {
-        return SelectOptions.builder()
-                .books(bookService.getOptions())
-                .shelves(shelfService.getOptions())
-                .build();
+    public CopySelectOptionsResponse getSelectOptions() {
+        return new CopySelectOptionsResponse(
+                bookService.getOptions(),
+                shelfService.getOptions());
     }
 
     public Optional<Copy> findById(Long id) {

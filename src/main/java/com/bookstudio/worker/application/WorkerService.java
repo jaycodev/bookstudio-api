@@ -2,11 +2,11 @@ package com.bookstudio.worker.application;
 
 import com.bookstudio.role.application.RoleService;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
 import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
 import com.bookstudio.worker.application.dto.response.WorkerListResponse;
+import com.bookstudio.worker.application.dto.response.WorkerSelectOptionsResponse;
 import com.bookstudio.worker.domain.model.Worker;
 import com.bookstudio.worker.infrastructure.repository.WorkerRepository;
 
@@ -29,10 +29,8 @@ public class WorkerService {
         return workerRepository.findList(loggedId);
     }
 
-    public SelectOptions getSelectOptions() {
-        return SelectOptions.builder()
-                .roles(roleService.getOptions())
-                .build();
+    public WorkerSelectOptionsResponse getSelectOptions() {
+        return new WorkerSelectOptionsResponse(roleService.getOptions());
     }
 
     public Optional<Worker> findById(Long id) {

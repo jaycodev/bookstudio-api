@@ -5,10 +5,10 @@ import com.bookstudio.publisher.application.dto.request.CreatePublisherRequest;
 import com.bookstudio.publisher.application.dto.request.UpdatePublisherRequest;
 import com.bookstudio.publisher.application.dto.response.PublisherDetailResponse;
 import com.bookstudio.publisher.application.dto.response.PublisherListResponse;
+import com.bookstudio.publisher.application.dto.response.PublisherSelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -123,12 +123,12 @@ public class PublisherController {
             @ApiResponse(responseCode = "204", description = "No select options found"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/publishers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
-        SelectOptions options = publisherService.getSelectOptions();
+    public ResponseEntity<ApiSuccess<PublisherSelectOptionsResponse>> selectOptions() {
+        PublisherSelectOptionsResponse options = publisherService.getSelectOptions();
 
         boolean hasOptions = !options.nationalities().isEmpty();
 
-        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+        ApiSuccess<PublisherSelectOptionsResponse> response = new ApiSuccess<>(
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 

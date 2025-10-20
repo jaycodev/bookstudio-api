@@ -5,10 +5,10 @@ import com.bookstudio.copy.application.dto.request.CreateCopyRequest;
 import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
 import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
+import com.bookstudio.copy.application.dto.response.CopySelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -122,11 +122,11 @@ public class CopyController {
             @ApiResponse(responseCode = "204", description = "No select options found"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
-        SelectOptions options = copyService.getSelectOptions();
+    public ResponseEntity<ApiSuccess<CopySelectOptionsResponse>> selectOptions() {
+        CopySelectOptionsResponse options = copyService.getSelectOptions();
         boolean hasOptions = !options.books().isEmpty() || !options.shelves().isEmpty();
 
-        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+        ApiSuccess<CopySelectOptionsResponse> response = new ApiSuccess<>(
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 

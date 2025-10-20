@@ -5,10 +5,10 @@ import com.bookstudio.loan.application.dto.request.CreateLoanRequest;
 import com.bookstudio.loan.application.dto.request.UpdateLoanRequest;
 import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
 import com.bookstudio.loan.application.dto.response.LoanListResponse;
+import com.bookstudio.loan.application.dto.response.LoanSelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -122,12 +122,12 @@ public class LoanController {
             @ApiResponse(responseCode = "204", description = "No select options found"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
-        SelectOptions options = loanService.getSelectOptions();
+    public ResponseEntity<ApiSuccess<LoanSelectOptionsResponse>> selectOptions() {
+        LoanSelectOptionsResponse options = loanService.getSelectOptions();
 
         boolean hasOptions = !options.books().isEmpty() || !options.students().isEmpty();
 
-        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+        ApiSuccess<LoanSelectOptionsResponse> response = new ApiSuccess<>(
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 

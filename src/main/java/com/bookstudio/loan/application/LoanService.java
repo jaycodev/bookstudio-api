@@ -9,6 +9,7 @@ import com.bookstudio.loan.application.dto.request.UpdateLoanItemRequest;
 import com.bookstudio.loan.application.dto.request.UpdateLoanRequest;
 import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
 import com.bookstudio.loan.application.dto.response.LoanListResponse;
+import com.bookstudio.loan.application.dto.response.LoanSelectOptionsResponse;
 import com.bookstudio.loan.domain.model.Loan;
 import com.bookstudio.loan.domain.model.LoanItem;
 import com.bookstudio.loan.domain.model.LoanItemId;
@@ -18,7 +19,6 @@ import com.bookstudio.loan.infrastructure.repository.LoanRepository;
 import com.bookstudio.reader.application.ReaderService;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -53,11 +53,10 @@ public class LoanService {
         return loanRepository.findForOptions();
     }
 
-    public SelectOptions getSelectOptions() {
-        return SelectOptions.builder()
-                .books(bookService.getOptions())
-                .students(readerService.getOptions())
-                .build();
+    public LoanSelectOptionsResponse getSelectOptions() {
+        return new LoanSelectOptionsResponse(
+                bookService.getOptions(),
+                readerService.getOptions());
     }
 
     public LoanDetailResponse getDetailById(Long id) {

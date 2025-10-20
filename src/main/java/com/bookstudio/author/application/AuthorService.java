@@ -4,11 +4,11 @@ import com.bookstudio.author.application.dto.request.CreateAuthorRequest;
 import com.bookstudio.author.application.dto.request.UpdateAuthorRequest;
 import com.bookstudio.author.application.dto.response.AuthorDetailResponse;
 import com.bookstudio.author.application.dto.response.AuthorListResponse;
+import com.bookstudio.author.application.dto.response.AuthorSelectOptionsResponse;
 import com.bookstudio.author.domain.model.Author;
 import com.bookstudio.author.infrastructure.repository.AuthorRepository;
 import com.bookstudio.nationality.application.NationalityService;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.util.SelectOptions;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,10 +29,8 @@ public class AuthorService {
         return authorRepository.findList();
     }
 
-    public SelectOptions getSelectOptions() {
-        return SelectOptions.builder()
-                .nationalities(nationalityService.getOptions())
-                .build();
+    public AuthorSelectOptionsResponse getSelectOptions() {
+        return new AuthorSelectOptionsResponse(nationalityService.getOptions());
     }
 
     public Optional<Author> findById(Long id) {

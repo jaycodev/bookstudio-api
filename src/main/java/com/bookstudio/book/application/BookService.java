@@ -5,6 +5,7 @@ import com.bookstudio.book.application.dto.request.CreateBookRequest;
 import com.bookstudio.book.application.dto.request.UpdateBookRequest;
 import com.bookstudio.book.application.dto.response.BookDetailResponse;
 import com.bookstudio.book.application.dto.response.BookListResponse;
+import com.bookstudio.book.application.dto.response.BookSelectOptionsResponse;
 import com.bookstudio.book.domain.model.Book;
 import com.bookstudio.book.domain.model.BookAuthor;
 import com.bookstudio.book.domain.model.BookAuthorId;
@@ -21,7 +22,6 @@ import com.bookstudio.language.application.LanguageService;
 import com.bookstudio.publisher.application.PublisherService;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,12 +52,11 @@ public class BookService {
         return bookRepository.findForOptions();
     }
 
-    public SelectOptions getSelectOptions() {
-        return SelectOptions.builder()
-                .languages(languageService.getOptions())
-                .publishers(publisherService.getOptions())
-                .categories(categoryService.getOptions())
-                .build();
+    public BookSelectOptionsResponse getSelectOptions() {
+        return new BookSelectOptionsResponse(
+                languageService.getOptions(),
+                publisherService.getOptions(),
+                categoryService.getOptions());
     }
 
     public Optional<Book> findById(Long id) {

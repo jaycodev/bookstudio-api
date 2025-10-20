@@ -2,12 +2,12 @@ package com.bookstudio.worker.presentation;
 
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
-import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.worker.application.WorkerService;
 import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
 import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
 import com.bookstudio.worker.application.dto.response.WorkerListResponse;
+import com.bookstudio.worker.application.dto.response.WorkerSelectOptionsResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -105,12 +105,12 @@ public class WorkerController {
             @ApiResponse(responseCode = "204", description = "No select options found"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
-        SelectOptions options = workerService.getSelectOptions();
+    public ResponseEntity<ApiSuccess<WorkerSelectOptionsResponse>> selectOptions() {
+        WorkerSelectOptionsResponse options = workerService.getSelectOptions();
 
         boolean hasOptions = !options.roles().isEmpty();
 
-        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+        ApiSuccess<WorkerSelectOptionsResponse> response = new ApiSuccess<>(
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 

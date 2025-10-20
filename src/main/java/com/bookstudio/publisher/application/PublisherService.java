@@ -6,6 +6,7 @@ import com.bookstudio.publisher.application.dto.request.CreatePublisherRequest;
 import com.bookstudio.publisher.application.dto.request.UpdatePublisherRequest;
 import com.bookstudio.publisher.application.dto.response.PublisherDetailResponse;
 import com.bookstudio.publisher.application.dto.response.PublisherListResponse;
+import com.bookstudio.publisher.application.dto.response.PublisherSelectOptionsResponse;
 import com.bookstudio.publisher.domain.model.Publisher;
 import com.bookstudio.publisher.domain.model.PublisherGenre;
 import com.bookstudio.publisher.domain.model.PublisherGenreId;
@@ -13,7 +14,6 @@ import com.bookstudio.publisher.infrastructure.repository.PublisherGenreReposito
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.response.OptionResponse;
-import com.bookstudio.shared.util.SelectOptions;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,10 +39,8 @@ public class PublisherService {
         return publisherRepository.findForOptions();
     }
 
-    public SelectOptions getSelectOptions() {
-        return SelectOptions.builder()
-                .nationalities(nationalityService.getOptions())
-                .build();
+    public PublisherSelectOptionsResponse getSelectOptions() {
+        return new PublisherSelectOptionsResponse(nationalityService.getOptions());
     }
 
     public Optional<Publisher> findById(Long id) {
