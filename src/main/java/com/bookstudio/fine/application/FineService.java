@@ -7,7 +7,8 @@ import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.fine.domain.model.Fine;
 import com.bookstudio.fine.infrastructure.repository.FineRepository;
 import com.bookstudio.loan.application.LoanItemService;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -43,14 +44,14 @@ public class FineService {
 
     public FineDetailResponse getDetailById(Long id) {
         return fineRepository.findDetailById(id)
-                .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + id));
     }
 
     @Transactional
     public FineListResponse create(CreateFineRequest request) {
         Fine fine = new Fine();
         fine.setLoanItem(loanItemService.findById(request.loanItemId())
-                .orElseThrow(() -> new RuntimeException("Loan item not found with ID: " + request.loanItemId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan item not found with ID: " + request.loanItemId())));
 
         fine.setAmount(request.amount());
         fine.setDaysLate(request.daysLate());
@@ -66,7 +67,7 @@ public class FineService {
     @Transactional
     public FineListResponse update(Long id, UpdateFineRequest request) {
         Fine fine = fineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + id));
 
         fine.setAmount(request.amount());
         fine.setDaysLate(request.daysLate());

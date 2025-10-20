@@ -1,20 +1,21 @@
 package com.bookstudio.category.application;
 
 import com.bookstudio.category.infrastructure.repository.CategoryRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.category.application.dto.request.CreateCategoryRequest;
 import com.bookstudio.category.application.dto.request.UpdateCategoryRequest;
 import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
 import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.category.domain.model.Category;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +37,7 @@ public class CategoryService {
 
     public CategoryDetailResponse getDetailById(Long id) {
         return categoryRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
     }
 
     @Transactional
@@ -55,7 +56,7 @@ public class CategoryService {
     @Transactional
     public CategoryListResponse update(Long id, UpdateCategoryRequest request) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
 
         category.setName(request.name());
         category.setLevel(request.level());

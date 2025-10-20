@@ -19,10 +19,10 @@ import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.genre.domain.model.Genre;
 import com.bookstudio.language.application.LanguageService;
 import com.bookstudio.publisher.application.PublisherService;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +66,7 @@ public class BookService {
 
     public BookDetailResponse getDetailById(Long id) {
         BookDetailResponse base = bookRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
         return base.withAuthorsAndGenres(
                 bookAuthorRepository.findAuthorItemsByBookId(id),
@@ -78,13 +78,13 @@ public class BookService {
         Book book = new Book();
         book.setLanguage(languageService.findById(request.languageId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Language not found with ID: " + request.languageId())));
+                        () -> new ResourceNotFoundException("Language not found with ID: " + request.languageId())));
         book.setPublisher(publisherService.findById(request.publisherId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Publisher not found with ID: " + request.publisherId())));
+                        () -> new ResourceNotFoundException("Publisher not found with ID: " + request.publisherId())));
         book.setCategory(categoryService.findById(request.categoryId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Category not found with ID: " + request.categoryId())));
+                        () -> new ResourceNotFoundException("Category not found with ID: " + request.categoryId())));
 
         book.setTitle(request.title());
         book.setIsbn(request.isbn());
@@ -125,17 +125,17 @@ public class BookService {
     @Transactional
     public BookListResponse update(Long id, UpdateBookRequest request) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
         book.setLanguage(languageService.findById(request.languageId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Language not found with ID: " + request.languageId())));
+                        () -> new ResourceNotFoundException("Language not found with ID: " + request.languageId())));
         book.setPublisher(publisherService.findById(request.publisherId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Publisher not found with ID: " + request.publisherId())));
+                        () -> new ResourceNotFoundException("Publisher not found with ID: " + request.publisherId())));
         book.setCategory(categoryService.findById(request.categoryId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Category not found with ID: " + request.categoryId())));
+                        () -> new ResourceNotFoundException("Category not found with ID: " + request.categoryId())));
 
         book.setTitle(request.title());
         book.setIsbn(request.isbn());

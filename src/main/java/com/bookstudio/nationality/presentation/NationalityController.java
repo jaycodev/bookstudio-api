@@ -1,10 +1,16 @@
 package com.bookstudio.nationality.presentation;
 
 import com.bookstudio.nationality.application.NationalityService;
-import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.api.ApiError;
+import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
@@ -25,17 +31,18 @@ public class NationalityController {
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get nationality filter options")
-    public ResponseEntity<?> filterOptions() {
-        try {
-            List<OptionResponse> nationalities = nationalityService.getOptions();
-            if (nationalities.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new ApiErrorResponse(false, "No nationalities found for filter.", "no_content", 204));
-            }
-            return ResponseEntity.ok(nationalities);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Error fetching nationality filter options.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No nationalities found for filter"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/nationalities/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
+        List<OptionResponse> nationalities = nationalityService.getOptions();
+        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
+                nationalities.isEmpty() ? "No nationalities found for filter" : "Filter options retrieved successfully",
+                nationalities);
+
+        HttpStatus status = nationalities.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 }

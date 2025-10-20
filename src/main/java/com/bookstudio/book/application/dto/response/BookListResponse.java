@@ -1,8 +1,5 @@
 package com.bookstudio.book.application.dto.response;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.bookstudio.shared.domain.model.type.Status;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,35 +28,43 @@ public record BookListResponse(
         Status status) {
 
     @JsonGetter("category")
-    public Map<String, Object> getCategory() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", categoryId());
-        map.put("name", categoryName());
-        return map;
+    public Category getCategory() {
+        return new Category(categoryId, categoryName);
     }
 
     @JsonGetter("publisher")
-    public Map<String, Object> getPublisher() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", publisherId());
-        map.put("name", publisherName());
-        return map;
+    public Publisher getPublisher() {
+        return new Publisher(publisherId, publisherName);
     }
 
     @JsonGetter("language")
-    public Map<String, Object> getLanguage() {
-        Map<String, Object> language = new LinkedHashMap<>();
-        language.put("id", languageId);
-        language.put("code", languageCode);
-        language.put("name", languageName);
-        return language;
+    public Language getLanguage() {
+        return new Language(languageId, languageCode, languageName);
     }
 
     @JsonGetter("copies")
-    public Map<String, Object> getCopies() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("loaned", copiesLoaned());
-        map.put("available", copiesAvailable());
-        return map;
+    public Copies getCopies() {
+        return new Copies(copiesLoaned, copiesAvailable);
+    }
+
+    public record Category(
+            Long id,
+            String name) {
+    }
+
+    public record Publisher(
+            Long id,
+            String name) {
+    }
+
+    public record Language(
+            Long id,
+            String code,
+            String name) {
+    }
+
+    public record Copies(
+            Long loaned,
+            Long available) {
     }
 }

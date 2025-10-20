@@ -1,8 +1,6 @@
 package com.bookstudio.loan.application.dto.response;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,57 +18,33 @@ public record LoanListResponse(
         LocalDate loanDate,
         Long itemCount,
 
-        @JsonIgnore Map<String, Long> statusCounts) {
-
-    public LoanListResponse(
-            Long id,
-            String code,
-
-            Long readerId,
-            String readerCode,
-            String readerFullName,
-
-            LocalDate loanDate,
-
-            Long borrowedCount,
-            Long returnedCount,
-            Long overdueCount,
-            Long lostCount,
-            Long canceledCount) {
-
-        this(
-                id,
-                code,
-                readerId,
-                readerCode,
-                readerFullName,
-                loanDate,
-                borrowedCount + returnedCount + overdueCount + lostCount + canceledCount,
-                buildStatusCounts(borrowedCount, returnedCount, overdueCount, lostCount, canceledCount));
-    }
-
-    private static Map<String, Long> buildStatusCounts(
-            Long borrowed, Long returned, Long overdue, Long lost, Long canceled) {
-        Map<String, Long> map = new LinkedHashMap<>();
-        map.put("borrowed", borrowed);
-        map.put("returned", returned);
-        map.put("overdue", overdue);
-        map.put("lost", lost);
-        map.put("canceled", canceled);
-        return map;
-    }
+        @JsonIgnore Long borrowedCount,
+        @JsonIgnore Long returnedCount,
+        @JsonIgnore Long overdueCount,
+        @JsonIgnore Long lostCount,
+        @JsonIgnore Long canceledCount) {
 
     @JsonGetter("reader")
-    public Map<String, Object> getReader() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", readerId());
-        map.put("code", readerCode());
-        map.put("fullName", readerFullName());
-        return map;
+    public Reader getReader() {
+        return new Reader(readerId, readerCode, readerFullName);
     }
 
     @JsonGetter("statusCounts")
-    public Map<String, Long> getStatusCounts() {
-        return statusCounts();
+    public StatusCounts getStatusCounts() {
+        return new StatusCounts(borrowedCount, returnedCount, overdueCount, lostCount, canceledCount);
+    }
+
+    public record Reader(
+            Long id,
+            String code,
+            String fullName) {
+    }
+
+    public record StatusCounts(
+            Long borrowed,
+            Long returned,
+            Long overdue,
+            Long lost,
+            Long canceled) {
     }
 }

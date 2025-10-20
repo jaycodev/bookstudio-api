@@ -1,8 +1,6 @@
 package com.bookstudio.reservation.application.dto.response;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.reservation.domain.model.type.ReservationStatus;
@@ -28,21 +26,25 @@ public record ReservationDetailResponse(
         ReservationStatus status) {
 
     @JsonGetter("reader")
-    public Map<String, Object> getReader() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", readerId());
-        map.put("code", readerCode());
-        map.put("fullName", readerFullName());
-        return map;
+    public Reader getReader() {
+        return new Reader(readerId, readerCode, readerFullName);
     }
 
     @JsonGetter("copy")
-    public Map<String, Object> getCopy() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", copyId());
-        map.put("code", copyCode());
-        map.put("barcode", copyBarcode());
-        map.put("status", copyStatus());
-        return map;
+    public Copy getCopy() {
+        return new Copy(copyId, copyCode, copyBarcode, copyStatus);
+    }
+
+    public record Reader(
+            Long id,
+            String code,
+            String fullName) {
+    }
+
+    public record Copy(
+            Long id,
+            String code,
+            String barcode,
+            CopyStatus status) {
     }
 }

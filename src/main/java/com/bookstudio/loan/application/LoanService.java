@@ -16,11 +16,11 @@ import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 import com.bookstudio.loan.infrastructure.repository.LoanItemRepository;
 import com.bookstudio.loan.infrastructure.repository.LoanRepository;
 import com.bookstudio.reader.application.ReaderService;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,7 +62,7 @@ public class LoanService {
 
     public LoanDetailResponse getDetailById(Long id) {
         LoanDetailResponse base = loanRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 
         return base.withItems(loanItemRepository.findLoanItemsByLoanId(id));
     }
@@ -71,7 +71,7 @@ public class LoanService {
     public LoanListResponse create(CreateLoanRequest request) {
         Loan loan = new Loan();
         loan.setReader(readerService.findById(request.readerId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.readerId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         loan.setLoanDate(LocalDate.now());
         loan.setObservation(request.observation());
@@ -83,7 +83,7 @@ public class LoanService {
             for (CreateLoanItemRequest itemDto : request.items()) {
                 Copy copy = copyService.findById(itemDto.copyId())
                         .orElseThrow(
-                                () -> new EntityNotFoundException("Copy not found with ID: " + itemDto.copyId()));
+                                () -> new ResourceNotFoundException("Copy not found with ID: " + itemDto.copyId()));
 
                 LoanItem item = LoanItem.builder()
                         .id(new LoanItemId(saved.getId(), copy.getId()))
@@ -103,10 +103,10 @@ public class LoanService {
     @Transactional
     public LoanListResponse update(Long id, UpdateLoanRequest request) {
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 
         loan.setReader(readerService.findById(request.readerId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.readerId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         loan.setObservation(request.observation());
 
@@ -117,7 +117,7 @@ public class LoanService {
         if (request.items() != null) {
             for (UpdateLoanItemRequest itemDto : request.items()) {
                 Copy copy = copyService.findById(itemDto.copyId())
-                        .orElseThrow(() -> new EntityNotFoundException(
+                        .orElseThrow(() -> new ResourceNotFoundException(
                                 "Copy not found with ID: " + itemDto.copyId()));
 
                 LoanItem item = LoanItem.builder()
@@ -141,6 +141,12 @@ public class LoanService {
                         LoanItem::getStatus,
                         Collectors.counting()));
 
+        Long borrowed = counts.getOrDefault(LoanItemStatus.PRESTADO, 0L);
+        Long returned = counts.getOrDefault(LoanItemStatus.DEVUELTO, 0L);
+        Long overdue = counts.getOrDefault(LoanItemStatus.RETRASADO, 0L);
+        Long lost = counts.getOrDefault(LoanItemStatus.EXTRAVIADO, 0L);
+        Long canceled = counts.getOrDefault(LoanItemStatus.CANCELADO, 0L);
+
         return new LoanListResponse(
                 loan.getId(),
                 loan.getCode(),
@@ -150,11 +156,12 @@ public class LoanService {
                 loan.getReader().getFullName(),
 
                 loan.getLoanDate(),
+                borrowed + returned + overdue + lost + canceled,
 
-                counts.getOrDefault(LoanItemStatus.PRESTADO, 0L),
-                counts.getOrDefault(LoanItemStatus.DEVUELTO, 0L),
-                counts.getOrDefault(LoanItemStatus.RETRASADO, 0L),
-                counts.getOrDefault(LoanItemStatus.EXTRAVIADO, 0L),
-                counts.getOrDefault(LoanItemStatus.CANCELADO, 0L));
+                borrowed,
+                returned,
+                overdue,
+                lost,
+                canceled);
     }
 }

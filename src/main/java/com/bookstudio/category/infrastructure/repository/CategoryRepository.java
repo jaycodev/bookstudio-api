@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
 import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.category.domain.model.Category;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;

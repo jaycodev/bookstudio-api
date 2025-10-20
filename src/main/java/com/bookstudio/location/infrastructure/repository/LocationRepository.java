@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.bookstudio.location.application.dto.response.LocationDetailResponse;
 import com.bookstudio.location.application.dto.response.LocationListResponse;
 import com.bookstudio.location.domain.model.Location;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
     @Query("""

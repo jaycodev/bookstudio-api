@@ -2,7 +2,7 @@ package com.bookstudio.nationality.application;
 
 import com.bookstudio.nationality.domain.model.Nationality;
 import com.bookstudio.nationality.infrastructure.repository.NationalityRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

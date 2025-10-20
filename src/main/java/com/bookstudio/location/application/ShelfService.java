@@ -2,7 +2,7 @@ package com.bookstudio.location.application;
 
 import com.bookstudio.location.domain.model.Shelf;
 import com.bookstudio.location.infrastructure.repository.ShelfRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

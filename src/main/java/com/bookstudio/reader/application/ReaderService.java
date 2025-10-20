@@ -6,10 +6,10 @@ import com.bookstudio.reader.application.dto.response.ReaderDetailResponse;
 import com.bookstudio.reader.application.dto.response.ReaderListResponse;
 import com.bookstudio.reader.domain.model.Reader;
 import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class ReaderService {
 
     public ReaderDetailResponse getDetailById(Long id) {
         return readerRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + id));
     }
 
     @Transactional
@@ -75,7 +75,7 @@ public class ReaderService {
     @Transactional
     public ReaderListResponse update(Long id, UpdateReaderRequest request) {
         Reader reader = readerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + id));
 
         if (readerRepository.findByEmailAndIdNot(request.email(), id).isPresent()) {
             throw new IllegalArgumentException("The provided email address is already registered.");

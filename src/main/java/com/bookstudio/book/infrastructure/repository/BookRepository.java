@@ -3,7 +3,7 @@ package com.bookstudio.book.infrastructure.repository;
 import com.bookstudio.book.application.dto.response.BookDetailResponse;
 import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.domain.model.Book;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

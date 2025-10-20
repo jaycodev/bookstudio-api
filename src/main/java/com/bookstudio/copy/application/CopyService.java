@@ -8,11 +8,11 @@ import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
 import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.domain.model.Copy;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -54,16 +54,16 @@ public class CopyService {
 
     public CopyDetailResponse getDetailById(Long id) {
         return copyRepository.findDetailById(id)
-                .orElseThrow(() -> new RuntimeException("Copy not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + id));
     }
 
     @Transactional
     public CopyListResponse create(CreateCopyRequest request) {
         Copy copy = new Copy();
         copy.setBook(bookService.findById(request.bookId())
-                .orElseThrow(() -> new EntityNotFoundException("Book not found with ID: " + request.bookId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + request.bookId())));
         copy.setShelf(shelfService.findById(request.shelfId())
-                .orElseThrow(() -> new EntityNotFoundException("Shelf not found with ID: " + request.shelfId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
         copy.setBarcode(request.barcode());
         copy.setStatus(request.status());
@@ -78,10 +78,10 @@ public class CopyService {
     @Transactional
     public CopyListResponse update(Long id, UpdateCopyRequest request) {
         Copy copy = copyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + id));
 
         copy.setShelf(shelfService.findById(request.shelfId())
-                .orElseThrow(() -> new EntityNotFoundException("Shelf not found with ID: " + request.shelfId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
         copy.setBarcode(request.barcode());
         copy.setStatus(request.status());

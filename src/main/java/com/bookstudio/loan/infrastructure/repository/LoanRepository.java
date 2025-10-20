@@ -3,7 +3,7 @@ package com.bookstudio.loan.infrastructure.repository;
 import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
 import com.bookstudio.loan.application.dto.response.LoanListResponse;
 import com.bookstudio.loan.domain.model.Loan;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +22,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             CONCAT(r.firstName, ' ', r.lastName) AS readerFullName,
 
             l.loanDate AS loanDate,
+            COALESCE(COUNT(li.id), 0) AS itemCount,
 
             COALESCE(SUM(CASE WHEN li.status = 'PRESTADO' THEN 1 ELSE 0 END), 0) AS borrowedCount,
             COALESCE(SUM(CASE WHEN li.status = 'DEVUELTO' THEN 1 ELSE 0 END), 0) AS returnedCount,

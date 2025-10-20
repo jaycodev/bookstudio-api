@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.bookstudio.fine.application.dto.response.FineDetailResponse;
 import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.fine.domain.model.Fine;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 public interface FineRepository extends JpaRepository<Fine, Long> {
     @Query("""

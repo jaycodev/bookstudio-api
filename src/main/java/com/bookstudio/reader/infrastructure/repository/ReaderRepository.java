@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.bookstudio.reader.application.dto.response.ReaderDetailResponse;
 import com.bookstudio.reader.application.dto.response.ReaderListResponse;
 import com.bookstudio.reader.domain.model.Reader;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;

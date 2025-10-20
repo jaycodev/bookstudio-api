@@ -14,9 +14,9 @@ import com.bookstudio.payment.domain.model.PaymentFineId;
 import com.bookstudio.payment.infrastructure.repository.PaymentFineRepository;
 import com.bookstudio.payment.infrastructure.repository.PaymentRepository;
 import com.bookstudio.reader.application.ReaderService;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class PaymentService {
 
     public PaymentDetailResponse getDetailById(Long id) {
         PaymentDetailResponse base = paymentRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Payment not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 
         return base.withFines(paymentFineRepository.findFinesItemsByPaymentId(id));
     }
@@ -58,7 +58,7 @@ public class PaymentService {
     public PaymentListResponse create(CreatePaymentRequest request) {
         Payment payment = new Payment();
         payment.setReader(readerService.findById(request.readerId())
-                .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + request.readerId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         payment.setAmount(request.amount());
         payment.setPaymentDate(request.paymentDate());
@@ -70,7 +70,7 @@ public class PaymentService {
         if (request.fineIds() != null) {
             for (Long fineId : request.fineIds()) {
                 Fine fine = fineService.findById(fineId)
-                        .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
+                        .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
 
                 PaymentFine relation = PaymentFine.builder()
                         .id(new PaymentFineId(saved.getId(), fine.getId()))
@@ -91,10 +91,10 @@ public class PaymentService {
     @Transactional
     public PaymentListResponse update(Long id, UpdatePaymentRequest request) {
         Payment payment = paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 
         payment.setReader(readerService.findById(request.readerId())
-                .orElseThrow(() -> new RuntimeException("Reader not found with ID: " + request.readerId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         payment.setAmount(request.amount());
         payment.setPaymentDate(request.paymentDate());
@@ -107,7 +107,7 @@ public class PaymentService {
         if (request.fineIds() != null) {
             for (Long fineId : request.fineIds()) {
                 Fine fine = fineService.findById(fineId)
-                        .orElseThrow(() -> new RuntimeException("Fine not found with ID: " + fineId));
+                        .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
 
                 PaymentFine relation = PaymentFine.builder()
                         .id(new PaymentFineId(updated.getId(), fine.getId()))

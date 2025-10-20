@@ -1,7 +1,7 @@
 package com.bookstudio.worker.application;
 
-import com.bookstudio.auth.util.PasswordUtils;
 import com.bookstudio.role.application.RoleService;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.util.SelectOptions;
 import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
@@ -10,7 +10,6 @@ import com.bookstudio.worker.application.dto.response.WorkerListResponse;
 import com.bookstudio.worker.domain.model.Worker;
 import com.bookstudio.worker.infrastructure.repository.WorkerRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +41,7 @@ public class WorkerService {
 
     public WorkerDetailResponse getDetailById(Long id) {
         return workerRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Worker not found with ID: " + id));
     }
 
     @Transactional
@@ -58,13 +57,13 @@ public class WorkerService {
         Worker worker = new Worker();
         worker.setRole(roleService.findById(request.roleId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Role not found with ID: " + request.roleId())));
+                        () -> new ResourceNotFoundException("Role not found with ID: " + request.roleId())));
 
         worker.setUsername(request.username());
         worker.setEmail(request.email());
         worker.setFirstName(request.firstName());
         worker.setLastName(request.lastName());
-        worker.setPassword(PasswordUtils.hashPassword(request.password()));
+        worker.setPassword(request.password());
         worker.setProfilePhotoUrl(request.profilePhotoUrl());
         worker.setStatus(request.status());
 
@@ -75,10 +74,10 @@ public class WorkerService {
     @Transactional
     public WorkerListResponse update(Long id, UpdateWorkerRequest request) {
         Worker worker = workerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Worker not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Worker not found with ID: " + id));
 
         worker.setRole(roleService.findById(request.roleId())
-                .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + request.roleId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + request.roleId())));
 
         worker.setFirstName(request.firstName());
         worker.setLastName(request.lastName());

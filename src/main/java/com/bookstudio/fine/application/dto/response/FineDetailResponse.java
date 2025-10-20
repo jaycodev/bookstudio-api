@@ -2,8 +2,6 @@ package com.bookstudio.fine.application.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.fine.domain.model.type.FineStatus;
@@ -21,7 +19,7 @@ public record FineDetailResponse(
         @JsonIgnore String loanItemCopyCode,
         @JsonIgnore String loanItemCopyBarcode,
         @JsonIgnore CopyStatus loanItemCopyStatus,
-        
+
         @JsonIgnore LocalDate loanItemDueDate,
         @JsonIgnore LocalDate loanItemReturnDate,
         @JsonIgnore LoanItemStatus loanItemStatus,
@@ -32,20 +30,22 @@ public record FineDetailResponse(
         LocalDate issuedAt) {
 
     @JsonGetter("loanItem")
-    public Map<String, Object> getLoanItem() {
-        Map<String, Object> map = new LinkedHashMap<>();
+    public LoanItem getLoanItem() {
+        Copy copy = new Copy(loanItemCopyId, loanItemCopyCode, loanItemCopyBarcode, loanItemCopyStatus);
+        return new LoanItem(copy, loanItemDueDate, loanItemReturnDate, loanItemStatus);
+    }
 
-        Map<String, Object> copyMap = new LinkedHashMap<>();
-        copyMap.put("id", loanItemCopyId());
-        copyMap.put("code", loanItemCopyCode());
-        copyMap.put("barcode", loanItemCopyBarcode());
-        copyMap.put("status", loanItemCopyStatus());
+    public record LoanItem(
+            Copy copy,
+            LocalDate dueDate,
+            LocalDate returnDate,
+            LoanItemStatus status) {
+    }
 
-        map.put("copy", copyMap);
-        map.put("dueDate", loanItemDueDate());
-        map.put("returnDate", loanItemReturnDate());
-        map.put("status", loanItemStatus());
-
-        return map;
+    public record Copy(
+            Long id,
+            String code,
+            String barcode,
+            CopyStatus status) {
     }
 }

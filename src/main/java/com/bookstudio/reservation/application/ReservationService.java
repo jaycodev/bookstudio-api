@@ -6,11 +6,11 @@ import com.bookstudio.reservation.application.dto.response.ReservationDetailResp
 import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.reservation.domain.model.Reservation;
 import com.bookstudio.reservation.infrastructure.repository.ReservationRepository;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.copy.application.CopyService;
 import com.bookstudio.reader.application.ReaderService;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class ReservationService {
 
     public ReservationDetailResponse getDetailById(Long id) {
         return reservationRepository.findDetailById(id)
-                .orElseThrow(() -> new RuntimeException("Reservation not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + id));
     }
 
     @Transactional
@@ -48,11 +48,11 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setReader(readerService.findById(request.readerId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Reader not found with ID: " + request.readerId())));
         reservation.setCopy(copyService.findById(request.copyId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Copy not found with ID: " + request.copyId())));
+                        () -> new ResourceNotFoundException("Copy not found with ID: " + request.copyId())));
 
         reservation.setReservationDate(request.reservationDate());
         reservation.setStatus(request.status());
@@ -66,12 +66,12 @@ public class ReservationService {
     @Transactional
     public ReservationListResponse update(Long id, UpdateReservationRequest request) {
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + id));
 
         reservation.setReader(readerService.findById(request.readerId())
-                .orElseThrow(() -> new EntityNotFoundException("Reader not found with ID: " + request.readerId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
         reservation.setCopy(copyService.findById(request.copyId())
-                .orElseThrow(() -> new EntityNotFoundException("Copy not found with ID: " + request.copyId())));
+                .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + request.copyId())));
 
         reservation.setReservationDate(request.reservationDate());
         reservation.setStatus(request.status());

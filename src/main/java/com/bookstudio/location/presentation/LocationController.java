@@ -5,13 +5,18 @@ import com.bookstudio.location.application.dto.request.CreateLocationRequest;
 import com.bookstudio.location.application.dto.request.UpdateLocationRequest;
 import com.bookstudio.location.application.dto.response.LocationDetailResponse;
 import com.bookstudio.location.application.dto.response.LocationListResponse;
-import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.application.dto.response.ApiResponse;
+import com.bookstudio.shared.api.ApiError;
+import com.bookstudio.shared.api.ApiSuccess;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,48 +39,60 @@ public class LocationController {
 
     @GetMapping
     @Operation(summary = "List all locations")
-    public ResponseEntity<?> list() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Locations listed successfully"),
+            @ApiResponse(responseCode = "204", description = "No locations found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<LocationListResponse>>> list() {
         List<LocationListResponse> locations = locationService.getList();
-        if (locations.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiErrorResponse(false, "No locations found.", "no_content", 204));
-        }
-        return ResponseEntity.ok(locations);
+        ApiSuccess<List<LocationListResponse>> response = new ApiSuccess<>(
+                locations.isEmpty() ? "No locations found" : "Locations listed successfully",
+                locations);
+
+        HttpStatus status = locations.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a location by ID")
-    public ResponseEntity<?> get(@PathVariable Long id) {
-        try {
-            LocationDetailResponse location = locationService.getDetailById(id);
-            return ResponseEntity.ok(location);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "not_found", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Invalid ID", summary = "Invalid ID format", value = "{\"success\":false,\"status\":400,\"message\":\"Parameter 'id' has invalid value 'abc'\",\"path\":\"/locations/abc\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "404", description = "Location not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Location not found", value = "{\"success\":false,\"status\":404,\"message\":\"Location not found with ID: 999\",\"path\":\"/locations/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<LocationDetailResponse>> get(@PathVariable Long id) {
+        LocationDetailResponse location = locationService.getDetailById(id);
+        return ResponseEntity.ok(new ApiSuccess<>("Location found", location));
     }
 
     @PostMapping
     @Operation(summary = "Create a new location")
-    public ResponseEntity<?> create(@RequestBody CreateLocationRequest request) {
-        try {
-            LocationListResponse created = locationService.create(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "creation_failed", 400));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Location created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed or malformed JSON", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/locations\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"name\",\"message\":\"must not be blank\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/locations\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<LocationListResponse>> create(@Valid @RequestBody CreateLocationRequest request) {
+        LocationListResponse created = locationService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiSuccess<>("Location created successfully", created));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a location by ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateLocationRequest request) {
-        try {
-            LocationListResponse updated = locationService.update(id, request);
-            return ResponseEntity.ok(new ApiResponse(true, updated));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "update_failed", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed, malformed JSON, or invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"name\",\"message\":\"must not be blank\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "404", description = "Location not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Location not found", value = "{\"success\":false,\"status\":404,\"message\":\"Location not found\",\"path\":\"/locations/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<LocationListResponse>> update(@PathVariable Long id,
+            @Valid @RequestBody UpdateLocationRequest request) {
+        LocationListResponse updated = locationService.update(id, request);
+        return ResponseEntity.ok(new ApiSuccess<>("Location updated successfully", updated));
     }
 }

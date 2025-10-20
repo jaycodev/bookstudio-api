@@ -10,7 +10,7 @@ import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.location.domain.model.Location;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 public interface CopyRepository extends JpaRepository<Copy, Long> {
     @Query("""

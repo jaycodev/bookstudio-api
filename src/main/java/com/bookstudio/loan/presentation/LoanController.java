@@ -5,15 +5,20 @@ import com.bookstudio.loan.application.dto.request.CreateLoanRequest;
 import com.bookstudio.loan.application.dto.request.UpdateLoanRequest;
 import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
 import com.bookstudio.loan.application.dto.response.LoanListResponse;
-import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.application.dto.response.ApiResponse;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.api.ApiError;
+import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,79 +41,97 @@ public class LoanController {
 
     @GetMapping
     @Operation(summary = "List all loans")
-    public ResponseEntity<?> list() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Loans listed successfully"),
+            @ApiResponse(responseCode = "204", description = "No loans found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<LoanListResponse>>> list() {
         List<LoanListResponse> loans = loanService.getList();
-        if (loans.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiErrorResponse(false, "No loans found.", "no_content", 204));
-        }
-        return ResponseEntity.ok(loans);
+        ApiSuccess<List<LoanListResponse>> response = new ApiSuccess<>(
+                loans.isEmpty() ? "No loans found" : "Loans listed successfully",
+                loans);
+
+        HttpStatus status = loans.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a loan by ID")
-    public ResponseEntity<?> get(@PathVariable Long id) {
-        try {
-            LoanDetailResponse loan = loanService.getDetailById(id);
-            return ResponseEntity.ok(loan);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, "Loan not found.", "not_found", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Loan found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Invalid ID", summary = "Invalid ID format", value = "{\"success\":false,\"status\":400,\"message\":\"Parameter 'id' has invalid value 'abc'\",\"path\":\"/loans/abc\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "404", description = "Loan not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Loan not found", value = "{\"success\":false,\"status\":404,\"message\":\"Loan not found with ID: 999\",\"path\":\"/loans/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<LoanDetailResponse>> get(@PathVariable Long id) {
+        LoanDetailResponse loan = loanService.getDetailById(id);
+        return ResponseEntity.ok(new ApiSuccess<>("Loan found", loan));
     }
 
     @PostMapping
     @Operation(summary = "Create a new loan")
-    public ResponseEntity<?> create(@RequestBody CreateLoanRequest request) {
-        try {
-            LoanListResponse created = loanService.create(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "creation_failed", 400));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Loan created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed or malformed JSON", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/loans\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"copyId\",\"message\":\"must not be null\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/loans\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<LoanListResponse>> create(@Valid @RequestBody CreateLoanRequest request) {
+        LoanListResponse created = loanService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiSuccess<>("Loan created successfully", created));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a loan by ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateLoanRequest request) {
-        try {
-            LoanListResponse result = loanService.update(id, request);
-            return ResponseEntity.ok(new ApiResponse(true, result));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "update_failed", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Loan updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed, malformed JSON, or invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/loans/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"status\",\"message\":\"must not be null\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "404", description = "Loan not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Loan not found", value = "{\"success\":false,\"status\":404,\"message\":\"Loan not found\",\"path\":\"/loans/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/loans/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<LoanListResponse>> update(@PathVariable Long id,
+            @Valid @RequestBody UpdateLoanRequest request) {
+        LoanListResponse result = loanService.update(id, request);
+        return ResponseEntity.ok(new ApiSuccess<>("Loan updated successfully", result));
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get loan filter options")
-    public ResponseEntity<?> filterOptions() {
-        try {
-            List<OptionResponse> loans = loanService.getOptions();
-            if (loans.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new ApiErrorResponse(false, "No loans found for filter.", "no_content", 204));
-            }
-            return ResponseEntity.ok(loans);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Error fetching loan filter options.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No loans found for filter"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
+        List<OptionResponse> loans = loanService.getOptions();
+        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
+                loans.isEmpty() ? "No loans found for filter" : "Filter options retrieved successfully",
+                loans);
+
+        HttpStatus status = loans.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping("/select-options")
     @Operation(summary = "Get select options for loans")
-    public ResponseEntity<?> selectOptions() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
         SelectOptions options = loanService.getSelectOptions();
 
         boolean hasOptions = !options.books().isEmpty() || !options.students().isEmpty();
 
-        if (hasOptions) {
-            return ResponseEntity.ok(options);
-        } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiErrorResponse(false, "No select options found.", "no_content", 204));
-        }
+        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+                hasOptions ? "Select options retrieved successfully" : "No select options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
     }
 }

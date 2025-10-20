@@ -7,9 +7,9 @@ import com.bookstudio.author.application.dto.response.AuthorListResponse;
 import com.bookstudio.author.domain.model.Author;
 import com.bookstudio.author.infrastructure.repository.AuthorRepository;
 import com.bookstudio.nationality.application.NationalityService;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.util.SelectOptions;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class AuthorService {
 
     public AuthorDetailResponse getDetailById(Long id) {
         return authorRepository.findDetailById(id)
-                .orElseThrow(() -> new RuntimeException("Author not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + id));
     }
 
     @Transactional
@@ -49,7 +49,7 @@ public class AuthorService {
         Author author = new Author();
         author.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
 
         author.setName(request.name());
@@ -66,11 +66,11 @@ public class AuthorService {
     @Transactional
     public AuthorListResponse update(Long id, UpdateAuthorRequest request) {
         Author author = authorRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Author not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + id));
 
         author.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
 
         author.setName(request.name());

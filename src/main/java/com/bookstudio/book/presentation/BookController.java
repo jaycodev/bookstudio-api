@@ -5,15 +5,20 @@ import com.bookstudio.book.application.dto.request.CreateBookRequest;
 import com.bookstudio.book.application.dto.request.UpdateBookRequest;
 import com.bookstudio.book.application.dto.response.BookDetailResponse;
 import com.bookstudio.book.application.dto.response.BookListResponse;
-import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.application.dto.response.ApiResponse;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.api.ApiError;
+import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,81 +41,99 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "List all books")
-    public ResponseEntity<?> list() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Books listed successfully"),
+            @ApiResponse(responseCode = "204", description = "No books found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<BookListResponse>>> list() {
         List<BookListResponse> books = bookService.getList();
-        if (books.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiErrorResponse(false, "No books found.", "no_content", 204));
-        }
-        return ResponseEntity.ok(books);
+        ApiSuccess<List<BookListResponse>> response = new ApiSuccess<>(
+                books.isEmpty() ? "No books found" : "Books listed successfully",
+                books);
+
+        HttpStatus status = books.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a book by ID")
-    public ResponseEntity<?> get(@PathVariable Long id) {
-        try {
-            BookDetailResponse book = bookService.getDetailById(id);
-            return ResponseEntity.ok(book);
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, "Book not found.", "not_found", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Book found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Invalid ID", summary = "Invalid ID format", value = "{\"success\":false,\"status\":400,\"message\":\"Parameter 'id' has invalid value 'abc'\",\"path\":\"/books/abc\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "404", description = "Book not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Book not found", value = "{\"success\":false,\"status\":404,\"message\":\"Book not found with ID: 999\",\"path\":\"/books/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<BookDetailResponse>> get(@PathVariable Long id) {
+        BookDetailResponse book = bookService.getDetailById(id);
+        return ResponseEntity.ok(new ApiSuccess<>("Book found", book));
     }
 
     @PostMapping
     @Operation(summary = "Create a new book")
-    public ResponseEntity<?> create(@RequestBody CreateBookRequest request) {
-        try {
-            BookListResponse created = bookService.create(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "creation_failed", 400));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Book created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed or malformed JSON", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/books\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"title\",\"message\":\"must not be blank\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/books\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<BookListResponse>> create(@Valid @RequestBody CreateBookRequest request) {
+        BookListResponse created = bookService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiSuccess<>("Book created successfully", created));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a book by ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateBookRequest request) {
-        try {
-            BookListResponse updated = bookService.update(id, request);
-            return ResponseEntity.ok(new ApiResponse(true, updated));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "update_failed", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Book updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed, malformed JSON, or invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/books/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"title\",\"message\":\"must not be blank\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "404", description = "Book not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Book not found", value = "{\"success\":false,\"status\":404,\"message\":\"Book not found\",\"path\":\"/books/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/books/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<BookListResponse>> update(@PathVariable Long id,
+            @Valid @RequestBody UpdateBookRequest request) {
+        BookListResponse updated = bookService.update(id, request);
+        return ResponseEntity.ok(new ApiSuccess<>("Book updated successfully", updated));
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get book filter options")
-    public ResponseEntity<?> filterOptions() {
-        try {
-            List<OptionResponse> books = bookService.getOptions();
-            if (books.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new ApiErrorResponse(false, "No books found for filter.", "no_content", 204));
-            }
-            return ResponseEntity.ok(books);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Error fetching book filter options.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No books found for filter"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
+        List<OptionResponse> books = bookService.getOptions();
+        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
+                books.isEmpty() ? "No books found for filter" : "Filter options retrieved successfully",
+                books);
+
+        HttpStatus status = books.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping("/select-options")
     @Operation(summary = "Get select options for books")
-    public ResponseEntity<?> selectOptions() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<SelectOptions>> selectOptions() {
         SelectOptions options = bookService.getSelectOptions();
 
         boolean hasOptions = !options.languages().isEmpty()
                 || !options.publishers().isEmpty()
                 || !options.categories().isEmpty();
 
-        if (hasOptions) {
-            return ResponseEntity.ok(options);
-        } else {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiErrorResponse(false, "No select options found.", "no_content", 204));
-        }
+        ApiSuccess<SelectOptions> response = new ApiSuccess<>(
+                hasOptions ? "Select options retrieved successfully" : "No select options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
     }
 }

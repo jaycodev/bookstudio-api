@@ -10,7 +10,7 @@ import com.bookstudio.role.domain.model.RolePermission;
 import com.bookstudio.role.domain.model.RolePermissionId;
 import com.bookstudio.role.infrastructure.repository.RolePermissionRepository;
 import com.bookstudio.role.infrastructure.repository.RoleRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

@@ -1,8 +1,6 @@
 package com.bookstudio.publisher.application.dto.response;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.bookstudio.shared.domain.model.type.Status;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -33,12 +31,14 @@ public record PublisherDetailResponse(
     }
 
     @JsonGetter("nationality")
-    public Map<String, Object> getNationality() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", nationalityId());
-        map.put("code", nationalityCode());
-        map.put("name", nationalityName());
-        return map;
+    public Nationality getNationality() {
+        return new Nationality(nationalityId, nationalityCode, nationalityName);
+    }
+
+    public record Nationality(
+            Long id,
+            String code,
+            String name) {
     }
 
     public record GenreItem(

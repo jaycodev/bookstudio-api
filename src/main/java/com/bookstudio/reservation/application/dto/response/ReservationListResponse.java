@@ -1,8 +1,6 @@
 package com.bookstudio.reservation.application.dto.response;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.bookstudio.reservation.domain.model.type.ReservationStatus;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -24,18 +22,22 @@ public record ReservationListResponse(
         ReservationStatus status) {
 
     @JsonGetter("reader")
-    public Map<String, Object> getReader() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", readerId());
-        map.put("code", readerCode());
-        map.put("fullName", readerFullName());
-        return map;
+    public Reader getReader() {
+        return new Reader(readerId, readerCode, readerFullName);
     }
 
     @JsonGetter("copy")
-    public Map<String, Object> getCopy() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("code", copyCode());
-        return map;
+    public Copy getCopy() {
+        return new Copy(copyCode);
+    }
+
+    public record Reader(
+            Long id,
+            String code,
+            String fullName) {
+    }
+
+    public record Copy(
+            String code) {
     }
 }

@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @JsonPropertyOrder({ "id", "photoUrl", "name", "nationality", "website", "address", "status" })
 public record PublisherListResponse(
         Long id,
@@ -23,11 +20,13 @@ public record PublisherListResponse(
         Status status) {
 
     @JsonGetter("nationality")
-    public Map<String, Object> getNationality() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", nationalityId());
-        map.put("code", nationalityCode());
-        map.put("name", nationalityName());
-        return map;
+    public Nationality getNationality() {
+        return new Nationality(nationalityId, nationalityCode, nationalityName);
+    }
+
+    public record Nationality(
+            Long id,
+            String code,
+            String name) {
     }
 }

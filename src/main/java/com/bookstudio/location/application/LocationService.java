@@ -11,10 +11,10 @@ import com.bookstudio.location.domain.model.Location;
 import com.bookstudio.location.domain.model.Shelf;
 import com.bookstudio.location.infrastructure.repository.LocationRepository;
 import com.bookstudio.location.infrastructure.repository.ShelfRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class LocationService {
 
     public LocationDetailResponse getDetailById(Long id) {
         LocationDetailResponse base = locationRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Location not found with ID: " + id));
 
         return base.withShelves(shelfRepository.findShelfItemsByLocationId(id));
     }
@@ -80,7 +80,7 @@ public class LocationService {
     @Transactional
     public LocationListResponse update(Long id, UpdateLocationRequest request) {
         Location location = locationRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Location not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Location not found with ID: " + id));
 
         location.setName(request.name());
         location.setDescription(request.description());
@@ -90,7 +90,7 @@ public class LocationService {
                 if (shelfRequest.id() != null) {
                     Shelf shelf = shelfRepository.findById(shelfRequest.id())
                             .orElseThrow(
-                                    () -> new EntityNotFoundException(
+                                    () -> new ResourceNotFoundException(
                                             "Shelf not found with ID: " + shelfRequest.id()));
 
                     shelf.setCode(shelfRequest.code());

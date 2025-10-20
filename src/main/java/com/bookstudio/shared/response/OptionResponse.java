@@ -1,4 +1,4 @@
-package com.bookstudio.shared.application.dto.response;
+package com.bookstudio.shared.response;
 
 public record OptionResponse(
     Long value,

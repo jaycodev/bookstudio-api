@@ -1,8 +1,5 @@
 package com.bookstudio.copy.application.dto.response;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.bookstudio.copy.domain.model.type.CopyCondition;
 import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -29,22 +26,26 @@ public record CopyDetailResponse(
         CopyCondition condition) {
 
     @JsonGetter("book")
-    public Map<String, Object> getBook() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", bookId());
-        map.put("isbn", bookIsbn());
-        map.put("coverUrl", bookCoverUrl());
-        map.put("title", bookTitle());
-        return map;
+    public Book getBook() {
+        return new Book(bookId, bookIsbn, bookCoverUrl, bookTitle);
     }
 
     @JsonGetter("shelf")
-    public Map<String, Object> getShelf() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", shelfId());
-        map.put("code", shelfCode());
-        map.put("floor", shelfFloor());
-        map.put("description", shelfDescription());
-        return map;
+    public Shelf getShelf() {
+        return new Shelf(shelfId, shelfCode, shelfFloor, shelfDescription);
+    }
+
+    public record Book(
+            Long id,
+            String isbn,
+            String coverUrl,
+            String title) {
+    }
+
+    public record Shelf(
+            Long id,
+            String code,
+            String floor,
+            String description) {
     }
 }

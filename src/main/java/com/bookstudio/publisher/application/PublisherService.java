@@ -11,10 +11,10 @@ import com.bookstudio.publisher.domain.model.PublisherGenre;
 import com.bookstudio.publisher.domain.model.PublisherGenreId;
 import com.bookstudio.publisher.infrastructure.repository.PublisherGenreRepository;
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.shared.util.SelectOptions;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class PublisherService {
 
     public PublisherDetailResponse getDetailById(Long id) {
         PublisherDetailResponse base = publisherRepository.findDetailById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 
         return base.withGenres(publisherGenreRepository.findGenreItemsByPublisherId(id));
     }
@@ -61,7 +61,7 @@ public class PublisherService {
         Publisher publisher = new Publisher();
         publisher.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
 
         publisher.setName(request.name());
@@ -90,11 +90,11 @@ public class PublisherService {
     @Transactional
     public PublisherListResponse update(Long id, UpdatePublisherRequest request) {
         Publisher publisher = publisherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Publisher not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 
         publisher.setNationality(nationalityService.findById(request.nationalityId())
                 .orElseThrow(
-                        () -> new EntityNotFoundException(
+                        () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
 
         publisher.setName(request.name());

@@ -2,8 +2,6 @@ package com.bookstudio.fine.application.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -27,18 +25,22 @@ public record FineListResponse(
         FineStatus status) {
 
     @JsonGetter("loan")
-    public Map<String, Object> getLoan() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", loanId());
-        map.put("code", loanCode());
-        return map;
+    public Loan getLoan() {
+        return new Loan(loanId, loanCode);
     }
 
     @JsonGetter("copy")
-    public Map<String, Object> getCopy() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", copyId());
-        map.put("code", copyCode());
-        return map;
+    public Copy getCopy() {
+        return new Copy(copyId, copyCode);
+    }
+
+    public record Loan(
+            Long id,
+            String code) {
+    }
+
+    public record Copy(
+            Long id,
+            String code) {
     }
 }

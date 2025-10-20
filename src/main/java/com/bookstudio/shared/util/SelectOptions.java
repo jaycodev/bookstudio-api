@@ -2,7 +2,7 @@ package com.bookstudio.shared.util;
 
 import java.util.List;
 
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.response.OptionResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Builder;

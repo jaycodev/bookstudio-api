@@ -1,8 +1,6 @@
 package com.bookstudio.author.application.dto.response;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.bookstudio.shared.domain.model.type.Status;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -23,11 +21,13 @@ public record AuthorListResponse(
         Status status) {
 
     @JsonGetter("nationality")
-    public Map<String, Object> getNationality() {
-        Map<String, Object> nationality = new LinkedHashMap<>();
-        nationality.put("id", nationalityId);
-        nationality.put("code", nationalityCode);
-        nationality.put("name", nationalityName);
-        return nationality;
+    public Nationality getNationality() {
+        return new Nationality(nationalityId, nationalityCode, nationalityName);
+    }
+
+    public record Nationality(
+            Long id,
+            String code,
+            String name) {
     }
 }

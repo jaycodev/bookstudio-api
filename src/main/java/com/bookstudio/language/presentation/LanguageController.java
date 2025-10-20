@@ -1,10 +1,16 @@
 package com.bookstudio.language.presentation;
 
 import com.bookstudio.language.application.LanguageService;
-import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.api.ApiError;
+import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
@@ -25,17 +31,18 @@ public class LanguageController {
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get language filter options")
-    public ResponseEntity<?> filterOptions() {
-        try {
-            List<OptionResponse> languages = languageService.getOptions();
-            if (languages.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new ApiErrorResponse(false, "No languages found for filter.", "no_content", 204));
-            }
-            return ResponseEntity.ok(languages);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Error fetching language filter options.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No languages found for filter"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/languages/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
+        List<OptionResponse> languages = languageService.getOptions();
+        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
+                languages.isEmpty() ? "No languages found for filter" : "Filter options retrieved successfully",
+                languages);
+
+        HttpStatus status = languages.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 }

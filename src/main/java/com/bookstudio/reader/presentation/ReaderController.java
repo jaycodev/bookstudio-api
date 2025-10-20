@@ -5,14 +5,19 @@ import com.bookstudio.reader.application.dto.request.CreateReaderRequest;
 import com.bookstudio.reader.application.dto.request.UpdateReaderRequest;
 import com.bookstudio.reader.application.dto.response.ReaderDetailResponse;
 import com.bookstudio.reader.application.dto.response.ReaderListResponse;
-import com.bookstudio.shared.application.dto.response.ApiErrorResponse;
-import com.bookstudio.shared.application.dto.response.ApiResponse;
-import com.bookstudio.shared.application.dto.response.OptionResponse;
+import com.bookstudio.shared.api.ApiError;
+import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,73 +40,77 @@ public class ReaderController {
 
     @GetMapping
     @Operation(summary = "List all readers")
-    public ResponseEntity<?> list() {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Readers listed successfully"),
+            @ApiResponse(responseCode = "204", description = "No readers found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<ReaderListResponse>>> list() {
         List<ReaderListResponse> readers = readerService.getList();
-        if (readers.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiErrorResponse(false, "No readers found.", "no_content", 204));
-        }
-        return ResponseEntity.ok(readers);
+        ApiSuccess<List<ReaderListResponse>> response = new ApiSuccess<>(
+                readers.isEmpty() ? "No readers found" : "Readers listed successfully",
+                readers);
+
+        HttpStatus status = readers.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a reader by ID")
-    public ResponseEntity<?> get(@PathVariable Long id) {
-        try {
-            ReaderDetailResponse reader = readerService.getDetailById(id);
-            return ResponseEntity.ok(reader);
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, "Reader not found.", "not_found", 404));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reader found"),
+            @ApiResponse(responseCode = "400", description = "Invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Invalid ID", summary = "Invalid ID format", value = "{\"success\":false,\"status\":400,\"message\":\"Parameter 'id' has invalid value 'abc'\",\"path\":\"/readers/abc\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "404", description = "Reader not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Reader not found", value = "{\"success\":false,\"status\":404,\"message\":\"Reader not found with ID: 999\",\"path\":\"/readers/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<ReaderDetailResponse>> get(@PathVariable Long id) {
+        ReaderDetailResponse reader = readerService.getDetailById(id);
+        return ResponseEntity.ok(new ApiSuccess<>("Reader found", reader));
     }
 
     @PostMapping
     @Operation(summary = "Create a new reader")
-    public ResponseEntity<?> create(@RequestBody CreateReaderRequest request) {
-        try {
-            ReaderListResponse created = readerService.create(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(true, created));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "validation_error", 400));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Server error while creating reader.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Reader created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed or malformed JSON", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/readers\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"name\",\"message\":\"must not be blank\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/readers\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<ReaderListResponse>> create(@Valid @RequestBody CreateReaderRequest request) {
+        ReaderListResponse created = readerService.create(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiSuccess<>("Reader created successfully", created));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a reader by ID")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UpdateReaderRequest request) {
-        try {
-            ReaderListResponse updated = readerService.update(id, request);
-            return ResponseEntity.ok(new ApiResponse(true, updated));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "update_failed", 404));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ApiErrorResponse(false, e.getMessage(), "validation_error", 400));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Server error while updating reader.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reader updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation failed, malformed JSON, or invalid ID format", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Validation Error", summary = "Validation failed", value = "{\"success\":false,\"status\":400,\"message\":\"Validation failed\",\"path\":\"/readers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":[{\"field\":\"name\",\"message\":\"must not be blank\",\"rejectedValue\":null}]}"))),
+            @ApiResponse(responseCode = "404", description = "Reader not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Reader not found", value = "{\"success\":false,\"status\":404,\"message\":\"Reader not found\",\"path\":\"/readers/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/readers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<ReaderListResponse>> update(@PathVariable Long id,
+            @Valid @RequestBody UpdateReaderRequest request) {
+        ReaderListResponse updated = readerService.update(id, request);
+        return ResponseEntity.ok(new ApiSuccess<>("Reader updated successfully", updated));
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get reader filter options")
-    public ResponseEntity<?> filterOptions() {
-        try {
-            List<OptionResponse> readers = readerService.getOptions();
-            if (readers.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new ApiErrorResponse(false, "No readers found for filter.", "no_content", 204));
-            }
-            return ResponseEntity.ok(readers);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiErrorResponse(false, "Error fetching reader filter options.", "server_error", 500));
-        }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No readers found for filter"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
+        List<OptionResponse> readers = readerService.getOptions();
+        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
+                readers.isEmpty() ? "No readers found for filter" : "Filter options retrieved successfully",
+                readers);
+
+        HttpStatus status = readers.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
     }
 }

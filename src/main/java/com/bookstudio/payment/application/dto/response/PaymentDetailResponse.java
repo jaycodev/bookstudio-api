@@ -2,9 +2,7 @@ package com.bookstudio.payment.application.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.payment.domain.model.type.PaymentMethod;
@@ -32,12 +30,14 @@ public record PaymentDetailResponse(
     }
 
     @JsonGetter("reader")
-    public Map<String, Object> getReader() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", readerId());
-        map.put("code", readerCode());
-        map.put("fullName", readerFullName());
-        return map;
+    public Reader getReader() {
+        return new Reader(readerId, readerCode, readerFullName);
+    }
+
+    public record Reader(
+            Long id,
+            String code,
+            String fullName) {
     }
 
     public record FineItem(

@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @JsonPropertyOrder({ "id", "profilePhotoUrl", "username", "email", "fullName", "role", "status" })
 public record WorkerListResponse(
         Long id,
@@ -22,10 +19,12 @@ public record WorkerListResponse(
         WorkerStatus status) {
 
     @JsonGetter("role")
-    public Map<String, Object> getRole() {
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id", roleId());
-        map.put("name", roleName());
-        return map;
+    public Role getRole() {
+        return new Role(roleId, roleName);
+    }
+
+    public record Role(
+            Long id,
+            String name) {
     }
 }
