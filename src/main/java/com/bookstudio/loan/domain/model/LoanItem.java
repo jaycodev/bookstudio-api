@@ -13,13 +13,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "loan_items")
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoanItem {
     @EmbeddedId
     private LoanItemId id;
