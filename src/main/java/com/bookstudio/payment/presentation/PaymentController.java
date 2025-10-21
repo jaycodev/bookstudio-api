@@ -56,7 +56,7 @@ public class PaymentController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get payment filter options")
+    @Operation(summary = "Get filter options for payments")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

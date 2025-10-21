@@ -57,7 +57,7 @@ public class BookController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get book filter options")
+    @Operation(summary = "Get filter options for books")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

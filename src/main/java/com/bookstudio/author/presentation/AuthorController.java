@@ -57,7 +57,7 @@ public class AuthorController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get author filter options")
+    @Operation(summary = "Get filter options for authors")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

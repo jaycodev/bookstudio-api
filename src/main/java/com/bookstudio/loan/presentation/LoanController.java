@@ -57,7 +57,7 @@ public class LoanController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get loan filter options")
+    @Operation(summary = "Get filter options for loans")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

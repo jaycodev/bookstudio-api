@@ -56,7 +56,7 @@ public class ReservationController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get reservation filter options")
+    @Operation(summary = "Get filter options for reservations")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

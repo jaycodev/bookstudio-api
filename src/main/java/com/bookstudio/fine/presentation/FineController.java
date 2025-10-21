@@ -56,7 +56,7 @@ public class FineController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get fine filter options")
+    @Operation(summary = "Get filter options for fines")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

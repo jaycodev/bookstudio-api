@@ -57,7 +57,7 @@ public class PublisherController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get publisher filter options")
+    @Operation(summary = "Get filter options for publishers")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),

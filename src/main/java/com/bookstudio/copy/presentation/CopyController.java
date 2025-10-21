@@ -57,7 +57,7 @@ public class CopyController {
     }
 
     @GetMapping("/filter-options")
-    @Operation(summary = "Get copy filter options")
+    @Operation(summary = "Get filter options for copies")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
             @ApiResponse(responseCode = "204", description = "No filter options found"),
