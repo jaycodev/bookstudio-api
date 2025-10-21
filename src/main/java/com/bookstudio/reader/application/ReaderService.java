@@ -7,7 +7,6 @@ import com.bookstudio.reader.application.dto.response.ReaderListResponse;
 import com.bookstudio.reader.domain.model.Reader;
 import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,14 +27,6 @@ public class ReaderService {
 
     public List<ReaderListResponse> getList() {
         return readerRepository.findList();
-    }
-
-    public List<OptionResponse> getOptions() {
-        return readerRepository.findForOptions();
-    }
-
-    public Optional<Reader> findById(Long id) {
-        return readerRepository.findById(id);
     }
 
     public ReaderDetailResponse getDetailById(Long id) {

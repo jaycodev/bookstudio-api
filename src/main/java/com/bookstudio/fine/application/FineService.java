@@ -3,12 +3,14 @@ package com.bookstudio.fine.application;
 import com.bookstudio.fine.application.dto.request.CreateFineRequest;
 import com.bookstudio.fine.application.dto.request.UpdateFineRequest;
 import com.bookstudio.fine.application.dto.response.FineDetailResponse;
+import com.bookstudio.fine.application.dto.response.FineFilterOptionsResponse;
 import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.fine.domain.model.Fine;
 import com.bookstudio.fine.infrastructure.repository.FineRepository;
-import com.bookstudio.loan.application.LoanItemService;
+import com.bookstudio.loan.infrastructure.repository.LoanItemRepository;
+import com.bookstudio.loan.infrastructure.repository.LoanRepository;
+import com.bookstudio.copy.infrastructure.repository.CopyRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +28,18 @@ public class FineService {
     private EntityManager entityManager;
 
     private final FineRepository fineRepository;
-
-    private final LoanItemService loanItemService;
+    private final LoanRepository loanRepository;
+    private final CopyRepository copyRepository;
+    private final LoanItemRepository loanItemRepository;
 
     public List<FineListResponse> getList() {
         return fineRepository.findList();
     }
 
-    public List<OptionResponse> getOptions() {
-        return fineRepository.findForOptions();
-    }
-
-    public Optional<Fine> findById(Long id) {
-        return fineRepository.findById(id);
+    public FineFilterOptionsResponse getFilterOptions() {
+        return new FineFilterOptionsResponse(
+                loanRepository.findForOptions(),
+                copyRepository.findForOptions());
     }
 
     public FineDetailResponse getDetailById(Long id) {
@@ -50,8 +50,9 @@ public class FineService {
     @Transactional
     public FineListResponse create(CreateFineRequest request) {
         Fine fine = new Fine();
-        fine.setLoanItem(loanItemService.findById(request.loanItemId())
-                .orElseThrow(() -> new ResourceNotFoundException("Loan item not found with ID: " + request.loanItemId())));
+        fine.setLoanItem(loanItemRepository.findById(request.loanItemId())
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Loan item not found with ID: " + request.loanItemId())));
 
         fine.setAmount(request.amount());
         fine.setDaysLate(request.daysLate());

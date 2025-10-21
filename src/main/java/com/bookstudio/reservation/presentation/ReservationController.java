@@ -4,6 +4,7 @@ import com.bookstudio.reservation.application.ReservationService;
 import com.bookstudio.reservation.application.dto.request.CreateReservationRequest;
 import com.bookstudio.reservation.application.dto.request.UpdateReservationRequest;
 import com.bookstudio.reservation.application.dto.response.ReservationDetailResponse;
+import com.bookstudio.reservation.application.dto.response.ReservationFilterOptionsResponse;
 import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
@@ -51,6 +52,26 @@ public class ReservationController {
                 reservations);
 
         HttpStatus status = reservations.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get reservation filter options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<ReservationFilterOptionsResponse>> filterOptions() {
+        ReservationFilterOptionsResponse options = reservationService.getFilterOptions();
+
+        boolean hasOptions = !options.readers().isEmpty();
+
+        ApiSuccess<ReservationFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return ResponseEntity.status(status).body(response);
     }
 

@@ -4,6 +4,7 @@ import com.bookstudio.author.domain.model.Author;
 import com.bookstudio.book.application.dto.request.CreateBookRequest;
 import com.bookstudio.book.application.dto.request.UpdateBookRequest;
 import com.bookstudio.book.application.dto.response.BookDetailResponse;
+import com.bookstudio.book.application.dto.response.BookFilterOptionsResponse;
 import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.application.dto.response.BookSelectOptionsResponse;
 import com.bookstudio.book.domain.model.Book;
@@ -14,14 +15,14 @@ import com.bookstudio.book.domain.model.BookGenreId;
 import com.bookstudio.book.infrastructure.repository.BookAuthorRepository;
 import com.bookstudio.book.infrastructure.repository.BookGenreRepository;
 import com.bookstudio.book.infrastructure.repository.BookRepository;
-import com.bookstudio.category.application.CategoryService;
+import com.bookstudio.category.infrastructure.repository.CategoryRepository;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.genre.domain.model.Genre;
-import com.bookstudio.language.application.LanguageService;
-import com.bookstudio.publisher.application.PublisherService;
+import com.bookstudio.language.infrastructure.repository.LanguageRepository;
+import com.bookstudio.loan.infrastructure.repository.LoanRepository;
+import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,28 +39,29 @@ public class BookService {
     private final BookRepository bookRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
-
-    private final LanguageService languageService;
-    private final PublisherService publisherService;
-    private final CategoryService categoryService;
+    
+    private final LoanRepository loanRepository;
+    private final LanguageRepository languageRepository;
+    private final PublisherRepository publisherRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<BookListResponse> getList() {
         return bookRepository.findList();
     }
 
-    public List<OptionResponse> getOptions() {
-        return bookRepository.findForOptions();
+    public BookFilterOptionsResponse getFilterOptions() {
+        return new BookFilterOptionsResponse(
+                categoryRepository.findForOptions(),
+                publisherRepository.findForOptions(),
+                languageRepository.findForOptions(),
+                loanRepository.findForOptions());
     }
 
     public BookSelectOptionsResponse getSelectOptions() {
         return new BookSelectOptionsResponse(
-                languageService.getOptions(),
-                publisherService.getOptions(),
-                categoryService.getOptions());
-    }
-
-    public Optional<Book> findById(Long id) {
-        return bookRepository.findById(id);
+                languageRepository.findForOptions(),
+                publisherRepository.findForOptions(),
+                categoryRepository.findForOptions());
     }
 
     public BookDetailResponse getDetailById(Long id) {
@@ -75,13 +76,13 @@ public class BookService {
     @Transactional
     public BookListResponse create(CreateBookRequest request) {
         Book book = new Book();
-        book.setLanguage(languageService.findById(request.languageId())
+        book.setLanguage(languageRepository.findById(request.languageId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Language not found with ID: " + request.languageId())));
-        book.setPublisher(publisherService.findById(request.publisherId())
+        book.setPublisher(publisherRepository.findById(request.publisherId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Publisher not found with ID: " + request.publisherId())));
-        book.setCategory(categoryService.findById(request.categoryId())
+        book.setCategory(categoryRepository.findById(request.categoryId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Category not found with ID: " + request.categoryId())));
 
@@ -126,13 +127,13 @@ public class BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
-        book.setLanguage(languageService.findById(request.languageId())
+        book.setLanguage(languageRepository.findById(request.languageId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Language not found with ID: " + request.languageId())));
-        book.setPublisher(publisherService.findById(request.publisherId())
+        book.setPublisher(publisherRepository.findById(request.publisherId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Publisher not found with ID: " + request.publisherId())));
-        book.setCategory(categoryService.findById(request.categoryId())
+        book.setCategory(categoryRepository.findById(request.categoryId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Category not found with ID: " + request.categoryId())));
 

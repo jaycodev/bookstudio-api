@@ -2,7 +2,6 @@ package com.bookstudio.category.application;
 
 import com.bookstudio.category.infrastructure.repository.CategoryRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 import com.bookstudio.category.application.dto.request.CreateCategoryRequest;
 import com.bookstudio.category.application.dto.request.UpdateCategoryRequest;
 import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +22,6 @@ public class CategoryService {
 
     public List<CategoryListResponse> getList() {
         return categoryRepository.findList();
-    }
-
-    public List<OptionResponse> getOptions() {
-        return categoryRepository.findForOptions();
-    }
-
-    public Optional<Category> findById(Long id) {
-        return categoryRepository.findById(id);
     }
 
     public CategoryDetailResponse getDetailById(Long id) {

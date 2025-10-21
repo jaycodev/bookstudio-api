@@ -7,7 +7,6 @@ import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
 import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
-import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,22 +94,5 @@ public class CategoryController {
             @Valid @RequestBody UpdateCategoryRequest request) {
         CategoryListResponse updated = categoryService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Category updated successfully", updated));
-    }
-
-    @GetMapping("/filter-options")
-    @Operation(summary = "Get category filter options")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No categories found for filter"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/categories/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
-        List<OptionResponse> categories = categoryService.getOptions();
-        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
-                categories.isEmpty() ? "No categories found for filter" : "Filter options retrieved successfully",
-                categories);
-
-        HttpStatus status = categories.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
     }
 }

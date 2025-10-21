@@ -4,6 +4,7 @@ import com.bookstudio.fine.application.FineService;
 import com.bookstudio.fine.application.dto.request.CreateFineRequest;
 import com.bookstudio.fine.application.dto.request.UpdateFineRequest;
 import com.bookstudio.fine.application.dto.response.FineDetailResponse;
+import com.bookstudio.fine.application.dto.response.FineFilterOptionsResponse;
 import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
@@ -51,6 +52,26 @@ public class FineController {
                 fines);
 
         HttpStatus status = fines.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get fine filter options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/fines/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<FineFilterOptionsResponse>> filterOptions() {
+        FineFilterOptionsResponse options = fineService.getFilterOptions();
+
+        boolean hasOptions = !options.loans().isEmpty() || !options.copies().isEmpty();
+
+        ApiSuccess<FineFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return ResponseEntity.status(status).body(response);
     }
 

@@ -4,6 +4,7 @@ import com.bookstudio.payment.application.PaymentService;
 import com.bookstudio.payment.application.dto.request.CreatePaymentRequest;
 import com.bookstudio.payment.application.dto.request.UpdatePaymentRequest;
 import com.bookstudio.payment.application.dto.response.PaymentDetailResponse;
+import com.bookstudio.payment.application.dto.response.PaymentFilterOptionsResponse;
 import com.bookstudio.payment.application.dto.response.PaymentListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
@@ -51,6 +52,26 @@ public class PaymentController {
                 payments);
 
         HttpStatus status = payments.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get payment filter options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<PaymentFilterOptionsResponse>> filterOptions() {
+        PaymentFilterOptionsResponse options = paymentService.getFilterOptions();
+
+        boolean hasOptions = !options.readers().isEmpty();
+
+        ApiSuccess<PaymentFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
         return ResponseEntity.status(status).body(response);
     }
 

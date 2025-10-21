@@ -1,19 +1,19 @@
 package com.bookstudio.payment.application;
 
-import com.bookstudio.fine.application.FineService;
 import com.bookstudio.fine.domain.model.Fine;
 import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.fine.infrastructure.repository.FineRepository;
 import com.bookstudio.payment.application.dto.request.CreatePaymentRequest;
 import com.bookstudio.payment.application.dto.request.UpdatePaymentRequest;
 import com.bookstudio.payment.application.dto.response.PaymentDetailResponse;
+import com.bookstudio.payment.application.dto.response.PaymentFilterOptionsResponse;
 import com.bookstudio.payment.application.dto.response.PaymentListResponse;
 import com.bookstudio.payment.domain.model.Payment;
 import com.bookstudio.payment.domain.model.PaymentFine;
 import com.bookstudio.payment.domain.model.PaymentFineId;
 import com.bookstudio.payment.infrastructure.repository.PaymentFineRepository;
 import com.bookstudio.payment.infrastructure.repository.PaymentRepository;
-import com.bookstudio.reader.application.ReaderService;
+import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
 import jakarta.persistence.EntityManager;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,16 +34,15 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final FineRepository fineRepository;
     private final PaymentFineRepository paymentFineRepository;
-
-    private final ReaderService readerService;
-    private final FineService fineService;
+    private final ReaderRepository readerRepository;
 
     public List<PaymentListResponse> getList() {
         return paymentRepository.findList();
     }
 
-    public Optional<Payment> findById(Long id) {
-        return paymentRepository.findById(id);
+    public PaymentFilterOptionsResponse getFilterOptions() {
+        return new PaymentFilterOptionsResponse(
+                readerRepository.findForOptions());
     }
 
     public PaymentDetailResponse getDetailById(Long id) {
@@ -57,7 +55,7 @@ public class PaymentService {
     @Transactional
     public PaymentListResponse create(CreatePaymentRequest request) {
         Payment payment = new Payment();
-        payment.setReader(readerService.findById(request.readerId())
+        payment.setReader(readerRepository.findById(request.readerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         payment.setAmount(request.amount());
@@ -69,7 +67,7 @@ public class PaymentService {
 
         if (request.fineIds() != null) {
             for (Long fineId : request.fineIds()) {
-                Fine fine = fineService.findById(fineId)
+                Fine fine = fineRepository.findById(fineId)
                         .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
 
                 PaymentFine relation = PaymentFine.builder()
@@ -93,7 +91,7 @@ public class PaymentService {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 
-        payment.setReader(readerService.findById(request.readerId())
+        payment.setReader(readerRepository.findById(request.readerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         payment.setAmount(request.amount());
@@ -106,7 +104,7 @@ public class PaymentService {
 
         if (request.fineIds() != null) {
             for (Long fineId : request.fineIds()) {
-                Fine fine = fineService.findById(fineId)
+                Fine fine = fineRepository.findById(fineId)
                         .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
 
                 PaymentFine relation = PaymentFine.builder()

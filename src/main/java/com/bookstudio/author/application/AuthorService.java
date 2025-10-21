@@ -3,11 +3,12 @@ package com.bookstudio.author.application;
 import com.bookstudio.author.application.dto.request.CreateAuthorRequest;
 import com.bookstudio.author.application.dto.request.UpdateAuthorRequest;
 import com.bookstudio.author.application.dto.response.AuthorDetailResponse;
+import com.bookstudio.author.application.dto.response.AuthorFilterOptionsResponse;
 import com.bookstudio.author.application.dto.response.AuthorListResponse;
 import com.bookstudio.author.application.dto.response.AuthorSelectOptionsResponse;
 import com.bookstudio.author.domain.model.Author;
 import com.bookstudio.author.infrastructure.repository.AuthorRepository;
-import com.bookstudio.nationality.application.NationalityService;
+import com.bookstudio.nationality.infrastructure.repository.NationalityRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -15,26 +16,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AuthorService {
     private final AuthorRepository authorRepository;
-
-    private final NationalityService nationalityService;
+    private final NationalityRepository nationalityRepository;
 
     public List<AuthorListResponse> getList() {
         return authorRepository.findList();
     }
 
-    public AuthorSelectOptionsResponse getSelectOptions() {
-        return new AuthorSelectOptionsResponse(nationalityService.getOptions());
+    public AuthorFilterOptionsResponse getFilterOptions() {
+        return new AuthorFilterOptionsResponse(
+                nationalityRepository.findForOptions());
     }
 
-    public Optional<Author> findById(Long id) {
-        return authorRepository.findById(id);
+    public AuthorSelectOptionsResponse getSelectOptions() {
+        return new AuthorSelectOptionsResponse(
+                nationalityRepository.findForOptions());
     }
 
     public AuthorDetailResponse getDetailById(Long id) {
@@ -45,7 +46,7 @@ public class AuthorService {
     @Transactional
     public AuthorListResponse create(CreateAuthorRequest request) {
         Author author = new Author();
-        author.setNationality(nationalityService.findById(request.nationalityId())
+        author.setNationality(nationalityRepository.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
@@ -66,7 +67,7 @@ public class AuthorService {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + id));
 
-        author.setNationality(nationalityService.findById(request.nationalityId())
+        author.setNationality(nationalityRepository.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));

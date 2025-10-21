@@ -1,6 +1,6 @@
 package com.bookstudio.worker.application;
 
-import com.bookstudio.role.application.RoleService;
+import com.bookstudio.role.infrastructure.repository.RoleRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
@@ -23,14 +23,14 @@ import java.util.Optional;
 public class WorkerService {
     private final WorkerRepository workerRepository;
 
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
 
     public List<WorkerListResponse> getList(Long loggedId) {
         return workerRepository.findList(loggedId);
     }
 
     public WorkerSelectOptionsResponse getSelectOptions() {
-        return new WorkerSelectOptionsResponse(roleService.getOptions());
+        return new WorkerSelectOptionsResponse(roleRepository.findForOptions());
     }
 
     public Optional<Worker> findById(Long id) {
@@ -53,7 +53,7 @@ public class WorkerService {
         }
 
         Worker worker = new Worker();
-        worker.setRole(roleService.findById(request.roleId())
+        worker.setRole(roleRepository.findById(request.roleId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Role not found with ID: " + request.roleId())));
 
@@ -74,7 +74,7 @@ public class WorkerService {
         Worker worker = workerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found with ID: " + id));
 
-        worker.setRole(roleService.findById(request.roleId())
+        worker.setRole(roleRepository.findById(request.roleId())
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found with ID: " + request.roleId())));
 
         worker.setFirstName(request.firstName());

@@ -4,11 +4,11 @@ import com.bookstudio.publisher.application.PublisherService;
 import com.bookstudio.publisher.application.dto.request.CreatePublisherRequest;
 import com.bookstudio.publisher.application.dto.request.UpdatePublisherRequest;
 import com.bookstudio.publisher.application.dto.response.PublisherDetailResponse;
+import com.bookstudio.publisher.application.dto.response.PublisherFilterOptionsResponse;
 import com.bookstudio.publisher.application.dto.response.PublisherListResponse;
 import com.bookstudio.publisher.application.dto.response.PublisherSelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
-import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,6 +56,46 @@ public class PublisherController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get publisher filter options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/publishers/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<PublisherFilterOptionsResponse>> filterOptions() {
+        PublisherFilterOptionsResponse options = publisherService.getFilterOptions();
+
+        boolean hasOptions = !options.nationalities().isEmpty();
+
+        ApiSuccess<PublisherFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping("/select-options")
+    @Operation(summary = "Get select options for publishers")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/publishers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<PublisherSelectOptionsResponse>> selectOptions() {
+        PublisherSelectOptionsResponse options = publisherService.getSelectOptions();
+
+        boolean hasOptions = !options.nationalities().isEmpty();
+
+        ApiSuccess<PublisherSelectOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Select options retrieved successfully" : "No select options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a publisher by ID")
     @ApiResponses(value = {
@@ -97,42 +137,5 @@ public class PublisherController {
             @Valid @RequestBody UpdatePublisherRequest request) {
         PublisherListResponse updated = publisherService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Publisher updated successfully", updated));
-    }
-
-    @GetMapping("/filter-options")
-    @Operation(summary = "Get publisher filter options")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No publishers found for filter"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/publishers/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
-        List<OptionResponse> publishers = publisherService.getOptions();
-        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
-                publishers.isEmpty() ? "No publishers found for filter" : "Filter options retrieved successfully",
-                publishers);
-
-        HttpStatus status = publishers.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    @GetMapping("/select-options")
-    @Operation(summary = "Get select options for publishers")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/publishers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<PublisherSelectOptionsResponse>> selectOptions() {
-        PublisherSelectOptionsResponse options = publisherService.getSelectOptions();
-
-        boolean hasOptions = !options.nationalities().isEmpty();
-
-        ApiSuccess<PublisherSelectOptionsResponse> response = new ApiSuccess<>(
-                hasOptions ? "Select options retrieved successfully" : "No select options found",
-                options);
-
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
     }
 }

@@ -4,11 +4,11 @@ import com.bookstudio.book.application.BookService;
 import com.bookstudio.book.application.dto.request.CreateBookRequest;
 import com.bookstudio.book.application.dto.request.UpdateBookRequest;
 import com.bookstudio.book.application.dto.response.BookDetailResponse;
+import com.bookstudio.book.application.dto.response.BookFilterOptionsResponse;
 import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.application.dto.response.BookSelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
-import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,6 +56,51 @@ public class BookController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get book filter options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<BookFilterOptionsResponse>> filterOptions() {
+        BookFilterOptionsResponse options = bookService.getFilterOptions();
+
+        boolean hasOptions = !options.categories().isEmpty()
+                || !options.publishers().isEmpty()
+                || !options.languages().isEmpty()
+                || !options.loans().isEmpty();
+
+        ApiSuccess<BookFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping("/select-options")
+    @Operation(summary = "Get select options for books")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<BookSelectOptionsResponse>> selectOptions() {
+        BookSelectOptionsResponse options = bookService.getSelectOptions();
+
+        boolean hasOptions = !options.languages().isEmpty()
+                || !options.publishers().isEmpty()
+                || !options.categories().isEmpty();
+
+        ApiSuccess<BookSelectOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Select options retrieved successfully" : "No select options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a book by ID")
     @ApiResponses(value = {
@@ -96,44 +141,5 @@ public class BookController {
             @Valid @RequestBody UpdateBookRequest request) {
         BookListResponse updated = bookService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Book updated successfully", updated));
-    }
-
-    @GetMapping("/filter-options")
-    @Operation(summary = "Get book filter options")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No books found for filter"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
-        List<OptionResponse> books = bookService.getOptions();
-        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
-                books.isEmpty() ? "No books found for filter" : "Filter options retrieved successfully",
-                books);
-
-        HttpStatus status = books.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    @GetMapping("/select-options")
-    @Operation(summary = "Get select options for books")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<BookSelectOptionsResponse>> selectOptions() {
-        BookSelectOptionsResponse options = bookService.getSelectOptions();
-
-        boolean hasOptions = !options.languages().isEmpty()
-                || !options.publishers().isEmpty()
-                || !options.categories().isEmpty();
-
-        ApiSuccess<BookSelectOptionsResponse> response = new ApiSuccess<>(
-                hasOptions ? "Select options retrieved successfully" : "No select options found",
-                options);
-
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
     }
 }

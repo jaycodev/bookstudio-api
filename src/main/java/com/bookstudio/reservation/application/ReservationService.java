@@ -3,12 +3,13 @@ package com.bookstudio.reservation.application;
 import com.bookstudio.reservation.application.dto.request.CreateReservationRequest;
 import com.bookstudio.reservation.application.dto.request.UpdateReservationRequest;
 import com.bookstudio.reservation.application.dto.response.ReservationDetailResponse;
+import com.bookstudio.reservation.application.dto.response.ReservationFilterOptionsResponse;
 import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.reservation.domain.model.Reservation;
 import com.bookstudio.reservation.infrastructure.repository.ReservationRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.copy.application.CopyService;
-import com.bookstudio.reader.application.ReaderService;
+import com.bookstudio.copy.infrastructure.repository.CopyRepository;
+import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +27,16 @@ public class ReservationService {
     private EntityManager entityManager;
 
     private final ReservationRepository reservationRepository;
-    private final ReaderService readerService;
-    private final CopyService copyService;
+    private final ReaderRepository readerRepository;
+    private final CopyRepository copyRepository;
 
     public List<ReservationListResponse> getList() {
         return reservationRepository.findList();
     }
 
-    public Optional<Reservation> findById(Long id) {
-        return reservationRepository.findById(id);
+    public ReservationFilterOptionsResponse getFilterOptions() {
+        return new ReservationFilterOptionsResponse(
+                readerRepository.findForOptions());
     }
 
     public ReservationDetailResponse getDetailById(Long id) {
@@ -46,11 +47,11 @@ public class ReservationService {
     @Transactional
     public ReservationListResponse create(CreateReservationRequest request) {
         Reservation reservation = new Reservation();
-        reservation.setReader(readerService.findById(request.readerId())
+        reservation.setReader(readerRepository.findById(request.readerId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(
                                 "Reader not found with ID: " + request.readerId())));
-        reservation.setCopy(copyService.findById(request.copyId())
+        reservation.setCopy(copyRepository.findById(request.copyId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Copy not found with ID: " + request.copyId())));
 
@@ -68,9 +69,9 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + id));
 
-        reservation.setReader(readerService.findById(request.readerId())
+        reservation.setReader(readerRepository.findById(request.readerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
-        reservation.setCopy(copyService.findById(request.copyId())
+        reservation.setCopy(copyRepository.findById(request.copyId())
                 .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + request.copyId())));
 
         reservation.setReservationDate(request.reservationDate());

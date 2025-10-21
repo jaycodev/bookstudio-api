@@ -7,7 +7,6 @@ import com.bookstudio.role.application.dto.response.RoleDetailResponse;
 import com.bookstudio.role.application.dto.response.RoleListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
-import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -95,22 +94,5 @@ public class RoleController {
             @Valid @RequestBody UpdateRoleRequest request) {
         RoleListResponse updated = roleService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Role updated successfully", updated));
-    }
-
-    @GetMapping("/filter-options")
-    @Operation(summary = "Get role filter options")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No roles found for filter"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
-        List<OptionResponse> roles = roleService.getOptions();
-        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
-                roles.isEmpty() ? "No roles found for filter" : "Filter options retrieved successfully",
-                roles);
-
-        HttpStatus status = roles.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
     }
 }

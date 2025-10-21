@@ -10,7 +10,6 @@ import com.bookstudio.role.domain.model.RolePermission;
 import com.bookstudio.role.domain.model.RolePermissionId;
 import com.bookstudio.role.infrastructure.repository.RolePermissionRepository;
 import com.bookstudio.role.infrastructure.repository.RoleRepository;
-import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,14 +27,6 @@ public class RoleService {
 
     public List<RoleListResponse> getList() {
         return roleRepository.findList();
-    }
-
-    public List<OptionResponse> getOptions() {
-        return roleRepository.findForOptions();
-    }
-
-    public Optional<Role> findById(Long id) {
-        return roleRepository.findById(id);
     }
 
     public RoleDetailResponse getDetailById(Long id) {

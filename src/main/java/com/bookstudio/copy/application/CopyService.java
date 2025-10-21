@@ -1,16 +1,16 @@
 package com.bookstudio.copy.application;
 
-import com.bookstudio.book.application.BookService;
+import com.bookstudio.book.infrastructure.repository.BookRepository;
 import com.bookstudio.copy.infrastructure.repository.CopyRepository;
-import com.bookstudio.location.application.ShelfService;
+import com.bookstudio.location.infrastructure.repository.ShelfRepository;
 import com.bookstudio.copy.application.dto.request.CreateCopyRequest;
 import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
 import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
+import com.bookstudio.copy.application.dto.response.CopyFilterOptionsResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.application.dto.response.CopySelectOptionsResponse;
 import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,26 +28,22 @@ public class CopyService {
     private EntityManager entityManager;
 
     private final CopyRepository copyRepository;
-
-    private final BookService bookService;
-    private final ShelfService shelfService;
+    private final BookRepository bookRepository;
+    private final ShelfRepository shelfRepository;
 
     public List<CopyListResponse> getList() {
         return copyRepository.findList();
     }
 
-    public List<OptionResponse> getOptions() {
-        return copyRepository.findForOptions();
+    public CopyFilterOptionsResponse getFilterOptions() {
+        return new CopyFilterOptionsResponse(
+                bookRepository.findForOptions());
     }
 
     public CopySelectOptionsResponse getSelectOptions() {
         return new CopySelectOptionsResponse(
-                bookService.getOptions(),
-                shelfService.getOptions());
-    }
-
-    public Optional<Copy> findById(Long id) {
-        return copyRepository.findById(id);
+                bookRepository.findForOptions(),
+                shelfRepository.findForOptions());
     }
 
     public CopyDetailResponse getDetailById(Long id) {
@@ -59,9 +54,9 @@ public class CopyService {
     @Transactional
     public CopyListResponse create(CreateCopyRequest request) {
         Copy copy = new Copy();
-        copy.setBook(bookService.findById(request.bookId())
+        copy.setBook(bookRepository.findById(request.bookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + request.bookId())));
-        copy.setShelf(shelfService.findById(request.shelfId())
+        copy.setShelf(shelfRepository.findById(request.shelfId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
         copy.setBarcode(request.barcode());
@@ -79,7 +74,7 @@ public class CopyService {
         Copy copy = copyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + id));
 
-        copy.setShelf(shelfService.findById(request.shelfId())
+        copy.setShelf(shelfRepository.findById(request.shelfId())
                 .orElseThrow(() -> new ResourceNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
         copy.setBarcode(request.barcode());

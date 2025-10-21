@@ -12,7 +12,6 @@ import com.bookstudio.location.domain.model.Shelf;
 import com.bookstudio.location.infrastructure.repository.LocationRepository;
 import com.bookstudio.location.infrastructure.repository.ShelfRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +34,6 @@ public class LocationService {
 
     public List<LocationListResponse> getList() {
         return locationRepository.findList();
-    }
-
-    public List<OptionResponse> getOptions() {
-        return locationRepository.findForOptions();
-    }
-
-    public Optional<Location> findById(Long id) {
-        return locationRepository.findById(id);
     }
 
     public LocationDetailResponse getDetailById(Long id) {

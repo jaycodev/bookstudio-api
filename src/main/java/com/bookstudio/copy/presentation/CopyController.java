@@ -4,11 +4,11 @@ import com.bookstudio.copy.application.CopyService;
 import com.bookstudio.copy.application.dto.request.CreateCopyRequest;
 import com.bookstudio.copy.application.dto.request.UpdateCopyRequest;
 import com.bookstudio.copy.application.dto.response.CopyDetailResponse;
+import com.bookstudio.copy.application.dto.response.CopyFilterOptionsResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.application.dto.response.CopySelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
-import com.bookstudio.shared.response.OptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,6 +56,45 @@ public class CopyController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get copy filter options")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<CopyFilterOptionsResponse>> filterOptions() {
+        CopyFilterOptionsResponse options = copyService.getFilterOptions();
+
+        boolean hasOptions = !options.books().isEmpty();
+
+        ApiSuccess<CopyFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
+    @GetMapping("/select-options")
+    @Operation(summary = "Get select options for copies")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<CopySelectOptionsResponse>> selectOptions() {
+        CopySelectOptionsResponse options = copyService.getSelectOptions();
+        boolean hasOptions = !options.books().isEmpty() || !options.shelves().isEmpty();
+
+        ApiSuccess<CopySelectOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Select options retrieved successfully" : "No select options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a copy by ID")
     @ApiResponses(value = {
@@ -96,41 +135,5 @@ public class CopyController {
             @Valid @RequestBody UpdateCopyRequest request) {
         CopyListResponse updated = copyService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Copy updated successfully", updated));
-    }
-
-    @GetMapping("/filter-options")
-    @Operation(summary = "Get copy filter options")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No copies found for filter"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<List<OptionResponse>>> filterOptions() {
-        List<OptionResponse> copies = copyService.getOptions();
-        ApiSuccess<List<OptionResponse>> response = new ApiSuccess<>(
-                copies.isEmpty() ? "No copies found for filter" : "Filter options retrieved successfully",
-                copies);
-
-        HttpStatus status = copies.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
-    }
-
-    @GetMapping("/select-options")
-    @Operation(summary = "Get select options for copies")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<CopySelectOptionsResponse>> selectOptions() {
-        CopySelectOptionsResponse options = copyService.getSelectOptions();
-        boolean hasOptions = !options.books().isEmpty() || !options.shelves().isEmpty();
-
-        ApiSuccess<CopySelectOptionsResponse> response = new ApiSuccess<>(
-                hasOptions ? "Select options retrieved successfully" : "No select options found",
-                options);
-
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
     }
 }

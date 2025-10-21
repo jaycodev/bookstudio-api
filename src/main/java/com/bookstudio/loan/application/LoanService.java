@@ -1,13 +1,14 @@
 package com.bookstudio.loan.application;
 
-import com.bookstudio.book.application.BookService;
-import com.bookstudio.copy.application.CopyService;
+import com.bookstudio.book.infrastructure.repository.BookRepository;
 import com.bookstudio.copy.domain.model.Copy;
+import com.bookstudio.copy.infrastructure.repository.CopyRepository;
 import com.bookstudio.loan.application.dto.request.CreateLoanItemRequest;
 import com.bookstudio.loan.application.dto.request.CreateLoanRequest;
 import com.bookstudio.loan.application.dto.request.UpdateLoanItemRequest;
 import com.bookstudio.loan.application.dto.request.UpdateLoanRequest;
 import com.bookstudio.loan.application.dto.response.LoanDetailResponse;
+import com.bookstudio.loan.application.dto.response.LoanFilterOptionsResponse;
 import com.bookstudio.loan.application.dto.response.LoanListResponse;
 import com.bookstudio.loan.application.dto.response.LoanSelectOptionsResponse;
 import com.bookstudio.loan.domain.model.Loan;
@@ -16,9 +17,8 @@ import com.bookstudio.loan.domain.model.LoanItemId;
 import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 import com.bookstudio.loan.infrastructure.repository.LoanItemRepository;
 import com.bookstudio.loan.infrastructure.repository.LoanRepository;
-import com.bookstudio.reader.application.ReaderService;
+import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -40,23 +40,24 @@ public class LoanService {
 
     private final LoanRepository loanRepository;
     private final LoanItemRepository loanItemRepository;
-
-    private final BookService bookService;
-    private final ReaderService readerService;
-    private final CopyService copyService;
+    
+    private final BookRepository bookRepository;
+    private final ReaderRepository readerRepository;
+    private final CopyRepository copyRepository;
 
     public List<LoanListResponse> getList() {
         return loanRepository.findList();
     }
 
-    public List<OptionResponse> getOptions() {
-        return loanRepository.findForOptions();
+    public LoanFilterOptionsResponse getFilterOptions() {
+        return new LoanFilterOptionsResponse(
+                readerRepository.findForOptions());
     }
 
     public LoanSelectOptionsResponse getSelectOptions() {
         return new LoanSelectOptionsResponse(
-                bookService.getOptions(),
-                readerService.getOptions());
+                bookRepository.findForOptions(),
+                readerRepository.findForOptions());
     }
 
     public LoanDetailResponse getDetailById(Long id) {
@@ -69,7 +70,7 @@ public class LoanService {
     @Transactional
     public LoanListResponse create(CreateLoanRequest request) {
         Loan loan = new Loan();
-        loan.setReader(readerService.findById(request.readerId())
+        loan.setReader(readerRepository.findById(request.readerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         loan.setLoanDate(LocalDate.now());
@@ -80,7 +81,7 @@ public class LoanService {
 
         if (request.items() != null) {
             for (CreateLoanItemRequest itemDto : request.items()) {
-                Copy copy = copyService.findById(itemDto.copyId())
+                Copy copy = copyRepository.findById(itemDto.copyId())
                         .orElseThrow(
                                 () -> new ResourceNotFoundException("Copy not found with ID: " + itemDto.copyId()));
 
@@ -104,7 +105,7 @@ public class LoanService {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 
-        loan.setReader(readerService.findById(request.readerId())
+        loan.setReader(readerRepository.findById(request.readerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + request.readerId())));
 
         loan.setObservation(request.observation());
@@ -115,7 +116,7 @@ public class LoanService {
 
         if (request.items() != null) {
             for (UpdateLoanItemRequest itemDto : request.items()) {
-                Copy copy = copyService.findById(itemDto.copyId())
+                Copy copy = copyRepository.findById(itemDto.copyId())
                         .orElseThrow(() -> new ResourceNotFoundException(
                                 "Copy not found with ID: " + itemDto.copyId()));
 

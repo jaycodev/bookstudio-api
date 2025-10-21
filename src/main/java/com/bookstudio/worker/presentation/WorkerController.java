@@ -56,6 +56,26 @@ public class WorkerController {
         return ResponseEntity.status(status).body(response);
     }
 
+    @GetMapping("/select-options")
+    @Operation(summary = "Get select options for workers")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+    })
+    public ResponseEntity<ApiSuccess<WorkerSelectOptionsResponse>> selectOptions() {
+        WorkerSelectOptionsResponse options = workerService.getSelectOptions();
+
+        boolean hasOptions = !options.roles().isEmpty();
+
+        ApiSuccess<WorkerSelectOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Select options retrieved successfully" : "No select options found",
+                options);
+
+        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
+        return ResponseEntity.status(status).body(response);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a worker by ID")
     @ApiResponses(value = {
@@ -96,25 +116,5 @@ public class WorkerController {
             @Valid @RequestBody UpdateWorkerRequest request) {
         WorkerListResponse updated = workerService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Worker updated successfully", updated));
-    }
-
-    @GetMapping("/select-options")
-    @Operation(summary = "Get select options for workers")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
-    })
-    public ResponseEntity<ApiSuccess<WorkerSelectOptionsResponse>> selectOptions() {
-        WorkerSelectOptionsResponse options = workerService.getSelectOptions();
-
-        boolean hasOptions = !options.roles().isEmpty();
-
-        ApiSuccess<WorkerSelectOptionsResponse> response = new ApiSuccess<>(
-                hasOptions ? "Select options retrieved successfully" : "No select options found",
-                options);
-
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
     }
 }

@@ -1,10 +1,11 @@
 package com.bookstudio.publisher.application;
 
 import com.bookstudio.genre.domain.model.Genre;
-import com.bookstudio.nationality.application.NationalityService;
+import com.bookstudio.nationality.infrastructure.repository.NationalityRepository;
 import com.bookstudio.publisher.application.dto.request.CreatePublisherRequest;
 import com.bookstudio.publisher.application.dto.request.UpdatePublisherRequest;
 import com.bookstudio.publisher.application.dto.response.PublisherDetailResponse;
+import com.bookstudio.publisher.application.dto.response.PublisherFilterOptionsResponse;
 import com.bookstudio.publisher.application.dto.response.PublisherListResponse;
 import com.bookstudio.publisher.application.dto.response.PublisherSelectOptionsResponse;
 import com.bookstudio.publisher.domain.model.Publisher;
@@ -13,14 +14,12 @@ import com.bookstudio.publisher.domain.model.PublisherGenreId;
 import com.bookstudio.publisher.infrastructure.repository.PublisherGenreRepository;
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
-import com.bookstudio.shared.response.OptionResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,23 +27,20 @@ import java.util.Optional;
 public class PublisherService {
     private final PublisherRepository publisherRepository;
     private final PublisherGenreRepository publisherGenreRepository;
-
-    private final NationalityService nationalityService;
+    private final NationalityRepository nationalityRepository;
 
     public List<PublisherListResponse> getList() {
         return publisherRepository.findList();
     }
 
-    public List<OptionResponse> getOptions() {
-        return publisherRepository.findForOptions();
+    public PublisherFilterOptionsResponse getFilterOptions() {
+        return new PublisherFilterOptionsResponse(
+                nationalityRepository.findForOptions());
     }
 
     public PublisherSelectOptionsResponse getSelectOptions() {
-        return new PublisherSelectOptionsResponse(nationalityService.getOptions());
-    }
-
-    public Optional<Publisher> findById(Long id) {
-        return publisherRepository.findById(id);
+        return new PublisherSelectOptionsResponse(
+                nationalityRepository.findForOptions());
     }
 
     public PublisherDetailResponse getDetailById(Long id) {
@@ -57,7 +53,7 @@ public class PublisherService {
     @Transactional
     public PublisherListResponse create(CreatePublisherRequest request) {
         Publisher publisher = new Publisher();
-        publisher.setNationality(nationalityService.findById(request.nationalityId())
+        publisher.setNationality(nationalityRepository.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
@@ -90,7 +86,7 @@ public class PublisherService {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 
-        publisher.setNationality(nationalityService.findById(request.nationalityId())
+        publisher.setNationality(nationalityRepository.findById(request.nationalityId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException(
                                 "Nationality not found with ID: " + request.nationalityId())));
