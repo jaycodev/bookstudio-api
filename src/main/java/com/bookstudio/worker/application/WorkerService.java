@@ -15,14 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class WorkerService {
     private final WorkerRepository workerRepository;
-
     private final RoleRepository roleRepository;
 
     public List<WorkerListResponse> getList(Long loggedId) {
@@ -31,10 +29,6 @@ public class WorkerService {
 
     public WorkerSelectOptionsResponse getSelectOptions() {
         return new WorkerSelectOptionsResponse(roleRepository.findForOptions());
-    }
-
-    public Optional<Worker> findById(Long id) {
-        return workerRepository.findById(id);
     }
 
     public WorkerDetailResponse getDetailById(Long id) {
