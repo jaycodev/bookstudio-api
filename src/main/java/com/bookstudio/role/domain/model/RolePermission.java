@@ -7,14 +7,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "role_permissions")
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class RolePermission {

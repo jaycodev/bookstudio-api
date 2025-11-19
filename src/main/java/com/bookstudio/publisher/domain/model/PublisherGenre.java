@@ -2,21 +2,12 @@ package com.bookstudio.publisher.domain.model;
 
 import com.bookstudio.genre.domain.model.Genre;
 
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "publisher_genres")
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PublisherGenre {
