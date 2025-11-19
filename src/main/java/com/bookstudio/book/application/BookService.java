@@ -24,9 +24,13 @@ import com.bookstudio.loan.infrastructure.repository.LoanRepository;
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Map;
@@ -35,11 +39,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class BookService {
     private final BookRepository bookRepository;
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
-    
+
     private final LoanRepository loanRepository;
     private final LanguageRepository languageRepository;
     private final PublisherRepository publisherRepository;
@@ -64,7 +69,7 @@ public class BookService {
                 categoryRepository.findForOptions());
     }
 
-    public BookDetailResponse getDetailById(Long id) {
+    public BookDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         BookDetailResponse base = bookRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
@@ -97,33 +102,27 @@ public class BookService {
 
         Book saved = bookRepository.save(book);
 
-        if (request.authorIds() != null) {
-            for (Long authorId : request.authorIds()) {
-                BookAuthor relation = BookAuthor.builder()
-                        .id(new BookAuthorId(saved.getId(), authorId))
-                        .book(saved)
-                        .author(new Author(authorId))
-                        .build();
-                bookAuthorRepository.save(relation);
-            }
+        for (Long authorId : request.authorIds()) {
+            BookAuthor relation = new BookAuthor(
+                    new BookAuthorId(saved.getId(), authorId),
+                    saved,
+                    new Author(authorId));
+            bookAuthorRepository.save(relation);
         }
 
-        if (request.genreIds() != null) {
-            for (Long genreId : request.genreIds()) {
-                BookGenre relation = BookGenre.builder()
-                        .id(new BookGenreId(saved.getId(), genreId))
-                        .book(saved)
-                        .genre(new Genre(genreId))
-                        .build();
-                bookGenreRepository.save(relation);
-            }
+        for (Long genreId : request.genreIds()) {
+            BookGenre relation = new BookGenre(
+                    new BookGenreId(saved.getId(), genreId),
+                    saved,
+                    new Genre(genreId));
+            bookGenreRepository.save(relation);
         }
 
         return toListResponse(saved);
     }
 
     @Transactional
-    public BookListResponse update(Long id, UpdateBookRequest request) {
+    public BookListResponse update(@NonNull @Min(1) Long id, UpdateBookRequest request) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
@@ -151,26 +150,20 @@ public class BookService {
         bookAuthorRepository.deleteAllByBook(updated);
         bookGenreRepository.deleteAllByBook(updated);
 
-        if (request.authorIds() != null) {
-            for (Long authorId : request.authorIds()) {
-                BookAuthor relation = BookAuthor.builder()
-                        .id(new BookAuthorId(updated.getId(), authorId))
-                        .book(updated)
-                        .author(new Author(authorId))
-                        .build();
-                bookAuthorRepository.save(relation);
-            }
+        for (Long authorId : request.authorIds()) {
+            BookAuthor relation = new BookAuthor(
+                    new BookAuthorId(updated.getId(), authorId),
+                    updated,
+                    new Author(authorId));
+            bookAuthorRepository.save(relation);
         }
 
-        if (request.genreIds() != null) {
-            for (Long genreId : request.genreIds()) {
-                BookGenre relation = BookGenre.builder()
-                        .id(new BookGenreId(updated.getId(), genreId))
-                        .book(updated)
-                        .genre(new Genre(genreId))
-                        .build();
-                bookGenreRepository.save(relation);
-            }
+        for (Long genreId : request.genreIds()) {
+            BookGenre relation = new BookGenre(
+                    new BookGenreId(updated.getId(), genreId),
+                    updated,
+                    new Genre(genreId));
+            bookGenreRepository.save(relation);
         }
 
         return toListResponse(updated);
