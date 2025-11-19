@@ -1,6 +1,7 @@
 package com.bookstudio.shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -78,6 +79,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
                 String.format("Parameter '%s' has invalid value '%s'", ex.getName(), ex.getValue()),
+                request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex,
+            HttpServletRequest request) {
+
+        String message = ex.getConstraintViolations().stream()
+                .map(cv -> cv.getMessage())
+                .collect(Collectors.joining(", "));
+
+        ApiError apiError = new ApiError(
+                HttpStatus.BAD_REQUEST.value(),
+                message,
                 request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
