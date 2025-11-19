@@ -8,6 +8,7 @@ import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
 import com.bookstudio.worker.application.dto.response.WorkerListResponse;
 import com.bookstudio.worker.application.dto.response.WorkerSelectOptionsResponse;
 import com.bookstudio.worker.domain.model.Worker;
+import com.bookstudio.worker.domain.model.type.WorkerStatus;
 import com.bookstudio.worker.infrastructure.repository.WorkerRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,7 @@ public class WorkerService {
         worker.setLastName(request.lastName());
         worker.setPassword(request.password());
         worker.setProfilePhotoUrl(request.profilePhotoUrl());
-        worker.setStatus(request.status());
+        worker.setStatus(WorkerStatus.valueOf(request.status()));
 
         Worker saved = workerRepository.save(worker);
         return toListResponse(saved);
@@ -78,7 +79,7 @@ public class WorkerService {
         worker.setFirstName(request.firstName());
         worker.setLastName(request.lastName());
         worker.setProfilePhotoUrl(request.profilePhotoUrl());
-        worker.setStatus(request.status());
+        worker.setStatus(WorkerStatus.valueOf(request.status()));
 
         Worker updated = workerRepository.save(worker);
         return toListResponse(updated);

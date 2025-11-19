@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.lang.NonNull;
 
 import com.bookstudio.shared.type.Status;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -32,8 +33,9 @@ public record CreatePublisherRequest(
     @Size(max = 255, message = "Address must not exceed 255 characters")
     String address,
 
-    @NotNull(message = "Status is required")
-    Status status,
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = Status.class, message = "Invalid status")
+    String status,
 
     @Size(max = 1024, message = "Photo URL must not exceed 1024 characters")
     String photoUrl,

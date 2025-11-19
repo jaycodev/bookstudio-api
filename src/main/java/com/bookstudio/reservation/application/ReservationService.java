@@ -6,6 +6,7 @@ import com.bookstudio.reservation.application.dto.response.ReservationDetailResp
 import com.bookstudio.reservation.application.dto.response.ReservationFilterOptionsResponse;
 import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.reservation.domain.model.Reservation;
+import com.bookstudio.reservation.domain.model.type.ReservationStatus;
 import com.bookstudio.reservation.infrastructure.repository.ReservationRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.copy.infrastructure.repository.CopyRepository;
@@ -60,7 +61,7 @@ public class ReservationService {
                         () -> new ResourceNotFoundException("Copy not found with ID: " + request.copyId())));
 
         reservation.setReservationDate(request.reservationDate());
-        reservation.setStatus(request.status());
+        reservation.setStatus(ReservationStatus.valueOf(request.status()));
 
         Reservation saved = reservationRepository.save(reservation);
         entityManager.refresh(saved);
@@ -79,7 +80,7 @@ public class ReservationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + request.copyId())));
 
         reservation.setReservationDate(request.reservationDate());
-        reservation.setStatus(request.status());
+        reservation.setStatus(ReservationStatus.valueOf(request.status()));
 
         Reservation updated = reservationRepository.save(reservation);
         return toListResponse(updated);

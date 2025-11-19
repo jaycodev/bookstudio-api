@@ -4,6 +4,7 @@ import org.springframework.lang.NonNull;
 
 import com.bookstudio.copy.domain.model.type.CopyCondition;
 import com.bookstudio.copy.domain.model.type.CopyStatus;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,9 +21,11 @@ public record UpdateCopyRequest(
     @Size(max = 50, message = "Barcode must not exceed 50 characters")
     String barcode,
 
-    @NotNull(message = "Status is required")
-    CopyStatus status,
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = CopyStatus.class, message = "Invalid status")
+    String status,
 
-    @NotNull(message = "Condition is required")
-    CopyCondition condition
+    @NotBlank(message = "Condition is required")
+    @ValidEnum(enumClass = CopyCondition.class, message = "Invalid condition")
+    String condition
 ) {}

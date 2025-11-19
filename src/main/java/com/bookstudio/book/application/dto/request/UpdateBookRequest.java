@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.lang.NonNull;
 
 import com.bookstudio.shared.type.Status;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -52,8 +53,9 @@ public record UpdateBookRequest(
     @PastOrPresent(message = "Release date must be in the past or present")
     LocalDate releaseDate,
 
-    @NotNull(message = "Status is required")
-    Status status,
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = Status.class, message = "Invalid status")
+    String status,
 
     @NonNull
     @NotEmpty(message = "Author IDs cannot be empty")

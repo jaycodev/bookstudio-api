@@ -19,8 +19,13 @@ import com.bookstudio.shared.api.ApiFieldError;
 
 import org.springframework.lang.NonNull;
 
+import java.lang.reflect.Field;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -32,8 +37,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             @NonNull HttpStatusCode status,
             @NonNull WebRequest request) {
 
+        final Map<String, Integer> fieldOrder = Optional.ofNullable(ex.getBindingResult().getTarget())
+                .map(Object::getClass)
+                .map(this::createFieldOrder)
+                .orElse(Map.of());
+
         List<ApiFieldError> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
                 .map(fe -> new ApiFieldError(fe.getField(), fe.getDefaultMessage(), fe.getRejectedValue()))
+                .sorted(Comparator.comparing(fe -> fieldOrder.getOrDefault(fe.getField(), Integer.MAX_VALUE)))
                 .collect(Collectors.toList());
 
         ApiError apiError = new ApiError(
@@ -54,7 +65,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),
-                "Malformed JSON request",
+                ex.getMessage(),
                 request.getDescription(false).replace("uri=", ""));
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
@@ -105,5 +116,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(apiError);
+    }
+
+    private Map<String, Integer> createFieldOrder(Class<?> clazz) {
+        Field[] fields = clazz.getDeclaredFields();
+        return IntStream.range(0, fields.length)
+                .boxed()
+                .collect(Collectors.toMap(i -> fields[i].getName(), i -> i));
     }
 }

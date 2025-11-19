@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.bookstudio.reader.domain.model.type.ReaderGender;
 import com.bookstudio.reader.domain.model.type.ReaderStatus;
 import com.bookstudio.reader.domain.model.type.ReaderType;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -43,12 +44,15 @@ public record CreateReaderRequest(
     @PastOrPresent(message = "Birth date must be in the past or present")
     LocalDate birthDate,
 
-    @NotNull(message = "Gender is required")
-    ReaderGender gender,
+    @NotBlank(message = "Gender is required")
+    @ValidEnum(enumClass = ReaderGender.class, message = "Invalid gender")
+    String gender,
 
-    @NotNull(message = "Type is required")
-    ReaderType type,
+    @NotBlank(message = "Type is required")
+    @ValidEnum(enumClass = ReaderType.class, message = "Invalid type")
+    String type,
 
-    @NotNull(message = "Status is required")
-    ReaderStatus status
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = ReaderStatus.class, message = "Invalid status")
+    String status
 ) {}

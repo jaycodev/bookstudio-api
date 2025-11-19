@@ -6,6 +6,7 @@ import com.bookstudio.fine.application.dto.response.FineDetailResponse;
 import com.bookstudio.fine.application.dto.response.FineFilterOptionsResponse;
 import com.bookstudio.fine.application.dto.response.FineListResponse;
 import com.bookstudio.fine.domain.model.Fine;
+import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.fine.infrastructure.repository.FineRepository;
 import com.bookstudio.loan.infrastructure.repository.LoanItemRepository;
 import com.bookstudio.loan.infrastructure.repository.LoanRepository;
@@ -60,7 +61,7 @@ public class FineService {
 
         fine.setAmount(request.amount());
         fine.setDaysLate(request.daysLate());
-        fine.setStatus(request.status());
+        fine.setStatus(FineStatus.valueOf(request.status()));
         fine.setIssuedAt(request.issuedAt());
 
         Fine saved = fineRepository.save(fine);
@@ -76,7 +77,7 @@ public class FineService {
 
         fine.setAmount(request.amount());
         fine.setDaysLate(request.daysLate());
-        fine.setStatus(request.status());
+        fine.setStatus(FineStatus.valueOf(request.status()));
 
         Fine updated = fineRepository.save(fine);
 

@@ -7,9 +7,11 @@ import org.springframework.lang.NonNull;
 
 import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.loan.domain.model.LoanItemId;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
@@ -26,8 +28,9 @@ public record CreateFineRequest(
     @Min(value = 1, message = "Days late must be at least 1")
     Integer daysLate,
 
-    @NotNull(message = "Status is required")
-    FineStatus status,
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = FineStatus.class, message = "Invalid status")
+    String status,
 
     @NotNull(message = "Issued at is required")
     @PastOrPresent(message = "Issued at must be in the past or present")

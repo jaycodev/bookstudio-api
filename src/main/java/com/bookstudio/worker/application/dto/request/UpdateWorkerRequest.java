@@ -3,6 +3,7 @@ package com.bookstudio.worker.application.dto.request;
 import org.springframework.lang.NonNull;
 
 import com.bookstudio.worker.domain.model.type.WorkerStatus;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -26,6 +27,7 @@ public record UpdateWorkerRequest(
     @Size(max = 1024, message = "Profile photo URL must not exceed 1024 characters")
     String profilePhotoUrl,
 
-    @NotNull(message = "Status is required")
-    WorkerStatus status
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = WorkerStatus.class, message = "Invalid status")
+    String status
 ) {}

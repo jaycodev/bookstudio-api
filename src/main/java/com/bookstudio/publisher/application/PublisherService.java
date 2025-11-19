@@ -14,6 +14,7 @@ import com.bookstudio.publisher.domain.model.PublisherGenreId;
 import com.bookstudio.publisher.infrastructure.repository.PublisherGenreRepository;
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.type.Status;
 
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.constraints.Min;
@@ -66,7 +67,7 @@ public class PublisherService {
         publisher.setFoundationYear(request.foundationYear());
         publisher.setWebsite(request.website());
         publisher.setAddress(request.address());
-        publisher.setStatus(request.status());
+        publisher.setStatus(Status.valueOf(request.status()));
         publisher.setPhotoUrl(request.photoUrl());
 
         Publisher saved = publisherRepository.save(publisher);
@@ -96,7 +97,7 @@ public class PublisherService {
         publisher.setFoundationYear(request.foundationYear());
         publisher.setWebsite(request.website());
         publisher.setAddress(request.address());
-        publisher.setStatus(request.status());
+        publisher.setStatus(Status.valueOf(request.status()));
 
         if (request.photoUrl() == null || request.photoUrl().isBlank()) {
             publisher.setPhotoUrl(null);

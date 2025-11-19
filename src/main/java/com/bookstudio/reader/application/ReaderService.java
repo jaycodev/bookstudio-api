@@ -5,6 +5,9 @@ import com.bookstudio.reader.application.dto.request.UpdateReaderRequest;
 import com.bookstudio.reader.application.dto.response.ReaderDetailResponse;
 import com.bookstudio.reader.application.dto.response.ReaderListResponse;
 import com.bookstudio.reader.domain.model.Reader;
+import com.bookstudio.reader.domain.model.type.ReaderGender;
+import com.bookstudio.reader.domain.model.type.ReaderStatus;
+import com.bookstudio.reader.domain.model.type.ReaderType;
 import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
@@ -56,9 +59,9 @@ public class ReaderService {
         reader.setPhone(request.phone());
         reader.setEmail(request.email());
         reader.setBirthDate(request.birthDate());
-        reader.setGender(request.gender());
-        reader.setType(request.type());
-        reader.setStatus(request.status());
+        reader.setGender(ReaderGender.valueOf(request.gender()));
+        reader.setType(ReaderType.valueOf(request.type()));
+        reader.setStatus(ReaderStatus.valueOf(request.status()));
 
         Reader saved = readerRepository.save(reader);
         entityManager.refresh(saved);
@@ -81,9 +84,9 @@ public class ReaderService {
         reader.setPhone(request.phone());
         reader.setEmail(request.email());
         reader.setBirthDate(request.birthDate());
-        reader.setGender(request.gender());
-        reader.setType(request.type());
-        reader.setStatus(request.status());
+        reader.setGender(ReaderGender.valueOf(request.gender()));
+        reader.setType(ReaderType.valueOf(request.type()));
+        reader.setStatus(ReaderStatus.valueOf(request.status()));
 
         Reader updated = readerRepository.save(reader);
         return toListResponse(updated);

@@ -11,6 +11,7 @@ import com.bookstudio.payment.application.dto.response.PaymentListResponse;
 import com.bookstudio.payment.domain.model.Payment;
 import com.bookstudio.payment.domain.model.PaymentFine;
 import com.bookstudio.payment.domain.model.PaymentFineId;
+import com.bookstudio.payment.domain.model.type.PaymentMethod;
 import com.bookstudio.payment.infrastructure.repository.PaymentFineRepository;
 import com.bookstudio.payment.infrastructure.repository.PaymentRepository;
 import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
@@ -65,7 +66,7 @@ public class PaymentService {
 
         payment.setAmount(request.amount());
         payment.setPaymentDate(request.paymentDate());
-        payment.setMethod(request.method());
+        payment.setMethod(PaymentMethod.valueOf(request.method()));
 
         Payment saved = paymentRepository.save(payment);
         entityManager.refresh(saved);
@@ -97,7 +98,7 @@ public class PaymentService {
 
         payment.setAmount(request.amount());
         payment.setPaymentDate(request.paymentDate());
-        payment.setMethod(request.method());
+        payment.setMethod(PaymentMethod.valueOf(request.method()));
 
         Payment updated = paymentRepository.save(payment);
 

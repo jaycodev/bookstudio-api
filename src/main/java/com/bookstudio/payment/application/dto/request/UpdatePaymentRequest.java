@@ -7,9 +7,11 @@ import java.util.List;
 import org.springframework.lang.NonNull;
 
 import com.bookstudio.payment.domain.model.type.PaymentMethod;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -28,8 +30,9 @@ public record UpdatePaymentRequest(
     @PastOrPresent(message = "Payment date must be in the past or present")
     LocalDate paymentDate,
 
-    @NotNull(message = "Method is required")
-    PaymentMethod method,
+    @NotBlank(message = "Method is required")
+    @ValidEnum(enumClass = PaymentMethod.class, message = "Invalid method")
+    String method,
 
     @NonNull
     @NotEmpty(message = "Fine IDs cannot be empty")

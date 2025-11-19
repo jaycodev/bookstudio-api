@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import org.springframework.lang.NonNull;
 
 import com.bookstudio.loan.domain.model.type.LoanItemStatus;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateLoanItemRequest(
@@ -20,6 +22,7 @@ public record UpdateLoanItemRequest(
     @Future(message = "Due date must be in the future")
     LocalDate dueDate,
 
-    @NotNull(message = "Status is required")
-    LoanItemStatus status
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = LoanItemStatus.class, message = "Invalid status")
+    String status
 ) {}

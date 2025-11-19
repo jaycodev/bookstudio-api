@@ -23,6 +23,7 @@ import com.bookstudio.language.infrastructure.repository.LanguageRepository;
 import com.bookstudio.loan.infrastructure.repository.LoanRepository;
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.type.Status;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -98,7 +99,7 @@ public class BookService {
         book.setDescription(request.description());
         book.setCoverUrl(request.coverUrl());
         book.setReleaseDate(request.releaseDate());
-        book.setStatus(request.status());
+        book.setStatus(Status.valueOf(request.status()));
 
         Book saved = bookRepository.save(book);
 
@@ -143,7 +144,7 @@ public class BookService {
         book.setDescription(request.description());
         book.setCoverUrl(request.coverUrl());
         book.setReleaseDate(request.releaseDate());
-        book.setStatus(request.status());
+        book.setStatus(Status.valueOf(request.status()));
 
         Book updated = bookRepository.save(book);
 

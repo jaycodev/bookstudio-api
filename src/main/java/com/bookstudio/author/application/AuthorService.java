@@ -10,6 +10,7 @@ import com.bookstudio.author.domain.model.Author;
 import com.bookstudio.author.infrastructure.repository.AuthorRepository;
 import com.bookstudio.nationality.infrastructure.repository.NationalityRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
+import com.bookstudio.shared.type.Status;
 
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +60,7 @@ public class AuthorService {
         author.setName(request.name());
         author.setBirthDate(request.birthDate());
         author.setBiography(request.biography());
-        author.setStatus(request.status());
+        author.setStatus(Status.valueOf(request.status()));
         author.setPhotoUrl(request.photoUrl());
 
         Author saved = authorRepository.save(author);
@@ -80,7 +81,7 @@ public class AuthorService {
         author.setName(request.name());
         author.setBirthDate(request.birthDate());
         author.setBiography(request.biography());
-        author.setStatus(request.status());
+        author.setStatus(Status.valueOf(request.status()));
         author.setPhotoUrl(request.photoUrl());
 
         Author updated = authorRepository.save(author);

@@ -7,6 +7,8 @@ import com.bookstudio.category.application.dto.request.UpdateCategoryRequest;
 import com.bookstudio.category.application.dto.response.CategoryDetailResponse;
 import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.category.domain.model.Category;
+import com.bookstudio.category.domain.model.type.CategoryLevel;
+import com.bookstudio.shared.type.Status;
 
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.constraints.Min;
@@ -37,9 +39,9 @@ public class CategoryService {
     public CategoryListResponse create(CreateCategoryRequest request) {
         Category category = new Category();
         category.setName(request.name());
-        category.setLevel(request.level());
+        category.setLevel(CategoryLevel.valueOf(request.level()));
         category.setDescription(request.description());
-        category.setStatus(request.status());
+        category.setStatus(Status.valueOf(request.status()));
 
         Category saved = categoryRepository.save(category);
 
@@ -52,9 +54,9 @@ public class CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
 
         category.setName(request.name());
-        category.setLevel(request.level());
+        category.setLevel(CategoryLevel.valueOf(request.level()));
         category.setDescription(request.description());
-        category.setStatus(request.status());
+        category.setStatus(Status.valueOf(request.status()));
 
         Category updated = categoryRepository.save(category);
 

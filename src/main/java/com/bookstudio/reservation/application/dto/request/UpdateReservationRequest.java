@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import org.springframework.lang.NonNull;
 
 import com.bookstudio.reservation.domain.model.type.ReservationStatus;
+import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
@@ -25,6 +27,7 @@ public record UpdateReservationRequest(
     @PastOrPresent(message = "Reservation date must be in the past or present")
     LocalDate reservationDate,
 
-    @NotNull(message = "Status is required")
-    ReservationStatus status
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = ReservationStatus.class, message = "Invalid status")
+    String status
 ) {}

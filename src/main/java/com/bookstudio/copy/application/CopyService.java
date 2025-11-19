@@ -10,6 +10,8 @@ import com.bookstudio.copy.application.dto.response.CopyFilterOptionsResponse;
 import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.application.dto.response.CopySelectOptionsResponse;
 import com.bookstudio.copy.domain.model.Copy;
+import com.bookstudio.copy.domain.model.type.CopyCondition;
+import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
 import jakarta.persistence.EntityManager;
@@ -64,8 +66,8 @@ public class CopyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
         copy.setBarcode(request.barcode());
-        copy.setStatus(request.status());
-        copy.setCondition(request.condition());
+        copy.setStatus(CopyStatus.valueOf(request.status()));
+        copy.setCondition(CopyCondition.valueOf(request.condition()));
 
         Copy saved = copyRepository.save(copy);
         entityManager.refresh(saved);
@@ -82,8 +84,8 @@ public class CopyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Shelf not found with ID: " + request.shelfId())));
 
         copy.setBarcode(request.barcode());
-        copy.setStatus(request.status());
-        copy.setCondition(request.condition());
+        copy.setStatus(CopyStatus.valueOf(request.status()));
+        copy.setCondition(CopyCondition.valueOf(request.condition()));
 
         Copy updated = copyRepository.save(copy);
 

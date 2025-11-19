@@ -3,6 +3,7 @@ package com.bookstudio.author.application.dto.request;
 import java.time.LocalDate;
 
 import com.bookstudio.shared.type.Status;
+import com.bookstudio.shared.validation.ValidEnum;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,8 +26,9 @@ public record UpdateAuthorRequest(
 
     String biography,
 
-    @NotNull(message = "Status is required")
-    Status status,
+    @NotBlank(message = "Status is required")
+    @ValidEnum(enumClass = Status.class, message = "Invalid status")
+    String status,
     
     @Size(max = 1024, message = "Photo URL must not exceed 1024 characters")
     String photoUrl
