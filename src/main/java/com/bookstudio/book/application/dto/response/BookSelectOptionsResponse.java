@@ -5,7 +5,7 @@ import java.util.List;
 import com.bookstudio.shared.response.OptionResponse;
 
 public record BookSelectOptionsResponse(
-        List<OptionResponse> languages,
-        List<OptionResponse> publishers,
-        List<OptionResponse> categories) {
-}
+    List<OptionResponse> languages,
+    List<OptionResponse> publishers,
+    List<OptionResponse> categories
+) {}

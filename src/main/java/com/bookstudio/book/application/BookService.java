@@ -20,7 +20,6 @@ import com.bookstudio.copy.domain.model.Copy;
 import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.genre.domain.model.Genre;
 import com.bookstudio.language.infrastructure.repository.LanguageRepository;
-import com.bookstudio.loan.infrastructure.repository.LoanRepository;
 import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.type.Status;
@@ -46,7 +45,6 @@ public class BookService {
     private final BookAuthorRepository bookAuthorRepository;
     private final BookGenreRepository bookGenreRepository;
 
-    private final LoanRepository loanRepository;
     private final LanguageRepository languageRepository;
     private final PublisherRepository publisherRepository;
     private final CategoryRepository categoryRepository;
@@ -59,8 +57,7 @@ public class BookService {
         return new BookFilterOptionsResponse(
                 categoryRepository.findForOptions(),
                 publisherRepository.findForOptions(),
-                languageRepository.findForOptions(),
-                loanRepository.findForOptions());
+                languageRepository.findForOptions());
     }
 
     public BookSelectOptionsResponse getSelectOptions() {

@@ -70,8 +70,7 @@ public class BookController {
 
         boolean hasOptions = !options.categories().isEmpty()
                 || !options.publishers().isEmpty()
-                || !options.languages().isEmpty()
-                || !options.loans().isEmpty();
+                || !options.languages().isEmpty();
 
         ApiSuccess<BookFilterOptionsResponse> response = new ApiSuccess<>(
                 hasOptions ? "Filter options retrieved successfully" : "No filter options found",
