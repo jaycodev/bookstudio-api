@@ -12,15 +12,20 @@ import com.bookstudio.role.infrastructure.repository.RolePermissionRepository;
 import com.bookstudio.role.infrastructure.repository.RoleRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class RoleService {
     private final RoleRepository roleRepository;
     private final RolePermissionRepository rolePermissionRepository;
@@ -29,7 +34,7 @@ public class RoleService {
         return roleRepository.findList();
     }
 
-    public RoleDetailResponse getDetailById(Long id) {
+    public RoleDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         RoleDetailResponse base = roleRepository.findDetailById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
 
@@ -44,22 +49,19 @@ public class RoleService {
 
         Role saved = roleRepository.save(role);
 
-        if (request.permissionIds() != null) {
-            for (Long permissionId : request.permissionIds()) {
-                RolePermission relation = RolePermission.builder()
-                        .id(new RolePermissionId(saved.getId(), permissionId))
-                        .role(saved)
-                        .permission(new Permission(permissionId))
-                        .build();
-                rolePermissionRepository.save(relation);
-            }
+        for (Long permissionId : request.permissionIds()) {
+            RolePermission relation = new RolePermission(
+                    new RolePermissionId(saved.getId(), permissionId),
+                    saved,
+                    new Permission(permissionId));
+            rolePermissionRepository.save(relation);
         }
 
         return toListResponse(saved);
     }
 
     @Transactional
-    public RoleListResponse update(Long id, UpdateRoleRequest request) {
+    public RoleListResponse update(@NonNull @Min(1) Long id, UpdateRoleRequest request) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
 
@@ -70,15 +72,12 @@ public class RoleService {
 
         rolePermissionRepository.deleteAllByRole(updated);
 
-        if (request.permissionIds() != null) {
-            for (Long permissionId : request.permissionIds()) {
-                RolePermission relation = RolePermission.builder()
-                        .id(new RolePermissionId(updated.getId(), permissionId))
-                        .role(updated)
-                        .permission(new Permission(permissionId))
-                        .build();
-                rolePermissionRepository.save(relation);
-            }
+        for (Long permissionId : request.permissionIds()) {
+            RolePermission relation = new RolePermission(
+                    new RolePermissionId(updated.getId(), permissionId),
+                    updated,
+                    new Permission(permissionId));
+            rolePermissionRepository.save(relation);
         }
 
         return toListResponse(updated);

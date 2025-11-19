@@ -15,14 +15,18 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class CopyService {
     @PersistenceContext
     private EntityManager entityManager;
@@ -46,7 +50,7 @@ public class CopyService {
                 shelfRepository.findForOptions());
     }
 
-    public CopyDetailResponse getDetailById(Long id) {
+    public CopyDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         return copyRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + id));
     }
@@ -70,7 +74,7 @@ public class CopyService {
     }
 
     @Transactional
-    public CopyListResponse update(Long id, UpdateCopyRequest request) {
+    public CopyListResponse update(@NonNull @Min(1) Long id, UpdateCopyRequest request) {
         Copy copy = copyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Copy not found with ID: " + id));
 

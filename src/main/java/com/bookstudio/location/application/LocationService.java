@@ -16,14 +16,18 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class LocationService {
     @PersistenceContext
     private EntityManager entityManager;
@@ -36,7 +40,7 @@ public class LocationService {
         return locationRepository.findList();
     }
 
-    public LocationDetailResponse getDetailById(Long id) {
+    public LocationDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         LocationDetailResponse base = locationRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location not found with ID: " + id));
 
@@ -68,34 +72,22 @@ public class LocationService {
     }
 
     @Transactional
-    public LocationListResponse update(Long id, UpdateLocationRequest request) {
+    public LocationListResponse update(@NonNull @Min(1) Long id, UpdateLocationRequest request) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location not found with ID: " + id));
 
         location.setName(request.name());
         location.setDescription(request.description());
 
-        if (request.shelves() != null) {
-            for (UpdateShelfRequest shelfRequest : request.shelves()) {
-                if (shelfRequest.id() != null) {
-                    Shelf shelf = shelfRepository.findById(shelfRequest.id())
-                            .orElseThrow(
-                                    () -> new ResourceNotFoundException(
-                                            "Shelf not found with ID: " + shelfRequest.id()));
+        for (UpdateShelfRequest shelfRequest : request.shelves()) {
+            Shelf shelf = shelfRepository.findById(shelfRequest.id())
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException(
+                                    "Shelf not found with ID: " + shelfRequest.id()));
 
-                    shelf.setCode(shelfRequest.code());
-                    shelf.setFloor(shelfRequest.floor());
-                    shelf.setDescription(shelfRequest.description());
-                } else {
-                    Shelf shelf = new Shelf();
-                    shelf.setCode(shelf.getCode());
-                    shelf.setFloor(shelf.getFloor());
-                    shelf.setDescription(shelf.getDescription());
-                    shelf.setLocation(location);
-
-                    shelfRepository.save(shelf);
-                }
-            }
+            shelf.setCode(shelfRequest.code());
+            shelf.setFloor(shelfRequest.floor());
+            shelf.setDescription(shelfRequest.description());
         }
 
         return toListResponse(location);

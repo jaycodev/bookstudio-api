@@ -10,6 +10,8 @@ import com.bookstudio.shared.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("""
@@ -44,5 +46,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
         FROM Category c
         WHERE c.id = :id
     """)
-    Optional<CategoryDetailResponse> findDetailById(Long id);
+    Optional<CategoryDetailResponse> findDetailById(@NonNull @Min(1) Long id);
 }

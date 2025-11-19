@@ -18,7 +18,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,7 +85,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Reservation not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Reservation not found", value = "{\"success\":false,\"status\":404,\"message\":\"Reservation not found with ID: 999\",\"path\":\"/reservations/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<ReservationDetailResponse>> get(@PathVariable Long id) {
+    public ResponseEntity<ApiSuccess<ReservationDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
         ReservationDetailResponse reservation = reservationService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Reservation found", reservation));
     }
@@ -112,7 +114,8 @@ public class ReservationController {
             @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/reservations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<ReservationListResponse>> update(@PathVariable Long id,
+    public ResponseEntity<ApiSuccess<ReservationListResponse>> update(
+            @PathVariable @NonNull @Min(1) Long id,
             @Valid @RequestBody UpdateReservationRequest request) {
         ReservationListResponse updated = reservationService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Reservation updated successfully", updated));

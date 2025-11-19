@@ -14,14 +14,18 @@ import com.bookstudio.reader.infrastructure.repository.ReaderRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class ReservationService {
     @PersistenceContext
     private EntityManager entityManager;
@@ -39,7 +43,7 @@ public class ReservationService {
                 readerRepository.findForOptions());
     }
 
-    public ReservationDetailResponse getDetailById(Long id) {
+    public ReservationDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         return reservationRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + id));
     }
@@ -65,7 +69,7 @@ public class ReservationService {
     }
 
     @Transactional
-    public ReservationListResponse update(Long id, UpdateReservationRequest request) {
+    public ReservationListResponse update(@NonNull @Min(1) Long id, UpdateReservationRequest request) {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with ID: " + id));
 

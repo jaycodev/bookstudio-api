@@ -23,8 +23,11 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,13 +37,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class LoanService {
     @PersistenceContext
     private EntityManager entityManager;
 
     private final LoanRepository loanRepository;
     private final LoanItemRepository loanItemRepository;
-    
+
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final CopyRepository copyRepository;
@@ -60,7 +64,7 @@ public class LoanService {
                 readerRepository.findForOptions());
     }
 
-    public LoanDetailResponse getDetailById(Long id) {
+    public LoanDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         LoanDetailResponse base = loanRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 
@@ -79,29 +83,27 @@ public class LoanService {
         Loan saved = loanRepository.save(loan);
         entityManager.refresh(saved);
 
-        if (request.items() != null) {
-            for (CreateLoanItemRequest itemDto : request.items()) {
-                Copy copy = copyRepository.findById(itemDto.copyId())
-                        .orElseThrow(
-                                () -> new ResourceNotFoundException("Copy not found with ID: " + itemDto.copyId()));
+        for (CreateLoanItemRequest itemDto : request.items()) {
+            Copy copy = copyRepository.findById(itemDto.copyId())
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Copy not found with ID: " + itemDto.copyId()));
 
-                LoanItem item = LoanItem.builder()
-                        .id(new LoanItemId(saved.getId(), copy.getId()))
-                        .loan(saved)
-                        .copy(copy)
-                        .dueDate(itemDto.dueDate())
-                        .status(LoanItemStatus.PRESTADO)
-                        .build();
+            LoanItem item = new LoanItem(
+                    new LoanItemId(saved.getId(), copy.getId()),
+                    saved,
+                    copy,
+                    itemDto.dueDate(),
+                    null,
+                    LoanItemStatus.PRESTADO);
 
-                loanItemRepository.save(item);
-            }
+            loanItemRepository.save(item);
         }
 
         return toListResponse(saved);
     }
 
     @Transactional
-    public LoanListResponse update(Long id, UpdateLoanRequest request) {
+    public LoanListResponse update(@NonNull @Min(1) Long id, UpdateLoanRequest request) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 
@@ -114,22 +116,20 @@ public class LoanService {
 
         loanItemRepository.deleteAllByLoan(updated);
 
-        if (request.items() != null) {
-            for (UpdateLoanItemRequest itemDto : request.items()) {
-                Copy copy = copyRepository.findById(itemDto.copyId())
-                        .orElseThrow(() -> new ResourceNotFoundException(
-                                "Copy not found with ID: " + itemDto.copyId()));
+        for (UpdateLoanItemRequest itemDto : request.items()) {
+            Copy copy = copyRepository.findById(itemDto.copyId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Copy not found with ID: " + itemDto.copyId()));
 
-                LoanItem item = LoanItem.builder()
-                        .id(new LoanItemId(updated.getId(), copy.getId()))
-                        .loan(updated)
-                        .copy(copy)
-                        .dueDate(itemDto.dueDate())
-                        .status(itemDto.status())
-                        .build();
+            LoanItem item = new LoanItem(
+                    new LoanItemId(updated.getId(), copy.getId()),
+                    updated,
+                    copy,
+                    itemDto.dueDate(),
+                    null,
+                    LoanItemStatus.PRESTADO);
 
-                loanItemRepository.save(item);
-            }
+            loanItemRepository.save(item);
         }
 
         return toListResponse(updated);

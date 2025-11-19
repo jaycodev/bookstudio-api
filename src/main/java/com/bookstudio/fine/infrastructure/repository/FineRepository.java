@@ -2,6 +2,8 @@ package com.bookstudio.fine.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -67,5 +69,5 @@ public interface FineRepository extends JpaRepository<Fine, Long> {
         JOIN li.copy c
         WHERE f.id = :id
     """)
-    Optional<FineDetailResponse> findDetailById(Long id);
+    Optional<FineDetailResponse> findDetailById(@NonNull @Min(1) Long id);
 }

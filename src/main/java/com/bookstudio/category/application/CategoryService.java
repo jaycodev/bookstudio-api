@@ -9,14 +9,18 @@ import com.bookstudio.category.application.dto.response.CategoryListResponse;
 import com.bookstudio.category.domain.model.Category;
 
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
@@ -24,7 +28,7 @@ public class CategoryService {
         return categoryRepository.findList();
     }
 
-    public CategoryDetailResponse getDetailById(Long id) {
+    public CategoryDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         return categoryRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
     }
@@ -43,7 +47,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryListResponse update(Long id, UpdateCategoryRequest request) {
+    public CategoryListResponse update(@NonNull @Min(1) Long id, UpdateCategoryRequest request) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
 

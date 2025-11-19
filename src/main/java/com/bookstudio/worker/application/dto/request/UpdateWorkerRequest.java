@@ -1,11 +1,31 @@
 package com.bookstudio.worker.application.dto.request;
 
+import org.springframework.lang.NonNull;
+
 import com.bookstudio.worker.domain.model.type.WorkerStatus;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public record UpdateWorkerRequest(
+    @NotBlank(message = "First name is required")
+    @Size(max = 255, message = "First name must not exceed 255 characters")
     String firstName,
+
+    @NotBlank(message = "Last name is required")
+    @Size(max = 255, message = "Last name must not exceed 255 characters")
     String lastName,
+
+    @NonNull
+    @NotNull(message = "Role ID is required")
+    @Min(value = 1, message = "Role ID must be at least 1")
     Long roleId,
+
+    @Size(max = 1024, message = "Profile photo URL must not exceed 1024 characters")
     String profilePhotoUrl,
+
+    @NotNull(message = "Status is required")
     WorkerStatus status
 ) {}

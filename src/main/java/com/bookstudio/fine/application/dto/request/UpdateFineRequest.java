@@ -4,8 +4,19 @@ import java.math.BigDecimal;
 
 import com.bookstudio.fine.domain.model.type.FineStatus;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public record UpdateFineRequest(
+    @NotNull(message = "Amount is required")
+    @DecimalMin(value = "0.00", message = "Amount must be at least 0.00")
     BigDecimal amount,
+
+    @NotNull(message = "Days late is required")
+    @Min(value = 1, message = "Days late must be at least 1")
     Integer daysLate,
+
+    @NotNull(message = "Status is required")
     FineStatus status
 ) {}

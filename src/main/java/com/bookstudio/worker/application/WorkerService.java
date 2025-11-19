@@ -11,14 +11,18 @@ import com.bookstudio.worker.domain.model.Worker;
 import com.bookstudio.worker.infrastructure.repository.WorkerRepository;
 
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class WorkerService {
     private final WorkerRepository workerRepository;
     private final RoleRepository roleRepository;
@@ -31,7 +35,7 @@ public class WorkerService {
         return new WorkerSelectOptionsResponse(roleRepository.findForOptions());
     }
 
-    public WorkerDetailResponse getDetailById(Long id) {
+    public WorkerDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         return workerRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found with ID: " + id));
     }
@@ -64,7 +68,7 @@ public class WorkerService {
     }
 
     @Transactional
-    public WorkerListResponse update(Long id, UpdateWorkerRequest request) {
+    public WorkerListResponse update(@NonNull @Min(1) Long id, UpdateWorkerRequest request) {
         Worker worker = workerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Worker not found with ID: " + id));
 

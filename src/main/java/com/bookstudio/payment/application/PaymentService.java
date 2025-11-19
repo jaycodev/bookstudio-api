@@ -19,14 +19,19 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class PaymentService {
     @PersistenceContext
     private EntityManager entityManager;
@@ -45,7 +50,7 @@ public class PaymentService {
                 readerRepository.findForOptions());
     }
 
-    public PaymentDetailResponse getDetailById(Long id) {
+    public PaymentDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         PaymentDetailResponse base = paymentRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 
@@ -65,29 +70,25 @@ public class PaymentService {
         Payment saved = paymentRepository.save(payment);
         entityManager.refresh(saved);
 
-        if (request.fineIds() != null) {
-            for (Long fineId : request.fineIds()) {
-                Fine fine = fineRepository.findById(fineId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
+        for (Long fineId : request.fineIds()) {
+            Fine fine = fineRepository.findById(Objects.requireNonNull(fineId, "Fine ID cannot be null"))
+                    .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
 
-                PaymentFine relation = PaymentFine.builder()
-                        .id(new PaymentFineId(saved.getId(), fine.getId()))
-                        .payment(saved)
-                        .fine(fine)
-                        .build();
+            PaymentFine relation = new PaymentFine(
+                    new PaymentFineId(saved.getId(), fine.getId()),
+                    saved,
+                    fine);
+            paymentFineRepository.save(relation);
 
-                paymentFineRepository.save(relation);
-
-                fine.setStatus(FineStatus.PAGADO);
-                fineRepository.save(fine);
-            }
+            fine.setStatus(FineStatus.PAGADO);
+            fineRepository.save(fine);
         }
 
         return toListResponse(saved);
     }
 
     @Transactional
-    public PaymentListResponse update(Long id, UpdatePaymentRequest request) {
+    public PaymentListResponse update(@NonNull @Min(1) Long id, UpdatePaymentRequest request) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 
@@ -102,22 +103,18 @@ public class PaymentService {
 
         paymentFineRepository.deleteAllByPayment(updated);
 
-        if (request.fineIds() != null) {
-            for (Long fineId : request.fineIds()) {
-                Fine fine = fineRepository.findById(fineId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
+        for (Long fineId : request.fineIds()) {
+            Fine fine = fineRepository.findById(Objects.requireNonNull(fineId, "Fine ID cannot be null"))
+                    .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + fineId));
 
-                PaymentFine relation = PaymentFine.builder()
-                        .id(new PaymentFineId(updated.getId(), fine.getId()))
-                        .payment(updated)
-                        .fine(fine)
-                        .build();
+            PaymentFine relation = new PaymentFine(
+                    new PaymentFineId(updated.getId(), fine.getId()),
+                    updated,
+                    fine);
+            paymentFineRepository.save(relation);
 
-                paymentFineRepository.save(relation);
-
-                fine.setStatus(FineStatus.PAGADO);
-                fineRepository.save(fine);
-            }
+            fine.setStatus(FineStatus.PAGADO);
+            fineRepository.save(fine);
         }
 
         return toListResponse(updated);

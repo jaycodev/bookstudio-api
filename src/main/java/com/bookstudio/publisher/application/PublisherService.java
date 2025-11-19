@@ -16,14 +16,18 @@ import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.constraints.Min;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class PublisherService {
     private final PublisherRepository publisherRepository;
     private final PublisherGenreRepository publisherGenreRepository;
@@ -43,7 +47,7 @@ public class PublisherService {
                 nationalityRepository.findForOptions());
     }
 
-    public PublisherDetailResponse getDetailById(Long id) {
+    public PublisherDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         PublisherDetailResponse base = publisherRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 
@@ -67,22 +71,19 @@ public class PublisherService {
 
         Publisher saved = publisherRepository.save(publisher);
 
-        if (request.genreIds() != null) {
-            for (Long genreId : request.genreIds()) {
-                PublisherGenre relation = PublisherGenre.builder()
-                        .id(new PublisherGenreId(saved.getId(), genreId))
-                        .publisher(saved)
-                        .genre(new Genre(genreId))
-                        .build();
-                publisherGenreRepository.save(relation);
-            }
+        for (Long genreId : request.genreIds()) {
+            PublisherGenre relation = new PublisherGenre(
+                    new PublisherGenreId(saved.getId(), genreId),
+                    saved,
+                    new Genre(genreId));
+            publisherGenreRepository.save(relation);
         }
 
         return toListResponse(saved);
     }
 
     @Transactional
-    public PublisherListResponse update(Long id, UpdatePublisherRequest request) {
+    public PublisherListResponse update(@NonNull @Min(1) Long id, UpdatePublisherRequest request) {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 
@@ -107,15 +108,12 @@ public class PublisherService {
 
         publisherGenreRepository.deleteAllByPublisher(updated);
 
-        if (request.genreIds() != null) {
-            for (Long genreId : request.genreIds()) {
-                PublisherGenre relation = PublisherGenre.builder()
-                        .id(new PublisherGenreId(updated.getId(), genreId))
-                        .publisher(updated)
-                        .genre(new Genre(genreId))
-                        .build();
-                publisherGenreRepository.save(relation);
-            }
+        for (Long genreId : request.genreIds()) {
+            PublisherGenre relation = new PublisherGenre(
+                    new PublisherGenreId(updated.getId(), genreId),
+                    updated,
+                    new Genre(genreId));
+            publisherGenreRepository.save(relation);
         }
 
         return toListResponse(updated);
