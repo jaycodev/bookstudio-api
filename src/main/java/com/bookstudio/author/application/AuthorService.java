@@ -11,15 +11,20 @@ import com.bookstudio.author.infrastructure.repository.AuthorRepository;
 import com.bookstudio.nationality.infrastructure.repository.NationalityRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Validated
 public class AuthorService {
     private final AuthorRepository authorRepository;
     private final NationalityRepository nationalityRepository;
@@ -38,7 +43,7 @@ public class AuthorService {
                 nationalityRepository.findForOptions());
     }
 
-    public AuthorDetailResponse getDetailById(Long id) {
+    public AuthorDetailResponse getDetailById(@NonNull @Min(1) Long id) {
         return authorRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + id));
     }
@@ -63,7 +68,7 @@ public class AuthorService {
     }
 
     @Transactional
-    public AuthorListResponse update(Long id, UpdateAuthorRequest request) {
+    public AuthorListResponse update(@NonNull @Min(1) Long id, UpdateAuthorRequest request) {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with ID: " + id));
 

@@ -2,10 +2,13 @@ package com.bookstudio.author.infrastructure.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 
 import com.bookstudio.author.application.dto.response.AuthorDetailResponse;
 import com.bookstudio.author.application.dto.response.AuthorListResponse;
 import com.bookstudio.author.domain.model.Author;
+
+import jakarta.validation.constraints.Min;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,5 +49,5 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
         JOIN a.nationality n
         WHERE a.id = :id
     """)
-    Optional<AuthorDetailResponse> findDetailById(Long id);
+    Optional<AuthorDetailResponse> findDetailById(@NonNull @Min(1) Long id);
 }

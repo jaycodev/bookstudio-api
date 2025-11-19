@@ -19,9 +19,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/authors")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Authors", description = "Operations related to authors")
 public class AuthorController {
     private final AuthorService authorService;
@@ -104,7 +108,7 @@ public class AuthorController {
             @ApiResponse(responseCode = "404", description = "Author not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Author not found", value = "{\"success\":false,\"status\":404,\"message\":\"Author not found with ID: 999\",\"path\":\"/authors/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/authors/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<AuthorDetailResponse>> get(@PathVariable Long id) {
+    public ResponseEntity<ApiSuccess<AuthorDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
         AuthorDetailResponse author = authorService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Author found", author));
     }
@@ -117,7 +121,8 @@ public class AuthorController {
             @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/admin/authors\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/admin/authors\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<AuthorListResponse>> create(@Valid @RequestBody CreateAuthorRequest request) {
+    public ResponseEntity<ApiSuccess<AuthorListResponse>> create(
+            @Valid @RequestBody CreateAuthorRequest request) {
         AuthorListResponse created = authorService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiSuccess<>("Author created successfully", created));
@@ -132,7 +137,8 @@ public class AuthorController {
             @ApiResponse(responseCode = "409", description = "Database constraint violation", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Conflict Error", summary = "Database constraint violation", value = "{\"success\":false,\"status\":409,\"message\":\"Database error: constraint violation\",\"path\":\"/admin/authors/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/admin/products/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<AuthorListResponse>> update(@PathVariable Long id,
+    public ResponseEntity<ApiSuccess<AuthorListResponse>> update(
+            @PathVariable @NonNull @Min(1) Long id,
             @Valid @RequestBody UpdateAuthorRequest request) {
         AuthorListResponse updated = authorService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Author updated successfully", updated));
