@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/loans")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Loans", description = "Operations related to loans")
 public class LoanController {
     private final LoanService loanService;

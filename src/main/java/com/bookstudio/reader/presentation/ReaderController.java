@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/readers")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Readers", description = "Operations related to readers")
 public class ReaderController {
     private final ReaderService readerService;
