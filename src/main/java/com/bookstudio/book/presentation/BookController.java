@@ -9,6 +9,7 @@ import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.application.dto.response.BookSelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -114,7 +115,7 @@ public class BookController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<BookDetailResponse>> get(
-            @PathVariable @NonNull @Min(1) Long id) {
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         BookDetailResponse book = bookService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Book found", book));
     }
@@ -143,7 +144,7 @@ public class BookController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/books/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<BookListResponse>> update(
-            @PathVariable @NonNull @Min(1) Long id,
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdateBookRequest request) {
         BookListResponse updated = bookService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Book updated successfully", updated));

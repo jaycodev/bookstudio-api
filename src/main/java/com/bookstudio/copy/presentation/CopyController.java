@@ -9,6 +9,7 @@ import com.bookstudio.copy.application.dto.response.CopyListResponse;
 import com.bookstudio.copy.application.dto.response.CopySelectOptionsResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -107,7 +108,7 @@ public class CopyController {
             @ApiResponse(responseCode = "404", description = "Copy not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Copy not found", value = "{\"success\":false,\"status\":404,\"message\":\"Copy not found with ID: 999\",\"path\":\"/copies/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<CopyDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
+    public ResponseEntity<ApiSuccess<CopyDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         CopyDetailResponse copy = copyService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Copy found", copy));
     }
@@ -136,7 +137,7 @@ public class CopyController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<CopyListResponse>> update(
-            @PathVariable @NonNull @Min(1) Long id,
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdateCopyRequest request) {
         CopyListResponse updated = copyService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Copy updated successfully", updated));

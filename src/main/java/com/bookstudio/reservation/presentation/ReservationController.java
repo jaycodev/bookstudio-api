@@ -8,6 +8,7 @@ import com.bookstudio.reservation.application.dto.response.ReservationFilterOpti
 import com.bookstudio.reservation.application.dto.response.ReservationListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -87,7 +88,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Reservation not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Reservation not found", value = "{\"success\":false,\"status\":404,\"message\":\"Reservation not found with ID: 999\",\"path\":\"/reservations/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<ReservationDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
+    public ResponseEntity<ApiSuccess<ReservationDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         ReservationDetailResponse reservation = reservationService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Reservation found", reservation));
     }
@@ -117,7 +118,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<ReservationListResponse>> update(
-            @PathVariable @NonNull @Min(1) Long id,
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdateReservationRequest request) {
         ReservationListResponse updated = reservationService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Reservation updated successfully", updated));

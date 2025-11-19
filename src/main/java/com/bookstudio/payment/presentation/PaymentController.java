@@ -8,6 +8,7 @@ import com.bookstudio.payment.application.dto.response.PaymentFilterOptionsRespo
 import com.bookstudio.payment.application.dto.response.PaymentListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -87,7 +88,7 @@ public class PaymentController {
             @ApiResponse(responseCode = "404", description = "Payment not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Payment not found", value = "{\"success\":false,\"status\":404,\"message\":\"Payment not found with ID: 999\",\"path\":\"/payments/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/payments/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<PaymentDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
+    public ResponseEntity<ApiSuccess<PaymentDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         PaymentDetailResponse payment = paymentService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Payment found", payment));
     }
@@ -116,7 +117,7 @@ public class PaymentController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/payments/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<PaymentListResponse>> update(
-            @PathVariable @NonNull @Min(1) Long id,
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdatePaymentRequest request) {
         PaymentListResponse updated = paymentService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Payment updated successfully", updated));

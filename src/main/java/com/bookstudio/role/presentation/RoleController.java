@@ -7,6 +7,7 @@ import com.bookstudio.role.application.dto.response.RoleDetailResponse;
 import com.bookstudio.role.application.dto.response.RoleListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -66,7 +67,7 @@ public class RoleController {
             @ApiResponse(responseCode = "404", description = "Role not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Role not found", value = "{\"success\":false,\"status\":404,\"message\":\"Role not found with ID: 999\",\"path\":\"/roles/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<RoleDetailResponse>> get(@NonNull @Min(1) @PathVariable Long id) {
+    public ResponseEntity<ApiSuccess<RoleDetailResponse>> get(@NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id) {
         RoleDetailResponse role = roleService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Role found", role));
     }
@@ -95,7 +96,7 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<RoleListResponse>> update(
-            @NonNull @Min(1) @PathVariable Long id,
+            @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id,
             @Valid @RequestBody UpdateRoleRequest request) {
         RoleListResponse updated = roleService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Role updated successfully", updated));

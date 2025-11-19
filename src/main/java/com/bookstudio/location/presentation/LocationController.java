@@ -7,6 +7,7 @@ import com.bookstudio.location.application.dto.response.LocationDetailResponse;
 import com.bookstudio.location.application.dto.response.LocationListResponse;
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -66,7 +67,7 @@ public class LocationController {
             @ApiResponse(responseCode = "404", description = "Location not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Location not found", value = "{\"success\":false,\"status\":404,\"message\":\"Location not found with ID: 999\",\"path\":\"/locations/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<LocationDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
+    public ResponseEntity<ApiSuccess<LocationDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         LocationDetailResponse location = locationService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Location found", location));
     }
@@ -95,7 +96,7 @@ public class LocationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<LocationListResponse>> update(
-            @PathVariable @NonNull @Min(1) Long id,
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdateLocationRequest request) {
         LocationListResponse updated = locationService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Location updated successfully", updated));

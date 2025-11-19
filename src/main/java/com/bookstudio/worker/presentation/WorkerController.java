@@ -2,6 +2,7 @@ package com.bookstudio.worker.presentation;
 
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiSuccess;
+import com.bookstudio.shared.validation.ValidationMessages;
 import com.bookstudio.worker.application.WorkerService;
 import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
@@ -88,7 +89,8 @@ public class WorkerController {
             @ApiResponse(responseCode = "404", description = "Worker not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Worker not found", value = "{\"success\":false,\"status\":404,\"message\":\"Worker not found with ID: 999\",\"path\":\"/workers/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<WorkerDetailResponse>> get(@PathVariable @NonNull @Min(1) Long id) {
+    public ResponseEntity<ApiSuccess<WorkerDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         WorkerDetailResponse worker = workerService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Worker found", worker));
     }
@@ -117,7 +119,7 @@ public class WorkerController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<WorkerListResponse>> update(
-            @PathVariable @NonNull @Min(1) Long id,
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdateWorkerRequest request) {
         WorkerListResponse updated = workerService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Worker updated successfully", updated));
