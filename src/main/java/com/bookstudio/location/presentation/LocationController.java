@@ -45,8 +45,7 @@ public class LocationController {
     @GetMapping
     @Operation(summary = "List all locations")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Locations listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No locations found"),
+            @ApiResponse(responseCode = "200", description = "Locations listed successfully (or empty list if no locations found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<LocationListResponse>>> list() {
@@ -55,8 +54,7 @@ public class LocationController {
                 locations.isEmpty() ? "No locations found" : "Locations listed successfully",
                 locations);
 
-        HttpStatus status = locations.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -67,7 +65,8 @@ public class LocationController {
             @ApiResponse(responseCode = "404", description = "Location not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Location not found", value = "{\"success\":false,\"status\":404,\"message\":\"Location not found with ID: 999\",\"path\":\"/locations/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/locations/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<LocationDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+    public ResponseEntity<ApiSuccess<LocationDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         LocationDetailResponse location = locationService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Location found", location));
     }

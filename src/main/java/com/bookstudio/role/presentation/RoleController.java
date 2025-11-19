@@ -45,8 +45,7 @@ public class RoleController {
     @GetMapping
     @Operation(summary = "List all roles")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Roles listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No roles found"),
+            @ApiResponse(responseCode = "200", description = "Roles listed successfully (or empty list if no roles found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<RoleListResponse>>> list() {
@@ -55,8 +54,7 @@ public class RoleController {
                 roles.isEmpty() ? "No roles found" : "Roles listed successfully",
                 roles);
 
-        HttpStatus status = roles.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -67,7 +65,8 @@ public class RoleController {
             @ApiResponse(responseCode = "404", description = "Role not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Role not found", value = "{\"success\":false,\"status\":404,\"message\":\"Role not found with ID: 999\",\"path\":\"/roles/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<RoleDetailResponse>> get(@NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id) {
+    public ResponseEntity<ApiSuccess<RoleDetailResponse>> get(
+            @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id) {
         RoleDetailResponse role = roleService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Role found", role));
     }

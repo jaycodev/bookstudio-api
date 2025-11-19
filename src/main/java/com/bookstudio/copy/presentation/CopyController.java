@@ -47,8 +47,7 @@ public class CopyController {
     @GetMapping
     @Operation(summary = "List all copies")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Copies listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No copies found"),
+            @ApiResponse(responseCode = "200", description = "Copies listed successfully (or empty list if no copies found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<CopyListResponse>>> list() {
@@ -57,15 +56,13 @@ public class CopyController {
                 copies.isEmpty() ? "No copies found" : "Copies listed successfully",
                 copies);
 
-        HttpStatus status = copies.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get filter options for copies")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<CopyFilterOptionsResponse>> filterOptions() {
@@ -77,15 +74,13 @@ public class CopyController {
                 hasOptions ? "Filter options retrieved successfully" : "No filter options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/select-options")
     @Operation(summary = "Get select options for copies")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<CopySelectOptionsResponse>> selectOptions() {
@@ -96,8 +91,7 @@ public class CopyController {
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -108,7 +102,8 @@ public class CopyController {
             @ApiResponse(responseCode = "404", description = "Copy not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Copy not found", value = "{\"success\":false,\"status\":404,\"message\":\"Copy not found with ID: 999\",\"path\":\"/copies/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/copies/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<CopyDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+    public ResponseEntity<ApiSuccess<CopyDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         CopyDetailResponse copy = copyService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Copy found", copy));
     }

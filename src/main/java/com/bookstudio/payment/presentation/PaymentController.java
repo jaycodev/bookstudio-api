@@ -46,8 +46,7 @@ public class PaymentController {
     @GetMapping
     @Operation(summary = "List all payments")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Payments listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No payments found"),
+            @ApiResponse(responseCode = "200", description = "Payments listed successfully (or empty list if no payments found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/payments\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<PaymentListResponse>>> list() {
@@ -56,15 +55,13 @@ public class PaymentController {
                 payments.isEmpty() ? "No payments found" : "Payments listed successfully",
                 payments);
 
-        HttpStatus status = payments.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get filter options for payments")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/reservations/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<PaymentFilterOptionsResponse>> filterOptions() {
@@ -76,8 +73,7 @@ public class PaymentController {
                 hasOptions ? "Filter options retrieved successfully" : "No filter options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -88,7 +84,8 @@ public class PaymentController {
             @ApiResponse(responseCode = "404", description = "Payment not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Payment not found", value = "{\"success\":false,\"status\":404,\"message\":\"Payment not found with ID: 999\",\"path\":\"/payments/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/payments/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<PaymentDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+    public ResponseEntity<ApiSuccess<PaymentDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         PaymentDetailResponse payment = paymentService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Payment found", payment));
     }

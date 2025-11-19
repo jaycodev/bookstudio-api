@@ -45,8 +45,7 @@ public class ReaderController {
     @GetMapping
     @Operation(summary = "List all readers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Readers listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No readers found"),
+            @ApiResponse(responseCode = "200", description = "Readers listed successfully (or empty list if no readers found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<ReaderListResponse>>> list() {
@@ -55,8 +54,7 @@ public class ReaderController {
                 readers.isEmpty() ? "No readers found" : "Readers listed successfully",
                 readers);
 
-        HttpStatus status = readers.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -67,7 +65,8 @@ public class ReaderController {
             @ApiResponse(responseCode = "404", description = "Reader not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Reader not found", value = "{\"success\":false,\"status\":404,\"message\":\"Reader not found with ID: 999\",\"path\":\"/readers/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/readers/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<ReaderDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+    public ResponseEntity<ApiSuccess<ReaderDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         ReaderDetailResponse reader = readerService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Reader found", reader));
     }

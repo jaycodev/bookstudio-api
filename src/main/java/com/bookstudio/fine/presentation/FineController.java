@@ -46,8 +46,7 @@ public class FineController {
     @GetMapping
     @Operation(summary = "List all fines")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Fines listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No fines found"),
+            @ApiResponse(responseCode = "200", description = "Fines listed successfully (or empty list if no fines found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/fines\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<FineListResponse>>> list() {
@@ -56,15 +55,13 @@ public class FineController {
                 fines.isEmpty() ? "No fines found" : "Fines listed successfully",
                 fines);
 
-        HttpStatus status = fines.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get filter options for fines")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/fines/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<FineFilterOptionsResponse>> filterOptions() {
@@ -76,8 +73,7 @@ public class FineController {
                 hasOptions ? "Filter options retrieved successfully" : "No filter options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -88,7 +84,8 @@ public class FineController {
             @ApiResponse(responseCode = "404", description = "Fine not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Fine not found", value = "{\"success\":false,\"status\":404,\"message\":\"Fine not found with ID: 999\",\"path\":\"/fines/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/fines/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<FineDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+    public ResponseEntity<ApiSuccess<FineDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         FineDetailResponse fine = fineService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Fine found", fine));
     }

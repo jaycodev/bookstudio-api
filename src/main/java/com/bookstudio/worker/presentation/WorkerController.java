@@ -46,8 +46,7 @@ public class WorkerController {
     @GetMapping
     @Operation(summary = "List all workers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Workers listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No workers found"),
+            @ApiResponse(responseCode = "200", description = "Workers listed successfully (or empty list if no workers found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<WorkerListResponse>>> list() {
@@ -57,15 +56,13 @@ public class WorkerController {
                 workers.isEmpty() ? "No workers found" : "Workers listed successfully",
                 workers);
 
-        HttpStatus status = workers.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/select-options")
     @Operation(summary = "Get select options for workers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<WorkerSelectOptionsResponse>> selectOptions() {
@@ -77,8 +74,7 @@ public class WorkerController {
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

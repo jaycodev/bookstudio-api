@@ -47,8 +47,7 @@ public class LoanController {
     @GetMapping
     @Operation(summary = "List all loans")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Loans listed successfully"),
-            @ApiResponse(responseCode = "204", description = "No loans found"),
+            @ApiResponse(responseCode = "200", description = "Loans listed successfully (or empty list if no loans found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<List<LoanListResponse>>> list() {
@@ -57,15 +56,13 @@ public class LoanController {
                 loans.isEmpty() ? "No loans found" : "Loans listed successfully",
                 loans);
 
-        HttpStatus status = loans.isEmpty() ? HttpStatus.NO_CONTENT : HttpStatus.OK;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/filter-options")
     @Operation(summary = "Get filter options for loans")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No filter options found"),
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<LoanFilterOptionsResponse>> filterOptions() {
@@ -77,15 +74,13 @@ public class LoanController {
                 hasOptions ? "Filter options retrieved successfully" : "No filter options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/select-options")
     @Operation(summary = "Get select options for loans")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully"),
-            @ApiResponse(responseCode = "204", description = "No select options found"),
+            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully (or empty if no options found)"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<LoanSelectOptionsResponse>> selectOptions() {
@@ -97,8 +92,7 @@ public class LoanController {
                 hasOptions ? "Select options retrieved successfully" : "No select options found",
                 options);
 
-        HttpStatus status = hasOptions ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-        return ResponseEntity.status(status).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -109,7 +103,8 @@ public class LoanController {
             @ApiResponse(responseCode = "404", description = "Loan not found", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Not Found", summary = "Loan not found", value = "{\"success\":false,\"status\":404,\"message\":\"Loan not found with ID: 999\",\"path\":\"/loans/999\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}"))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/loans/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<LoanDetailResponse>> get(@PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+    public ResponseEntity<ApiSuccess<LoanDetailResponse>> get(
+            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         LoanDetailResponse loan = loanService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Loan found", loan));
     }
