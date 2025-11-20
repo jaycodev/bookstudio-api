@@ -4,6 +4,6 @@ import java.util.List;
 
 import com.bookstudio.shared.response.OptionResponse;
 
-public record WorkerSelectOptionsResponse(
+public record WorkerFilterOptionsResponse(
         List<OptionResponse> roles) {
 }

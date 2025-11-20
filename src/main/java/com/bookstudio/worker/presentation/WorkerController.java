@@ -8,7 +8,7 @@ import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
 import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
 import com.bookstudio.worker.application.dto.response.WorkerListResponse;
-import com.bookstudio.worker.application.dto.response.WorkerSelectOptionsResponse;
+import com.bookstudio.worker.application.dto.response.WorkerFilterOptionsResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -59,19 +59,19 @@ public class WorkerController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/select-options")
-    @Operation(summary = "Get select options for workers")
+    @GetMapping("/filter-options")
+    @Operation(summary = "Get filter options for workers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Select options retrieved successfully (or empty if no options found)"),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/select-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
+            @ApiResponse(responseCode = "200", description = "Filter options retrieved successfully (or empty if no options found)"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/workers/filter-options\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
-    public ResponseEntity<ApiSuccess<WorkerSelectOptionsResponse>> selectOptions() {
-        WorkerSelectOptionsResponse options = workerService.getSelectOptions();
+    public ResponseEntity<ApiSuccess<WorkerFilterOptionsResponse>> filterOptions() {
+        WorkerFilterOptionsResponse options = workerService.getFilterOptions();
 
         boolean hasOptions = !options.roles().isEmpty();
 
-        ApiSuccess<WorkerSelectOptionsResponse> response = new ApiSuccess<>(
-                hasOptions ? "Select options retrieved successfully" : "No select options found",
+        ApiSuccess<WorkerFilterOptionsResponse> response = new ApiSuccess<>(
+                hasOptions ? "Filter options retrieved successfully" : "No filter options found",
                 options);
 
         return ResponseEntity.ok(response);

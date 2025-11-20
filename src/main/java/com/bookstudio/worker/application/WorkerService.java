@@ -6,7 +6,7 @@ import com.bookstudio.worker.application.dto.request.CreateWorkerRequest;
 import com.bookstudio.worker.application.dto.request.UpdateWorkerRequest;
 import com.bookstudio.worker.application.dto.response.WorkerDetailResponse;
 import com.bookstudio.worker.application.dto.response.WorkerListResponse;
-import com.bookstudio.worker.application.dto.response.WorkerSelectOptionsResponse;
+import com.bookstudio.worker.application.dto.response.WorkerFilterOptionsResponse;
 import com.bookstudio.worker.domain.model.Worker;
 import com.bookstudio.worker.domain.model.type.WorkerStatus;
 import com.bookstudio.worker.infrastructure.repository.WorkerRepository;
@@ -32,8 +32,8 @@ public class WorkerService {
         return workerRepository.findList(loggedId);
     }
 
-    public WorkerSelectOptionsResponse getSelectOptions() {
-        return new WorkerSelectOptionsResponse(roleRepository.findForOptions());
+    public WorkerFilterOptionsResponse getFilterOptions() {
+        return new WorkerFilterOptionsResponse(roleRepository.findForOptions());
     }
 
     public WorkerDetailResponse getDetailById(@NonNull @Min(1) Long id) {
