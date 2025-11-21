@@ -14,7 +14,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.bookstudio.reader.domain.model.Reader;
@@ -41,5 +40,5 @@ public class Loan {
     private String observation;
 
     @OneToMany(mappedBy = "loan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<LoanItem> loanItems = new ArrayList<>();
+    private List<LoanItem> loanItems;
 }
