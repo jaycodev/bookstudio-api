@@ -16,7 +16,8 @@ public record UpdateAuthorRequest(
     @Size(max = 255, message = "Name must not exceed 255 characters")
     String name,
 
-    @NonNull @NotNull(message = "Nationality ID cannot be null")
+    @NonNull
+    @NotNull(message = "Nationality ID cannot be null")
     @Min(value = 1, message = "Nationality ID must be at least 1")
     Long nationalityId,
     
