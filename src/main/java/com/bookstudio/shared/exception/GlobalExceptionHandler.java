@@ -42,7 +42,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .orElse(Map.of());
 
         List<ApiFieldError> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
-                .map(fe -> new ApiFieldError(fe.getField(), fe.getDefaultMessage(), fe.getRejectedValue()))
+                .map(fe -> {
+                    String field = fe.getField();
+                    if (field.startsWith("items[")) {
+                        field = field.replaceAll("items\\[\\d+\\]\\.", "item.");
+                    }
+                    return new ApiFieldError(field, fe.getDefaultMessage(), fe.getRejectedValue());
+                })
                 .sorted(Comparator.comparing(fe -> fieldOrder.getOrDefault(fe.getField(), Integer.MAX_VALUE)))
                 .collect(Collectors.toList());
 
