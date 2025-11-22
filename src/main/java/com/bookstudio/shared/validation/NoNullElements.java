@@ -7,12 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = ValidEnumValidator.class)
+@Constraint(validatedBy = NoNullElementsValidator.class)
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidEnum {
-    String message() default "Invalid value";
+public @interface NoNullElements {
+    String message() default "List cannot contain null elements";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-    Class<? extends Enum<?>> enumClass();
 }

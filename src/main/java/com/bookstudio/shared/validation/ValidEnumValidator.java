@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class EnumValidator implements ConstraintValidator<ValidEnum, String> {
+public class ValidEnumValidator implements ConstraintValidator<ValidEnum, String> {
     private ValidEnum annotation;
     private Class<? extends Enum<?>> enumClass;
 
