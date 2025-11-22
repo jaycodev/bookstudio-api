@@ -5,7 +5,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.bookstudio.payment.domain.model.type.PaymentMethod;
+import com.bookstudio.shared.validation.NoNullElements;
 import com.bookstudio.shared.validation.ValidEnum;
+import com.bookstudio.shared.validation.ValidIds;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -32,5 +34,7 @@ public record CreatePaymentRequest(
     String method,
 
     @NotEmpty(message = "Fine IDs cannot be empty")
+    @NoNullElements(message = "Fine IDs cannot contain null values")
+    @ValidIds(message = "Fine IDs must be greater than or equal to 1")
     List<Long> fineIds
 ) {}

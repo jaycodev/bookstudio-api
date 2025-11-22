@@ -3,7 +3,9 @@ package com.bookstudio.publisher.application.dto.request;
 import java.util.List;
 
 import com.bookstudio.shared.type.Status;
+import com.bookstudio.shared.validation.NoNullElements;
 import com.bookstudio.shared.validation.ValidEnum;
+import com.bookstudio.shared.validation.ValidIds;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -38,5 +40,7 @@ public record UpdatePublisherRequest(
     String photoUrl,
 
     @NotEmpty(message = "Genre IDs cannot be empty")
+    @NoNullElements(message = "Genre IDs cannot contain null values")
+    @ValidIds(message = "Genre IDs must be greater than or equal to 1")
     List<Long> genreIds
 ) {}

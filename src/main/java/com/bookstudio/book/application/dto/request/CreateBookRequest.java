@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.bookstudio.shared.type.Status;
+import com.bookstudio.shared.validation.NoNullElements;
+import com.bookstudio.shared.validation.ValidIds;
 import com.bookstudio.shared.validation.ValidEnum;
 
 import jakarta.validation.constraints.Min;
@@ -53,8 +55,12 @@ public record CreateBookRequest(
     String status,
 
     @NotEmpty(message = "Author IDs cannot be empty")
+    @NoNullElements(message = "Author IDs cannot contain null values")
+    @ValidIds(message = "Author IDs must be greater than or equal to 1")
     List<Long> authorIds,
 
     @NotEmpty(message = "Genre IDs cannot be empty")
+    @NoNullElements(message = "Genre IDs cannot contain null values")
+    @ValidIds(message = "Genre IDs must be greater than or equal to 1")
     List<Long> genreIds
 ) {}
