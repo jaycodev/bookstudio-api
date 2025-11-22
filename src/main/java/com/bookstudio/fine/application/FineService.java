@@ -16,8 +16,7 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -47,7 +46,7 @@ public class FineService {
                 copyRepository.findForOptions());
     }
 
-    public FineDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public FineDetailResponse getDetailById(Long id) {
         return fineRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + id));
     }
@@ -71,7 +70,7 @@ public class FineService {
     }
 
     @Transactional
-    public FineListResponse update(@NonNull @Min(1) Long id, UpdateFineRequest request) {
+    public FineListResponse update(Long id, UpdateFineRequest request) {
         Fine fine = fineRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fine not found with ID: " + id));
 

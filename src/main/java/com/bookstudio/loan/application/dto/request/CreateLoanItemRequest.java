@@ -2,14 +2,11 @@ package com.bookstudio.loan.application.dto.request;
 
 import java.time.LocalDate;
 
-import org.springframework.lang.NonNull;
-
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record CreateLoanItemRequest(
-    @NonNull
     @NotNull(message = "Copy ID is required")
     @Min(value = 1, message = "Copy ID must be at least 1")
     Long copyId,

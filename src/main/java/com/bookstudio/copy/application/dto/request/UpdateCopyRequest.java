@@ -1,7 +1,5 @@
 package com.bookstudio.copy.application.dto.request;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.copy.domain.model.type.CopyCondition;
 import com.bookstudio.copy.domain.model.type.CopyStatus;
 import com.bookstudio.shared.validation.ValidEnum;
@@ -12,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UpdateCopyRequest(
-    @NonNull
     @NotNull(message = "Shelf ID is required")
     @Min(value = 1, message = "Shelf ID must be at least 1")
     Long shelfId,

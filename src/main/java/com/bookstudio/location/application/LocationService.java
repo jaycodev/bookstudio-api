@@ -16,8 +16,7 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -40,7 +39,7 @@ public class LocationService {
         return locationRepository.findList();
     }
 
-    public LocationDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public LocationDetailResponse getDetailById(Long id) {
         LocationDetailResponse base = locationRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location not found with ID: " + id));
 
@@ -72,7 +71,7 @@ public class LocationService {
     }
 
     @Transactional
-    public LocationListResponse update(@NonNull @Min(1) Long id, UpdateLocationRequest request) {
+    public LocationListResponse update(Long id, UpdateLocationRequest request) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location not found with ID: " + id));
 

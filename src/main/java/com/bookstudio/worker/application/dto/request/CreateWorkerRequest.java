@@ -1,8 +1,5 @@
 package com.bookstudio.worker.application.dto.request;
 
-
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.worker.domain.model.type.WorkerStatus;
 import com.bookstudio.shared.validation.ValidEnum;
 
@@ -34,7 +31,6 @@ public record CreateWorkerRequest(
     @Size(max = 255, message = "Password must not exceed 255 characters")
     String password,
 
-    @NonNull
     @NotNull(message = "Role ID is required")
     @Min(value = 1, message = "Role ID must be at least 1")
     Long roleId,

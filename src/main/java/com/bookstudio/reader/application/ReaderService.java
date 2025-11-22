@@ -14,8 +14,7 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -36,7 +35,7 @@ public class ReaderService {
         return readerRepository.findList();
     }
 
-    public ReaderDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public ReaderDetailResponse getDetailById(Long id) {
         return readerRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + id));
     }
@@ -70,7 +69,7 @@ public class ReaderService {
     }
 
     @Transactional
-    public ReaderListResponse update(@NonNull @Min(1) Long id, UpdateReaderRequest request) {
+    public ReaderListResponse update(Long id, UpdateReaderRequest request) {
         Reader reader = readerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reader not found with ID: " + id));
 

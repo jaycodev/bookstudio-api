@@ -18,8 +18,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.bookstudio.shared.api.ApiError;
 import com.bookstudio.shared.api.ApiFieldError;
 
-import org.springframework.lang.NonNull;
-
 import java.lang.reflect.Field;
 import java.util.Comparator;
 import java.util.List;
@@ -33,10 +31,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            @NonNull MethodArgumentNotValidException ex,
-            @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
-            @NonNull WebRequest request) {
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
 
         final Map<String, Integer> fieldOrder = Optional.ofNullable(ex.getBindingResult().getTarget())
                 .map(Object::getClass)
@@ -59,10 +57,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            @NonNull HttpMessageNotReadableException ex,
-            @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
-            @NonNull WebRequest request) {
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
 
         ApiError apiError = new ApiError(
                 HttpStatus.BAD_REQUEST.value(),

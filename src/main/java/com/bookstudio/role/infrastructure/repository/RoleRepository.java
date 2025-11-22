@@ -5,14 +5,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.lang.NonNull;
 
 import com.bookstudio.role.application.dto.response.RoleDetailResponse;
 import com.bookstudio.role.application.dto.response.RoleListResponse;
 import com.bookstudio.role.domain.model.Role;
 import com.bookstudio.shared.response.OptionResponse;
-
-import jakarta.validation.constraints.Min;
 
 public interface RoleRepository extends JpaRepository<Role, Long>{
     @Query("""
@@ -46,5 +43,5 @@ public interface RoleRepository extends JpaRepository<Role, Long>{
         FROM Role r
         WHERE r.id = :id
     """)
-    Optional<RoleDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<RoleDetailResponse> findDetailById(Long id);
 }

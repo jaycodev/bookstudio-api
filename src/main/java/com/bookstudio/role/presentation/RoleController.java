@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +65,7 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<RoleDetailResponse>> get(
-            @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id) {
+            @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id) {
         RoleDetailResponse role = roleService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Role found", role));
     }
@@ -95,7 +94,7 @@ public class RoleController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/roles/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<RoleListResponse>> update(
-            @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id,
+            @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) @PathVariable Long id,
             @Valid @RequestBody UpdateRoleRequest request) {
         RoleListResponse updated = roleService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Role updated successfully", updated));

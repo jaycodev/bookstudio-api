@@ -21,7 +21,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +84,7 @@ public class PaymentController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/payments/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<PaymentDetailResponse>> get(
-            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
+            @PathVariable @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id) {
         PaymentDetailResponse payment = paymentService.getDetailById(id);
         return ResponseEntity.ok(new ApiSuccess<>("Payment found", payment));
     }
@@ -114,7 +113,7 @@ public class PaymentController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ApiError.class), examples = @ExampleObject(name = "Internal Error", summary = "Internal server error", value = "{\"success\":false,\"status\":500,\"message\":\"Internal server error\",\"path\":\"/payments/1\",\"timestamp\":\"2025-10-16T21:09:26.122Z\",\"errors\":null}")))
     })
     public ResponseEntity<ApiSuccess<PaymentListResponse>> update(
-            @PathVariable @NonNull @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
+            @PathVariable @Min(value = 1, message = ValidationMessages.ID_MIN_VALUE) Long id,
             @Valid @RequestBody UpdatePaymentRequest request) {
         PaymentListResponse updated = paymentService.update(id, request);
         return ResponseEntity.ok(new ApiSuccess<>("Payment updated successfully", updated));

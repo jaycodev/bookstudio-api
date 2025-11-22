@@ -1,14 +1,11 @@
 package com.bookstudio.location.application.dto.request;
 
-import org.springframework.lang.NonNull;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UpdateShelfRequest(
-    @NonNull
     @NotNull(message = "ID is required")
     @Min(value = 1, message = "ID must be at least 1")
     Long id,

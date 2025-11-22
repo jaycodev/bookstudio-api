@@ -17,8 +17,7 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.type.Status;
 
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -48,7 +47,7 @@ public class PublisherService {
                 nationalityRepository.findForOptions());
     }
 
-    public PublisherDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public PublisherDetailResponse getDetailById(Long id) {
         PublisherDetailResponse base = publisherRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 
@@ -84,7 +83,7 @@ public class PublisherService {
     }
 
     @Transactional
-    public PublisherListResponse update(@NonNull @Min(1) Long id, UpdatePublisherRequest request) {
+    public PublisherListResponse update(Long id, UpdatePublisherRequest request) {
         Publisher publisher = publisherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with ID: " + id));
 

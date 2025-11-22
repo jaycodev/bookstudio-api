@@ -2,8 +2,6 @@ package com.bookstudio.reservation.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -54,5 +52,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         JOIN r.copy c
         WHERE r.id = :id
     """)
-    Optional<ReservationDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<ReservationDetailResponse> findDetailById(Long id);
 }

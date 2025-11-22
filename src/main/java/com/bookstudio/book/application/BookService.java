@@ -24,10 +24,8 @@ import com.bookstudio.publisher.infrastructure.repository.PublisherRepository;
 import com.bookstudio.shared.exception.ResourceNotFoundException;
 import com.bookstudio.shared.type.Status;
 
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -67,7 +65,7 @@ public class BookService {
                 categoryRepository.findForOptions());
     }
 
-    public BookDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public BookDetailResponse getDetailById(Long id) {
         BookDetailResponse base = bookRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 
@@ -120,7 +118,7 @@ public class BookService {
     }
 
     @Transactional
-    public BookListResponse update(@NonNull @Min(1) Long id, UpdateBookRequest request) {
+    public BookListResponse update(Long id, UpdateBookRequest request) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with ID: " + id));
 

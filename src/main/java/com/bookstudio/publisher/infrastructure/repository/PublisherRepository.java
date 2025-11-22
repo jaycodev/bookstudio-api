@@ -10,8 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
 
 public interface PublisherRepository extends JpaRepository<Publisher, Long> {
     @Query("""
@@ -63,5 +61,5 @@ public interface PublisherRepository extends JpaRepository<Publisher, Long> {
         JOIN p.nationality n
         WHERE p.id = :id
     """)
-    Optional<PublisherDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<PublisherDetailResponse> findDetailById(Long id);
 }

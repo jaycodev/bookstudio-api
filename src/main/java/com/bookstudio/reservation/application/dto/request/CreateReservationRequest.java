@@ -2,8 +2,6 @@ package com.bookstudio.reservation.application.dto.request;
 
 import java.time.LocalDate;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.reservation.domain.model.type.ReservationStatus;
 import com.bookstudio.shared.validation.ValidEnum;
 
@@ -13,12 +11,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
 public record CreateReservationRequest(
-    @NonNull
     @NotNull(message = "Reader ID is required")
     @Min(value = 1, message = "Reader ID must be at least 1")
     Long readerId,
 
-    @NonNull
     @NotNull(message = "Copy ID is required")
     @Min(value = 1, message = "Copy ID must be at least 1")
     Long copyId,

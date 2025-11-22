@@ -9,14 +9,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
-import org.springframework.lang.NonNull;
 
 public record UpdateAuthorRequest(
     @NotBlank(message = "Name is required")
     @Size(max = 255, message = "Name must not exceed 255 characters")
     String name,
 
-    @NonNull
     @NotNull(message = "Nationality ID cannot be null")
     @Min(value = 1, message = "Nationality ID must be at least 1")
     Long nationalityId,

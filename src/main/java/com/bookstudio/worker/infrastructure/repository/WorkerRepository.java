@@ -9,8 +9,6 @@ import com.bookstudio.worker.domain.model.Worker;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
 
 public interface WorkerRepository extends JpaRepository<Worker, Long> {
     @Query("""
@@ -47,7 +45,7 @@ public interface WorkerRepository extends JpaRepository<Worker, Long> {
         FROM Worker w
         WHERE w.id = :id
     """)
-    Optional<WorkerDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<WorkerDetailResponse> findDetailById(Long id);
 
     Optional<Worker> findByUsername(String username);
     Optional<Worker> findByEmail(String email);

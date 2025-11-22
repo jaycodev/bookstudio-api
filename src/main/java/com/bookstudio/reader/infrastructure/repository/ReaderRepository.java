@@ -10,8 +10,6 @@ import com.bookstudio.shared.response.OptionResponse;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
 
 public interface ReaderRepository extends JpaRepository<Reader, Long> {    
     @Query("""
@@ -55,7 +53,7 @@ public interface ReaderRepository extends JpaRepository<Reader, Long> {
         FROM Reader r
         WHERE r.id = :id
     """)
-    Optional<ReaderDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<ReaderDetailResponse> findDetailById(Long id);
 
     Optional<Reader> findByDni(String dni);
     Optional<Reader> findByEmail(String email);

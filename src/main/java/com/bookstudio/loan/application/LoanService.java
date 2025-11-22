@@ -23,8 +23,7 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -64,7 +63,7 @@ public class LoanService {
                 readerRepository.findForOptions());
     }
 
-    public LoanDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public LoanDetailResponse getDetailById(Long id) {
         LoanDetailResponse base = loanRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 
@@ -103,7 +102,7 @@ public class LoanService {
     }
 
     @Transactional
-    public LoanListResponse update(@NonNull @Min(1) Long id, UpdateLoanRequest request) {
+    public LoanListResponse update(Long id, UpdateLoanRequest request) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan not found with ID: " + id));
 

@@ -20,8 +20,7 @@ import com.bookstudio.shared.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +50,7 @@ public class PaymentService {
                 readerRepository.findForOptions());
     }
 
-    public PaymentDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public PaymentDetailResponse getDetailById(Long id) {
         PaymentDetailResponse base = paymentRepository.findDetailById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 
@@ -89,7 +88,7 @@ public class PaymentService {
     }
 
     @Transactional
-    public PaymentListResponse update(@NonNull @Min(1) Long id, UpdatePaymentRequest request) {
+    public PaymentListResponse update(Long id, UpdatePaymentRequest request) {
         Payment payment = paymentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Payment not found with ID: " + id));
 

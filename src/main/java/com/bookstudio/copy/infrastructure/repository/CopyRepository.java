@@ -2,8 +2,6 @@ package com.bookstudio.copy.infrastructure.repository;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -71,7 +69,7 @@ public interface CopyRepository extends JpaRepository<Copy, Long> {
         JOIN c.shelf s
         WHERE c.id = :id
     """)
-    Optional<CopyDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<CopyDetailResponse> findDetailById(Long id);
 
     @Query("""
         SELECT COUNT(c)

@@ -12,10 +12,8 @@ import com.bookstudio.role.infrastructure.repository.RolePermissionRepository;
 import com.bookstudio.role.infrastructure.repository.RoleRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -34,7 +32,7 @@ public class RoleService {
         return roleRepository.findList();
     }
 
-    public RoleDetailResponse getDetailById(@NonNull @Min(1) Long id) {
+    public RoleDetailResponse getDetailById(Long id) {
         RoleDetailResponse base = roleRepository.findDetailById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
 
@@ -61,7 +59,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleListResponse update(@NonNull @Min(1) Long id, UpdateRoleRequest request) {
+    public RoleListResponse update(Long id, UpdateRoleRequest request) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Role not found with ID: " + id));
 

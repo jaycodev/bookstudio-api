@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-import jakarta.validation.constraints.Min;
-import org.springframework.lang.NonNull;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("""
@@ -54,5 +52,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
         JOIN p.reader r
         WHERE p.id = :id
     """)
-    Optional<PaymentDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<PaymentDetailResponse> findDetailById(Long id);
 }

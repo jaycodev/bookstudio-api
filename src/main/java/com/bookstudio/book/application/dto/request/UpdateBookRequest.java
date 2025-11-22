@@ -3,8 +3,6 @@ package com.bookstudio.book.application.dto.request;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.shared.type.Status;
 import com.bookstudio.shared.validation.ValidEnum;
 
@@ -23,7 +21,6 @@ public record UpdateBookRequest(
     @Size(max = 20, message = "ISBN must not exceed 20 characters")
     String isbn,
 
-    @NonNull
     @NotNull(message = "Language ID is required")
     @Min(value = 1, message = "Language ID must be at least 1")
     Long languageId,
@@ -39,12 +36,10 @@ public record UpdateBookRequest(
     @Size(max = 300, message = "Cover URL must not exceed 300 characters")
     String coverUrl,
 
-    @NonNull
     @NotNull(message = "Publisher ID is required")
     @Min(value = 1, message = "Publisher ID must be at least 1")
     Long publisherId,
 
-    @NonNull
     @NotNull(message = "Category ID is required")
     @Min(value = 1, message = "Category ID must be at least 1")
     Long categoryId,
@@ -57,11 +52,9 @@ public record UpdateBookRequest(
     @ValidEnum(enumClass = Status.class, message = "Invalid status")
     String status,
 
-    @NonNull
     @NotEmpty(message = "Author IDs cannot be empty")
     List<Long> authorIds,
 
-    @NonNull
     @NotEmpty(message = "Genre IDs cannot be empty")
     List<Long> genreIds
 ) {}

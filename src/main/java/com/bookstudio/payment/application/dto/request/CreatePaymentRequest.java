@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.payment.domain.model.type.PaymentMethod;
 import com.bookstudio.shared.validation.ValidEnum;
 
@@ -17,7 +15,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
 public record CreatePaymentRequest(
-    @NonNull
     @NotNull(message = "Reader ID is required")
     @Min(value = 1, message = "Reader ID must be at least 1")
     Long readerId,
@@ -34,7 +31,6 @@ public record CreatePaymentRequest(
     @ValidEnum(enumClass = PaymentMethod.class, message = "Invalid method")
     String method,
 
-    @NonNull
     @NotEmpty(message = "Fine IDs cannot be empty")
     List<Long> fineIds
 ) {}

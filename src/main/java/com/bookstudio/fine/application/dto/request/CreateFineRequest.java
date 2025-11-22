@@ -3,8 +3,6 @@ package com.bookstudio.fine.application.dto.request;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.fine.domain.model.type.FineStatus;
 import com.bookstudio.loan.domain.model.LoanItemId;
 import com.bookstudio.shared.validation.ValidEnum;
@@ -16,7 +14,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 
 public record CreateFineRequest(
-    @NonNull
     @NotNull(message = "Loan item ID is required")
     LoanItemId loanItemId,
 

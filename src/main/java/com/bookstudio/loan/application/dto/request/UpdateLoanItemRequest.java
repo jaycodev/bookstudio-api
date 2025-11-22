@@ -2,8 +2,6 @@ package com.bookstudio.loan.application.dto.request;
 
 import java.time.LocalDate;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.loan.domain.model.type.LoanItemStatus;
 import com.bookstudio.shared.validation.ValidEnum;
 
@@ -13,7 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UpdateLoanItemRequest(
-    @NonNull
     @NotNull(message = "Copy ID is required")
     @Min(value = 1, message = "Copy ID must be at least 1")
     Long copyId,

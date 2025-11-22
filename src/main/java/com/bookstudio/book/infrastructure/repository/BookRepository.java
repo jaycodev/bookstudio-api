@@ -5,11 +5,8 @@ import com.bookstudio.book.application.dto.response.BookListResponse;
 import com.bookstudio.book.domain.model.Book;
 import com.bookstudio.shared.response.OptionResponse;
 
-import jakarta.validation.constraints.Min;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,5 +85,5 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         JOIN b.language l
         WHERE b.id = :id
     """)
-    Optional<BookDetailResponse> findDetailById(@NonNull @Min(1) Long id);
+    Optional<BookDetailResponse> findDetailById(Long id);
 }

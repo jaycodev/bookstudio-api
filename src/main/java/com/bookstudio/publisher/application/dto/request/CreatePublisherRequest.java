@@ -2,8 +2,6 @@ package com.bookstudio.publisher.application.dto.request;
 
 import java.util.List;
 
-import org.springframework.lang.NonNull;
-
 import com.bookstudio.shared.type.Status;
 import com.bookstudio.shared.validation.ValidEnum;
 
@@ -18,7 +16,6 @@ public record CreatePublisherRequest(
     @Size(max = 255, message = "Name must not exceed 255 characters")
     String name,
 
-    @NonNull
     @NotNull(message = "Nationality ID is required")
     @Min(value = 1, message = "Nationality ID must be at least 1")
     Long nationalityId,
@@ -40,7 +37,6 @@ public record CreatePublisherRequest(
     @Size(max = 1024, message = "Photo URL must not exceed 1024 characters")
     String photoUrl,
 
-    @NonNull
     @NotEmpty(message = "Genre IDs cannot be empty")
     List<Long> genreIds
 ) {}
