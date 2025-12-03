@@ -7,5 +7,5 @@ spring.jpa.hibernate.ddl-auto=validate
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 
-server.error.whitelabel.enabled=false
+spring.web.error.whitelabel.enabled=false
 spring.servlet.multipart.enabled=true
